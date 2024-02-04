@@ -9,18 +9,16 @@ import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.controls.ProviderEntry
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.simpleweather.radar.nullschool.EarthWindMapViewProvider
 import com.thewizrd.simpleweather.radar.openweather.OWMRadarViewProvider
 import com.thewizrd.simpleweather.radar.rainviewer.RainViewerViewProvider
 import com.thewizrd.weather_api.weatherModule
 
 object RadarProvider {
     const val KEY_RADARPROVIDER = "key_radarprovider"
-    const val EARTHWINDMAP = "nullschool"
     const val RAINVIEWER = "rainviewer"
     const val OPENWEATHERMAP = "openweather"
 
-    @StringDef(EARTHWINDMAP, RAINVIEWER, OPENWEATHERMAP)
+    @StringDef(RAINVIEWER, OPENWEATHERMAP)
     @Retention(AnnotationRetention.SOURCE)
     annotation class RadarProviders
 
@@ -35,10 +33,6 @@ object RadarProvider {
 
     private val FullRadarProviders = listOf(
         ProviderEntry(
-            "EarthWindMap Project", EARTHWINDMAP,
-            "https://earth.nullschool.net/", "https://earth.nullschool.net/"
-        ),
-        ProviderEntry(
             "RainViewer", RAINVIEWER,
             "https://www.rainviewer.com/", "https://www.rainviewer.com/api.html"
         ),
@@ -52,7 +46,7 @@ object RadarProvider {
     @RadarProviders
     fun getRadarProvider(): String {
         val prefs = appLib.preferences
-        val provider = prefs.getString(KEY_RADARPROVIDER, EARTHWINDMAP)!!
+        val provider = prefs.getString(KEY_RADARPROVIDER, RAINVIEWER)!!
 
         if (provider == WeatherAPI.OPENWEATHERMAP) {
             val owm = weatherModule.weatherManager.getWeatherProvider(WeatherAPI.OPENWEATHERMAP)
@@ -61,7 +55,7 @@ object RadarProvider {
                     WeatherAPI.OPENWEATHERMAP
                 ) == null
             ) {
-                return EARTHWINDMAP
+                return RAINVIEWER
             }
         }
 
@@ -71,12 +65,10 @@ object RadarProvider {
     @JvmStatic
     @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
     fun getRadarViewProvider(context: Context, rootView: ViewGroup): RadarViewProvider {
-        return if (getRadarProvider() == RAINVIEWER) {
-            RainViewerViewProvider(context, rootView)
-        } else if (getRadarProvider() == OPENWEATHERMAP) {
+        return if (getRadarProvider() == OPENWEATHERMAP) {
             OWMRadarViewProvider(context, rootView)
         } else {
-            EarthWindMapViewProvider(context, rootView)
+            RainViewerViewProvider(context, rootView)
         }
     }
 }
