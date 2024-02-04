@@ -12,7 +12,23 @@ import com.thewizrd.shared_resources.json.DateConverter
 import com.thewizrd.shared_resources.json.LocalDateTimeConverter
 import com.thewizrd.shared_resources.json.ZonedDateTimeConverter
 import com.thewizrd.shared_resources.locationdata.LocationData
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.AirQuality
+import com.thewizrd.shared_resources.weatherdata.model.Astronomy
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase
+import com.thewizrd.shared_resources.weatherdata.model.Pollen
+import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.TextForecast
+import com.thewizrd.shared_resources.weatherdata.model.UV
+import com.thewizrd.shared_resources.weatherdata.model.Weather
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
 import okio.Buffer
 import okio.buffer
 import okio.sink
@@ -23,7 +39,7 @@ import java.io.InputStream
 import java.lang.reflect.Type
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Date
 
 object JSONParser {
     private var moshi: Moshi
@@ -40,10 +56,16 @@ object JSONParser {
             .add(HourlyForecast::class.java, CustomJsonConverter(HourlyForecast::class.java))
             .add(TextForecast::class.java, CustomJsonConverter(TextForecast::class.java))
             .add(MinutelyForecast::class.java, CustomJsonConverter(MinutelyForecast::class.java))
+            .add(ForecastExtras::class.java, CustomJsonConverter(ForecastExtras::class.java))
             .add(Condition::class.java, CustomJsonConverter(Condition::class.java))
             .add(Atmosphere::class.java, CustomJsonConverter(Atmosphere::class.java))
             .add(Astronomy::class.java, CustomJsonConverter(Astronomy::class.java))
             .add(Precipitation::class.java, CustomJsonConverter(Precipitation::class.java))
+            .add(Beaufort::class.java, CustomJsonConverter(Beaufort::class.java))
+            .add(MoonPhase::class.java, CustomJsonConverter(MoonPhase::class.java))
+            .add(UV::class.java, CustomJsonConverter(UV::class.java))
+            .add(AirQuality::class.java, CustomJsonConverter(AirQuality::class.java))
+            .add(Pollen::class.java, CustomJsonConverter(Pollen::class.java))
             .add(WeatherAlert::class.java, CustomJsonConverter(WeatherAlert::class.java))
             .add(KotlinJsonAdapterFactory())
             .build()
