@@ -12,9 +12,8 @@ import com.thewizrd.shared_resources.utils.StringUtils.isNullOrWhitespace
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.weather_api.BuildConfig
 import com.thewizrd.weather_api.keys.WeatherKitConfig
-import io.jsonwebtoken.JwsHeader
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.Jwts.SIG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.security.KeyFactory
@@ -52,8 +51,8 @@ class WeatherKitJwtServiceImpl : WeatherKitJwtService {
     private fun getTokenFromStorage(): String? {
         val prefs = context.getSharedPreferences(WeatherAPI.APPLE, Context.MODE_PRIVATE)
 
-        val jwts = Jwts.parserBuilder()
-            .setClock {
+        val jwts = Jwts.parser()
+            .clock {
                 // Time travel to check expiration to avoid any auth issues
                 Date(Instant.now().plusSeconds(90).toEpochMilli())
             }.build()
@@ -64,7 +63,7 @@ class WeatherKitJwtServiceImpl : WeatherKitJwtService {
             val jwtToken = runCatching {
                 // Workaround: Read unsigned token
                 val split = token!!.split('.')
-                jwts.parseClaimsJws("${split[0]}.${split[1]}.")
+                jwts.parseSignedClaims("${split[0]}.${split[1]}.")
             }.onFailure {
                 if (BuildConfig.DEBUG) {
                     Log.d("WeatherKitJwtService", "Error reading token", it)
@@ -99,16 +98,18 @@ class WeatherKitJwtServiceImpl : WeatherKitJwtService {
         }.generatePrivate(PKCS8EncodedKeySpec(privKeyBytes))
 
         return Jwts.builder()
-            .signWith(privKey, SignatureAlgorithm.ES256)
-            .setHeaderParam(JwsHeader.KEY_ID, WeatherKitConfig.getKeyID())
-            .setHeaderParam(
+            .signWith(privKey, SIG.ES256)
+            .header()
+            .keyId(WeatherKitConfig.getKeyID())
+            .add(
                 "id",
                 "${WeatherKitConfig.getTeamID()}.${WeatherKitConfig.getServiceID()}"
             )
-            .setIssuer(WeatherKitConfig.getTeamID())
-            .setIssuedAt(iat)
-            .setExpiration(exp)
-            .setSubject(WeatherKitConfig.getServiceID())
+            .and()
+            .issuer(WeatherKitConfig.getTeamID())
+            .issuedAt(iat)
+            .expiration(exp)
+            .subject(WeatherKitConfig.getServiceID())
             .compact()
     }
 }

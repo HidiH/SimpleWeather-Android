@@ -27,6 +27,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+        buildConfig true
     }
 
     compileOptions {
@@ -61,6 +62,8 @@ dependencies {
     implementation project(":shared_resources")
     implementation project(":weather-api")
 
+    androidTestImplementation "androidx.test.ext:junit:$junit_version"
+
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.arch.core:core-runtime:$arch_core_runtime_version"
@@ -80,9 +83,9 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide_version"
     implementation "com.ibm.icu:icu4j:$icu4j_version"
 
-    fullgmsImplementation 'com.google.android.gms:play-services-basement:18.2.0'
-    fullgmsImplementation 'com.google.android.gms:play-services-tasks:18.0.2'
+    fullgmsImplementation "com.google.android.gms:play-services-basement:$gms_basement_version"
+    fullgmsImplementation "com.google.android.gms:play-services-tasks:$gms_tasks_version"
     fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation 'com.google.android.gms:play-services-wearable:18.1.0'
+    fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
     fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
 }

@@ -40,6 +40,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+        buildConfig true
     }
 
     compileOptions {
@@ -145,7 +146,7 @@ dependencies {
     ksp "com.github.bumptech.glide:ksp:$glide_version"
     implementation "com.jakewharton.timber:timber:$timber_version"
     implementation "com.ibm.icu:icu4j:$icu4j_version"
-    implementation 'com.github.skydoves:colorpickerview:2.2.4'
+    implementation 'com.github.skydoves:colorpickerview:2.3.0'
 
     implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
     ksp "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
@@ -163,15 +164,15 @@ dependencies {
     fullgmsImplementation 'com.google.firebase:firebase-config'
     fullgmsImplementation 'com.google.firebase:firebase-perf'
 
-    fullgmsImplementation 'com.google.android.gms:play-services-base:18.2.0'
+    fullgmsImplementation "com.google.android.gms:play-services-base:$gms_base_version"
     fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation 'com.google.android.gms:play-services-maps:18.1.0'
-    fullgmsImplementation 'com.google.android.gms:play-services-wearable:18.1.0'
+    fullgmsImplementation 'com.google.android.gms:play-services-maps:18.2.0'
+    fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
     fullgmsImplementation 'com.google.android.play:app-update-ktx:2.1.0'
     fullgmsImplementation 'com.google.android.play:feature-delivery-ktx:2.1.0'
     fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
 
-    nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.16'
+    nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.18'
 }
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Fullgms")) {
