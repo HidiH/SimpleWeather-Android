@@ -89,7 +89,7 @@ class UVComplicationService : WeatherHourlyForecastComplicationService() {
             return null
         }
 
-        val uvIndex = weather.condition.uv?.index ?: hourlyForecast?.extras?.uvIndex ?: return null
+        val uvIndex = weather.condition?.uv?.index ?: hourlyForecast?.extras?.uvIndex ?: return null
         val uvModel = UVIndexViewModel(UV(uvIndex))
 
         return when (dataType) {

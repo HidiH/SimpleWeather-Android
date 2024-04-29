@@ -51,8 +51,8 @@ fun createWeatherData(root: com.thewizrd.weather_api.weatherkit.Weather): Weathe
             val dailyFcast = createForecast(day)
             val txtFcast = createTextForecast(day)
 
-            forecast.add(dailyFcast)
-            txtForecast.add(txtFcast)
+            forecast!!.add(dailyFcast)
+            txtForecast!!.add(txtFcast)
 
             if (todaysForecast == null && dailyFcast.date.toLocalDate()
                     .isEqual(now.toLocalDate())
@@ -64,12 +64,12 @@ fun createWeatherData(root: com.thewizrd.weather_api.weatherkit.Weather): Weathe
 
         // Hourly Forecast
         root.forecastHourly?.hours?.forEach { hour ->
-            hrForecast.add(createHourlyForecast(hour))
+            hrForecast!!.add(createHourlyForecast(hour))
         }
 
         // Minutely Forecast
         root.forecastNextHour?.minutes?.forEach { minute ->
-            minForecast.add(createMinutelyForecast(minute))
+            minForecast!!.add(createMinutelyForecast(minute))
         }
 
         condition = createCondition(root.currentWeather!!, todaysForecast, todaysTxtForecast)
@@ -77,18 +77,18 @@ fun createWeatherData(root: com.thewizrd.weather_api.weatherkit.Weather): Weathe
 
         root.forecastDaily?.days?.firstOrNull {
             ZonedDateTime.parse(it.forecastStart).toLocalDate()
-                .isEqual(condition.observationTime.toLocalDate())
+                .isEqual(condition!!.observationTime.toLocalDate())
         }?.let {
             astronomy = createAstronomy(it)
         }
         precipitation = createPrecipitation(root.currentWeather!!)
         ttl = 180
 
-        if ((condition.highF == null || condition.highC == null) && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition!!.highF == null || condition!!.highC == null) && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
         weatherAlerts = createWeatherAlerts(root.weatherAlerts)

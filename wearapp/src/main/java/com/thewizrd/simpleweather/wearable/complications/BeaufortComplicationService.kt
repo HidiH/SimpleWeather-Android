@@ -124,7 +124,7 @@ class BeaufortComplicationService : WeatherHourlyForecastComplicationService() {
             return null
         }
 
-        val beaufort = weather.condition.beaufort ?: hourlyForecast?.extras?.windMph?.let {
+        val beaufort = weather.condition!!.beaufort ?: hourlyForecast?.extras?.windMph?.let {
             Beaufort(getBeaufortScale(it))
         } ?: return null
         val beaufortModel = BeaufortViewModel(beaufort)

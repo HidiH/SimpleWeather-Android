@@ -159,7 +159,7 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
                 // Add weather alerts if available
                 weather.weatherAlerts = createWeatherAlerts(
                     root,
-                    weather.location.latitude, weather.location.longitude
+                    weather.location!!.latitude, weather.location!!.longitude
                 )
             } catch (ex: Exception) {
                 weather = null
@@ -204,10 +204,11 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
         }
 
         // Update tz for weather properties
-        weather.updateTime = weather.updateTime.withZoneSameInstant(location.tzOffset)
-        weather.condition.observationTime = weather.condition.observationTime.withZoneSameInstant(location.tzOffset)
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(location.tzOffset)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(location.tzOffset)
 
-        val old = weather.astronomy
+        val old = weather.astronomy!!
         if (old.moonset.isEqual(DateTimeUtils.LOCALDATETIME_MIN) || old.moonrise.isEqual(
                 DateTimeUtils.LOCALDATETIME_MIN
             )
@@ -215,7 +216,7 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
             runCatching {
                 val newAstro = SunMoonCalcProvider().getAstronomyData(
                     location,
-                    weather.condition.observationTime
+                    weather.condition!!.observationTime
                 )
                 newAstro.sunrise = old.sunrise
                 newAstro.sunset = old.sunset
@@ -225,7 +226,7 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
             }
         }
 
-        for (forecast in weather.forecast) {
+        for (forecast in weather.forecast!!) {
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
         }
     }
@@ -298,7 +299,12 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
     override fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
-        return String.format(Locale.ROOT, "latitude=%s&longitude=%s", df.format(weather.location.latitude), df.format(weather.location.longitude))
+        return String.format(
+            Locale.ROOT,
+            "latitude=%s&longitude=%s",
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
+        )
     }
 
     override fun updateLocationQuery(location: LocationData): String {

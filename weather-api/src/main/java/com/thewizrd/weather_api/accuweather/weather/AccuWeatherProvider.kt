@@ -271,8 +271,8 @@ class AccuWeatherProvider : WeatherProviderImpl() {
         val locationModel = runBlocking {
             mLocationProvider.getLocation(
                 Coordinate(
-                    weather.location.latitude.toDouble(),
-                    weather.location.longitude.toDouble()
+                    weather.location!!.latitude.toDouble(),
+                    weather.location!!.longitude.toDouble()
                 ), getWeatherAPI()
             )
         }

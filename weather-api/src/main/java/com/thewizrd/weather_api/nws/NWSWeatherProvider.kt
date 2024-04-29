@@ -365,31 +365,31 @@ class NWSWeatherProvider : WeatherProviderImpl() {
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         val offset = location.tzOffset
 
-        weather.updateTime = weather.updateTime.withZoneSameInstant(offset)
-        weather.condition.observationTime =
-            weather.condition.observationTime.withZoneSameInstant(offset)
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(offset)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(offset)
 
         // NWS does not provide astrodata; calculate this ourselves (using their calculator)
         val solCalcData =
-            SolCalcAstroProvider().getAstronomyData(location, weather.condition.observationTime)
+            SolCalcAstroProvider().getAstronomyData(location, weather.condition!!.observationTime)
         weather.astronomy = try {
-            SunMoonCalcProvider().getAstronomyData(location, weather.condition.observationTime)
+            SunMoonCalcProvider().getAstronomyData(location, weather.condition!!.observationTime)
         } catch (e: WeatherException) {
             Logger.writeLine(Log.ERROR, e)
             solCalcData
         }
-        weather.astronomy.sunrise = solCalcData.sunrise
-        weather.astronomy.sunset = solCalcData.sunset
+        weather.astronomy!!.sunrise = solCalcData.sunrise
+        weather.astronomy!!.sunset = solCalcData.sunset
 
         // Update icons
         val now = ZonedDateTime.now(ZoneOffset.UTC).withZoneSameInstant(offset).toLocalTime()
-        val sunrise = weather.astronomy.sunrise.toLocalTime()
-        val sunset = weather.astronomy.sunset.toLocalTime()
+        val sunrise = weather.astronomy!!.sunrise.toLocalTime()
+        val sunset = weather.astronomy!!.sunset.toLocalTime()
 
-        weather.condition.icon =
-            getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), weather.condition.icon)
+        weather.condition!!.icon =
+            getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), weather.condition!!.icon)
 
-        for (hr_forecast in weather.hrForecast) {
+        for (hr_forecast in weather.hrForecast!!) {
             val hrf_date = hr_forecast.date.withZoneSameInstant(offset)
             hr_forecast.date = hrf_date
             val hrf_localTime = hrf_date.toLocalTime()
@@ -400,7 +400,12 @@ class NWSWeatherProvider : WeatherProviderImpl() {
     override fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
-        return String.format(Locale.ROOT, "lat=%s&lon=%s", df.format(weather.location.latitude), df.format(weather.location.longitude))
+        return String.format(
+            Locale.ROOT,
+            "lat=%s&lon=%s",
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
+        )
     }
 
     override fun updateLocationQuery(location: LocationData): String {
@@ -578,7 +583,7 @@ class NWSWeatherProvider : WeatherProviderImpl() {
     override fun isNight(weather: Weather): Boolean {
         var isNight = super.isNight(weather)
 
-        when (weather.condition.icon) {
+        when (weather.condition?.icon) {
             // The following cases can be present at any time of day
             WeatherIcons.SNOWFLAKE_COLD,
             WeatherIcons.SMOKE,
@@ -594,12 +599,12 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                 if (!isNight) {
                     // Fallback to sunset/rise time just in case
                     var tz: ZoneOffset? = null
-                    if (!weather.location.tzLong.isNullOrBlank()) {
-                        val id = ZoneIdCompat.of(weather.location.tzLong)
+                    if (!weather.location!!.tzLong.isNullOrBlank()) {
+                        val id = ZoneIdCompat.of(weather.location!!.tzLong)
                         tz = id.rules.getOffset(Instant.now())
                     }
                     if (tz == null) {
-                        tz = weather.location.tzOffset
+                        tz = weather.location!!.tzOffset
                     }
 
                     val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

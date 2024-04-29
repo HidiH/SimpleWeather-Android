@@ -203,7 +203,9 @@ class SettingsManager(context: Context) {
 
     suspend fun getWeatherData(key: String?): Weather? {
         loadIfNeeded()
-        return getWeatherDAO().getWeatherData(key)
+        return key?.let {
+            getWeatherDAO().getWeatherData(it)
+        }
     }
 
     suspend fun getWeatherDataByCoordinate(location: LocationData): Weather? {
@@ -221,8 +223,9 @@ class SettingsManager(context: Context) {
         var alerts: Collection<WeatherAlert>? = null
 
         try {
-            val weatherAlertData = getWeatherDAO().getWeatherAlertData(key)
-            alerts = weatherAlertData?.alerts
+            alerts = key?.let {
+                getWeatherDAO().getWeatherAlertData(it)?.alerts
+            }
         } catch (ex: Exception) {
             Logger.writeLine(Log.ERROR, ex, "SimpleWeather: Settings.GetWeatherAlertData()")
         }
@@ -230,13 +233,13 @@ class SettingsManager(context: Context) {
         return alerts ?: emptyList()
     }
 
-    suspend fun getWeatherForecastData(key: String?): Forecasts? {
+    suspend fun getWeatherForecastData(key: String): Forecasts? {
         loadIfNeeded()
         return getWeatherDAO().getForecastData(key)
     }
 
     suspend fun getHourlyWeatherForecastDataByLimit(
-        key: String?,
+        key: String,
         loadSize: Int
     ): List<HourlyForecast> {
         loadIfNeeded()
@@ -244,7 +247,7 @@ class SettingsManager(context: Context) {
     }
 
     suspend fun getHourlyForecastsByQueryOrderByDateByLimitFilterByDate(
-        key: String?,
+        key: String,
         loadSize: Int,
         date: ZonedDateTime
     ): List<HourlyForecast> {
@@ -256,13 +259,13 @@ class SettingsManager(context: Context) {
         )
     }
 
-    suspend fun getHourlyWeatherForecastData(key: String?): List<HourlyForecast> {
+    suspend fun getHourlyWeatherForecastData(key: String): List<HourlyForecast> {
         loadIfNeeded()
         return getWeatherDAO().getHourlyForecastsByQueryOrderByDate(key)
     }
 
     suspend fun getFirstHourlyForecastDataByDate(
-        key: String?,
+        key: String,
         date: ZonedDateTime
     ): HourlyForecast? {
         loadIfNeeded()
@@ -320,42 +323,42 @@ class SettingsManager(context: Context) {
     }
 
     private suspend fun cleanupWeatherData() {
-        val locs: List<LocationData?>
+        val locs: List<LocationData>
         if (isPhone) {
-            locs = getLocationsDAO().loadAllLocationData().toMutableList<LocationData?>()
-            if (useFollowGPS()) locs.add(lastGPSLocData)
+            locs = getLocationsDAO().loadAllLocationData().toMutableList()
+            if (useFollowGPS()) lastGPSLocData?.let { locs.add(it) }
         } else {
-            locs = listOf(getHomeData())
+            locs = getHomeData()?.let { listOf(it) } ?: emptyList()
         }
 
-        val locQueries = locs.map { it?.query }
+        val locQueries = locs.map { it.query }
         getWeatherDAO().deleteWeatherDataByKeyNotIn(locQueries)
     }
 
     private suspend fun cleanupWeatherForecastData() {
-        val locs: List<LocationData?>
+        val locs: List<LocationData>
         if (isPhone) {
-            locs = getLocationsDAO().loadAllLocationData().toMutableList<LocationData?>()
-            if (useFollowGPS()) locs.add(lastGPSLocData)
+            locs = getLocationsDAO().loadAllLocationData().toMutableList()
+            if (useFollowGPS()) lastGPSLocData?.let { locs.add(it) }
         } else {
-            locs = listOf(getHomeData())
+            locs = getHomeData()?.let { listOf(it) } ?: emptyList()
         }
 
-        val locQueries = locs.map { it?.query }
+        val locQueries = locs.map { it.query }
         getWeatherDAO().deleteForecastByKeyNotIn(locQueries)
         getWeatherDAO().deleteHourlyForecastByKeyNotIn(locQueries)
     }
 
     private suspend fun cleanupWeatherAlertData() {
-        val locs: List<LocationData?>
+        val locs: List<LocationData>
         if (isPhone) {
-            locs = getLocationsDAO().loadAllLocationData().toMutableList<LocationData?>()
-            if (useFollowGPS()) locs.add(lastGPSLocData)
+            locs = getLocationsDAO().loadAllLocationData().toMutableList()
+            if (useFollowGPS()) lastGPSLocData?.let { locs.add(it) }
         } else {
-            locs = listOf(getHomeData())
+            locs = getHomeData()?.let { listOf(it) } ?: emptyList()
         }
 
-        val locQueries = locs.map { it?.query }
+        val locQueries = locs.map { it.query }
         getWeatherDAO().deleteWeatherAlertDataByKeyNotIn(locQueries)
     }
 

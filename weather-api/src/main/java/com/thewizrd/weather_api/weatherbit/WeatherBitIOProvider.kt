@@ -336,8 +336,8 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
         return String.format(
             Locale.ROOT,
             "lat=%s&lon=%s",
-            df.format(weather.location.latitude),
-            df.format(weather.location.longitude)
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
         )
     }
 
@@ -521,19 +521,19 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
     override fun isNight(weather: Weather): Boolean {
         var isNight = super.isNight(weather)
 
-        when (weather.condition.icon) {
+        when (weather.condition?.icon) {
             // The following cases can be present at any time of day
             WeatherIcons.SMOKE,
             WeatherIcons.DUST -> {
                 if (!isNight) {
                     // Fallback to sunset/rise time just in case
                     var tz: ZoneOffset? = null
-                    if (!weather.location.tzLong.isNullOrBlank()) {
-                        val id = ZoneIdCompat.of(weather.location.tzLong)
+                    if (!weather.location!!.tzLong.isNullOrBlank()) {
+                        val id = ZoneIdCompat.of(weather.location!!.tzLong)
                         tz = id.rules.getOffset(Instant.now())
                     }
                     if (tz == null) {
-                        tz = weather.location.tzOffset
+                        tz = weather.location!!.tzOffset
                     }
 
                     val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

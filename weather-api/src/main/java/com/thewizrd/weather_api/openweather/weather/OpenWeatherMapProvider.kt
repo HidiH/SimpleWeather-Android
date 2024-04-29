@@ -244,25 +244,28 @@ class OpenWeatherMapProvider : WeatherProviderImpl() {
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         // OWM reports datetime in UTC; add location tz_offset
         val offset = location.tzOffset
-        weather.updateTime = weather.updateTime.withZoneSameInstant(offset)
-        weather.condition.observationTime =
-            weather.condition.observationTime.withZoneSameInstant(offset)
-        for (hr_forecast in weather.hrForecast) {
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(offset)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(offset)
+        for (hr_forecast in weather.hrForecast!!) {
             hr_forecast.date = hr_forecast.date.withZoneSameInstant(offset)
         }
-        for (forecast in weather.forecast) {
+        for (forecast in weather.forecast!!) {
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
         }
-        weather.astronomy.sunrise =
-            weather.astronomy.sunrise.plusSeconds(offset.totalSeconds.toLong())
-        weather.astronomy.sunset =
-            weather.astronomy.sunset.plusSeconds(offset.totalSeconds.toLong())
+        weather.astronomy!!.sunrise =
+            weather.astronomy!!.sunrise.plusSeconds(offset.totalSeconds.toLong())
+        weather.astronomy!!.sunset =
+            weather.astronomy!!.sunset.plusSeconds(offset.totalSeconds.toLong())
 
         runCatching {
             val old = weather.astronomy
             val newAstro =
-                SunMoonCalcProvider().getAstronomyData(location, weather.condition.observationTime)
-            newAstro.sunrise = old.sunrise
+                SunMoonCalcProvider().getAstronomyData(
+                    location,
+                    weather.condition!!.observationTime
+                )
+            newAstro.sunrise = old!!.sunrise
             newAstro.sunset = old.sunset
             weather.astronomy = newAstro
         }.onFailure {
@@ -273,7 +276,12 @@ class OpenWeatherMapProvider : WeatherProviderImpl() {
     override fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
-        return String.format(Locale.ROOT, "lat=%s&lon=%s", df.format(weather.location.latitude), df.format(weather.location.longitude))
+        return String.format(
+            Locale.ROOT,
+            "lat=%s&lon=%s",
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
+        )
     }
 
     override fun updateLocationQuery(location: LocationData): String {
@@ -540,7 +548,7 @@ class OpenWeatherMapProvider : WeatherProviderImpl() {
     override fun isNight(weather: Weather): Boolean {
         var isNight = super.isNight(weather)
 
-        when (weather.condition.icon) {
+        when (weather.condition?.icon) {
             // The following cases can be present at any time of day
             WeatherIcons.STORM_SHOWERS,
             WeatherIcons.THUNDERSTORM,
@@ -564,12 +572,12 @@ class OpenWeatherMapProvider : WeatherProviderImpl() {
                 if (!isNight) {
                     // Fallback to sunset/rise time just in case
                     var tz: ZoneOffset? = null
-                    if (!weather.location.tzLong.isNullOrBlank()) {
-                        val id = ZoneIdCompat.of(weather.location.tzLong)
+                    if (!weather.location!!.tzLong.isNullOrBlank()) {
+                        val id = ZoneIdCompat.of(weather.location!!.tzLong)
                         tz = id.rules.getOffset(Instant.now())
                     }
                     if (tz == null) {
-                        tz = weather.location.tzOffset
+                        tz = weather.location!!.tzOffset
                     }
 
                     val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

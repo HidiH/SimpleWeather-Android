@@ -27,7 +27,7 @@ import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.simpleweather.main.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.TimeUnit
 
 @RequiresApi(Build.VERSION_CODES.N_MR1)
@@ -126,7 +126,10 @@ class ShortcutCreatorWorker(context: Context, workerParams: WorkerParameters) : 
                 }
 
                 val bmp = withContext(Dispatchers.IO) {
-                    ImageUtils.adaptiveBitmapFromDrawable(context, wim.getWeatherIconResource(weather.condition.icon))
+                    ImageUtils.adaptiveBitmapFromDrawable(
+                        context,
+                        wim.getWeatherIconResource(weather.condition!!.icon)
+                    )
                 }
 
                 val shortCutIco = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -136,7 +139,7 @@ class ShortcutCreatorWorker(context: Context, workerParams: WorkerParameters) : 
                 }
 
                 val shortcut = ShortcutInfo.Builder(context, if (location.locationType == LocationType.GPS) Constants.KEY_GPS else "${location.query}_$i").apply {
-                    setShortLabel(if (weather.location.name.isNullOrBlank()) location.name else weather.location.name)
+                    setShortLabel(if (weather.location?.name.isNullOrBlank()) location.name!! else weather.location!!.name)
                     setIcon(shortCutIco)
                     setIntent(intent)
                 }.build()

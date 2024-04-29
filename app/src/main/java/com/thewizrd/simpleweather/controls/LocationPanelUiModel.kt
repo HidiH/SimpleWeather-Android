@@ -67,21 +67,19 @@ class LocationPanelUiModel {
 
                 imageData = null
 
-                locationName = weather.location.name
+                locationName = weather.location?.name
 
-                if (weather.precipitation != null) {
-                    if (weather.precipitation.pop != null) {
-                        pop = weather.precipitation.pop.toString() + "%"
+                weather.precipitation?.let {
+                    if (it.pop != null) {
+                        pop = it.pop.toString() + "%"
                         popIcon = R.drawable.wi_umbrella
-                    } else if (weather.precipitation.cloudiness != null) {
-                        pop = weather.precipitation.cloudiness.toString() + "%"
+                    } else if (it.cloudiness != null) {
+                        pop = it.cloudiness.toString() + "%"
                         popIcon = R.drawable.wi_cloudy
                     }
-                } else {
-                    pop = null
-                }
+                } ?: run { pop = null }
 
-                weatherIcon = weather.condition.icon
+                weatherIcon = weather.condition?.icon
                 weatherSource = weather.source
 
                 this.locationData = locationData
@@ -115,7 +113,8 @@ class LocationPanelUiModel {
         localeCode = LocaleUtils.getLocaleCode()
 
         currTemp = if (weather?.condition?.tempF != null && !ObjectsCompat.equals(weather?.condition?.tempF, weather?.condition?.tempC)) {
-            val temp = if (isFahrenheit) Math.round(weather!!.condition.tempF) else Math.round(weather!!.condition.tempC)
+            val temp =
+                if (isFahrenheit) Math.round(weather!!.condition!!.tempF) else Math.round(weather!!.condition!!.tempC)
             val unitTemp = if (isFahrenheit) Units.FAHRENHEIT else Units.CELSIUS
 
             String.format(LocaleUtils.getLocale(), "%d°%s", temp, unitTemp)
@@ -123,17 +122,30 @@ class LocationPanelUiModel {
             WeatherIcons.PLACEHOLDER
         }
 
-        currWeather = if (provider.supportsWeatherLocale()) weather!!.condition.weather else provider.getWeatherCondition(weather!!.condition.icon)
+        currWeather =
+            if (provider.supportsWeatherLocale()) weather!!.condition!!.weather else provider.getWeatherCondition(
+                weather!!.condition!!.icon
+            )
 
-        hiTemp = if (weather?.condition?.highF != null && !ObjectsCompat.equals(weather!!.condition.highF, weather!!.condition.highC)) {
-            val temp = if (isFahrenheit) Math.round(weather!!.condition.highF) else Math.round(weather!!.condition.highC)
+        hiTemp = if (weather?.condition?.highF != null && !ObjectsCompat.equals(
+                weather!!.condition!!.highF,
+                weather!!.condition!!.highC
+            )
+        ) {
+            val temp =
+                if (isFahrenheit) Math.round(weather!!.condition!!.highF) else Math.round(weather!!.condition!!.highC)
             String.format(LocaleUtils.getLocale(), "%d°", temp)
         } else {
             WeatherIcons.PLACEHOLDER
         }
 
-        loTemp = if (weather?.condition?.lowF != null && !ObjectsCompat.equals(weather!!.condition.lowF, weather!!.condition.lowC)) {
-            val temp = if (isFahrenheit) Math.round(weather!!.condition.lowF) else Math.round(weather!!.condition.lowC)
+        loTemp = if (weather?.condition?.lowF != null && !ObjectsCompat.equals(
+                weather!!.condition!!.lowF,
+                weather!!.condition!!.lowC
+            )
+        ) {
+            val temp =
+                if (isFahrenheit) Math.round(weather!!.condition!!.lowF) else Math.round(weather!!.condition!!.lowC)
             String.format(LocaleUtils.getLocale(), "%d°", temp)
         } else {
             WeatherIcons.PLACEHOLDER
@@ -149,25 +161,26 @@ class LocationPanelUiModel {
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
-                    speedVal = Math.round(weather!!.condition.windMph)
+                    speedVal = Math.round(weather!!.condition!!.windMph)
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_mph)
                 }
                 Units.KILOMETERS_PER_HOUR -> {
-                    speedVal = Math.round(weather!!.condition.windKph)
+                    speedVal = Math.round(weather!!.condition!!.windKph)
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_kph)
                 }
                 Units.METERS_PER_SECOND -> {
-                    speedVal = Math.round(ConversionMethods.kphToMsec(weather!!.condition.windKph))
+                    speedVal =
+                        Math.round(ConversionMethods.kphToMsec(weather!!.condition!!.windKph))
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_msec)
                 }
                 else -> {
-                    speedVal = Math.round(weather!!.condition.windMph)
+                    speedVal = Math.round(weather!!.condition!!.windMph)
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_mph)
                 }
             }
 
             windSpeed = String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit)
-            windDir = weather!!.condition.windDegrees + 180
+            windDir = weather!!.condition!!.windDegrees + 180
         } else {
             windSpeed = null
             windDir = 0

@@ -21,7 +21,11 @@ import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -114,11 +118,11 @@ class ForecastPanelsViewModel(app: Application) : AndroidViewModel(app) {
 
     private val forecastMapper = Function<Forecasts?, List<ForecastItemViewModel>> { input ->
         if (input?.forecast?.isNotEmpty() == true) {
-            val totalCount = input.forecast.size
+            val totalCount = input.forecast!!.size
             val models = ArrayList<ForecastItemViewModel>(totalCount)
 
             for (i in 0 until min(totalCount, 4)) {
-                models.add(ForecastItemViewModel(input.forecast[i]))
+                models.add(ForecastItemViewModel(input.forecast!![i]))
             }
 
             return@Function models
@@ -134,7 +138,7 @@ class ForecastPanelsViewModel(app: Application) : AndroidViewModel(app) {
                     ?: ZoneOffset.UTC
             ).truncatedTo(ChronoUnit.HOURS)
 
-            return@Function input.minForecast.filter { !it.date.isBefore(now) }.take(60).map {
+            return@Function input.minForecast!!.filter { !it.date.isBefore(now) }.take(60).map {
                 MinutelyForecastViewModel(it)
             }
         }

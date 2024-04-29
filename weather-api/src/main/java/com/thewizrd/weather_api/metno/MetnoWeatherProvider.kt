@@ -200,46 +200,46 @@ class MetnoWeatherProvider : WeatherProviderImpl() {
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         // OWM reports datetime in UTC; add location tz_offset
         val offset = location.tzOffset
-        weather.updateTime = weather.updateTime.withZoneSameInstant(offset)
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(offset)
 
         // The time of day is set to max if the sun never sets/rises and
         // DateTime is set to min if not found
         // Don't change this if its set that way
-        if (weather.astronomy.sunrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-            weather.astronomy.sunrise.toLocalTime().isBefore(LocalTime.MAX)
-        ) weather.astronomy.sunrise =
-            weather.astronomy.sunrise.plusSeconds(offset.totalSeconds.toLong())
-        if (weather.astronomy.sunset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-            weather.astronomy.sunset.toLocalTime().isBefore(LocalTime.MAX)
-        ) weather.astronomy.sunset =
-            weather.astronomy.sunset.plusSeconds(offset.totalSeconds.toLong())
-        if (weather.astronomy.moonrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-            weather.astronomy.moonrise.toLocalTime().isBefore(LocalTime.MAX)
-        ) weather.astronomy.moonrise =
-            weather.astronomy.moonrise.plusSeconds(offset.totalSeconds.toLong())
-        if (weather.astronomy.moonset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-            weather.astronomy.moonset.toLocalTime().isBefore(LocalTime.MAX)
-        ) weather.astronomy.moonset =
-            weather.astronomy.moonset.plusSeconds(offset.totalSeconds.toLong())
+        if (weather.astronomy!!.sunrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+            weather.astronomy!!.sunrise.toLocalTime().isBefore(LocalTime.MAX)
+        ) weather.astronomy!!.sunrise =
+            weather.astronomy!!.sunrise.plusSeconds(offset.totalSeconds.toLong())
+        if (weather.astronomy!!.sunset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+            weather.astronomy!!.sunset.toLocalTime().isBefore(LocalTime.MAX)
+        ) weather.astronomy!!.sunset =
+            weather.astronomy!!.sunset.plusSeconds(offset.totalSeconds.toLong())
+        if (weather.astronomy!!.moonrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+            weather.astronomy!!.moonrise.toLocalTime().isBefore(LocalTime.MAX)
+        ) weather.astronomy!!.moonrise =
+            weather.astronomy!!.moonrise.plusSeconds(offset.totalSeconds.toLong())
+        if (weather.astronomy!!.moonset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+            weather.astronomy!!.moonset.toLocalTime().isBefore(LocalTime.MAX)
+        ) weather.astronomy!!.moonset =
+            weather.astronomy!!.moonset.plusSeconds(offset.totalSeconds.toLong())
 
         // Set condition here
         val now = ZonedDateTime.now(ZoneOffset.UTC).withZoneSameInstant(offset).toLocalTime()
-        val sunrise = weather.astronomy.sunrise.toLocalTime()
-        val sunset = weather.astronomy.sunset.toLocalTime()
+        val sunrise = weather.astronomy!!.sunrise.toLocalTime()
+        val sunset = weather.astronomy!!.sunset.toLocalTime()
 
-        weather.condition.weather = getWeatherCondition(weather.condition.icon)
-        weather.condition.icon =
-            getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), weather.condition.icon)
-        weather.condition.observationTime =
-            weather.condition.observationTime.withZoneSameInstant(offset)
+        weather.condition!!.weather = getWeatherCondition(weather.condition!!.icon)
+        weather.condition!!.icon =
+            getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), weather.condition!!.icon)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(offset)
 
-        for (forecast in weather.forecast) {
+        for (forecast in weather.forecast!!) {
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
             forecast.condition = getWeatherCondition(forecast.icon)
             forecast.icon = getWeatherIcon(forecast.icon)
         }
 
-        for (hr_forecast in weather.hrForecast) {
+        for (hr_forecast in weather.hrForecast!!) {
             val hrfDate = hr_forecast.date.withZoneSameInstant(offset)
             hr_forecast.date = hrfDate
 
@@ -258,8 +258,8 @@ class MetnoWeatherProvider : WeatherProviderImpl() {
         return String.format(
             Locale.ROOT,
             "lat=%s&lon=%s",
-            df.format(weather.location.latitude),
-            df.format(weather.location.longitude)
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
         )
     }
 
@@ -501,12 +501,12 @@ class MetnoWeatherProvider : WeatherProviderImpl() {
         if (!isNight) {
             // Fallback to sunset/rise time just in case
             var tz: ZoneOffset? = null
-            if (!weather.location.tzLong.isNullOrBlank()) {
-                val id = ZoneIdCompat.of(weather.location.tzLong)
+            if (!weather.location?.tzLong.isNullOrBlank()) {
+                val id = ZoneIdCompat.of(weather.location!!.tzLong)
                 tz = id.rules.getOffset(Instant.now())
             }
             if (tz == null) {
-                tz = weather.location.tzOffset
+                tz = weather.location!!.tzOffset
             }
 
             val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

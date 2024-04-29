@@ -15,6 +15,7 @@ public class WeatherAlerts {
     @NonNull
     private String query;
     @ColumnInfo(name = "weather_alerts")
+    @Nullable
     private Collection<WeatherAlert> alerts;
 
     @NonNull

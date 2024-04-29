@@ -7,7 +7,14 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
+import androidx.work.ForegroundInfo
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkerParameters
 import androidx.work.multiprocess.RemoteWorkManager
 import com.thewizrd.common.helpers.areNotificationsEnabled
 import com.thewizrd.shared_resources.preferences.SettingsManager
@@ -18,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.Clock
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class DailyWeatherNotificationWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
@@ -147,9 +154,9 @@ class DailyWeatherNotificationWorker(appContext: Context, params: WorkerParamete
 
             if (forecasts != null) {
                 // Get the forecast for today
-                val todaysForecast = forecasts.forecast.firstOrNull {
+                val todaysForecast = forecasts.forecast?.firstOrNull {
                     it.date.toLocalDate().isEqual(now.toLocalDate())
-                } ?: forecasts.forecast.firstOrNull() ?: return
+                } ?: forecasts.forecast?.firstOrNull() ?: return
 
                 val notifMgr = context.getSystemService<NotificationManager>()!!
                 val notif = DailyWeatherNotificationBuilder.createNotification(

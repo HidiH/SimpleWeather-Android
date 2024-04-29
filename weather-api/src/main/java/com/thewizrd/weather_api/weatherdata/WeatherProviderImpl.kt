@@ -146,8 +146,8 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
         val weather = getWeatherData(location)
 
         if (location.tzLong.isNullOrBlank()) {
-            if (!weather.location.tzLong.isNullOrBlank()) {
-                location.tzLong = weather.location.tzLong
+            if (!weather.location!!.tzLong.isNullOrBlank()) {
+                location.tzLong = weather.location!!.tzLong
             } else if (location.latitude != 0.0 && location.longitude != 0.0) {
                 val tzId =
                     weatherModule.tzdbService.getTimeZone(location.latitude, location.longitude)
@@ -159,20 +159,20 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
             settingsManager.updateLocation(location)
         }
 
-        if (weather.location.tzLong.isNullOrBlank())
-            weather.location.tzLong = location.tzLong
+        if (weather.location?.tzLong.isNullOrBlank())
+            weather.location!!.tzLong = location.tzLong
 
-        if (weather.location.name.isNullOrBlank())
-            weather.location.name = location.name
+        if (weather.location?.name.isNullOrBlank())
+            weather.location!!.name = location.name
 
-        weather.location.latitude = location.latitude.toFloat()
-        weather.location.longitude = location.longitude.toFloat()
+        weather.location!!.latitude = location.latitude.toFloat()
+        weather.location!!.longitude = location.longitude.toFloat()
 
         // Provider-specifc updates/fixes
         updateWeatherData(location, weather)
 
         // Additional external data
-        if (weather.condition.airQuality == null && weather.aqiForecast == null) {
+        if (weather.condition?.airQuality == null && weather.aqiForecast == null) {
             if (!BuildConfig.IS_NONGMS) {
                 updateAQIData(location, weather)
             } else if (this is AirQualityProvider) {
@@ -181,9 +181,9 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
             }
         }
 
-        if (weather.condition.pollen == null) {
+        if (weather.condition?.pollen == null) {
             if (settingsManager.isDevSettingsEnabled()) {
-                weather.condition.pollen = TomorrowIOWeatherProvider().getPollenData(location)
+                weather.condition!!.pollen = TomorrowIOWeatherProvider().getPollenData(location)
             }
         }
 
@@ -206,7 +206,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     }
 
     private fun updateAQIData(location: LocationData, weather: Weather, aqiData: AirQualityData?) {
-        weather.condition.airQuality = aqiData?.current
+        weather.condition!!.airQuality = aqiData?.current
 
         if (aqiData is AQICNData) {
             try {
@@ -218,44 +218,44 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
                             DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT)
                         )
 
-                        if (weather.condition.uv == null && date.isEqual(weather.condition.observationTime.toLocalDate())) {
-                            if (weather.astronomy.sunrise != null && weather.astronomy.sunset != null) {
-                                val obsLocalTime = weather.condition.observationTime.toLocalTime()
+                        if (weather.condition?.uv == null && date.isEqual(weather.condition!!.observationTime.toLocalDate())) {
+                            if (weather.astronomy!!.sunrise != null && weather.astronomy!!.sunset != null) {
+                                val obsLocalTime = weather.condition!!.observationTime.toLocalTime()
                                 // if before sunrise, after sunset, or +/- 2hrs before/after sunrise/sunset, uv min
-                                if (obsLocalTime.isBefore(weather.astronomy.sunrise.toLocalTime()) ||
-                                    obsLocalTime.isAfter(weather.astronomy.sunset.toLocalTime()) ||
+                                if (obsLocalTime.isBefore(weather.astronomy!!.sunrise.toLocalTime()) ||
+                                    obsLocalTime.isAfter(weather.astronomy!!.sunset.toLocalTime()) ||
                                     Duration.between(
-                                        weather.astronomy.sunrise.toLocalTime(),
+                                        weather.astronomy!!.sunrise.toLocalTime(),
                                         obsLocalTime
                                     ).abs().toHours() <= 2 ||
                                     Duration.between(
-                                        weather.astronomy.sunset.toLocalTime(),
+                                        weather.astronomy!!.sunset.toLocalTime(),
                                         obsLocalTime
                                     ).abs().toHours() <= 2
                                 ) {
-                                    weather.condition.uv = UV(uviData.min?.toFloat() ?: 0f)
+                                    weather.condition!!.uv = UV(uviData.min?.toFloat() ?: 0f)
                                 } else {
                                     val totalSunlightTime =
-                                        weather.astronomy.sunset.toEpochSecond(location.tzOffset) - weather.astronomy.sunrise.toEpochSecond(
+                                        weather.astronomy!!.sunset.toEpochSecond(location.tzOffset) - weather.astronomy!!.sunrise.toEpochSecond(
                                             location.tzOffset
                                         )
                                     val solarNoon =
-                                        weather.astronomy.sunrise.plusSeconds(totalSunlightTime / 2)
+                                        weather.astronomy!!.sunrise.plusSeconds(totalSunlightTime / 2)
 
                                     // If +/- 2hrs within solar noon, UV max
                                     if (Duration.between(solarNoon.toLocalTime(), obsLocalTime)
                                             .abs().toHours() <= 2
                                     ) {
-                                        weather.condition.uv = UV(uviData.max?.toFloat() ?: 0f)
+                                        weather.condition!!.uv = UV(uviData.max?.toFloat() ?: 0f)
                                     } else { // else uv avg
-                                        weather.condition.uv = UV(uviData.avg?.toFloat() ?: 0f)
+                                        weather.condition!!.uv = UV(uviData.avg?.toFloat() ?: 0f)
                                     }
                                 }
                             }
                         }
 
                         val forecastObj =
-                            weather.forecast.find { it.date.toLocalDate().isEqual(date) }
+                            weather.forecast?.find { it.date.toLocalDate().isEqual(date) }
                         if (forecastObj != null && forecastObj.extras?.uvIndex == null) {
                             if (forecastObj.extras == null) {
                                 forecastObj.extras = ForecastExtras()
@@ -268,7 +268,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
                 Logger.writeLine(Log.ERROR, e, "Error parsing AQI data")
             }
 
-            weather.condition.airQuality?.attribution = context.getString(R.string.api_waqi)
+            weather.condition?.airQuality?.attribution = context.getString(R.string.api_waqi)
         }
 
         weather.aqiForecast = aqiData?.aqiForecast
@@ -503,7 +503,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     override fun isNight(weather: Weather): Boolean {
         var isNight = false
 
-        when (weather.condition.icon) {
+        when (weather.condition?.icon) {
             WeatherIcons.NIGHT_CLEAR,
             WeatherIcons.NIGHT_ALT_CLOUDY,
             WeatherIcons.NIGHT_ALT_CLOUDY_GUSTS,

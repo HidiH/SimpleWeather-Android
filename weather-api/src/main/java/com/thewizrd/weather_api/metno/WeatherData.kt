@@ -60,7 +60,7 @@ fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonR
 
             // Add a new hour
             if (!date.truncatedTo(ChronoUnit.HOURS).isBefore(now.toLocalDateTime().truncatedTo(ChronoUnit.HOURS)))
-                hrForecast.add(createHourlyForecast(time))
+                hrForecast!!.add(createHourlyForecast(time))
 
             // Create new forecast
             if (!currentDate.toLocalDate().isEqual(date.toLocalDate()) &&
@@ -77,7 +77,7 @@ fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonR
                     fcast.lowF = ConversionMethods.CtoF(dayMin)
                     fcast.lowC = dayMin.roundToInt().toFloat()
 
-                    forecast.add(fcast)
+                    forecast!!.add(fcast)
                 }
 
                 currentDate = date
@@ -104,14 +104,14 @@ fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonR
             }
         }
 
-        fcast = forecast.lastOrNull()
+        fcast = forecast!!.lastOrNull()
         if (fcast != null && fcast.condition == null && fcast.icon == null) {
-            forecast.removeAt(forecast.size - 1)
+            forecast!!.removeAt(forecast!!.size - 1)
         }
 
-        val hrfcast = hrForecast.lastOrNull()
+        val hrfcast = hrForecast!!.lastOrNull()
         if (hrfcast != null && hrfcast.condition == null && hrfcast.icon == null) {
-            hrForecast.removeAt(hrForecast.size - 1)
+            hrForecast!!.removeAt(hrForecast!!.size - 1)
         }
 
         if (sunRoot != null && moonRoot != null) {
@@ -124,18 +124,21 @@ fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonR
         query = String.format(
             Locale.ROOT,
             "lat=%s&lon=%s",
-            df.format(location.latitude),
-            location.longitude
+            df.format(location!!.latitude),
+            location!!.longitude
         )
 
-        if ((condition.highF == null || condition.highC == null) && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition?.highF == null || condition?.highC == null) && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
-        condition.observationTime = ZonedDateTime.ofInstant(Instant.from(DateTimeFormatter.ISO_INSTANT.parse(foreRoot.properties.meta.updatedAt)), ZoneOffset.UTC)
+        condition!!.observationTime = ZonedDateTime.ofInstant(
+            Instant.from(DateTimeFormatter.ISO_INSTANT.parse(foreRoot.properties.meta.updatedAt)),
+            ZoneOffset.UTC
+        )
 
         source = WeatherAPI.METNO
     }

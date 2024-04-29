@@ -58,7 +58,7 @@ object DailyWeatherNotificationBuilder {
         }
 
         val contentIntent = getOnClickIntent(context, location)
-        val contentTitle = "$hiTemp / $loTemp - ${location.name.split(",")[0]}"
+        val contentTitle = "$hiTemp / $loTemp - ${location.name!!.split(",")[0]}"
         val weatherIconResId = wim.getWeatherIconResource(forecast.icon)
 
         val notifBuilder = NotificationUtils.createNotificationBuilder(context, notChannelID)

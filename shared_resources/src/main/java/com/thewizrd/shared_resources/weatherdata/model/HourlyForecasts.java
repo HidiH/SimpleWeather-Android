@@ -1,6 +1,7 @@
 package com.thewizrd.shared_resources.weatherdata.model;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.TypeConverters;
@@ -17,6 +18,7 @@ public class HourlyForecasts {
     @TypeConverters(SortableDateTimeConverters.class)
     @ColumnInfo(name = "dateblob")
     private ZonedDateTime date;
+    @Nullable
     @ColumnInfo(name = "hrforecastblob")
     private HourlyForecast hrForecast;
 
@@ -47,12 +49,12 @@ public class HourlyForecasts {
         this.date = date;
     }
 
-    @NonNull
+    @Nullable
     public HourlyForecast getHrForecast() {
         return hrForecast;
     }
 
-    public void setHrForecast(@NonNull HourlyForecast hrForecast) {
+    public void setHrForecast(@Nullable HourlyForecast hrForecast) {
         this.hrForecast = hrForecast;
     }
 }

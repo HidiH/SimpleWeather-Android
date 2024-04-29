@@ -1,6 +1,12 @@
 package com.thewizrd.shared_resources.database
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.weatherdata.model.Favorites
 
@@ -8,13 +14,13 @@ import com.thewizrd.shared_resources.weatherdata.model.Favorites
 interface LocationsDAO {
     /* LocationData methods */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLocationData(Location: LocationData)
+    suspend fun insertLocationData(location: LocationData)
 
     @Update
     suspend fun updateLocationData(location: LocationData)
 
     @Delete
-    suspend fun deleteLocationData(Location: LocationData)
+    suspend fun deleteLocationData(location: LocationData)
 
     @Query("DELETE FROM locations")
     suspend fun deleteAllLocationData()
@@ -65,14 +71,14 @@ interface LocationsDAO {
     suspend fun deleteAllFavoriteData()
 
     @Query("DELETE FROM favorites WHERE `query` = :key")
-    suspend fun deleteFavoritesByKey(key: String?)
+    suspend fun deleteFavoritesByKey(key: String)
 
     @Transaction
     @Query("SELECT * FROM favorites")
     suspend fun loadAllFavorites(): List<Favorites>
 
     @Query("SELECT * FROM favorites WHERE `query` = :query LIMIT 1")
-    suspend fun getFavorite(query: String?): Favorites?
+    suspend fun getFavorite(query: String): Favorites?
 
     @Transaction
     @Query("SELECT * FROM favorites ORDER BY `position`")
@@ -82,5 +88,5 @@ interface LocationsDAO {
     suspend fun getFavoritesCount(): Int
 
     @Query("UPDATE favorites SET `position` = :toPos WHERE `query` = :key")
-    suspend fun updateFavPosition(key: String?, toPos: Int)
+    suspend fun updateFavPosition(key: String, toPos: Int)
 }

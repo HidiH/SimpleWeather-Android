@@ -9,14 +9,29 @@ import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.StringUtils.toPascalCase
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
 import com.thewizrd.shared_resources.weatherdata.model.Astronomy
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase
+import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.TextForecast
+import com.thewizrd.shared_resources.weatherdata.model.UV
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
 import java.text.DecimalFormat
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @SuppressLint("VisibleForTests")
@@ -34,8 +49,8 @@ fun createWeatherData(root: Rootobject): Weather {
             val dailyFcast = createForecast(fcast)
             val txtFcast = createTextForecast(fcast)
 
-            forecast.add(dailyFcast)
-            txtForecast.add(txtFcast)
+            forecast!!.add(dailyFcast)
+            txtForecast!!.add(txtFcast)
 
             if (todaysForecast == null && dailyFcast.date.toLocalDate()
                     .isEqual(now.toLocalDate())
@@ -49,7 +64,7 @@ fun createWeatherData(root: Rootobject): Weather {
             if (ZonedDateTime.parse(forecast1.utcTime).truncatedTo(ChronoUnit.HOURS).isBefore(now.truncatedTo(ChronoUnit.HOURS)))
                 continue
 
-            hrForecast.add(createHourlyForecast(forecast1))
+            hrForecast!!.add(createHourlyForecast(forecast1))
         }
 
         val observation = root.observations.location[0].observation[0]
