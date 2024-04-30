@@ -12,4 +12,28 @@ object AnalyticsLogger {
             if (properties == null) "" else StringUtils.lineSeparator() + properties.toString()
         Logger.writeLine(Log.INFO, "EVENT | $eventName$append")
     }
+
+    @JvmStatic
+    fun setUserProperty(
+        @Size(min = 1L, max = 24L) property: String,
+        @Size(max = 36L) value: String?
+    ) {
+        // no-op
+    }
+
+    @JvmStatic
+    fun setUserProperty(
+        @Size(min = 1L, max = 24L) property: String,
+        @Size(max = 36L) value: Boolean
+    ) {
+        // no-op
+    }
+
+    @JvmStatic
+    fun setUserProperty(
+        @Size(min = 1L, max = 24L) property: String,
+        @Size(max = 36L) value: Number
+    ) {
+        // no-op
+    }
 }

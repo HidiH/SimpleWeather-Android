@@ -24,8 +24,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.location.LocationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.preference.*
+import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.Preference.SummaryProvider
+import androidx.preference.PreferenceCategory
+import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
 import com.thewizrd.common.helpers.getBackgroundLocationRationale
@@ -40,13 +44,27 @@ import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.AnalyticsProps
+import com.thewizrd.shared_resources.utils.CommonActions
+import com.thewizrd.shared_resources.utils.LocaleUtils
+import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.StringUtils.toPascalCase
+import com.thewizrd.shared_resources.utils.Units
+import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.utils.UserThemeMode.OnThemeChangeListener
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
-import com.thewizrd.simpleweather.extras.*
+import com.thewizrd.simpleweather.extras.areNotificationExtrasEnabled
+import com.thewizrd.simpleweather.extras.createPremiumPreference
+import com.thewizrd.simpleweather.extras.enableAdditionalRefreshIntervals
+import com.thewizrd.simpleweather.extras.isIconPackSupported
+import com.thewizrd.simpleweather.extras.isPremiumSupported
+import com.thewizrd.simpleweather.extras.isWeatherAPISupported
+import com.thewizrd.simpleweather.extras.navigateToPremiumFragment
+import com.thewizrd.simpleweather.extras.navigateUnsupportedIconPack
+import com.thewizrd.simpleweather.extras.setupReviewPreference
 import com.thewizrd.simpleweather.locale.InstallRequest
 import com.thewizrd.simpleweather.locale.LocaleInstaller
 import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
@@ -68,7 +86,6 @@ import com.thewizrd.simpleweather.wearable.WearableWorkerActions
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 class SettingsFragment : BaseSettingsFragment(),
     OnSharedPreferenceChangeListener,
@@ -265,6 +282,14 @@ class SettingsFragment : BaseSettingsFragment(),
                         (!settingsManager.usePersonalKey()).toString()
                     )
                     AnalyticsLogger.logEvent("Update_API", bundle)
+                    AnalyticsLogger.setUserProperty(
+                        AnalyticsProps.WEATHER_PROVIDER,
+                        settingsManager.getAPI()
+                    )
+                    AnalyticsLogger.setUserProperty(
+                        AnalyticsProps.USING_PERSONAL_KEY,
+                        settingsManager.usePersonalKey()
+                    )
 
                     WeatherUpdaterWorker.enqueueAction(
                         requireContext(),

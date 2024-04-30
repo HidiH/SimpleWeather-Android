@@ -13,6 +13,7 @@ import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.preferences.UpdateSettings
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.Units
@@ -145,6 +146,17 @@ object VersionMigrations {
                 putLong("CurrentVersionCode", versionCode)
             }
             AnalyticsLogger.logEvent("App_Upgrading", bundle)
+
+            // Capture user props on every update
+            AnalyticsLogger.setUserProperty(AnalyticsProps.WEATHER_PROVIDER, settingsMgr.getAPI())
+            AnalyticsLogger.setUserProperty(
+                AnalyticsProps.USING_PERSONAL_KEY,
+                settingsMgr.usePersonalKey()
+            )
+            AnalyticsLogger.setUserProperty(
+                AnalyticsProps.USER_LOCALE,
+                LocaleUtils.getLocale().toLanguageTag()
+            )
         }
 
         if (versionCode > 0) {
