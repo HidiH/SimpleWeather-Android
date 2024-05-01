@@ -225,71 +225,109 @@ fun createForecast(forecast: DailyItem): Forecast {
 
 fun createTextForecast(forecast: DailyItem): TextForecast {
     return TextForecast().apply {
-        val context = sharedDeps.context
-
         date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(forecast.dt), ZoneOffset.UTC)
 
-        val sb = StringBuilder()
-        sb.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_morning),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoF(forecast.temp.morn).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoF(forecast.feelsLike.morn).roundToInt()))
-        sb.append(StringUtils.lineSeparator())
-        sb.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_afternoon),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoF(forecast.temp.day).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoF(forecast.feelsLike.day).roundToInt()))
-        sb.append(StringUtils.lineSeparator())
-        sb.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_eve),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoF(forecast.temp.eve).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoF(forecast.feelsLike.eve).roundToInt()))
-        sb.append(StringUtils.lineSeparator())
-        sb.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_night),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoF(forecast.temp.night).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoF(forecast.feelsLike.night).roundToInt()))
+        if (!forecast.summary.isNullOrBlank()) {
+            fcttext = forecast.summary.also {
+                fcttextMetric = it
+            }
+        } else {
+            val context = sharedDeps.context
 
-        fcttext = sb.toString()
+            val sb = StringBuilder()
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_morning),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoF(forecast.temp.morn).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoF(forecast.feelsLike.morn).roundToInt()
+                    )
+                )
+                .append(StringUtils.lineSeparator())
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_afternoon),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoF(forecast.temp.day).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoF(forecast.feelsLike.day).roundToInt()
+                    )
+                )
+                .append(StringUtils.lineSeparator())
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_eve),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoF(forecast.temp.eve).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoF(forecast.feelsLike.eve).roundToInt()
+                    )
+                )
+                .append(StringUtils.lineSeparator())
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_night),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoF(forecast.temp.night).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoF(forecast.feelsLike.night).roundToInt()
+                    )
+                )
 
-        val sb_metric = StringBuilder()
-        sb_metric.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_morning),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoC(forecast.temp.morn).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoC(forecast.feelsLike.morn).roundToInt()))
-        sb_metric.append(StringUtils.lineSeparator())
-        sb_metric.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_afternoon),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoC(forecast.temp.day).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoC(forecast.feelsLike.day).roundToInt()))
-        sb_metric.append(StringUtils.lineSeparator())
-        sb_metric.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_eve),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoC(forecast.temp.eve).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoC(forecast.feelsLike.eve).roundToInt()))
-        sb_metric.append(StringUtils.lineSeparator())
-        sb_metric.append(String.format(Locale.ROOT,
-                "%s - %s: %s°; %s: %s°", context.getString(R.string.label_night),
-                context.getString(R.string.label_temp),
-                ConversionMethods.KtoC(forecast.temp.night).roundToInt(),
-                context.getString(R.string.label_feelslike),
-                ConversionMethods.KtoC(forecast.feelsLike.night).roundToInt()))
+            fcttext = sb.toString()
 
-        fcttextMetric = sb_metric.toString()
+            val sbMetric = StringBuilder()
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_morning),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoC(forecast.temp.morn).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoC(forecast.feelsLike.morn).roundToInt()
+                    )
+                )
+                .append(StringUtils.lineSeparator())
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_afternoon),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoC(forecast.temp.day).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoC(forecast.feelsLike.day).roundToInt()
+                    )
+                )
+                .append(StringUtils.lineSeparator())
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_eve),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoC(forecast.temp.eve).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoC(forecast.feelsLike.eve).roundToInt()
+                    )
+                )
+                .append(StringUtils.lineSeparator())
+                .append(
+                    String.format(
+                        Locale.ROOT,
+                        "%s - %s: %s°; %s: %s°", context.getString(R.string.label_night),
+                        context.getString(R.string.label_temp),
+                        ConversionMethods.KtoC(forecast.temp.night).roundToInt(),
+                        context.getString(R.string.label_feelslike),
+                        ConversionMethods.KtoC(forecast.feelsLike.night).roundToInt()
+                    )
+                )
+
+            fcttextMetric = sbMetric.toString()
+        }
     }
 }
 

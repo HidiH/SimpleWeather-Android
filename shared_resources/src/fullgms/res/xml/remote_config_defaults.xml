@@ -51,6 +51,16 @@
         </value>
     </entry>
     <entry>
+        <key>openweather_onecall</key>
+        <value>
+            {
+            "enabled": true,
+            "locSource": "LocIQ",
+            "newWeatherSource": ""
+            }
+        </value>
+    </entry>
+    <entry>
         <key>wunlocked</key>
         <value>
             {

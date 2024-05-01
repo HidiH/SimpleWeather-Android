@@ -6,6 +6,7 @@ import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.locationdata.LocationData
+import com.thewizrd.shared_resources.locationdata.WeatherLocationProvider
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
@@ -44,7 +45,7 @@ import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class OpenWeatherMapProvider : WeatherProviderImpl() {
+class OpenWeatherMapProvider : WeatherProviderImpl {
     companion object {
         private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
         private const val KEYCHECK_QUERY_URL = BASE_URL + "forecast?appid=%s"
@@ -52,7 +53,7 @@ class OpenWeatherMapProvider : WeatherProviderImpl() {
         private const val FORECAST_QUERY_URL = BASE_URL + "forecast?%s&appid=%s&lang=%s"
     }
 
-    init {
+    constructor() {
         mLocationProvider = runCatching {
             weatherModule.locationProviderFactory.getLocationProvider(
                 remoteConfigService.getLocationProvider(
@@ -62,6 +63,10 @@ class OpenWeatherMapProvider : WeatherProviderImpl() {
         }.getOrElse {
             LocationIQProvider()
         }
+    }
+
+    internal constructor(locationProvider: WeatherLocationProvider) {
+        mLocationProvider = locationProvider
     }
 
     override fun getWeatherAPI(): String {

@@ -45,6 +45,7 @@ import java.util.concurrent.TimeUnit
 import com.thewizrd.weather_api.openweather.weather.onecall.Rootobject as OneCallRootobject
 import com.thewizrd.weather_api.openweather.weather.onecall.createWeatherData as createOneCallWeatherData
 
+@Deprecated("Access to One Call 2.5 will be closed in June 2024. Disable or migrate by then as it will require payment info")
 class OWMOneCallWeatherProvider : WeatherProviderImpl, AirQualityProvider {
     companion object {
         private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
