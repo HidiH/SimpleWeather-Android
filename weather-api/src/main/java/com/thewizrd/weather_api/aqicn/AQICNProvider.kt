@@ -9,6 +9,7 @@ import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.AirQualityProvider
 import com.thewizrd.weather_api.keys.Keys
+import com.thewizrd.weather_api.utils.APIRequestUtils.addUserAgent
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkRateLimit
 import com.thewizrd.weather_api.utils.RateLimitedRequest
@@ -19,7 +20,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class AQICNProvider : AirQualityProvider, RateLimitedRequest {
@@ -48,8 +49,6 @@ class AQICNProvider : AirQualityProvider, RateLimitedRequest {
                 checkRateLimit(API_ID)
 
                 val context = sharedDeps.context
-                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                val version = String.format("v%s", packageInfo.versionName)
 
                 val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
                 df.applyPattern("0.####")
@@ -69,10 +68,7 @@ class AQICNProvider : AirQualityProvider, RateLimitedRequest {
                             key
                         )
                     )
-                    .addHeader(
-                        "User-Agent",
-                        String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version)
-                    )
+                    .addUserAgent(context)
                     .build()
 
                 // Connect to webstream

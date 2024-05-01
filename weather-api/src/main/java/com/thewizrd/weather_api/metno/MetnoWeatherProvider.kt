@@ -18,6 +18,7 @@ import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.shared_resources.weatherdata.model.isNullOrInvalid
 import com.thewizrd.weather_api.extras.cacheRequestIfNeeded
 import com.thewizrd.weather_api.locationiq.LocationIQProvider
+import com.thewizrd.weather_api.utils.APIRequestUtils.addUserAgent
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkRateLimit
 import com.thewizrd.weather_api.utils.logMissingIcon
@@ -100,17 +101,11 @@ class MetnoWeatherProvider : WeatherProviderImpl() {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
-                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                val version = String.format("v%s", packageInfo.versionName)
-
                 val forecastRequest = Request.Builder()
                     .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
                     .url(String.format(FORECAST_QUERY_URL, query))
                     .addHeader("Accept-Encoding", "gzip")
-                    .addHeader(
-                        "User-Agent",
-                        String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version)
-                    )
+                    .addUserAgent(context)
                     .build()
 
                 val date = LocalDateTime.now()
@@ -120,20 +115,14 @@ class MetnoWeatherProvider : WeatherProviderImpl() {
                     .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
                     .url(String.format(SUN_QUERY_URL, query, date))
                     .addHeader("Accept-Encoding", "gzip")
-                    .addHeader(
-                        "User-Agent",
-                        String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version)
-                    )
+                    .addUserAgent(context)
                     .build()
 
                 val moonRequest = Request.Builder()
                     .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
                     .url(String.format(MOON_QUERY_URL, query, date))
                     .addHeader("Accept-Encoding", "gzip")
-                    .addHeader(
-                        "User-Agent",
-                        String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version)
-                    )
+                    .addUserAgent(context)
                     .build()
 
                 // Connect to webstream

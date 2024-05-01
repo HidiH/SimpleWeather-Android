@@ -28,6 +28,7 @@ import com.thewizrd.weather_api.nws.hourly.Location
 import com.thewizrd.weather_api.nws.hourly.PeriodsItem
 import com.thewizrd.weather_api.nws.observation.ForecastResponse
 import com.thewizrd.weather_api.smc.SunMoonCalcProvider
+import com.thewizrd.weather_api.utils.APIRequestUtils.addUserAgent
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkRateLimit
 import com.thewizrd.weather_api.utils.logMissingIcon
@@ -121,14 +122,11 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
-                    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                    val version = String.format("v%s", packageInfo.versionName)
-
                     val observationRequest = Request.Builder()
                         .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
                         .url(String.format(FORECAST_QUERY_URL, query))
                             .addHeader("Accept", "application/ld+json")
-                            .addHeader("User-Agent", String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version))
+                        .addUserAgent(context)
                             .build()
 
                     // Connect to webstream
@@ -148,10 +146,7 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                         .url(String.format(HRFORECAST_QUERY_URL, query))
                         .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
                         .addHeader("Accept", "application/ld+json")
-                        .addHeader(
-                            "User-Agent",
-                            String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version)
-                        )
+                        .addUserAgent(context)
                         .build()
 
                     // Connect to webstream
