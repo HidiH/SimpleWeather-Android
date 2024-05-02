@@ -121,7 +121,9 @@ fun createWeatherData(
                     // BUG: NWS MapClick API
                     // The epoch time sometimes is a day ahead
                     // If this is the case, adjust all dates accordingly
-                    if (i == 0 && period.periodName?.contains("night") == true && "6 pm" == period.time[i]) {
+                    if (i == 0 && period.periodName?.lowercase()
+                            ?.contains("night") == true && "6 pm" == period.time[i]
+                    ) {
                         val hrDate = instant.atZone(creationDate.zone)
                         if (creationDate.plusDays(1).truncatedTo(ChronoUnit.DAYS).isEqual(hrDate.truncatedTo(ChronoUnit.DAYS))) {
                             adjustDate = true

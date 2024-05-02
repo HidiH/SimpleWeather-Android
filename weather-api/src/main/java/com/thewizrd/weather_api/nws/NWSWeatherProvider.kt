@@ -27,6 +27,9 @@ import com.thewizrd.weather_api.nws.hourly.HourlyForecastResponse
 import com.thewizrd.weather_api.nws.hourly.Location
 import com.thewizrd.weather_api.nws.hourly.PeriodsItem
 import com.thewizrd.weather_api.nws.observation.ForecastResponse
+import com.thewizrd.weather_api.nws.points.HourlyPointsResponse
+import com.thewizrd.weather_api.nws.points.PointsResponse
+import com.thewizrd.weather_api.nws.points.toResponse
 import com.thewizrd.weather_api.smc.SunMoonCalcProvider
 import com.thewizrd.weather_api.utils.APIRequestUtils.addUserAgent
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
@@ -36,6 +39,7 @@ import com.thewizrd.weather_api.weatherModule
 import com.thewizrd.weather_api.weatherapi.location.WeatherApiLocationProvider
 import com.thewizrd.weather_api.weatherdata.WeatherProviderImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import okhttp3.Response
@@ -45,6 +49,7 @@ import okio.source
 import org.json.JSONObject
 import java.io.IOException
 import java.io.InputStream
+import java.net.HttpURLConnection
 import java.text.DecimalFormat
 import java.time.Instant
 import java.time.LocalTime
@@ -55,8 +60,12 @@ import java.util.concurrent.TimeUnit
 
 class NWSWeatherProvider : WeatherProviderImpl() {
     companion object {
-        private const val FORECAST_QUERY_URL = "https://forecast.weather.gov/MapClick.php?%s&FcstType=json"
-        private const val HRFORECAST_QUERY_URL = "https://forecast.weather.gov/MapClick.php?%s&FcstType=digitalJSON"
+        private const val FORECAST_QUERY_URL =
+            "https://mobile.weather.gov/wtf/MapClick.php?%s&FcstType=json"
+        private const val HRFORECAST_QUERY_URL =
+            "https://mobile.weather.gov/wtf/MapClick.php?%s&FcstType=digitalJSON"
+        private const val POINTS_QUERY_URL = "https://api.weather.gov/points/%s"
+        private const val MAX_ATTEMPTS = 2
     }
 
     init {
@@ -122,68 +131,73 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
-                    val observationRequest = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
-                        .url(String.format(FORECAST_QUERY_URL, query))
-                            .addHeader("Accept", "application/ld+json")
-                        .addUserAgent(context)
-                            .build()
+                val observationRequest = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
+                    .url(String.format(FORECAST_QUERY_URL, query))
+                    .addHeader("Accept", "application/ld+json")
+                    .addUserAgent(context)
+                    .build()
 
-                    // Connect to webstream
-                    observationResponse = client.newCall(observationRequest).await()
-                    checkForErrors(observationResponse)
+                // Connect to webstream
+                observationResponse = client.newCall(observationRequest).await()
+                checkForErrors(observationResponse)
 
-                    val observationStream = observationResponse.getStream()
+                val observationStream = observationResponse.getStream()
 
-                    // Load point json data
-                    val observationData: ForecastResponse =
-                        JSONParser.deserializer(observationStream, ForecastResponse::class.java)!!
+                // Load point json data
+                val observationData: ForecastResponse =
+                    JSONParser.deserializer(observationStream, ForecastResponse::class.java)!!
 
-                    // End Stream
-                    observationStream.closeQuietly()
+                // End Stream
+                observationStream.closeQuietly()
 
-                    val hrForecastRequest = Request.Builder()
-                        .url(String.format(HRFORECAST_QUERY_URL, query))
-                        .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
-                        .addHeader("Accept", "application/ld+json")
-                        .addUserAgent(context)
-                        .build()
+                val forecastRequest = Request.Builder()
+                    .url(String.format(HRFORECAST_QUERY_URL, query))
+                    .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
+                    .addHeader("Accept", "application/ld+json")
+                    .addUserAgent(context)
+                    .build()
 
-                    // Connect to webstream
-                    forecastResponse = client.newCall(hrForecastRequest).await()
-                    checkForErrors(forecastResponse)
+                // Connect to webstream
+                forecastResponse = client.newCall(forecastRequest).await()
+                checkForErrors(forecastResponse)
 
-                    val forecastStream = forecastResponse.getStream()
+                val forecastStream = forecastResponse.getStream()
 
-                    // Load point json data
-                    val forecastData = createHourlyForecastResponse(forecastStream)
+                // Load point json data
+                var forecastData: HourlyForecastResponse =
+                    createHourlyForecastResponse(forecastStream)
 
-                    // End Stream
-                    forecastStream.closeQuietly()
-
-                    weather = createWeatherData(observationData, forecastData)
-                } catch (ex: Exception) {
-                    weather = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "NWSWeatherProvider: error getting weather data")
-                } finally {
-                    observationResponse?.close()
+                if (forecastData.periodsItems.isNullOrEmpty()) {
+                    forecastData = getPointsHourlyForecastResponse(location)
                 }
 
-                if (wEx == null && weather.isNullOrInvalid()) {
-                    wEx = WeatherException(ErrorStatus.NOWEATHER)
-                } else if (weather != null) {
-                    weather.query = query
+                // End Stream
+                forecastStream.closeQuietly()
+
+                weather = createWeatherData(observationData, forecastData)
+            } catch (ex: Exception) {
+                weather = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
+                } else if (ex is WeatherException) {
+                    wEx = ex
                 }
-
-                if (wEx != null) throw wEx
-
-                return@withContext weather!!
+                Logger.writeLine(Log.ERROR, ex, "NWSWeatherProvider: error getting weather data")
+            } finally {
+                observationResponse?.close()
             }
+
+            if (wEx == null && weather.isNullOrInvalid()) {
+                wEx = WeatherException(ErrorStatus.NOWEATHER)
+            } else if (weather != null) {
+                weather.query = query
+            }
+
+            if (wEx != null) throw wEx
+
+            return@withContext weather!!
+        }
 
     private fun createHourlyForecastResponse(forecastStream: InputStream): HourlyForecastResponse {
         forecastStream.source().buffer().use { buffer ->
@@ -233,16 +247,16 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                     val periodObj = fcastRoot.getAsJSONObject(periodName) ?: continue
                     val timeArr = periodObj.getAsJSONArray("time") ?: continue
                     val unixTimeArr = periodObj.getAsJSONArray("unixtime") ?: continue
+                    val tempArr = periodObj.getAsJSONArray("temperature") ?: continue
+                    val iconArr = periodObj.getAsJSONArray("iconLink") ?: continue
+                    val conditionTxtArr = periodObj.getAsJSONArray("weather") ?: continue
                     val windChillArr = periodObj.getAsJSONArray("windChill")
                     val windSpeedArr = periodObj.getAsJSONArray("windSpeed")
                     val cloudAmtArr = periodObj.getAsJSONArray("cloudAmount")
                     val popArr = periodObj.getAsJSONArray("pop")
                     val humidityArr = periodObj.getAsJSONArray("relativeHumidity")
                     val windGustArr = periodObj.getAsJSONArray("windGust")
-                    val tempArr = periodObj.getAsJSONArray("temperature")
                     val windDirArr = periodObj.getAsJSONArray("windDirection")
-                    val iconArr = periodObj.getAsJSONArray("iconLink")
-                    val conditionTxtArr = periodObj.getAsJSONArray("weather")
 
                     item.periodName = periodObj.getString("periodName")
 
@@ -254,6 +268,21 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                     item.unixtime = ArrayList(unixTimeArr.length())
                     unixTimeArr.forEachString { time ->
                         item.unixtime.add(time)
+                    }
+
+                    item.temperature = ArrayList(tempArr.length())
+                    tempArr.forEachString { temp ->
+                        item.temperature.add(temp)
+                    }
+
+                    item.iconLink = ArrayList(iconArr.length())
+                    iconArr.forEachString { icon ->
+                        item.iconLink.add(icon)
+                    }
+
+                    item.weather = ArrayList(conditionTxtArr.length())
+                    conditionTxtArr.forEachString { condition ->
+                        item.weather.add(condition)
                     }
 
                     if (windChillArr != null) {
@@ -311,15 +340,6 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                         item.windGust = Collections.nCopies<String?>(unixTimeArr.length(), null)
                     }
 
-                    if (tempArr != null) {
-                        item.temperature = ArrayList(tempArr.length())
-                        tempArr.forEachString { temp ->
-                            item.temperature.add(temp)
-                        }
-                    } else {
-                        item.temperature = Collections.nCopies<String?>(unixTimeArr.length(), null)
-                    }
-
                     if (windDirArr != null) {
                         item.windDirection = ArrayList(windDirArr.length())
                         windDirArr.forEachString { windDir ->
@@ -330,24 +350,6 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                             Collections.nCopies<String?>(unixTimeArr.length(), null)
                     }
 
-                    if (iconArr != null) {
-                        item.iconLink = ArrayList(iconArr.length())
-                        iconArr.forEachString { icon ->
-                            item.iconLink.add(icon)
-                        }
-                    } else {
-                        item.iconLink = Collections.nCopies<String?>(unixTimeArr.length(), null)
-                    }
-
-                    if (conditionTxtArr != null) {
-                        item.weather = ArrayList(conditionTxtArr.length())
-                        conditionTxtArr.forEachString { condition ->
-                            item.weather.add(condition)
-                        }
-                    } else {
-                        item.weather = Collections.nCopies<String?>(unixTimeArr.length(), null)
-                    }
-
                     forecastData.periodsItems.add(item)
                 }
             }
@@ -355,6 +357,61 @@ class NWSWeatherProvider : WeatherProviderImpl() {
             return forecastData
         }
     }
+
+    private suspend fun getPointsHourlyForecastResponse(location: LocationData): HourlyForecastResponse =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val client = sharedDeps.httpClient
+
+                val pointsRequest = Request.Builder()
+                    .url(String.format(POINTS_QUERY_URL, updatePointsLocationQuery(location)))
+                    .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
+                    .addHeader("Accept", "application/ld+json")
+                    .addUserAgent(context)
+                    .build()
+
+                val pointsResponse = client.newCall(pointsRequest).await()
+                checkForErrors(pointsResponse)
+
+                // Load point json data
+                val pointsResponseData: PointsResponse = JSONParser.deserializer(
+                    pointsResponse.body!!.string(),
+                    PointsResponse::class.java
+                )!!
+
+                val forecastRequest = Request.Builder()
+                    .url(pointsResponseData.forecastHourly!! + "?units=us")
+                    .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
+                    .addHeader("Accept", "application/ld+json")
+                    .addUserAgent(context)
+                    .build()
+
+                var forecastResponseData: HourlyPointsResponse? = null
+
+                for (i in 0 until MAX_ATTEMPTS) {
+                    runCatching {
+                        val response = client.newCall(forecastRequest).await()
+
+                        response.use {
+                            if (it.code != HttpURLConnection.HTTP_BAD_REQUEST) {
+                                checkForErrors(it)
+
+                                forecastResponseData = JSONParser.deserializer(
+                                    it.getStream(),
+                                    HourlyPointsResponse::class.java
+                                )!!
+                            }
+                        }
+                    }
+
+                    if (forecastResponseData == null) {
+                        delay(1000)
+                    }
+                }
+
+                checkNotNull(forecastResponseData).toResponse(pointsResponseData)
+            }.getOrDefault(HourlyForecastResponse())
+        }
 
     @Throws(WeatherException::class)
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
@@ -407,6 +464,23 @@ class NWSWeatherProvider : WeatherProviderImpl() {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(Locale.ROOT, "lat=%s&lon=%s", df.format(location.latitude), location.longitude)
+    }
+
+    private fun updatePointsLocationQuery(weather: Weather): String {
+        val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
+        df.applyPattern("0.####")
+        return String.format(
+            Locale.ROOT,
+            "%s,%s",
+            df.format(weather.location!!.latitude),
+            weather.location!!.longitude
+        )
+    }
+
+    private fun updatePointsLocationQuery(location: LocationData): String {
+        val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
+        df.applyPattern("0.####")
+        return String.format(Locale.ROOT, "%s,%s", df.format(location.latitude), location.longitude)
     }
 
     override fun getWeatherIcon(icon: String?): String {
