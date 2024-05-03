@@ -164,86 +164,89 @@ class OpenWeatherMapProvider : WeatherProviderImpl {
                 String.format(Locale.ROOT, "id=%d", location.query.toInt())
             } catch (ex: NumberFormatException) {
                 updateLocationQuery(location)
-                }
-
-                val key =
-                    if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
-
-                val client = sharedDeps.httpClient
-                var currentResponse: Response? = null
-                var forecastResponse: Response? = null
-                var wEx: WeatherException? = null
-
-                try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
-
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                    }
-
-                    val currentRequest = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
-                        .url(String.format(CURRENT_QUERY_URL, query, key, locale))
-                        .build()
-                    val forecastRequest = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
-                        .url(String.format(FORECAST_QUERY_URL, query, key, locale))
-                        .build()
-
-                    // Connect to webstream
-                    currentResponse = client.newCall(currentRequest).await()
-                    checkForErrors(currentResponse)
-
-                    forecastResponse = client.newCall(forecastRequest).await()
-                    checkForErrors(forecastResponse)
-
-                    val currentStream = currentResponse.getStream()
-                    val forecastStream = forecastResponse.getStream()
-
-                    // Load weather
-                    val currRoot = JSONParser.deserializer<CurrentRootobject>(
-                        currentStream,
-                        CurrentRootobject::class.java
-                    )
-                    val foreRoot = JSONParser.deserializer<ForecastRootobject>(
-                        forecastStream,
-                        ForecastRootobject::class.java
-                    )
-
-                    // End Stream
-                    currentStream.closeQuietly()
-                    forecastStream.closeQuietly()
-
-                    requireNotNull(currRoot)
-                    requireNotNull(foreRoot)
-
-                    weather = createWeatherData(currRoot, foreRoot)
-                } catch (ex: Exception) {
-                    weather = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "OpenWeatherMapProvider: error getting weather data")
-                } finally {
-                    currentResponse?.closeQuietly()
-                    forecastResponse?.closeQuietly()
-                }
-
-                if (wEx == null && weather.isNullOrInvalid()) {
-                    wEx = WeatherException(ErrorStatus.NOWEATHER)
-                } else if (weather != null) {
-                    if (supportsWeatherLocale()) weather.locale = locale
-
-                    weather.query = location.query
-                }
-
-                if (wEx != null) throw wEx
-
-                return@withContext weather!!
             }
+
+            val key = getProviderKey()
+
+            val client = sharedDeps.httpClient
+            var currentResponse: Response? = null
+            var forecastResponse: Response? = null
+            var wEx: WeatherException? = null
+
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
+
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                }
+
+                val currentRequest = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
+                    .url(String.format(CURRENT_QUERY_URL, query, key, locale))
+                    .build()
+                val forecastRequest = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
+                    .url(String.format(FORECAST_QUERY_URL, query, key, locale))
+                    .build()
+
+                // Connect to webstream
+                currentResponse = client.newCall(currentRequest).await()
+                checkForErrors(currentResponse)
+
+                forecastResponse = client.newCall(forecastRequest).await()
+                checkForErrors(forecastResponse)
+
+                val currentStream = currentResponse.getStream()
+                val forecastStream = forecastResponse.getStream()
+
+                // Load weather
+                val currRoot = JSONParser.deserializer<CurrentRootobject>(
+                    currentStream,
+                    CurrentRootobject::class.java
+                )
+                val foreRoot = JSONParser.deserializer<ForecastRootobject>(
+                    forecastStream,
+                    ForecastRootobject::class.java
+                )
+
+                // End Stream
+                currentStream.closeQuietly()
+                forecastStream.closeQuietly()
+
+                requireNotNull(currRoot)
+                requireNotNull(foreRoot)
+
+                weather = createWeatherData(currRoot, foreRoot)
+            } catch (ex: Exception) {
+                weather = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
+                } else if (ex is WeatherException) {
+                    wEx = ex
+                }
+                Logger.writeLine(
+                    Log.ERROR,
+                    ex,
+                    "OpenWeatherMapProvider: error getting weather data"
+                )
+            } finally {
+                currentResponse?.closeQuietly()
+                forecastResponse?.closeQuietly()
+            }
+
+            if (wEx == null && weather.isNullOrInvalid()) {
+                wEx = WeatherException(ErrorStatus.NOWEATHER)
+            } else if (weather != null) {
+                if (supportsWeatherLocale()) weather.locale = locale
+
+                weather.query = location.query
+            }
+
+            if (wEx != null) throw wEx
+
+            return@withContext weather!!
+        }
 
     @Throws(WeatherException::class)
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {

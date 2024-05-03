@@ -27,6 +27,7 @@ import com.thewizrd.weather_api.tomorrow.TomorrowIOWeatherProvider
 import com.thewizrd.weather_api.utils.RateLimitedRequest
 import com.thewizrd.weather_api.utils.logMissingIcon
 import com.thewizrd.weather_api.weatherModule
+import com.thewizrd.weather_api.weatherapi.weather.WeatherApiProvider
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -275,7 +276,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     }
 
     /**
-     * Query the alert provider for current available weather alerts (currently US-only supported)
+     * Query the alert provider for current available weather alerts
      *
      * @param location The location data used to search for weather alerts
      * @return A collection of weather alerts currently available
@@ -284,8 +285,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
         return if (LocationUtils.isUS(location)) {
             NWSAlertProvider().getAlerts(location)
         } else {
-            //WeatherApiProvider().getAlerts(location)
-            null
+            WeatherApiProvider().getAlerts(location)
         }
     }
 
@@ -300,6 +300,14 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     abstract override suspend fun isKeyValid(key: String?): Boolean
 
     abstract override fun getAPIKey(): String?
+
+    protected fun getProviderKey(): String? {
+        return if (settingsManager.usePersonalKey()) {
+            settingsManager.getAPIKey(getWeatherAPI())
+        } else {
+            getAPIKey()
+        }
+    }
 
     // Utils Methods
     /**

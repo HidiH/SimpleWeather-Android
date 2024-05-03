@@ -169,8 +169,7 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
             val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
             val query = updateLocationQuery(location)
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = getProviderKey()
 
             val client = sharedDeps.httpClient
             var currentResponse: Response? = null
@@ -269,8 +268,7 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
         withContext(Dispatchers.IO) {
             var alerts: Collection<WeatherAlert>? = null
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = getProviderKey()
 
             val client = sharedDeps.httpClient
             var response: Response? = null

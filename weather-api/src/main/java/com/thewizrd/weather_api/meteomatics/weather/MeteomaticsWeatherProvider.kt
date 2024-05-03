@@ -151,8 +151,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
         withContext(Dispatchers.IO) {
             var weather: Weather?
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = getProviderKey()
 
             val providerKey = BasicAuthProviderKey().apply {
                 fromString(key ?: "")

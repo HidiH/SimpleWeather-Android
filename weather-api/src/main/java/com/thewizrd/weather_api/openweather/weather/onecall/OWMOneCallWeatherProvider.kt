@@ -175,8 +175,7 @@ class OWMOneCallWeatherProvider : WeatherProviderImpl, AirQualityProvider {
                 updateLocationQuery(location)
                 }
 
-                val key =
-                    if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = getProviderKey()
 
                 val client = sharedDeps.httpClient
                 var response: Response? = null
@@ -302,8 +301,7 @@ class OWMOneCallWeatherProvider : WeatherProviderImpl, AirQualityProvider {
             withContext(Dispatchers.IO) {
                 var aqiData: AirQualityData? = null
 
-                val key =
-                    if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+                val key = getProviderKey()
 
                 val client = sharedDeps.httpClient
                 var response: Response? = null
