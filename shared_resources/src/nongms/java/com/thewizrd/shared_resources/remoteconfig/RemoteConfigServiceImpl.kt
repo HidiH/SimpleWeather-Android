@@ -32,7 +32,7 @@ class RemoteConfigServiceImpl : RemoteConfigService {
     @WeatherProviders
     override fun getDefaultWeatherProvider(location: LocationQuery): String {
         return when {
-            LocationUtils.isUS(location) -> {
+            LocationUtils.isNWSSupported(location) -> {
                 WeatherAPI.NWS
             }
 
@@ -49,7 +49,7 @@ class RemoteConfigServiceImpl : RemoteConfigService {
     @WeatherProviders
     override fun getDefaultWeatherProvider(location: LocationData): String {
         return when {
-            LocationUtils.isUS(location) -> {
+            LocationUtils.isNWSSupported(location) -> {
                 WeatherAPI.NWS
             }
 

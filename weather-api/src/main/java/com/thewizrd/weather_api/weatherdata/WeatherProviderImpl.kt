@@ -282,7 +282,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
      * @return A collection of weather alerts currently available
      */
     override suspend fun getAlerts(location: LocationData): Collection<WeatherAlert>? {
-        return if (LocationUtils.isUS(location)) {
+        return if (LocationUtils.isNWSSupported(location)) {
             NWSAlertProvider().getAlerts(location)
         } else {
             WeatherApiProvider().getAlerts(location)

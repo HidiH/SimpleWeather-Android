@@ -89,11 +89,11 @@ class NWSWeatherProvider : WeatherProviderImpl() {
     }
 
     override fun isRegionSupported(location: LocationData): Boolean {
-        return LocationUtils.isUS(location)
+        return LocationUtils.isNWSSupported(location)
     }
 
     override fun isRegionSupported(location: LocationQuery): Boolean {
-        return LocationUtils.isUS(location)
+        return LocationUtils.isNWSSupported(location)
     }
 
     override fun isKeyRequired(): Boolean {
@@ -113,8 +113,8 @@ class NWSWeatherProvider : WeatherProviderImpl() {
         withContext(Dispatchers.IO) {
             var weather: Weather?
 
-            // NWS only supports locations in U.S.
-            if (!LocationUtils.isUS(location)) {
+            // NWS only supports locations in U.S. or U.S. territories
+            if (!LocationUtils.isNWSSupported(location)) {
                 throw WeatherException(ErrorStatus.QUERYNOTFOUND).apply {
                     initCause(Exception("Unsupported country code: provider (${getWeatherAPI()}), country (${location.countryCode})"))
                 }
