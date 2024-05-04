@@ -138,7 +138,7 @@ dependencies {
     fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
 }
 
-task keyCheck(type:Exec) {
+tasks.register('keyCheck', Exec) {
     workingDir '../'
     commandLine 'cmd', '/c', 'keycheck.bat'
 
@@ -147,7 +147,7 @@ task keyCheck(type:Exec) {
     }
 }
 
-android.libraryVariants.all { variant ->
+android.libraryVariants.configureEach { variant ->
     def name = variant.flavorName
     if (name.contains('fullgms')) {
         variant.preBuildProvider.configure { dependsOn(keyCheck) }
