@@ -14,14 +14,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.thewizrd.shared_resources.utils.Coordinate;
+import com.thewizrd.simpleweather.extras.ExtrasKt;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public abstract class MapTileRadarViewProvider extends RadarViewProvider implements OnMapReadyCallback {
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    protected static final int MIN_ZOOM_LEVEL = 2;
+    protected static final int MAX_ZOOM_LEVEL = 18;
+    protected static final int DEFAULT_ZOOM_LEVEL = 6;
 
     private MapView mapView;
 
@@ -38,6 +43,14 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
     public void updateCoordinates(@NonNull Coordinate coordinates, boolean updateView) {
         locationCoords = coordinates;
         if (updateView) updateRadarView();
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        UiSettings mapUISettings = googleMap.getUiSettings();
+
+        mapUISettings.setScrollGesturesEnabled(interactionsEnabled());
+        mapUISettings.setZoomGesturesEnabled(interactionsEnabled() && ExtrasKt.isRadarInteractionEnabled());
     }
 
     @Override
@@ -141,12 +154,14 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
                 .rotateGesturesEnabled(false)
                 .zoomControlsEnabled(false)
                 .zoomGesturesEnabled(false)
-                .tiltGesturesEnabled(false);
+                .tiltGesturesEnabled(false)
+                .minZoomPreference(MIN_ZOOM_LEVEL)
+                .maxZoomPreference(MAX_ZOOM_LEVEL);
 
         if (locationCoords != null) {
             CameraPosition cameraPosition = CameraPosition.builder()
                     .target(new LatLng(locationCoords.getLatitude(), locationCoords.getLongitude()))
-                    .zoom(6)
+                    .zoom(DEFAULT_ZOOM_LEVEL)
                     .build();
             mapOptions.camera(cameraPosition);
         }
@@ -158,7 +173,7 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
         if (locationCoords != null) {
             return CameraPosition.builder()
                     .target(new LatLng(locationCoords.getLatitude(), locationCoords.getLongitude()))
-                    .zoom(6)
+                    .zoom(DEFAULT_ZOOM_LEVEL)
                     .build();
         }
 

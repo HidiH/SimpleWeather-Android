@@ -117,6 +117,8 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) : MapTileRad
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        super.onMapReady(googleMap)
+
         val currentConfig = context.resources.configuration
         val systemNightMode = currentConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val isNightMode = systemNightMode == Configuration.UI_MODE_NIGHT_YES
@@ -149,9 +151,6 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) : MapTileRad
                 }
             }
         }
-
-        val mapUISettings = googleMap.uiSettings
-        mapUISettings.isScrollGesturesEnabled = interactionsEnabled()
 
         getRadarFrames()
     }
@@ -366,10 +365,10 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) : MapTileRad
          * need to define the supported x, y range at each zoom level.
          */
         private fun checkTileExists(x: Int, y: Int, zoom: Int): Boolean {
-            val minZoom = 6
-            val maxZoom = 6
+            val minZoom = MIN_ZOOM_LEVEL
+            val maxZoom = MAX_ZOOM_LEVEL
 
-            return zoom >= minZoom && zoom <= maxZoom
+            return zoom in minZoom..maxZoom
         }
     }
 }

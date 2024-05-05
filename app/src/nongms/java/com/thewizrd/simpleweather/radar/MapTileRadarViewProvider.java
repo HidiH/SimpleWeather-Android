@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.thewizrd.shared_resources.utils.Coordinate;
+import com.thewizrd.simpleweather.extras.ExtrasKt;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
@@ -28,6 +29,8 @@ import org.osmdroid.views.overlay.TilesOverlay;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public abstract class MapTileRadarViewProvider extends RadarViewProvider implements MapView.OnFirstLayoutListener {
     private MapView mapView;
+    protected static final int MIN_ZOOM_LEVEL = 2;
+    protected static final int MAX_ZOOM_LEVEL = 18;
     protected static final int DEFAULT_ZOOM_LEVEL = 8;
 
     private Coordinate locationCoords;
@@ -94,6 +97,8 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
             mapView.getController().setCenter(mapCameraPosition);
             mapView.getController().setZoom((double) DEFAULT_ZOOM_LEVEL);
         }
+
+        mapView.setMultiTouchControls(interactionsEnabled() && ExtrasKt.isRadarInteractionEnabled());
     }
 
     @Override
@@ -141,6 +146,8 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
         mv.setHorizontalMapRepetitionEnabled(false);
         mv.setVerticalMapRepetitionEnabled(false);
         mv.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+        mv.setMinZoomLevel((double) MIN_ZOOM_LEVEL);
+        mv.setMaxZoomLevel((double) MAX_ZOOM_LEVEL);
 
         if (locationCoords != null) {
             IMapController mapController = mv.getController();

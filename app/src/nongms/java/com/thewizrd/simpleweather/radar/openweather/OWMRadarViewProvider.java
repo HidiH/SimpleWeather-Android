@@ -67,7 +67,7 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
 
     private static class OWMTileProvider extends XYTileSource {
         public OWMTileProvider() {
-            super("OWM", DEFAULT_ZOOM_LEVEL, DEFAULT_ZOOM_LEVEL, 256, ".png",
+            super("OWM", MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, 256, ".png",
                     new String[]{"https://tile.openweathermap.org/"});
         }
 

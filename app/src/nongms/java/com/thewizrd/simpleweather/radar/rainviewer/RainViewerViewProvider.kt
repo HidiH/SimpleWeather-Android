@@ -328,8 +328,8 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
     private class RainViewTileProvider(private val mapFrame: RadarFrame?) :
         XYTileSource(
             "RainViewer",
-            DEFAULT_ZOOM_LEVEL,
-            DEFAULT_ZOOM_LEVEL,
+            MIN_ZOOM_LEVEL,
+            MAX_ZOOM_LEVEL,
             256,
             ".png",
             arrayOf(mapFrame?.host)

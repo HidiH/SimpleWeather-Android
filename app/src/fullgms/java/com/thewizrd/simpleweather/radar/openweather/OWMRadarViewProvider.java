@@ -13,16 +13,15 @@ import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
-import com.thewizrd.weather_api.keys.Keys;
 import com.thewizrd.simpleweather.R;
 import com.thewizrd.simpleweather.radar.CachingUrlTileProvider;
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider;
+import com.thewizrd.weather_api.keys.Keys;
 
 import java.util.Locale;
 
@@ -50,7 +49,9 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        super.onMapReady(googleMap);
+
         final Configuration currentConfig = getContext().getResources().getConfiguration();
         final int systemNightMode = currentConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
         final boolean isNightMode = systemNightMode == Configuration.UI_MODE_NIGHT_YES;
@@ -86,9 +87,6 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
             tileProvider = new OWMTileProvider(getContext());
             googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider));
         }
-
-        UiSettings mapUISettings = googleMap.getUiSettings();
-        mapUISettings.setScrollGesturesEnabled(interactionsEnabled());
     }
 
     private static class OWMTileProvider extends CachingUrlTileProvider {
@@ -113,10 +111,7 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
          * need to define the supported x, y range at each zoom level.
          */
         private boolean checkTileExists(int x, int y, int zoom) {
-            int minZoom = 6;
-            int maxZoom = 6;
-
-            return (zoom >= minZoom && zoom <= maxZoom);
+            return (zoom >= MIN_ZOOM_LEVEL && zoom <= MAX_ZOOM_LEVEL);
         }
     }
 }
