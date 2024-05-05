@@ -15,6 +15,7 @@
     <string name="api_weatherapi" translatable="false">WeatherAPI.com</string>
     <string name="api_tomorrowio" translatable="false">Tomorrow.io</string>
     <string name="api_apple_weather" translatable="false">Apple Weather</string>
+    <string name="api_google" translatable="false">Google</string>
     <string name="radar_rainviewer" translatable="false">RainViewer</string>
     <string name="label_gpsfollow">Current Location</string>
     <string name="label_getstarted">Get Started</string>

@@ -25,7 +25,7 @@ class PollenViewModel(pollenData: Pollen) {
         ragweedPollenDesc = getPollenCountDescription(pollenData.ragweedPollenCount)
     }
 
-    private fun getPollenCountDescription(pollenCount: Pollen.PollenCount): CharSequence {
+    private fun getPollenCountDescription(pollenCount: Pollen.PollenCount?): CharSequence {
         val context = sharedDeps.context
 
         return when (pollenCount) {
