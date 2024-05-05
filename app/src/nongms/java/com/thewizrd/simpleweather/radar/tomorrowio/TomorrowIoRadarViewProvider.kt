@@ -1,62 +1,54 @@
-package com.thewizrd.simpleweather.radar.rainviewer
+package com.thewizrd.simpleweather.radar.tomorrowio
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources.NotFoundException
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import com.google.android.material.slider.Slider
-import com.squareup.moshi.JsonReader
 import com.thewizrd.shared_resources.DateTimeConstants
-import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
-import com.thewizrd.shared_resources.sharedDeps
+import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
-import com.thewizrd.shared_resources.utils.JSONParser
-import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
+import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.databinding.RadarAnimateContainerBinding
 import com.thewizrd.simpleweather.extras.isRadarInteractionEnabled
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider
-import com.thewizrd.simpleweather.radar.RadarProvider
-import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
-import com.thewizrd.weather_api.utils.RateLimitedRequest
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.Request
-import okhttp3.Response
+import com.thewizrd.simpleweather.radar.rainviewer.RainViewerViewProvider
+import com.thewizrd.weather_api.keys.Keys
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.TilesOverlay
-import java.io.IOException
-import java.io.InputStreamReader
+import timber.log.Timber
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
-class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
-        MapTileRadarViewProvider(context, rootView) {
+class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
+    MapTileRadarViewProvider(context, rootView) {
     private val availableRadarFrames: MutableList<RadarFrame>
-    private val radarLayers: MutableMap<Long, TilesOverlay>
+    private val radarLayers: MutableMap<String, TilesOverlay>
 
     private var radarContainerBinding: RadarAnimateContainerBinding? = null
 
     private var animationPosition = 0
     private val mMainHandler: Handler
     private var mProcessingFrames: Boolean = false
-    private var mFrameCall: Call? = null
 
     init {
         availableRadarFrames = ArrayList()
@@ -103,7 +95,8 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
 
     override fun updateRadarView() {
         super.updateRadarView()
-        radarContainerBinding!!.radarToolbar.visibility = if (interactionsEnabled() && isRadarInteractionEnabled()) View.VISIBLE else View.GONE
+        radarContainerBinding!!.radarToolbar.visibility =
+            if (interactionsEnabled()/* && isRadarInteractionEnabled()*/) View.VISIBLE else View.GONE
     }
 
     override fun onDestroyView() {
@@ -132,93 +125,38 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
     }
 
     private fun getRadarFrames() {
-        val httpClient = sharedDeps.httpClient
+        mProcessingFrames = true
 
-        val request = Request.Builder()
-            .get()
-            .url("https://api.rainviewer.com/public/weather-maps.json".toHttpUrl())
-            .build()
+        availableRadarFrames.clear()
+        animationPosition = 0
 
-        // Connect to webstream
-        mFrameCall?.cancel()
-        mFrameCall = httpClient.newCall(request)
-        mFrameCall!!.enqueue(mFrameCallBack)
-    }
+        var now = Instant.now().truncatedTo(ChronoUnit.MINUTES) // 2024-05-05T14:52:00.000Z
+        val minute = (now.epochSecond - now.truncatedTo(ChronoUnit.HOURS).epochSecond) / 60L // 52
+        // Trim minute
+        now = now.minus(minute % 10, ChronoUnit.MINUTES)
 
-    private val mFrameCallBack = object : Callback, RateLimitedRequest {
-        override fun getRetryTime(): Long {
-            return 5000
+        val start = now.minus(2, ChronoUnit.HOURS)
+        val end = now.plus(2, ChronoUnit.HOURS)
+
+        var current = start
+        var nowIndex = -1
+
+        while (current <= end) {
+            availableRadarFrames.add(RadarFrame(DateTimeFormatter.ISO_INSTANT.format(current)))
+
+            if (current == now) {
+                nowIndex = availableRadarFrames.size - 1
+            }
+
+            current = current.plus(10, ChronoUnit.MINUTES)
         }
 
-        override fun onFailure(call: Call, e: IOException) {
-            Logger.writeLine(Log.ERROR, e)
-        }
+        mProcessingFrames = false
 
-        @Synchronized
-        override fun onResponse(call: Call, response: Response) {
-            try {
-                response.checkForErrors(WeatherAPI.RAINVIEWER, this)
-
-                val stream = response.getStream()
-
-                if (call.isCanceled()) return
-
-                // Load data
-                val root: WeatherMapsResponse? =
-                    JSONParser.deserializer(stream, WeatherMapsResponse::class.java)
-
-                if (call.isCanceled()) return
-
-                mProcessingFrames = true
-
-                // Remove already added tile overlays
-                val overlaysToDelete = radarLayers.values.toList()
-                radarLayers.clear()
-                for (overlay in overlaysToDelete) {
-                    mMainHandler.post {
-                        overlay.onDetach(mapView)
-                        mapView.overlays.remove(overlay)
-                    }
-                }
-
-                if (call.isCanceled()) {
-                    mProcessingFrames = false
-                    return
-                }
-
-                availableRadarFrames.clear()
-                animationPosition = 0
-
-                if (root?.radar != null) {
-                    root.radar?.past?.takeIf { it.isNotEmpty() }?.let {
-                        availableRadarFrames.addAll(it.mapNotNull { input: RadarItem? ->
-                            input?.let { RadarFrame(input.time.toLong(), root.host, input.path) }
-                        })
-                    }
-
-                    root.radar?.nowcast?.takeIf { it.isNotEmpty() }?.let {
-                        availableRadarFrames.addAll(it.mapNotNull { input: RadarItem? ->
-                            input?.let { RadarFrame(input.time.toLong(), root.host, input.path) }
-                        })
-                    }
-                }
-
-                mProcessingFrames = false
-
-                mMainHandler.post {
-                    if (isViewAlive) {
-                        val lastPastFramePosition = (root?.radar?.past?.size ?: 0) - 1
-                        showFrame(lastPastFramePosition)
-                    }
-                }
-
-                // End Stream
-                stream.close()
-            } catch (ex: Exception) {
-                Logger.writeLine(Log.ERROR, ex)
-            } finally {
-                response.close()
-                mProcessingFrames = false
+        mMainHandler.post {
+            if (isViewAlive) {
+                val lastPastFramePosition = nowIndex
+                showFrame(lastPastFramePosition)
             }
         }
     }
@@ -226,16 +164,16 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
     private fun addLayer(mapFrame: RadarFrame) {
         if (mProcessingFrames) return
 
-        if (!radarLayers.containsKey(mapFrame.timeStamp)) {
+        if (!radarLayers.containsKey(mapFrame.timestamp)) {
             val overlay = TilesOverlay(
-                MapTileProviderBasic(context, RainViewTileProvider(mapFrame)),
+                MapTileProviderBasic(context, TomorrowIoTileProvider(mapFrame)),
                 context,
                 false,
                 false
             )
             overlay.isEnabled = false
             mapView.overlays.add(overlay)
-            radarLayers[mapFrame.timeStamp] = overlay
+            radarLayers[mapFrame.timestamp] = overlay
         }
 
         radarContainerBinding!!.animationSeekbar.stepSize = 1f
@@ -259,10 +197,10 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
         }
 
         val currentFrame = availableRadarFrames[animationPosition] ?: return
-        val currentTimeStamp = currentFrame.timeStamp
+        val currentTimeStamp = currentFrame.timestamp
 
         val nextFrame = availableRadarFrames[position] ?: return
-        val nextTimeStamp = nextFrame.timeStamp
+        val nextTimeStamp = nextFrame.timestamp
 
         addLayer(nextFrame)
 
@@ -289,13 +227,20 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
         updateToolbar(position, nextFrame)
     }
 
-    private fun updateToolbar(position: Int, mapFrame: RadarFrame = availableRadarFrames[position]
+    private fun updateToolbar(
+        position: Int,
+        mapFrame: RadarFrame = availableRadarFrames[position]
     ) {
         radarContainerBinding!!.animationSeekbar.value = position.toFloat()
 
-        val dateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(mapFrame.timeStamp), ZoneOffset.systemDefault())
+        val dateTime =
+            ZonedDateTime.ofInstant(Instant.parse(mapFrame.timestamp), ZoneOffset.systemDefault())
         val fmt = if (DateFormat.is24HourFormat(context)) {
-            DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_DAYOFWEEK_AND_24HR))
+            DateTimeUtils.ofPatternForUserLocale(
+                DateTimeUtils.getBestPatternForSkeleton(
+                    DateTimeConstants.SKELETON_DAYOFWEEK_AND_24HR
+                )
+            )
         } else {
             DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAYOFWEEK_AND_12HR_MIN_AMPM)
         }
@@ -328,15 +273,14 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
         }
     }
 
-    private class RainViewTileProvider(private val mapFrame: RadarFrame?) :
-        XYTileSource(
-            "RainViewer",
-            MIN_ZOOM_LEVEL,
-            MAX_ZOOM_LEVEL,
-            256,
-            ".png",
-            arrayOf(mapFrame?.host)
-        ) {
+    private class TomorrowIoTileProvider(private val mapFrame: RadarFrame?) : XYTileSource(
+        "TomorrowIo",
+        MIN_ZOOM_LEVEL,
+        MAX_ZOOM_LEVEL,
+        256,
+        ".png",
+        arrayOf("https://api.tomorrow.io")
+    ) {
         override fun getTileURLString(pMapTileIndex: Long): String? {
             val zoom = MapTileIndex.getZoom(pMapTileIndex)
             val x = MapTileIndex.getX(pMapTileIndex)
@@ -346,16 +290,25 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
                 /* Define the URL pattern for the tile images */
                 return String.format(
                     Locale.ROOT,
-                    "%s%s/256/%d/%d/%d/1/1_1.png",
-                    mapFrame.host,
-                    mapFrame.path,
+                    "https://api.tomorrow.io/v4/map/tile/%d/%d/%d/precipitationIntensity/%s.png?apikey=%s",
                     zoom,
                     x,
-                    y
+                    y,
+                    mapFrame.timestamp,
+                    getKey()
                 )
             }
 
             return null
         }
+
+        private fun getKey(): String? {
+            val key = settingsManager.getAPIKey(WeatherAPI.TOMORROWIO)
+            return if (key.isNullOrBlank()) Keys.getTomorrowIoKey() else key
+        }
     }
+
+    private data class RadarFrame(
+        val timestamp: String
+    )
 }

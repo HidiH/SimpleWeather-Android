@@ -18,6 +18,9 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+import com.thewizrd.shared_resources.di.UtilsModuleKt;
+import com.thewizrd.shared_resources.utils.StringUtils;
+import com.thewizrd.shared_resources.weatherdata.WeatherAPI;
 import com.thewizrd.simpleweather.R;
 import com.thewizrd.simpleweather.radar.CachingUrlTileProvider;
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider;
@@ -101,7 +104,10 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
             }
 
             /* Define the URL pattern for the tile images */
-            return String.format(Locale.ROOT, "https://tile.openweathermap.org/map/precipitation_new/%d/%d/%d.png?appid=%s", zoom, x, y, Keys.getOWMKey());
+            return String.format(
+                    Locale.ROOT, "https://tile.openweathermap.org/map/precipitation_new/%d/%d/%d.png?appid=%s", zoom, x, y,
+                    getKey()
+            );
         }
 
         /*
@@ -112,6 +118,15 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
          */
         private boolean checkTileExists(int x, int y, int zoom) {
             return (zoom >= MIN_ZOOM_LEVEL && zoom <= MAX_ZOOM_LEVEL);
+        }
+
+        private String getKey() {
+            String key = UtilsModuleKt.getSettingsManager().getAPIKey(WeatherAPI.OPENWEATHERMAP);
+
+            if (StringUtils.isNullOrWhitespace(key))
+                return Keys.getOWMKey();
+
+            return key;
         }
     }
 }
