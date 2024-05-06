@@ -131,4 +131,11 @@
     <string name="label_widget_weather_3x1">Weather (3x1)</string>
     <string name="label_widget_weather_forecast_4x2">Weather Forecast (4x2)</string>
 
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">Minimum Alert Severity</string>
+    <string name="alertsev_all">None (Show all alerts)</string>
+    <string name="alertsev_moderate">Moderate</string>
+    <string name="alertsev_severe">Severe</string>
+    <string name="alertsev_extreme">Extreme</string>
+
 </resources>

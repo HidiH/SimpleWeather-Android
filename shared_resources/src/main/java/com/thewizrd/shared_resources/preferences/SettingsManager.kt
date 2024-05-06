@@ -98,6 +98,7 @@ class SettingsManager(context: Context) {
         private const val KEY_ONBOARDINGCOMPLETE = "key_onboardcomplete"
         const val KEY_USERTHEME = "key_usertheme"
         private const val KEY_DEVSETTINGSENABLED = "key_devsettingsenabled"
+        const val KEY_MINALERTSEVERITY = "key_minalertseverity"
 
         const val TEMPERATURE_ICON = "0"
         const val CONDITION_ICON = "1"
@@ -957,6 +958,18 @@ class SettingsManager(context: Context) {
                     60
                 }.toString()
             )
+        }
+    }
+
+    fun getMinimumAlertSeverity(): WeatherAlertSeverity {
+        return preferences.getString(KEY_MINALERTSEVERITY, "-1")?.toIntOrNull()?.let {
+            WeatherAlertSeverity.valueOf(it)
+        } ?: WeatherAlertSeverity.UNKNOWN
+    }
+
+    fun setMinimumAlertSeverity(severity: WeatherAlertSeverity) {
+        preferences.edit {
+            putString(KEY_MINALERTSEVERITY, severity.value.toString())
         }
     }
 }

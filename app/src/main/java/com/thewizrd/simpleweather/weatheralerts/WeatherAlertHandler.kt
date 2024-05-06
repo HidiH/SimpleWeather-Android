@@ -22,10 +22,14 @@ object WeatherAlertHandler {
                 // Check if any of these alerts have been posted before
                 // or are past the expiration date
                 val now = ZonedDateTime.now()
+                val minSeverity = settingsManager.getMinimumAlertSeverity()
+
                 val unotifiedAlerts = alerts.filter {
-                    BuildConfig.DEBUG || !it.isNotified && it.expiresDate.isAfter(now) && !it.date.isAfter(
-                        now
-                    )
+                    it.severity >= minSeverity &&
+                            (BuildConfig.DEBUG ||
+                                    (!it.isNotified && it.expiresDate.isAfter(now) && !it.date.isAfter(
+                                        now
+                                    )))
                 }
 
                 // Post any un-notified alerts
