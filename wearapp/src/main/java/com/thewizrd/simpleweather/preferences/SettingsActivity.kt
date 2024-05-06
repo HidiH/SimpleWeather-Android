@@ -473,8 +473,10 @@ class SettingsActivity : WearableListenerActivity() {
                 true
             }
 
-            val providers = WeatherAPI.APIs
+            val providers =
+                WeatherAPI.APIs.filter { remoteConfigService.isProviderEnabled(it.value) }
             providerPref = findPreference(SettingsManager.KEY_API)!!
+            providerPref.setDefaultValue(remoteConfigService.getDefaultWeatherProvider())
 
             val entries = arrayOfNulls<String>(providers.size)
             val entryValues = arrayOfNulls<String>(providers.size)

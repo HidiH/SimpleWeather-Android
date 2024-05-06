@@ -497,8 +497,9 @@ class SettingsFragment : BaseSettingsFragment(),
                 true
             }
 
-        val providers = WeatherAPI.APIs
+        val providers = WeatherAPI.APIs.filter { remoteConfigService.isProviderEnabled(it.value) }
         providerPref = findPreference(SettingsManager.KEY_API)!!
+        providerPref.setDefaultValue(remoteConfigService.getDefaultWeatherProvider())
 
         var entries = arrayOfNulls<String>(providers.size)
         var entryValues = arrayOfNulls<String>(providers.size)
@@ -879,7 +880,7 @@ class SettingsFragment : BaseSettingsFragment(),
                 fragment.setTargetFragment(this@SettingsFragment, 0)
                 fragment.show(
                     parentFragmentManager,
-                    KeyEntryPreferenceDialogFragment::class.java.name
+                    WeatherAPIPreferenceDialogFragment::class.java.name
                 )
             }
         } else {
