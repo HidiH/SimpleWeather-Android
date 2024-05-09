@@ -68,6 +68,7 @@ import com.thewizrd.simpleweather.extras.setupReviewPreference
 import com.thewizrd.simpleweather.locale.InstallRequest
 import com.thewizrd.simpleweather.locale.LocaleInstaller
 import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
+import com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
 import com.thewizrd.simpleweather.preferences.iconpreference.IconProviderPickerFragment
 import com.thewizrd.simpleweather.preferences.radiopreference.CandidateInfo
 import com.thewizrd.simpleweather.preferences.radiopreference.RadioButtonPreference
@@ -976,11 +977,11 @@ class SettingsFragment : BaseSettingsFragment(),
             private const val KEY_RESETUNITS = "key_resetunits"
         }
 
-        private lateinit var tempUnitPref: ListPreference
-        private lateinit var speedUnitPref: ListPreference
-        private lateinit var distanceUnitPref: ListPreference
-        private lateinit var precipationUnitPref: ListPreference
-        private lateinit var pressureUnitPref: ListPreference
+        private lateinit var tempUnitPref: ChipPreference
+        private lateinit var speedUnitPref: ChipPreference
+        private lateinit var distanceUnitPref: ChipPreference
+        private lateinit var precipationUnitPref: ChipPreference
+        private lateinit var pressureUnitPref: ChipPreference
 
         private var unitsChanged = false
 

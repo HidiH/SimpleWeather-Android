@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
+    <com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
         android:defaultValue="F"
         android:entries="@array/temperatureunit_entries"
         android:entryValues="@array/temperatureunit_values"
@@ -9,7 +10,7 @@
         android:summary="%s"
         android:title="@string/label_temperature" />
 
-    <ListPreference
+    <com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
         android:defaultValue="MPH"
         android:entries="@array/speedunit_entries"
         android:entryValues="@array/speedunit_values"
@@ -17,7 +18,7 @@
         android:summary="%s"
         android:title="@string/label_speed" />
 
-    <ListPreference
+    <com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
         android:defaultValue="MILES"
         android:entries="@array/distanceunit_entries"
         android:entryValues="@array/distanceunit_values"
@@ -25,7 +26,7 @@
         android:summary="%s"
         android:title="@string/label_distance" />
 
-    <ListPreference
+    <com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
         android:defaultValue="INCHES"
         android:entries="@array/precipitationunit_entries"
         android:entryValues="@array/precipitationunit_values"
@@ -33,7 +34,7 @@
         android:summary="%s"
         android:title="@string/label_precipitation" />
 
-    <ListPreference
+    <com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
         android:defaultValue="INMERCURY"
         android:entries="@array/pressureunit_entries"
         android:entryValues="@array/pressureunit_values"
@@ -43,6 +44,8 @@
 
     <Preference
         android:key="key_resetunits"
-        android:title="@string/pref_title_resetunits" />
+        android:title="@string/pref_title_resetunits"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false" />
 
 </PreferenceScreen>
