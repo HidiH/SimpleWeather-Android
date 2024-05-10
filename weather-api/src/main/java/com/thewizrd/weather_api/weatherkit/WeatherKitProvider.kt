@@ -130,7 +130,7 @@ class WeatherKitProvider : WeatherProviderImpl() {
                     .appendPath("weather")
                     .appendPath(locale)
                     .appendEncodedPath(query)
-                    .appendQueryParameter("countryCode", location.countryCode)
+                    .appendQueryParameter("country", location.countryCode)
                     .appendQueryParameter(
                         "dataSets",
                         "currentWeather,forecastDaily,forecastHourly,forecastNextHour,weatherAlerts"
