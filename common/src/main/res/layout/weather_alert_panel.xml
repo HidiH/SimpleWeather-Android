@@ -126,6 +126,7 @@
                 android:layout_height="wrap_content"
                 android:padding="24dp"
                 android:text="@{viewModel.alertBodyMessage}"
+                android:linksClickable="true"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:textSize="14sp"
                 tools:text="TextView" />

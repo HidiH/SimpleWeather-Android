@@ -1,12 +1,16 @@
 package com.thewizrd.common.controls
 
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import com.thewizrd.common.helpers.CustomChromeTabSpan
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.LocaleUtils.getLocale
+import com.thewizrd.shared_resources.utils.StringUtils
 import com.thewizrd.shared_resources.utils.getColorFromAlertSeverity
 import com.thewizrd.shared_resources.utils.getDrawableFromAlertType
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
@@ -84,8 +88,29 @@ class WeatherAlertViewModel(weatherAlert: WeatherAlert) {
         }
     }
 
-    val alertBodyMessage: String
-        get() = String.format("%s\n\n%s\n\n%s", expireDate, message, attribution)
+    val alertBodyMessage: CharSequence
+        get() = SpannableStringBuilder()
+            .append(expireDate)
+            .append(StringUtils.lineSeparator())
+            .append(StringUtils.lineSeparator())
+            .apply {
+                val start = length
+
+                if (message.startsWith("https://weatherkit.apple.com")) {
+                    append(sharedDeps.context.getString(R.string.label_moreinfo))
+                    setSpan(
+                        CustomChromeTabSpan(message),
+                        start,
+                        length,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+                    )
+                } else {
+                    append(message)
+                }
+            }
+            .append(StringUtils.lineSeparator())
+            .append(StringUtils.lineSeparator())
+            .append(attribution)
 
     @get:ColorInt
     val alertSeverityColor: Int
