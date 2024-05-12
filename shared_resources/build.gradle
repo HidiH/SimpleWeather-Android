@@ -33,7 +33,8 @@ android {
             minifyEnabled false
         }
         release {
-            minifyEnabled true
+            // Let the app module take care of this
+            minifyEnabled false
         }
     }
 
@@ -65,7 +66,6 @@ android {
         nongms {
             dimension 'gms'
             buildConfigField "boolean", "IS_NONGMS", "true"
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         fullgms {
             dimension 'gms'
