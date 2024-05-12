@@ -14,7 +14,6 @@ import android.text.method.LinkMovementMethod
 import android.view.*
 import android.widget.GridLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.Insets
 import androidx.core.util.ObjectsCompat
 import androidx.core.view.*
@@ -76,7 +75,6 @@ import com.thewizrd.simpleweather.adapters.HourlyForecastItemAdapter
 import com.thewizrd.simpleweather.banner.Banner
 import com.thewizrd.simpleweather.banner.BannerManager
 import com.thewizrd.simpleweather.banner.BannerManagerInterface
-import com.thewizrd.simpleweather.controls.FlowLayout
 import com.thewizrd.simpleweather.controls.ObservableNestedScrollView
 import com.thewizrd.simpleweather.controls.ObservableNestedScrollView.OnTouchScrollChangeListener
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastsNowViewModel
@@ -602,18 +600,11 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             }
         }
 
-        binding.detailsWrapLayout.updateLayoutParams<GridLayout.LayoutParams> {
-            columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
-            rowSpec = GridLayout.spec(5, GridLayout.CENTER)
-        }
-
         if (FeatureSettings.isUVEnabled) {
             // UV
-            uvControlBinding = WeathernowUvcontrolBinding.inflate(
-                inflater,
-                binding.detailsWrapLayout as ViewGroup,
-                true
-            )
+            uvControlBinding =
+                WeathernowUvcontrolBinding.inflate(inflater, binding.listLayout, false)
+
             uvControlBinding!!.viewModel = wNowViewModel
             uvControlBinding!!.lifecycleOwner = viewLifecycleOwner
 
@@ -629,22 +620,18 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             })
 
-            val context = uvControlBinding!!.root.context
-            if (context.isLargeTablet()) {
-                uvControlBinding!!.root.updateLayoutParams<FlowLayout.LayoutParams> {
-                    width = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                    itemMinimumWidth = context.resources.getDimensionPixelSize(R.dimen.details_item_min_width)
-                }
+            binding.listLayout.addView(uvControlBinding!!.root)
+            uvControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
+                rowSpec = GridLayout.spec(5, GridLayout.CENTER)
             }
         }
 
         if (FeatureSettings.isBeaufortEnabled) {
             // Beaufort
-            beaufortControlBinding = WeathernowBeaufortcontrolBinding.inflate(
-                inflater,
-                binding.detailsWrapLayout as ViewGroup,
-                true
-            )
+            beaufortControlBinding =
+                WeathernowBeaufortcontrolBinding.inflate(inflater, binding.listLayout, false)
+
             beaufortControlBinding!!.viewModel = wNowViewModel
             beaufortControlBinding!!.lifecycleOwner = viewLifecycleOwner
 
@@ -660,22 +647,18 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             })
 
-            val context = beaufortControlBinding!!.root.context
-            if (context.isLargeTablet()) {
-                beaufortControlBinding!!.root.updateLayoutParams<FlowLayout.LayoutParams> {
-                    width = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                    itemMinimumWidth = context.resources.getDimensionPixelSize(R.dimen.details_item_min_width)
-                }
+            binding.listLayout.addView(beaufortControlBinding!!.root)
+            beaufortControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
+                rowSpec = GridLayout.spec(6, GridLayout.CENTER)
             }
         }
 
         if (FeatureSettings.isAQIndexEnabled) {
             // Air Quality
-            aqiControlBinding = WeathernowAqicontrolBinding.inflate(
-                inflater,
-                binding.detailsWrapLayout as ViewGroup,
-                true
-            )
+            aqiControlBinding =
+                WeathernowAqicontrolBinding.inflate(inflater, binding.listLayout, false)
+
             aqiControlBinding!!.viewModel = wNowViewModel
             aqiControlBinding!!.lifecycleOwner = viewLifecycleOwner
 
@@ -685,53 +668,40 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 )
             }
 
-            val context = aqiControlBinding!!.root.context
-            if (context.isLargeTablet()) {
-                aqiControlBinding!!.root.updateLayoutParams<FlowLayout.LayoutParams> {
-                    width = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                    itemMinimumWidth =
-                        context.resources.getDimensionPixelSize(R.dimen.details_item_min_width)
-                }
+            binding.listLayout.addView(aqiControlBinding!!.root)
+            aqiControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
+                rowSpec = GridLayout.spec(7, GridLayout.CENTER)
             }
         }
 
         if (FeatureSettings.isPollenEnabled) {
             // Pollen
-            pollenCountControlBinding = WeathernowPollencountcontrolBinding.inflate(
-                inflater,
-                binding.detailsWrapLayout as ViewGroup,
-                true
-            )
+            pollenCountControlBinding =
+                WeathernowPollencountcontrolBinding.inflate(inflater, binding.listLayout, false)
+
             pollenCountControlBinding!!.viewModel = wNowViewModel
             pollenCountControlBinding!!.lifecycleOwner = viewLifecycleOwner
 
-            val context = pollenCountControlBinding!!.root.context
-            if (context.isLargeTablet()) {
-                pollenCountControlBinding!!.root.updateLayoutParams<FlowLayout.LayoutParams> {
-                    width = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                    itemMinimumWidth =
-                        context.resources.getDimensionPixelSize(R.dimen.details_item_min_width)
-                }
+            binding.listLayout.addView(pollenCountControlBinding!!.root)
+            pollenCountControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
+                rowSpec = GridLayout.spec(8, GridLayout.CENTER)
             }
         }
 
         if (FeatureSettings.isMoonPhaseEnabled) {
             // Moon Phase
-            moonphaseControlBinding = WeathernowMoonphasecontrolBinding.inflate(
-                inflater,
-                binding.detailsWrapLayout as ViewGroup,
-                true
-            )
+            moonphaseControlBinding =
+                WeathernowMoonphasecontrolBinding.inflate(inflater, binding.listLayout, false)
+
             moonphaseControlBinding!!.viewModel = wNowViewModel
             moonphaseControlBinding!!.lifecycleOwner = viewLifecycleOwner
 
-            val context = moonphaseControlBinding!!.root.context
-            if (context.isLargeTablet()) {
-                moonphaseControlBinding!!.root.updateLayoutParams<FlowLayout.LayoutParams> {
-                    width = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                    itemMinimumWidth =
-                        context.resources.getDimensionPixelSize(R.dimen.details_item_min_width)
-                }
+            binding.listLayout.addView(moonphaseControlBinding!!.root)
+            moonphaseControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
+                rowSpec = GridLayout.spec(9, GridLayout.CENTER)
             }
         }
 
@@ -745,7 +715,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             binding.listLayout.addView(sunphaseControlBinding!!.root)
             sunphaseControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
-                rowSpec = GridLayout.spec(6, GridLayout.CENTER)
+                rowSpec = GridLayout.spec(10, GridLayout.CENTER)
             }
         }
 
@@ -783,7 +753,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             binding.listLayout.addView(radarControlBinding!!.root)
             radarControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
-                rowSpec = GridLayout.spec(7, GridLayout.CENTER)
+                rowSpec = GridLayout.spec(11, GridLayout.CENTER)
             }
 
             radarViewProvider = RadarProvider.getRadarViewProvider(requireContext(), radarControlBinding!!.radarWebviewContainer).apply {
@@ -794,12 +764,12 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
         binding.weatherCredit.updateLayoutParams<GridLayout.LayoutParams> {
             columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
-            rowSpec = GridLayout.spec(8, GridLayout.CENTER)
+            rowSpec = GridLayout.spec(12, GridLayout.CENTER)
         }
 
         binding.panelOverlay?.updateLayoutParams<GridLayout.LayoutParams> {
             columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
-            rowSpec = GridLayout.spec(1, 8, GridLayout.FILL, 1f)
+            rowSpec = GridLayout.spec(1, 12, GridLayout.FILL, 1f)
         }
 
         return view.apply {
@@ -822,6 +792,8 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
     override fun onListPaneViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onListPaneViewCreated(view, savedInstanceState)
+
+        updateViewOrder()
 
         slidingPaneLayout.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
 
@@ -1285,7 +1257,23 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             setMaxWidthForView(it)
         }
 
-        binding.detailsWrapLayout.doOnPreDraw {
+        uvControlBinding?.root?.doOnPreDraw {
+            setMaxWidthForView(it)
+        }
+
+        beaufortControlBinding?.root?.doOnPreDraw {
+            setMaxWidthForView(it)
+        }
+
+        aqiControlBinding?.root?.doOnPreDraw {
+            setMaxWidthForView(it)
+        }
+
+        pollenCountControlBinding?.root?.doOnPreDraw {
+            setMaxWidthForView(it)
+        }
+
+        moonphaseControlBinding?.root?.doOnPreDraw {
             setMaxWidthForView(it)
         }
 
@@ -1328,6 +1316,82 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         }
         return lazy(LazyThreadSafetyMode.NONE) {
             ViewModelProvider(owner).get()
+        }
+    }
+
+    private fun updateViewOrder() {
+        val orderableFeatures = FeatureSettings.getFeatureOrder()
+
+        var index = 1
+
+        orderableFeatures.forEach { feature ->
+            when (feature) {
+                FeatureSettings.KEY_FEATURE_FORECAST -> {
+                    forecastPanelBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_HRFORECAST -> {
+                    hrForecastPanelBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_CHARTS -> {
+                    precipPanelBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_DETAILS -> {
+                    detailsContainerBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_UV -> {
+                    uvControlBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_BEAUFORT -> {
+                    beaufortControlBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_AQINDEX -> {
+                    aqiControlBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_POLLEN -> {
+                    pollenCountControlBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_MOONPHASE -> {
+                    moonphaseControlBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_SUNPHASE -> {
+                    sunphaseControlBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+
+                FeatureSettings.KEY_FEATURE_RADAR -> {
+                    radarControlBinding?.root?.updateLayoutParams<GridLayout.LayoutParams> {
+                        rowSpec = GridLayout.spec(index++, GridLayout.CENTER)
+                    }
+                }
+            }
         }
     }
 }

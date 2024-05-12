@@ -20,7 +20,7 @@ public class CallbackList<T> {
         mCallbacks.remove(callback);
     }
 
-    public void notifyChange(@NonNull ArrayList<T> sender, @NonNull ListChangedArgs args) {
+    public void notifyChange(@NonNull ArrayList<T> sender, @NonNull ListChangedArgs<T> args) {
         for (int i = 0; i < mCallbacks.size(); i++) {
             mCallbacks.get(i).onChanged(sender, args);
         }

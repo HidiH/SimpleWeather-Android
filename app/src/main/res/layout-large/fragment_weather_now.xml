@@ -119,15 +119,6 @@
                     android:layout_gravity="center_horizontal"
                     android:orientation="vertical">
 
-                    <com.thewizrd.simpleweather.controls.FlowLayout
-                        android:id="@+id/details_wrap_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:gravity="center_horizontal"
-                        app:itemSpacing="8dp"
-                        app:lineSpacing="4dp" />
-
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/weather_credit"
                         android:layout_width="match_parent"

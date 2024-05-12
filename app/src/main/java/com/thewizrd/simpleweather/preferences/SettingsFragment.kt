@@ -18,6 +18,10 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
@@ -30,7 +34,13 @@ import androidx.preference.Preference
 import androidx.preference.Preference.SummaryProvider
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreferenceCompat
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.thewizrd.common.helpers.ListChangedArgs
+import com.thewizrd.common.helpers.OnListChangedListener
 import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
 import com.thewizrd.common.helpers.getBackgroundLocationRationale
 import com.thewizrd.common.helpers.locationPermissionEnabled
@@ -47,6 +57,8 @@ import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CommonActions
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
+import com.thewizrd.shared_resources.utils.ContextUtils.getAttrResourceId
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.StringUtils.toPascalCase
@@ -56,6 +68,12 @@ import com.thewizrd.shared_resources.utils.UserThemeMode.OnThemeChangeListener
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.adapters.ButtonAdapter
+import com.thewizrd.simpleweather.adapters.DividerAdapter
+import com.thewizrd.simpleweather.adapters.FeaturesAdapter
+import com.thewizrd.simpleweather.adapters.ViewHolderLongClickListener
+import com.thewizrd.simpleweather.controls.FeatureItem
+import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
 import com.thewizrd.simpleweather.extras.areNotificationExtrasEnabled
 import com.thewizrd.simpleweather.extras.createPremiumPreference
 import com.thewizrd.simpleweather.extras.enableAdditionalRefreshIntervals
@@ -65,6 +83,7 @@ import com.thewizrd.simpleweather.extras.isWeatherAPISupported
 import com.thewizrd.simpleweather.extras.navigateToPremiumFragment
 import com.thewizrd.simpleweather.extras.navigateUnsupportedIconPack
 import com.thewizrd.simpleweather.extras.setupReviewPreference
+import com.thewizrd.simpleweather.fragments.ToolbarFragment
 import com.thewizrd.simpleweather.locale.InstallRequest
 import com.thewizrd.simpleweather.locale.LocaleInstaller
 import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
@@ -80,12 +99,16 @@ import com.thewizrd.simpleweather.services.WeatherUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetWorker
 import com.thewizrd.simpleweather.snackbar.Snackbar
+import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
 import com.thewizrd.simpleweather.utils.PowerUtils
 import com.thewizrd.simpleweather.wearable.WearableWorker
 import com.thewizrd.simpleweather.wearable.WearableWorkerActions
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class SettingsFragment : BaseSettingsFragment(),
@@ -1090,16 +1113,147 @@ class SettingsFragment : BaseSettingsFragment(),
         }
     }
 
-    class FeaturesFragment : BaseSettingsFragment() {
+    class FeaturesFragment : ToolbarFragment() {
+        private lateinit var binding: FragmentWeatherListBinding
+        private lateinit var orderableFeaturesAdapter: FeaturesAdapter
+        private lateinit var nonOrderableFeaturesAdapter: FeaturesAdapter
+
         override val titleResId: Int
             get() = R.string.pref_title_features
 
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.pref_features, null)
+        override fun createSnackManager(activity: Activity): SnackbarManager? = null
 
-            findPreference<Preference>(FeatureSettings.KEY_FEATURE_BGIMAGE)?.isVisible =
-                !BuildConfig.IS_NONGMS
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+            val root = super.onCreateView(inflater, container, savedInstanceState) as ViewGroup
+
+            // Use this to return your custom view for this Fragment
+            binding = FragmentWeatherListBinding.inflate(inflater, root, true)
+            binding.lifecycleOwner = this.viewLifecycleOwner
+
+            // Setup Actionbar
+            toolbar.setNavigationIcon(toolbar.context.getAttrResourceId(R.attr.homeAsUpIndicator))
+            toolbar.setNavigationOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
+
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the binding.recyclerView
+            binding.recyclerView.setHasFixedSize(true)
+            // use a linear layout manager
+            binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+            binding.progressBar.hide()
+
+            binding.recyclerView.adapter = ConcatAdapter(
+                FeaturesAdapter().apply {
+                    updateList(
+                        // Intersect collections to add any new features
+                        FeatureSettings.getFeatureOrder().intersect(FeaturesAdapter.ORDERABLE_ITEMS)
+                            .toList()
+                    )
+                }.also { orderableFeaturesAdapter = it },
+                DividerAdapter(),
+                FeaturesAdapter().apply {
+                    updateList(FeaturesAdapter.NON_ORDERABLE_ITEMS.toList())
+                }.also { nonOrderableFeaturesAdapter = it },
+                DividerAdapter(),
+                ButtonAdapter(
+                    resId = R.string.action_reset,
+                    padding = context?.dpToPx(8f)?.toInt() ?: 0,
+                    gravity = Gravity.CENTER
+                ) {
+                    orderableFeaturesAdapter.updateList(FeaturesAdapter.ORDERABLE_ITEMS.toList())
+                }
+            )
+
+            val ithCallback = object : ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
+            ) {
+                override fun isLongPressDragEnabled(): Boolean {
+                    return false
+                }
+
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    orderableFeaturesAdapter.onItemMove(
+                        viewHolder.bindingAdapterPosition,
+                        target.bindingAdapterPosition
+                    )
+                    return true
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
+                override fun canDropOver(
+                    recyclerView: RecyclerView,
+                    current: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return target is FeaturesAdapter.ViewHolder
+                }
+
+                override fun onSelectedChanged(
+                    viewHolder: RecyclerView.ViewHolder?,
+                    actionState: Int
+                ) {
+                    if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder is FeaturesAdapter.ViewHolder) {
+                        viewHolder.itemView.elevation = viewHolder.itemView.context.dpToPx(4f)
+                    }
+                }
+
+                override fun clearView(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder
+                ) {
+                    if (viewHolder is FeaturesAdapter.ViewHolder) {
+                        viewHolder.itemView.elevation = 0f
+                    }
+                }
+            }
+
+            val ith = ItemTouchHelper(ithCallback).apply {
+                attachToRecyclerView(binding.recyclerView)
+            }
+
+            orderableFeaturesAdapter.setOnLongClickToDragListener(object :
+                ViewHolderLongClickListener {
+                override fun onLongClick(holder: RecyclerView.ViewHolder) {
+                    if ((holder.itemView as? FeatureItem)?.isDraggable == true) {
+                        ith.startDrag(holder)
+                    }
+                }
+            })
+
+            orderableFeaturesAdapter.setOnListChangedCallback(object :
+                OnListChangedListener<String> {
+                private var job: Job? = null
+
+                override fun onChanged(
+                    sender: java.util.ArrayList<String>,
+                    args: ListChangedArgs<String>
+                ) {
+                    job?.cancel()
+
+                    job = lifecycleScope.launch {
+                        delay(1000)
+
+                        if (isActive) {
+                            FeatureSettings.setFeatureOrder(sender)
+                        }
+                    }
+                }
+            })
+
+            return root
         }
+
+        override val scrollTargetViewId: Int
+            get() = binding.recyclerView.id
     }
 
     class WeatherNotificationFragment : BaseSettingsFragment() {

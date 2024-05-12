@@ -224,6 +224,7 @@
     <string name="time_current">Current</string>
 
     <string name="action_refresh">Refresh</string>
+    <string name="action_reset">Reset</string>
 
     <!-- Credentials -->
     <string name="hint_appid" translatable="false">App ID</string>

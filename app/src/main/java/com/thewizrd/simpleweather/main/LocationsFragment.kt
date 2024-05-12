@@ -619,11 +619,8 @@ class LocationsFragment : ToolbarFragment() {
         }
     }
 
-    private val onListChangedListener = object : OnListChangedListener<LocationPanelUiModel>() {
-        override fun onChanged(
-            sender: ArrayList<LocationPanelUiModel>,
-            e: ListChangedArgs<LocationPanelUiModel>
-        ) {
+    private val onListChangedListener =
+        OnListChangedListener<LocationPanelUiModel> { _, e ->
             runWithView {
                 val dataMoved =
                     e.action == ListChangedAction.REMOVE || e.action == ListChangedAction.MOVE
@@ -651,20 +648,14 @@ class LocationsFragment : ToolbarFragment() {
                 editMenuBtn?.isVisible = if (mEditMode) false else !onlyHomeIsLeft
             }
         }
-    }
     private val onSelectionChangedListener =
-        object : OnListChangedListener<LocationPanelUiModel>() {
-            override fun onChanged(
-                sender: ArrayList<LocationPanelUiModel>,
-                args: ListChangedArgs<LocationPanelUiModel>
-            ) {
-                runWithView {
-                    if (mEditMode) {
-                        toolbar.title = if (sender.isNotEmpty()) sender.size.toString() else ""
+        OnListChangedListener<LocationPanelUiModel> { sender, _ ->
+            runWithView {
+                if (mEditMode) {
+                    toolbar.title = if (sender.isNotEmpty()) sender.size.toString() else ""
 
-                        val deleteBtnItem = toolbar.menu.findItem(R.id.action_delete)
-                        deleteBtnItem?.isVisible = sender.isNotEmpty()
-                    }
+                    val deleteBtnItem = toolbar.menu.findItem(R.id.action_delete)
+                    deleteBtnItem?.isVisible = sender.isNotEmpty()
                 }
             }
         }

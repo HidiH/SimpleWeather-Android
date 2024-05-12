@@ -17,7 +17,9 @@ android {
         versionCode 335840100
         versionName "5.8.4"
 
-        vectorDrawables.useSupportLibrary true
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
 
     buildTypes {

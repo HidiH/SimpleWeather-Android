@@ -43,14 +43,14 @@ public class ObservableArrayList<T> extends ArrayList<T> {
         super.set(oldIndex, super.set(newIndex, super.get(oldIndex)));
 
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs(ListChangedAction.MOVE, newIndex, oldIndex));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.MOVE, newIndex, oldIndex));
     }
 
     @Override
     public T set(int index, T element) {
         T oldVal = super.set(index, element);
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.REPLACE, index, index, Collections.singletonList(oldVal), Collections.singletonList(element)));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.REPLACE, index, index, Collections.singletonList(oldVal), Collections.singletonList(element)));
         return oldVal;
     }
 
@@ -58,7 +58,7 @@ public class ObservableArrayList<T> extends ArrayList<T> {
     public boolean add(T t) {
         super.add(t);
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.ADD, size() - 1, -1, null, Collections.singletonList(t)));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.ADD, size() - 1, -1, null, Collections.singletonList(t)));
         return true;
     }
 
@@ -66,14 +66,14 @@ public class ObservableArrayList<T> extends ArrayList<T> {
     public void add(int index, T element) {
         super.add(index, element);
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.ADD, index, -1, null, Collections.singletonList(element)));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.ADD, index, -1, null, Collections.singletonList(element)));
     }
 
     @Override
     public T remove(int index) {
         T val = super.remove(index);
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.REMOVE, -1, index, Collections.singletonList(val), null));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.REMOVE, -1, index, Collections.singletonList(val), null));
         return val;
     }
 
@@ -94,7 +94,7 @@ public class ObservableArrayList<T> extends ArrayList<T> {
         super.clear();
         if (oldSize != 0) {
             if (mListeners != null)
-                mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.RESET, -1, -1));
+                mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.RESET, -1, -1));
         }
     }
 
@@ -104,7 +104,7 @@ public class ObservableArrayList<T> extends ArrayList<T> {
         boolean added = super.addAll(c);
         if (added) {
             if (mListeners != null)
-                mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.ADD, oldSize - 1, -1, null, new LinkedList<>(c)));
+                mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.ADD, oldSize - 1, -1, null, new LinkedList<>(c)));
         }
         return added;
     }
@@ -114,7 +114,7 @@ public class ObservableArrayList<T> extends ArrayList<T> {
         boolean added = super.addAll(index, c);
         if (added) {
             if (mListeners != null)
-                mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.ADD, index, -1, null, new LinkedList<>(c)));
+                mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.ADD, index, -1, null, new LinkedList<>(c)));
         }
         return added;
     }
@@ -124,14 +124,14 @@ public class ObservableArrayList<T> extends ArrayList<T> {
         List<T> oldItems = this.subList(fromIndex, toIndex);
         super.removeRange(fromIndex, toIndex);
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.REMOVE, fromIndex, -1, oldItems, null));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.REMOVE, fromIndex, -1, oldItems, null));
     }
 
     @Override
     public boolean removeAll(@NonNull Collection<?> c) {
         boolean value = super.removeAll(c);
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.REMOVE, -1, -1, (List<T>) new LinkedList<>(c), null));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.REMOVE, -1, -1, (List<T>) new LinkedList<>(c), null));
         return value;
     }
 
@@ -140,7 +140,7 @@ public class ObservableArrayList<T> extends ArrayList<T> {
     public boolean removeIf(@NonNull Predicate<? super T> filter) {
         boolean value = super.removeIf(filter);
         if (mListeners != null)
-            mListeners.notifyChange(this, new ListChangedArgs<T>(ListChangedAction.REMOVE, -1, -1));
+            mListeners.notifyChange(this, new ListChangedArgs<>(ListChangedAction.REMOVE, -1, -1));
         return value;
     }
 }
