@@ -8,7 +8,7 @@ import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI.WeatherProviders
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 
 class LocationQuery {
     companion object {
@@ -69,14 +69,7 @@ class LocationQuery {
         df.applyPattern("0.####")
 
         locationQuery = when (weatherSource) {
-            WeatherAPI.HERE -> {
-                String.format(
-                    Locale.ROOT,
-                    "latitude=%s&longitude=%s",
-                    df.format(locationLat),
-                    df.format(locationLong)
-                )
-            }
+            WeatherAPI.HERE,
             WeatherAPI.WEATHERUNLOCKED,
             WeatherAPI.WEATHERAPI,
             WeatherAPI.TOMORROWIO,

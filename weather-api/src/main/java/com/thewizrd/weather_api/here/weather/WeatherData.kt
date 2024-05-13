@@ -6,6 +6,7 @@ import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.LocaleUtils
+import com.thewizrd.shared_resources.utils.NumberUtils.tryParseFloat
 import com.thewizrd.shared_resources.utils.StringUtils.toPascalCase
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
@@ -35,17 +36,17 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 @SuppressLint("VisibleForTests")
-fun createWeatherData(root: Rootobject): Weather {
+fun createWeatherData(root: PlacesItem): Weather {
     return Weather().apply {
-        val now = ZonedDateTime.parse(root.feedCreation)
+        val now = ZonedDateTime.now()
         var todaysForecast: Forecast? = null
         var todaysTxtForecast: TextForecast? = null
 
-        location = createLocationData(root.observations.location[0])
+        location = createLocationData(root.observations!![0].place!!)
         updateTime = now
-        forecast = ArrayList(root.dailyForecasts.forecastLocation.forecast.size)
-        txtForecast = ArrayList(root.dailyForecasts.forecastLocation.forecast.size)
-        for (fcast in root.dailyForecasts.forecastLocation.forecast) {
+        forecast = ArrayList(root.dailyForecasts!![0].forecasts!!.size)
+        txtForecast = ArrayList(root.dailyForecasts!![0].forecasts!!.size)
+        for (fcast in root.dailyForecasts!![0].forecasts!!) {
             val dailyFcast = createForecast(fcast)
             val txtFcast = createTextForecast(fcast)
 
@@ -59,19 +60,21 @@ fun createWeatherData(root: Rootobject): Weather {
                 todaysTxtForecast = txtFcast
             }
         }
-        hrForecast = ArrayList(root.hourlyForecasts.forecastLocation.forecast.size)
-        for (forecast1 in root.hourlyForecasts.forecastLocation.forecast) {
-            if (ZonedDateTime.parse(forecast1.utcTime).truncatedTo(ChronoUnit.HOURS).isBefore(now.truncatedTo(ChronoUnit.HOURS)))
+        hrForecast = ArrayList(root.hourlyForecasts!![0].forecasts!!.size)
+        for (forecast1 in root.hourlyForecasts!![0].forecasts!!) {
+            if (ZonedDateTime.parse(forecast1.time).truncatedTo(ChronoUnit.HOURS)
+                    .isBefore(now.truncatedTo(ChronoUnit.HOURS))
+            )
                 continue
 
             hrForecast!!.add(createHourlyForecast(forecast1))
         }
 
-        val observation = root.observations.location[0].observation[0]
+        val observation = root.observations!![0]
 
         condition = createCondition(observation, todaysForecast, todaysTxtForecast)
         atmosphere = createAtmosphere(observation)
-        astronomy = createAstronomy(root.astronomy.astronomy)
+        astronomy = createAstronomy(root.astronomyForecasts!![0].forecasts!!)
         precipitation = createPrecipitation(observation, todaysForecast)
         ttl = 180
 
@@ -79,19 +82,19 @@ fun createWeatherData(root: Rootobject): Weather {
     }
 }
 
-fun createLocationData(location: LocationItem): Location {
+fun createLocationData(place: Place): Location {
     return Location().apply {
         // Use location name from location provider
         name = null
-        latitude = location.latitude
-        longitude = location.longitude
+        latitude = place.location?.lat
+        longitude = place.location?.lng
         tzLong = null
     }
 }
 
-fun createForecast(forecast: ForecastItem): Forecast {
+fun createForecast(forecast: ForecastsItem): Forecast {
     return Forecast().apply {
-        date = ZonedDateTime.parse(forecast.utcTime).withZoneSameInstant(ZoneOffset.UTC)
+        date = ZonedDateTime.parse(forecast.time).withZoneSameInstant(ZoneOffset.UTC)
             .toLocalDateTime()
         forecast.highTemperature?.toFloatOrNull()?.let {
             highF = it
@@ -101,17 +104,19 @@ fun createForecast(forecast: ForecastItem): Forecast {
             lowF = it
             lowC = ConversionMethods.FtoC(it)
         }
-        condition = StringBuilder(forecast.description.toPascalCase()).apply {
-            if (forecast.airDescription.isNotBlank() && !forecast.airDescription.equals("*")) {
-                if (!endsWith('.')) {
-                    append('.')
+        condition = forecast.description?.let {
+            StringBuilder(it.toPascalCase()).apply {
+                if (!forecast.airDesc.isNullOrBlank() && !forecast.airDesc.equals("*")) {
+                    if (!endsWith('.')) {
+                        append('.')
+                    }
+                    append(" ${forecast.airDesc}.")
                 }
-                append(" ${forecast.airDescription}.")
-            }
-        }.toString()
+            }.toString()
+        }
         icon = weatherModule.weatherManager.getWeatherProvider(WeatherAPI.HERE)
             .getWeatherIcon(
-                forecast.daylight == "N" || forecast.iconName.startsWith("night_"),
+                forecast.daylight == "night" || forecast.iconName?.startsWith("night") == true,
                 forecast.iconName
             )
 
@@ -127,11 +132,11 @@ fun createForecast(forecast: ForecastItem): Forecast {
             extras.dewpointC = ConversionMethods.FtoC(it)
         }
         extras.pop = forecast.precipitationProbability?.toIntOrNull()
-        forecast.rainFall?.toFloatOrNull()?.let {
+        forecast.rainFall.tryParseFloat(0f).let {
             extras.qpfRainIn = it
             extras.qpfRainMm = ConversionMethods.inToMM(it)
         }
-        forecast.snowFall?.toFloatOrNull()?.let {
+        forecast.snowFall.tryParseFloat(0f).let {
             extras.qpfSnowIn = it
             extras.qpfSnowCm = ConversionMethods.inToMM(it) / 10
         }
@@ -148,52 +153,50 @@ fun createForecast(forecast: ForecastItem): Forecast {
     }
 }
 
-fun createTextForecast(forecast: ForecastItem): TextForecast {
+fun createTextForecast(forecast: ForecastsItem): TextForecast {
     return TextForecast().apply {
-        date = ZonedDateTime.parse(forecast.utcTime)
-        fcttext = StringBuilder(
-            String.format(
-                Locale.ROOT, "%s - %s",
-                forecast.weekday,
-                forecast.description.toPascalCase()
-            )
-        ).apply {
-            if (forecast.beaufortDescription.isNotBlank() && !forecast.beaufortDescription.equals("*")) {
-                if (!this.endsWith('.')) {
-                    append('.')
+        date = ZonedDateTime.parse(forecast.time)
+        fcttext = forecast.description?.let {
+            StringBuilder(it.toPascalCase()).apply {
+                if (!forecast.beaufortDesc.isNullOrBlank() && !forecast.beaufortDesc.equals("*")) {
+                    if (!this.endsWith('.')) {
+                        append('.')
+                    }
+                    append(" ${forecast.beaufortDesc}.")
                 }
-                append(" ${forecast.beaufortDescription}.")
-            }
-            if (forecast.airDescription.isNotBlank() && !forecast.airDescription.equals("*")) {
-                if (!this.endsWith('.')) {
-                    append('.')
+                if (!forecast.airDesc.isNullOrBlank() && !forecast.airDesc.equals("*")) {
+                    if (!this.endsWith('.')) {
+                        append('.')
+                    }
+                    append(" ${forecast.airDesc}.")
                 }
-                append(" ${forecast.airDescription}.")
-            }
-        }.toString()
+            }.toString()
+        }
         fcttextMetric = fcttext
     }
 }
 
-fun createHourlyForecast(hr_forecast: ForecastItem1): HourlyForecast {
+fun createHourlyForecast(hr_forecast: ForecastsItem): HourlyForecast {
     return HourlyForecast().apply {
-        date = ZonedDateTime.parse(hr_forecast.utcTime)
+        date = ZonedDateTime.parse(hr_forecast.time)
         hr_forecast.temperature?.toFloatOrNull()?.let {
             highF = it
             highC = ConversionMethods.FtoC(it)
         }
-        condition = StringBuilder(hr_forecast.description.toPascalCase()).apply {
-            if (hr_forecast.airDescription.isNotBlank() && !hr_forecast.airDescription.equals("*")) {
-                if (!endsWith('.')) {
-                    append('.')
+        condition = hr_forecast.description?.let {
+            StringBuilder(it.toPascalCase()).apply {
+                if (!hr_forecast.airDesc.isNullOrBlank() && !hr_forecast.airDesc.equals("*")) {
+                    if (!endsWith('.')) {
+                        append('.')
+                    }
+                    append(" ${hr_forecast.airDesc}.")
                 }
-                append(" ${hr_forecast.airDescription}.")
-            }
-        }.toString()
+            }.toString()
+        }
 
         icon = weatherModule.weatherManager.getWeatherProvider(WeatherAPI.HERE)
             .getWeatherIcon(
-                hr_forecast.daylight == "N" || hr_forecast.iconName.startsWith("night_"),
+                hr_forecast.daylight == "night" || hr_forecast.iconName?.startsWith("night") == true,
                 hr_forecast.iconName
             )
 
@@ -221,11 +224,11 @@ fun createHourlyForecast(hr_forecast: ForecastItem1): HourlyForecast {
             extras.visibilityKm = ConversionMethods.miToKm(it)
         }
         extras.pop = hr_forecast.precipitationProbability?.toIntOrNull()
-        hr_forecast.rainFall?.toFloatOrNull()?.let {
+        hr_forecast.rainFall.tryParseFloat(0f).let {
             extras.qpfRainIn = it
             extras.qpfRainMm = ConversionMethods.inToMM(it)
         }
-        hr_forecast.snowFall?.toFloatOrNull()?.let {
+        hr_forecast.snowFall.tryParseFloat(0f).let {
             extras.qpfSnowIn = it
             extras.qpfSnowCm = ConversionMethods.inToMM(it) / 10
         }
@@ -240,12 +243,12 @@ fun createHourlyForecast(hr_forecast: ForecastItem1): HourlyForecast {
 }
 
 fun createCondition(
-    observation: ObservationItem,
+    observation: ObservationsItem,
     todaysForecast: Forecast? = null,
     todaysTxtForecast: TextForecast? = null
 ): Condition {
     return Condition().apply {
-        weather = observation.description.toPascalCase()
+        weather = observation.description?.toPascalCase()
         observation.temperature?.toFloatOrNull()?.let {
             tempF = it
             tempC = ConversionMethods.FtoC(it)
@@ -280,7 +283,7 @@ fun createCondition(
 
         icon = weatherModule.weatherManager.getWeatherProvider(WeatherAPI.HERE)
             .getWeatherIcon(
-                observation.daylight == "N" || observation.iconName.startsWith("night_"),
+                observation.daylight == "night" || observation.iconName?.startsWith("night") == true,
                 observation.iconName
             )
 
@@ -288,7 +291,7 @@ fun createCondition(
             uv = UV(todaysForecast.extras.uvIndex)
         }
 
-        observationTime = ZonedDateTime.parse(observation.utcTime)
+        observationTime = ZonedDateTime.parse(observation.time)
 
         if (todaysForecast != null && todaysTxtForecast != null) {
             val locale = LocaleUtils.getLocale()
@@ -311,7 +314,7 @@ fun createCondition(
     }
 }
 
-fun createAtmosphere(observation: ObservationItem): Atmosphere {
+fun createAtmosphere(observation: ObservationsItem): Atmosphere {
     return Atmosphere().apply {
         humidity = observation.humidity?.toIntOrNull()
 
@@ -340,11 +343,17 @@ fun createAstronomy(astronomy: List<AstronomyItem>): Astronomy {
         val now = LocalDate.now()
 
         runCatching {
-            sunrise = LocalTime.parse(astroData.sunrise, DateTimeFormatter.ofPattern("h:mma", Locale.ROOT)).atDate(now)
+            sunrise = LocalTime.parse(
+                astroData.sunRise,
+                DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+            ).atDate(now)
         }
         runCatching {
             sunset =
-                LocalTime.parse(astroData.sunset, DateTimeFormatter.ofPattern("h:mma", Locale.ROOT))
+                LocalTime.parse(
+                    astroData.sunSet,
+                    DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+                )
                     .atDate(now)
             if (sunrise != null && sunset.isBefore(sunrise)) {
                 // Is next day
@@ -352,10 +361,16 @@ fun createAstronomy(astronomy: List<AstronomyItem>): Astronomy {
             }
         }
         runCatching {
-            moonrise = LocalTime.parse(astroData.moonrise, DateTimeFormatter.ofPattern("h:mma", Locale.ROOT)).atDate(now)
+            moonrise = LocalTime.parse(
+                astroData.moonRise,
+                DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+            ).atDate(now)
         }
         runCatching {
-            moonset = LocalTime.parse(astroData.moonset, DateTimeFormatter.ofPattern("h:mma", Locale.ROOT)).atDate(now)
+            moonset = LocalTime.parse(
+                astroData.moonSet,
+                DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+            ).atDate(now)
         }
 
         // If the sun won't set/rise, set time to the future
@@ -387,7 +402,7 @@ fun createAstronomy(astronomy: List<AstronomyItem>): Astronomy {
 }
 
 fun createPrecipitation(
-    observation: ObservationItem,
+    observation: ObservationsItem,
     todaysForecast: Forecast? = null
 ): Precipitation {
     return Precipitation().apply {

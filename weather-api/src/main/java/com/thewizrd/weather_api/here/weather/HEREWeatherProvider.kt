@@ -1,5 +1,6 @@
 package com.thewizrd.weather_api.here.weather
 
+import android.net.Uri
 import android.util.Log
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
@@ -12,10 +13,8 @@ import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.*
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.WeatherAlertProvider
 import com.thewizrd.shared_resources.weatherdata.auth.AuthType
 import com.thewizrd.shared_resources.weatherdata.model.Weather
-import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
 import com.thewizrd.shared_resources.weatherdata.model.isNullOrInvalid
 import com.thewizrd.weather_api.extras.cacheRequestIfNeeded
 import com.thewizrd.weather_api.google.location.getGoogleLocationProvider
@@ -23,7 +22,6 @@ import com.thewizrd.weather_api.here.auth.hereOAuthService
 import com.thewizrd.weather_api.smc.SunMoonCalcProvider
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkRateLimit
-import com.thewizrd.weather_api.utils.APIRequestUtils.createThrowable
 import com.thewizrd.weather_api.utils.logMissingIcon
 import com.thewizrd.weather_api.weatherModule
 import com.thewizrd.weather_api.weatherdata.WeatherProviderImpl
@@ -37,20 +35,9 @@ import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
+class HEREWeatherProvider : WeatherProviderImpl() {
     companion object {
-        private const val WEATHER_GLOBAL_QUERY_URL =
-            "https://weather.ls.hereapi.com/weather/1.0/report.json?" +
-                    "product=alerts&product=forecast_7days_simple&product=forecast_hourly&product=forecast_astronomy&product=observation&oneobservation=true" +
-                    "&%s&language=%s&metric=false"
-        private const val WEATHER_US_CA_QUERY_URL =
-            "https://weather.ls.hereapi.com/weather/1.0/report.json?" +
-                    "product=nws_alerts&product=forecast_7days_simple&product=forecast_hourly&product=forecast_astronomy&product=observation&oneobservation=true" +
-                    "&%s&language=%s&metric=false"
-        private const val ALERT_GLOBAL_QUERY_URL =
-            "https://weather.ls.hereapi.com/weather/1.0/report.json?product=alerts&%s&language=%s&metric=false"
-        private const val ALERT_US_CA_QUERY_URL =
-            "https://weather.ls.hereapi.com/weather/1.0/report.json?product=nws_alerts&%s&language=%s&metric=false"
+        private const val BASE_URL = "https://weather.hereapi.com/v3/report"
     }
 
     init {
@@ -118,15 +105,23 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
                     }
                 }
 
-                val url = if (LocationUtils.isUSorCanada(location)) {
-                    String.format(WEATHER_US_CA_QUERY_URL, query, locale)
-                } else {
-                    String.format(WEATHER_GLOBAL_QUERY_URL, query, locale)
-                }
+                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                    .appendQueryParameter(
+                        "products",
+                        "forecast7daysSimple,forecastHourly,forecastAstronomy,observation," + if (LocationUtils.isUSorCanada(
+                                location
+                            )
+                        ) "nwsAlerts" else "alerts"
+                    )
+                    .appendQueryParameter("location", query)
+                    .appendQueryParameter("units", "imperial")
+                    .appendQueryParameter("oneObservation", "true")
+                    .appendQueryParameter("lang", locale)
+                    .build()
 
                 val request = Request.Builder()
                     .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
-                    .url(url)
+                    .url(requestUri.toString())
                     .addHeader("Authorization", authorization)
                     .build()
 
@@ -137,28 +132,43 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
                 val stream = response.getStream()
 
                 // Load weather
-                val root: Rootobject? = JSONParser.deserializer(stream, Rootobject::class.java)
-
-                // Check for errors
-                when (root?.type) {
-                    "Invalid Request" -> throw WeatherException(
-                        ErrorStatus.QUERYNOTFOUND,
-                        response.createThrowable()
-                    )
-
-                    "Unauthorized" -> throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                }
+                val root =
+                    JSONParser.deserializer<WeatherResponse>(stream, WeatherResponse::class.java)
 
                 // End Stream
                 stream.closeQuietly()
 
                 requireNotNull(root)
 
-                weather = createWeatherData(root)
+                // Fold into single item
+                val rootObject = root.places!!.fold(PlacesItem()) { base, item ->
+                    if (item.alerts != null) {
+                        base.alerts = item.alerts
+                    }
+                    if (item.hourlyForecasts != null) {
+                        base.hourlyForecasts = item.hourlyForecasts
+                    }
+                    if (item.observations != null) {
+                        base.observations = item.observations
+                    }
+                    if (item.astronomyForecasts != null) {
+                        base.astronomyForecasts = item.astronomyForecasts
+                    }
+                    if (item.nwsAlerts != null) {
+                        base.nwsAlerts = item.nwsAlerts
+                    }
+                    if (item.dailyForecasts != null) {
+                        base.dailyForecasts = item.dailyForecasts
+                    }
+
+                    base
+                }
+
+                weather = createWeatherData(rootObject)
 
                 // Add weather alerts if available
                 weather.weatherAlerts = createWeatherAlerts(
-                    root,
+                    rootObject,
                     weather.location!!.latitude, weather.location!!.longitude
                 )
             } catch (ex: Exception) {
@@ -231,77 +241,12 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
         }
     }
 
-    override suspend fun getAlerts(location: LocationData): Collection<WeatherAlert> {
-        var alerts: Collection<WeatherAlert>? = null
-
-        val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
-        val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
-
-        val client = sharedDeps.httpClient
-        var response: Response? = null
-
-        try {
-            // If were under rate limit, deny request
-            checkRateLimit()
-
-            val authorization = hereOAuthService.getBearerToken(false)
-
-            if (authorization.isNullOrBlank()) {
-                throw WeatherException(ErrorStatus.NETWORKERROR).apply {
-                    initCause(Exception("Invalid bearer token: $authorization"))
-                }
-            }
-
-            val url = if (LocationUtils.isUSorCanada(location)) {
-                String.format(ALERT_US_CA_QUERY_URL, location.query, locale)
-            } else {
-                String.format(ALERT_GLOBAL_QUERY_URL, location.query, locale)
-            }
-
-            val request = Request.Builder()
-                .url(url)
-                .addHeader("Authorization", authorization)
-                .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
-                .build()
-
-            // Connect to webstream
-            response = client.newCall(request).await()
-            checkForErrors(response)
-
-            val stream = response.getStream()
-
-            // Load data
-            val root = withContext(Dispatchers.Default) {
-                JSONParser.deserializer<Rootobject>(stream, Rootobject::class.java)
-            }
-
-            // End Stream
-            stream.closeQuietly()
-
-            requireNotNull(root)
-
-            // Add weather alerts if available
-            alerts = createWeatherAlerts(
-                root,
-                location.latitude.toFloat(), location.longitude.toFloat()
-            )
-        } catch (ex: Exception) {
-            Logger.writeLine(Log.ERROR, ex, "HEREWeatherProvider: error getting weather alert data")
-        } finally {
-            response?.close()
-        }
-
-        if (alerts == null) alerts = emptyList()
-
-        return alerts
-    }
-
     override fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
             Locale.ROOT,
-            "latitude=%s&longitude=%s",
+            "%s,%s",
             df.format(weather.location!!.latitude),
             df.format(weather.location!!.longitude)
         )
@@ -310,7 +255,12 @@ class HEREWeatherProvider : WeatherProviderImpl(), WeatherAlertProvider {
     override fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
-        return String.format(Locale.ROOT, "latitude=%s&longitude=%s", df.format(location.latitude), df.format(location.longitude))
+        return String.format(
+            Locale.ROOT,
+            "%s,%s",
+            df.format(location.latitude),
+            df.format(location.longitude)
+        )
     }
 
     override fun localeToLangCode(iso: String, name: String): String {
