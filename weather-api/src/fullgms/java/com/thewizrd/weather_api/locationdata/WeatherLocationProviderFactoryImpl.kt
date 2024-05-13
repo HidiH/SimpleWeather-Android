@@ -17,7 +17,6 @@ class WeatherLocationProviderFactoryImpl : WeatherLocationProviderFactory {
                 else
                     WeatherApiLocationProvider()
             }
-            //WeatherAPI.HERE -> HERELocationProvider()
             WeatherAPI.LOCATIONIQ -> LocationIQProvider()
             WeatherAPI.GOOGLE -> GoogleLocationProvider()
             WeatherAPI.WEATHERAPI -> WeatherApiLocationProvider()
