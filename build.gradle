@@ -7,7 +7,7 @@ buildscript {
         targetSdkVersion = 33
 
         kotlin_version = '1.9.23'
-        kotlinx_version = '1.8.0'
+        kotlinx_version = '1.8.1'
         ksp_version = '1.9.23-1.0.20'
 
         desugar_version = '2.0.4'
