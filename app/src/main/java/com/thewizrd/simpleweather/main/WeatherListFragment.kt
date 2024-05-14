@@ -16,9 +16,13 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.transition.platform.MaterialSharedAxis
+import com.google.android.material.transition.MaterialSharedAxis
 import com.thewizrd.common.adapters.WeatherAlertPanelAdapter
-import com.thewizrd.common.controls.*
+import com.thewizrd.common.controls.BaseForecastItemViewModel
+import com.thewizrd.common.controls.ForecastItemViewModel
+import com.thewizrd.common.controls.ForecastsListViewModel
+import com.thewizrd.common.controls.HourlyForecastItemViewModel
+import com.thewizrd.common.controls.WeatherAlertsViewModel
 import com.thewizrd.common.helpers.SimpleRecyclerViewAdapterObserver
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.di.settingsManager
