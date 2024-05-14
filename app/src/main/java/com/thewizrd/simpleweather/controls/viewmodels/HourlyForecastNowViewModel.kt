@@ -6,11 +6,16 @@ import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.icons.WeatherIcons
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.ConversionMethods
+import com.thewizrd.shared_resources.utils.DateTimeUtils
+import com.thewizrd.shared_resources.utils.LocaleUtils
+import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.NumberUtils.getValueOrDefault
+import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.weather_api.weatherModule
 import java.text.DecimalFormat
+import kotlin.math.roundToInt
 
 class HourlyForecastNowViewModel(forecast: HourlyForecast) {
     var date: String
@@ -88,19 +93,24 @@ class HourlyForecastNowViewModel(forecast: HourlyForecast) {
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
-                    speedVal = Math.round(forecast.extras.windMph)
+                    speedVal = forecast.extras.windMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
                 Units.KILOMETERS_PER_HOUR -> {
-                    speedVal = Math.round(forecast.extras.windKph)
+                    speedVal = forecast.extras.windKph.roundToInt()
                     speedUnit = context.getString(R.string.unit_kph)
                 }
                 Units.METERS_PER_SECOND -> {
-                    speedVal = Math.round(ConversionMethods.kphToMsec(forecast.extras.windKph))
+                    speedVal = ConversionMethods.kphToMsec(forecast.extras.windKph).roundToInt()
                     speedUnit = context.getString(R.string.unit_msec)
                 }
+
+                Units.KNOTS -> {
+                    speedVal = ConversionMethods.mphToKts(forecast.extras.windMph).roundToInt()
+                    speedUnit = context.getString(R.string.unit_knots)
+                }
                 else -> {
-                    speedVal = Math.round(forecast.extras.windMph)
+                    speedVal = forecast.extras.windMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
             }

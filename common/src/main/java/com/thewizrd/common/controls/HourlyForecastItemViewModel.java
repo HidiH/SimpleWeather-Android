@@ -89,6 +89,10 @@ public class HourlyForecastItemViewModel extends BaseForecastItemViewModel {
                     speedVal = Math.round(ConversionMethods.kphToMsec(forecast.getExtras().getWindKph()));
                     speedUnit = context.getString(R.string.unit_msec);
                     break;
+                case Units.KNOTS:
+                    speedVal = Math.round(ConversionMethods.mphToKts(forecast.getExtras().getWindMph()));
+                    speedUnit = context.getString(R.string.unit_knots);
+                    break;
             }
 
             windSpeed = String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit);
@@ -209,16 +213,20 @@ public class HourlyForecastItemViewModel extends BaseForecastItemViewModel {
                 switch (unit) {
                     case Units.MILES_PER_HOUR:
                     default:
-                        speedVal = Math.round(forecast.getExtras().getWindMph());
+                        speedVal = Math.round(forecast.getExtras().getWindGustMph());
                         speedUnit = context.getString(R.string.unit_mph);
                         break;
                     case Units.KILOMETERS_PER_HOUR:
-                        speedVal = Math.round(forecast.getExtras().getWindKph());
+                        speedVal = Math.round(forecast.getExtras().getWindGustKph());
                         speedUnit = context.getString(R.string.unit_kph);
                         break;
                     case Units.METERS_PER_SECOND:
-                        speedVal = Math.round(ConversionMethods.kphToMsec(forecast.getExtras().getWindKph()));
+                        speedVal = Math.round(ConversionMethods.kphToMsec(forecast.getExtras().getWindGustKph()));
                         speedUnit = context.getString(R.string.unit_msec);
+                        break;
+                    case Units.KNOTS:
+                        speedVal = Math.round(ConversionMethods.mphToKts(forecast.getExtras().getWindGustMph()));
+                        speedUnit = context.getString(R.string.unit_knots);
                         break;
                 }
 

@@ -448,11 +448,11 @@ class WeatherUiModel() {
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition!!.windMph)
+                    speedVal = weatherData!!.condition!!.windMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
                 Units.KILOMETERS_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition!!.windKph)
+                    speedVal = weatherData!!.condition!!.windKph.roundToInt()
                     speedUnit = context.getString(R.string.unit_kph)
                 }
                 Units.METERS_PER_SECOND -> {
@@ -460,8 +460,13 @@ class WeatherUiModel() {
                         ConversionMethods.kphToMsec(weatherData!!.condition!!.windKph).roundToInt()
                     speedUnit = context.getString(R.string.unit_msec)
                 }
+                Units.KNOTS -> {
+                    speedVal =
+                        ConversionMethods.mphToKts(weatherData!!.condition!!.windMph).roundToInt()
+                    speedUnit = context.getString(R.string.unit_knots)
+                }
                 else -> {
-                    speedVal = Math.round(weatherData!!.condition!!.windMph)
+                    speedVal = weatherData!!.condition!!.windMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
             }
@@ -495,17 +500,24 @@ class WeatherUiModel() {
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition!!.windGustMph)
+                    speedVal = weatherData!!.condition!!.windGustMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
                 Units.KILOMETERS_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition!!.windGustKph)
+                    speedVal = weatherData!!.condition!!.windGustKph.roundToInt()
                     speedUnit = context.getString(R.string.unit_kph)
                 }
                 Units.METERS_PER_SECOND -> {
                     speedVal =
-                        Math.round(ConversionMethods.kphToMsec(weatherData!!.condition!!.windGustKph))
+                        ConversionMethods.kphToMsec(weatherData!!.condition!!.windGustKph)
+                            .roundToInt()
                     speedUnit = context.getString(R.string.unit_msec)
+                }
+
+                Units.KNOTS -> {
+                    speedVal =
+                        ConversionMethods.mphToKts(weatherData!!.condition!!.windMph).roundToInt()
+                    speedUnit = context.getString(R.string.unit_knots)
                 }
                 else -> {
                     speedVal = Math.round(weatherData!!.condition!!.windGustMph)

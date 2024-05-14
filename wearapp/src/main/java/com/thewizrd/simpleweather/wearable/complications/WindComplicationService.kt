@@ -158,6 +158,11 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
                     ConversionMethods.kphToMsec(windKph).roundToInt()
                 speedUnit = getString(R.string.unit_msec)
             }
+            Units.KNOTS -> {
+                speedVal =
+                    ConversionMethods.mphToKts(windMph).roundToInt()
+                speedUnit = getString(R.string.unit_knots)
+            }
             else -> {
                 speedVal = windMph.roundToInt()
                 speedUnit = getString(R.string.unit_mph)

@@ -187,6 +187,10 @@ public class ForecastGraphViewModel {
                             speedVal = Math.round(ConversionMethods.kphToMsec(forecast.getExtras().getWindKph()));
                             speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_msec);
                             break;
+                        case Units.KNOTS:
+                            speedVal = Math.round(ConversionMethods.mphToKts(forecast.getExtras().getWindMph()));
+                            speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_knots);
+                            break;
                     }
 
                     String windSpeed = String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit);

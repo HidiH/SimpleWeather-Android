@@ -16,6 +16,7 @@ import com.thewizrd.simpleweather.images.getImageData
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 class LocationPanelUiModel {
     private var weather: Weather? = null
@@ -161,20 +162,26 @@ class LocationPanelUiModel {
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
-                    speedVal = Math.round(weather!!.condition!!.windMph)
+                    speedVal = weather!!.condition!!.windMph.roundToInt()
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_mph)
                 }
                 Units.KILOMETERS_PER_HOUR -> {
-                    speedVal = Math.round(weather!!.condition!!.windKph)
+                    speedVal = weather!!.condition!!.windKph.roundToInt()
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_kph)
                 }
                 Units.METERS_PER_SECOND -> {
                     speedVal =
-                        Math.round(ConversionMethods.kphToMsec(weather!!.condition!!.windKph))
+                        ConversionMethods.kphToMsec(weather!!.condition!!.windKph).roundToInt()
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_msec)
                 }
+
+                Units.KNOTS -> {
+                    speedVal =
+                        ConversionMethods.mphToKts(weather!!.condition!!.windMph).roundToInt()
+                    speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_knots)
+                }
                 else -> {
-                    speedVal = Math.round(weather!!.condition!!.windMph)
+                    speedVal = weather!!.condition!!.windMph.roundToInt()
                     speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_mph)
                 }
             }
