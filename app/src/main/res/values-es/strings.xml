@@ -158,4 +158,11 @@
     <string name="pref_title_iconsize">"Tamaño de ícono"</string>
     <string name="precipitation_minutely_starting_text_format">"La lluvia comenzará en unos %1$s"</string>
     <string name="precipitation_minutely_stopping_text_format">"La lluvia cesará en unos %1$s"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Severidad mínima de la alerta"</string>
+    <string name="alertsev_all">"Ninguna (Mostrar todas las descripciones)"</string>
+    <string name="alertsev_moderate">"Moderado"</string>
+    <string name="alertsev_severe">"Severo"</string>
+    <string name="alertsev_extreme">"Extremo"</string>
 </resources>

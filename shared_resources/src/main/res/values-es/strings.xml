@@ -231,4 +231,6 @@
     <string name="hint_password">"Contraseña"</string>
     <string name="pref_title_privacypolicy">"Política de privacidad"</string>
     <string name="pref_title_termsofservice">"Zmluvné podmienky"</string>
+    <string name="label_moreinfo">"Más información"</string>
+    <string name="action_reset">"Restablecer"</string>
 </resources>
