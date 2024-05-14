@@ -4,7 +4,6 @@ import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -18,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.transition.TransitionManager
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.thewizrd.common.utils.ActivityUtils.setTransparentWindow
 import com.thewizrd.shared_resources.Constants

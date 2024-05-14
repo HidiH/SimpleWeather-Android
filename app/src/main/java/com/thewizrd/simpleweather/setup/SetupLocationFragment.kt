@@ -14,7 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.transition.platform.MaterialSharedAxis
+import com.google.android.material.transition.MaterialSharedAxis
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.utils.ErrorMessage

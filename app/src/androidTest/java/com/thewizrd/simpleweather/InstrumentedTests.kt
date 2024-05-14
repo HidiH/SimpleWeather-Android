@@ -49,7 +49,7 @@ import java.util.*
  * @see [Testing documentation](http://d.android.com/tools/testing)
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class InstrumentedTests {
     private lateinit var settingsManager: SettingsManager
 
     @Before
