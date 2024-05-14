@@ -88,4 +88,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/premium_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:minWidth="56dp"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/premium_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_star_24dp"
+            app:tint="#FFFFD700"
+            app:maxWidth="48dp"
+            app:maxHeight="48dp" />
+
+    </LinearLayout>
+
 </LinearLayout>
