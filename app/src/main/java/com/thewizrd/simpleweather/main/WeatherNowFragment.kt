@@ -752,6 +752,8 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             radarControlBinding =
                 WeathernowRadarcontrolBinding.inflate(inflater, binding.listLayout, false)
 
+            ViewCompat.setTransitionName(radarControlBinding!!.radarWebviewCover, "radar")
+
             radarControlBinding!!.radarWebviewCover.setOnClickListener { v ->
                 runWithView {
                     AnalyticsLogger.logEvent("WeatherNowFragment: radar view click")
@@ -765,8 +767,6 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                         )
                 }
             }
-
-            ViewCompat.setTransitionName(radarControlBinding!!.radarWebviewCover, "radar")
 
             /*
              * NOTE
