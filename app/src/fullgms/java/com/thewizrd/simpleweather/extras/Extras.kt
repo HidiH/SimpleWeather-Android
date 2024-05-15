@@ -9,6 +9,7 @@ import android.content.Intent
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.thewizrd.extras.extrasModule
 import com.thewizrd.shared_resources.appLib
@@ -29,13 +30,16 @@ import timber.log.Timber
 fun initializeExtras() {
     extrasModule.initialize()
 
-    MapsInitializer.initialize(appLib.context, MapsInitializer.Renderer.LEGACY) {
+    MapsInitializer.initialize(
+        appLib.context,
+        if (BuildConfig.DEBUG) Renderer.LEGACY else Renderer.LATEST
+    ) {
         when (it) {
-            MapsInitializer.Renderer.LATEST -> {
+            Renderer.LATEST -> {
                 Timber.tag("Application").d("The latest version of the renderer is used.")
             }
 
-            MapsInitializer.Renderer.LEGACY -> {
+            Renderer.LEGACY -> {
                 Timber.tag("Application").d("The legacy version of the renderer is used.")
             }
         }
