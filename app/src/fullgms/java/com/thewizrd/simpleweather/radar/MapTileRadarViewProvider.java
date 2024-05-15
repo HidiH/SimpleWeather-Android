@@ -1,6 +1,8 @@
 package com.thewizrd.simpleweather.radar;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
@@ -17,9 +20,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.thewizrd.shared_resources.utils.Coordinate;
+import com.thewizrd.simpleweather.R;
 import com.thewizrd.simpleweather.extras.ExtrasKt;
+
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public abstract class MapTileRadarViewProvider extends RadarViewProvider implements OnMapReadyCallback {
@@ -47,6 +55,36 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        final Configuration currentConfig = getContext().getResources().getConfiguration();
+        final int systemNightMode = currentConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        final boolean isNightMode = systemNightMode == Configuration.UI_MODE_NIGHT_YES;
+
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            getContext(), isNightMode ? R.raw.gmap_dark_style : R.raw.gmap_light_style));
+
+            if (!success) {
+                Timber.tag("RadarView").e("Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Timber.tag("RadarView").e(e, "Can't find style.");
+        }
+
+        CameraPosition cameraPosition = getMapCameraPosition();
+        if (cameraPosition != null) {
+            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            if (locationMarker == null) {
+                locationMarker = googleMap.addMarker(new MarkerOptions().position(cameraPosition.target));
+            } else {
+                locationMarker.setPosition(cameraPosition.target);
+            }
+        }
+
+        // Update gestures
         UiSettings mapUISettings = googleMap.getUiSettings();
 
         mapUISettings.setScrollGesturesEnabled(interactionsEnabled());

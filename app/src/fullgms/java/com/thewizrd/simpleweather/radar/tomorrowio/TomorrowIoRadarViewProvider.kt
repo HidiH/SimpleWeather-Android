@@ -1,8 +1,6 @@
 package com.thewizrd.simpleweather.radar.tomorrowio
 
 import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Resources.NotFoundException
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,10 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.material.slider.Slider
@@ -24,12 +19,10 @@ import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.databinding.RadarAnimateContainerBinding
 import com.thewizrd.simpleweather.radar.CachingUrlTileProvider
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider
 import com.thewizrd.weather_api.keys.Keys
-import timber.log.Timber
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -108,43 +101,8 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val currentConfig = context.resources.configuration
-        val systemNightMode = currentConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val isNightMode = systemNightMode == Configuration.UI_MODE_NIGHT_YES
-
-        this.googleMap = googleMap
-
-        try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            val success = googleMap.setMapStyle(
-                MapStyleOptions.loadRawResourceStyle(
-                    context, if (isNightMode) R.raw.gmap_dark_style else R.raw.gmap_light_style
-                )
-            )
-
-            if (!success) {
-                Timber.tag("RadarView").e("Style parsing failed.")
-            }
-        } catch (e: NotFoundException) {
-            Timber.tag("RadarView").e(e, "Can't find style.")
-        }
-
-        mapCameraPosition?.let { cameraPosition ->
-            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-
-            if (interactionsEnabled()) {
-                if (locationMarker == null) {
-                    locationMarker =
-                        googleMap.addMarker(MarkerOptions().position(cameraPosition.target))
-                } else {
-                    locationMarker.position = cameraPosition.target
-                }
-            }
-        }
-
-        // Update gestures
         super.onMapReady(googleMap)
+        this.googleMap = googleMap
 
         getRadarFrames()
     }
