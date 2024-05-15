@@ -108,8 +108,6 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        super.onMapReady(googleMap)
-
         val currentConfig = context.resources.configuration
         val systemNightMode = currentConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val isNightMode = systemNightMode == Configuration.UI_MODE_NIGHT_YES
@@ -144,6 +142,9 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
                 }
             }
         }
+
+        // Update gestures
+        super.onMapReady(googleMap)
 
         getRadarFrames()
     }

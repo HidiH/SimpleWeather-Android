@@ -117,8 +117,6 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) : MapTileRad
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        super.onMapReady(googleMap)
-
         val currentConfig = context.resources.configuration
         val systemNightMode = currentConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val isNightMode = systemNightMode == Configuration.UI_MODE_NIGHT_YES
@@ -151,6 +149,9 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) : MapTileRad
                 }
             }
         }
+
+        // Update gestures
+        super.onMapReady(googleMap)
 
         getRadarFrames()
     }

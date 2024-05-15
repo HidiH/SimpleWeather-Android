@@ -53,8 +53,6 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        super.onMapReady(googleMap);
-
         final Configuration currentConfig = getContext().getResources().getConfiguration();
         final int systemNightMode = currentConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
         final boolean isNightMode = systemNightMode == Configuration.UI_MODE_NIGHT_YES;
@@ -85,6 +83,9 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
                 }
             }
         }
+
+        // Update gestures
+        super.onMapReady(googleMap);
 
         if (tileProvider == null) {
             tileProvider = new OWMTileProvider(getContext());
