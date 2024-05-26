@@ -406,6 +406,8 @@ class NWSWeatherProvider : WeatherProviderImpl() {
 
                     if (forecastResponseData == null) {
                         delay(1000)
+                    } else {
+                        break
                     }
                 }
 
