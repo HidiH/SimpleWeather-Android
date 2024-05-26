@@ -21,6 +21,8 @@ fun createWeatherAlerts(root: PlacesItem, lat: Float, lon: Float): Collection<We
     if (!root.alerts.isNullOrEmpty()) {
         weatherAlerts = ArrayList(root.alerts!!.size)
         for (result in root.alerts!!) {
+            if (result.description.isNullOrBlank() || result.timeSegments.isNullOrEmpty()) continue
+
             weatherAlerts.add(createWeatherAlert(result))
         }
     } else if (root.nwsAlerts?.watches != null || root.nwsAlerts?.warnings != null) {
@@ -31,9 +33,11 @@ fun createWeatherAlerts(root: PlacesItem, lat: Float, lon: Float): Collection<We
 
         if (root.nwsAlerts?.watches != null) {
             for (watchItem in root.nwsAlerts!!.watches!!) {
-                val locations = watchItem.counties?.mapNotNull { it.location }
-                    ?: watchItem.zones?.mapNotNull { it.location }
-                    ?: watchItem.provinces?.mapNotNull { it.location }
+                val locations =
+                    watchItem.counties?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: watchItem.zones?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: watchItem.provinces?.mapNotNull { it.location }
+                            ?.takeIf { it.isNotEmpty() }
 
                 if (locations == null) continue
 
@@ -52,9 +56,11 @@ fun createWeatherAlerts(root: PlacesItem, lat: Float, lon: Float): Collection<We
         }
         if (root.nwsAlerts?.warnings != null) {
             for (warningItem in root.nwsAlerts!!.warnings!!) {
-                val locations = warningItem.counties?.mapNotNull { it.location }
-                    ?: warningItem.zones?.mapNotNull { it.location }
-                    ?: warningItem.provinces?.mapNotNull { it.location }
+                val locations =
+                    warningItem.counties?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: warningItem.zones?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: warningItem.provinces?.mapNotNull { it.location }
+                            ?.takeIf { it.isNotEmpty() }
 
                 if (locations == null) continue
 

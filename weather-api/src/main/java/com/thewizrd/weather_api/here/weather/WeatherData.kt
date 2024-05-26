@@ -345,14 +345,14 @@ fun createAstronomy(astronomy: List<AstronomyItem>): Astronomy {
         runCatching {
             sunrise = LocalTime.parse(
                 astroData.sunRise,
-                DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+                DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ROOT)
             ).atDate(now)
         }
         runCatching {
             sunset =
                 LocalTime.parse(
                     astroData.sunSet,
-                    DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+                    DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ROOT)
                 )
                     .atDate(now)
             if (sunrise != null && sunset.isBefore(sunrise)) {
@@ -363,13 +363,13 @@ fun createAstronomy(astronomy: List<AstronomyItem>): Astronomy {
         runCatching {
             moonrise = LocalTime.parse(
                 astroData.moonRise,
-                DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+                DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ROOT)
             ).atDate(now)
         }
         runCatching {
             moonset = LocalTime.parse(
                 astroData.moonSet,
-                DateTimeFormatter.ofPattern("hh:mm:ss", Locale.ROOT)
+                DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ROOT)
             ).atDate(now)
         }
 

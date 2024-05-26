@@ -123,9 +123,9 @@ class RemoteConfigServiceImpl : RemoteConfigService {
                             continuation.resume(it.result)
                         } else {
                             continuation.resumeWithException(it.exception!!)
-                            }
                         }
                     }
+                }
         }
     }
 }
