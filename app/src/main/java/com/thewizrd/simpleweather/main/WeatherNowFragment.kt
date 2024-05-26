@@ -512,6 +512,13 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             forecastPanelBinding!!.forecastsView = forecastsView
             forecastPanelBinding!!.lifecycleOwner = viewLifecycleOwner
 
+            forecastPanelBinding!!.headerLayout.setOnClickListener {
+                openDetails(
+                    TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
+                        .setWeatherListType(WeatherListType.FORECAST)
+                )
+            }
+
             forecastPanelBinding!!.rangebarGraphPanel.setOnClickPositionListener(object :
                 RecyclerOnClickListenerInterface {
                 override fun onClick(view: View, position: Int) {
@@ -555,6 +562,13 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             })
 
+            hrForecastPanelBinding!!.headerLayout.setOnClickListener {
+                openDetails(
+                    TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
+                        .setWeatherListType(WeatherListType.HOURLYFORECAST)
+                )
+            }
+
             hourlyForecastItemAdapter.onClickListener = object : RecyclerOnClickListenerInterface {
                 override fun onClick(view: View, position: Int) {
                     openDetails(
@@ -590,6 +604,10 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                         WeatherChartsFragmentDirections.actionGlobalWeatherChartsFragment()
                     )
                 }
+            }
+
+            precipPanelBinding!!.headerLayout.setOnClickListener {
+                onClickListener.onClick(it, 0)
             }
 
             precipPanelBinding!!.minutelyPrecipGraphPanel.setDrawIconLabels(false)
@@ -754,7 +772,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
             ViewCompat.setTransitionName(radarControlBinding!!.radarWebviewCover, "radar")
 
-            radarControlBinding!!.radarWebviewCover.setOnClickListener { v ->
+            val onClickListener = View.OnClickListener { v ->
                 runWithView {
                     AnalyticsLogger.logEvent("WeatherNowFragment: radar view click")
                     v.isEnabled = false
@@ -762,11 +780,19 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                         .safeNavigate(
                             WeatherNowFragmentDirections.actionWeatherNowFragmentToWeatherRadarFragment(),
                             FragmentNavigator.Extras.Builder()
-                                .addSharedElement(v, "radar")
+                                .apply {
+                                    if (v.id == R.id.radar_webview_cover) {
+                                        addSharedElement(v, "radar")
+                                    }
+                                }
                                 .build()
                         )
                 }
             }
+
+            radarControlBinding!!.radarWebviewCover.setOnClickListener(onClickListener)
+            radarControlBinding!!.radarLabel.setOnClickListener(onClickListener)
+            radarControlBinding!!.chevronRight.setOnClickListener(onClickListener)
 
             /*
              * NOTE
