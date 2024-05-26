@@ -110,6 +110,13 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
     private fun getRadarFrames() {
         mProcessingFrames = true
 
+        // Remove already added tile overlays
+        val overlaysToDelete = radarLayers.values.toList()
+        radarLayers.clear()
+        for (overlay in overlaysToDelete) {
+            mMainHandler.post { overlay.remove() }
+        }
+
         availableRadarFrames.clear()
         animationPosition = 0
 
