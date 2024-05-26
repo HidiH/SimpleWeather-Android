@@ -149,117 +149,114 @@ class AccuWeatherProvider : WeatherProviderImpl() {
             var wEx: WeatherException? = null
 
             try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    val key =
-                        if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(
-                            getWeatherAPI()
-                        ) else getAPIKey()
+                val key = getProviderKey()
 
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                    }
-
-                    val request5dayUri = Uri.parse(DAILY_5DAY_FORECAST_URL).buildUpon()
-                        .appendPath(location.query)
-                            .appendQueryParameter("apikey", key)
-                            .appendQueryParameter("language", locale)
-                            .appendQueryParameter("details", "true")
-                            .appendQueryParameter("metric", "true")
-
-                    val request = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 3, TimeUnit.HOURS)
-                            .url(request5dayUri.toString())
-                            .build()
-
-                    val requestHourlyUri = Uri.parse(HOURLY_12HR_FORECAST_URL).buildUpon()
-                        .appendPath(location.query)
-                            .appendQueryParameter("apikey", key)
-                            .appendQueryParameter("language", locale)
-                            .appendQueryParameter("details", "true")
-                            .appendQueryParameter("metric", "true")
-
-                    val hourlyRequest = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 3, TimeUnit.HOURS)
-                            .url(requestHourlyUri.toString())
-                            .build()
-
-                    val requestCurrentUri = Uri.parse(CURRENT_CONDITIONS_URL).buildUpon()
-                        .appendPath(location.query)
-                            .appendQueryParameter("apikey", key)
-                            .appendQueryParameter("language", locale)
-                            .appendQueryParameter("details", "true")
-
-                    val currentRequest = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
-                        .url(requestCurrentUri.toString())
-                        .build()
-
-                    // Connect to webstream
-                    val dailyResponse = client.newCall(request).await()
-                    checkForErrors(dailyResponse)
-
-                    val hourlyResponse = client.newCall(hourlyRequest).await()
-                    checkForErrors(hourlyResponse)
-
-                    val currentResponse = client.newCall(currentRequest).await()
-                    checkForErrors(currentResponse)
-
-                    val dailyRoot = dailyResponse.use { r ->
-                        r.getStream().use { s ->
-                            JSONParser.deserializer<DailyResponse>(s, DailyResponse::class.java)
-                        }
-                    }
-                    val hourlyRoot = hourlyResponse.use { r ->
-                        r.getStream().use { s ->
-                            JSONParser.deserializer<List<HourlyResponseItem>>(
-                                s,
-                                listType<HourlyResponseItem>()
-                            )
-                        }
-                    }?.let {
-                        HourlyResponse(it)
-                    }
-                    val currentRoot = currentResponse.use { r ->
-                        r.getStream().use { s ->
-                            JSONParser.deserializer<List<CurrentsResponseItem>>(
-                                s,
-                                listType<CurrentsResponseItem>()
-                            )
-                        }
-                    }?.let {
-                        CurrentsResponse(it)
-                    }
-
-                    requireNotNull(dailyRoot)
-                    requireNotNull(hourlyRoot)
-                    requireNotNull(currentRoot)
-
-                    weather = createWeatherData(dailyRoot, hourlyRoot, currentRoot)
-                } catch (ex: Exception) {
-                    weather = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "AccuWeatherProvider: error getting weather data")
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                if (wEx == null && weather.isNullOrInvalid()) {
-                    wEx = WeatherException(ErrorStatus.NOWEATHER)
-                } else if (weather != null) {
-                    if (supportsWeatherLocale())
-                        weather.locale = locale
+                val request5dayUri = Uri.parse(DAILY_5DAY_FORECAST_URL).buildUpon()
+                    .appendPath(location.query)
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("language", locale)
+                    .appendQueryParameter("details", "true")
+                    .appendQueryParameter("metric", "true")
 
-                    weather.query = location.query
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 3, TimeUnit.HOURS)
+                    .url(request5dayUri.toString())
+                    .build()
+
+                val requestHourlyUri = Uri.parse(HOURLY_12HR_FORECAST_URL).buildUpon()
+                    .appendPath(location.query)
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("language", locale)
+                    .appendQueryParameter("details", "true")
+                    .appendQueryParameter("metric", "true")
+
+                val hourlyRequest = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 3, TimeUnit.HOURS)
+                    .url(requestHourlyUri.toString())
+                    .build()
+
+                val requestCurrentUri = Uri.parse(CURRENT_CONDITIONS_URL).buildUpon()
+                    .appendPath(location.query)
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("language", locale)
+                    .appendQueryParameter("details", "true")
+
+                val currentRequest = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
+                    .url(requestCurrentUri.toString())
+                    .build()
+
+                // Connect to webstream
+                val dailyResponse = client.newCall(request).await()
+                checkForErrors(dailyResponse)
+
+                val hourlyResponse = client.newCall(hourlyRequest).await()
+                checkForErrors(hourlyResponse)
+
+                val currentResponse = client.newCall(currentRequest).await()
+                checkForErrors(currentResponse)
+
+                val dailyRoot = dailyResponse.use { r ->
+                    r.getStream().use { s ->
+                        JSONParser.deserializer<DailyResponse>(s, DailyResponse::class.java)
+                    }
+                }
+                val hourlyRoot = hourlyResponse.use { r ->
+                    r.getStream().use { s ->
+                        JSONParser.deserializer<List<HourlyResponseItem>>(
+                            s,
+                            listType<HourlyResponseItem>()
+                        )
+                    }
+                }?.let {
+                    HourlyResponse(it)
+                }
+                val currentRoot = currentResponse.use { r ->
+                    r.getStream().use { s ->
+                        JSONParser.deserializer<List<CurrentsResponseItem>>(
+                            s,
+                            listType<CurrentsResponseItem>()
+                        )
+                    }
+                }?.let {
+                    CurrentsResponse(it)
                 }
 
-                if (wEx != null) throw wEx
+                requireNotNull(dailyRoot)
+                requireNotNull(hourlyRoot)
+                requireNotNull(currentRoot)
 
-                return@withContext weather!!
+                weather = createWeatherData(dailyRoot, hourlyRoot, currentRoot)
+            } catch (ex: Exception) {
+                weather = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
+                } else if (ex is WeatherException) {
+                    wEx = ex
+                }
+                Logger.writeLine(Log.ERROR, ex, "AccuWeatherProvider: error getting weather data")
             }
+
+            if (wEx == null && weather.isNullOrInvalid()) {
+                wEx = WeatherException(ErrorStatus.NOWEATHER)
+            } else if (weather != null) {
+                if (supportsWeatherLocale())
+                    weather.locale = locale
+
+                weather.query = location.query
+            }
+
+            if (wEx != null) throw wEx
+
+            return@withContext weather!!
+        }
 
     @Throws(WeatherException::class)
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
