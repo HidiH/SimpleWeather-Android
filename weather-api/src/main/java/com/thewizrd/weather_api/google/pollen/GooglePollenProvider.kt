@@ -61,7 +61,7 @@ class GooglePollenProvider : PollenProvider, RateLimitedRequest {
                 val request = Request.Builder()
                     .cacheControl(
                         CacheControl.Builder()
-                            .maxAge(1, TimeUnit.HOURS)
+                            .maxAge(12, TimeUnit.HOURS)
                             .build()
                     )
                     .url(
@@ -110,7 +110,7 @@ class GooglePollenProvider : PollenProvider, RateLimitedRequest {
                 Logger.writeLine(
                     Log.ERROR,
                     ex,
-                    "GooglePollenProvider: error getting air quality data"
+                    "GooglePollenProvider: error getting pollen data"
                 )
             } finally {
                 response?.closeQuietly()
