@@ -82,7 +82,7 @@ class WeatherAlertViewModel(weatherAlert: WeatherAlert) {
 
         attribution = weatherAlert.attribution
 
-        if (attribution != null) {
+        if (!attribution.isNullOrBlank()) {
             attribution =
                 String.format("%s %s", context.getString(R.string.credit_prefix), attribution)
         }
