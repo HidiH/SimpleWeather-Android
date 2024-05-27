@@ -123,7 +123,7 @@ object VersionMigrations {
                 settingsMgr.getLastGPSLocData()?.let { locations.add(it) }
 
                 locations.forEach { location ->
-                    if (location.tzLong == "unknown" || location.tzLong == "UTC") {
+                    if (location.tzLong.isNullOrBlank() || location.tzLong == "unknown" || location.tzLong == "UTC") {
                         if (location.latitude != 0.0 && location.longitude != 0.0) {
                             val tzId = weatherModule.tzdbService.getTimeZone(
                                 location.latitude,
