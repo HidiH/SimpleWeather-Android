@@ -61,9 +61,9 @@ import java.util.concurrent.TimeUnit
 class NWSWeatherProvider : WeatherProviderImpl() {
     companion object {
         private const val FORECAST_QUERY_URL =
-            "https://mobile.weather.gov/wtf/MapClick.php?%s&FcstType=json"
+            "https://forecast.weather.gov/MapClick.php?%s&FcstType=json"
         private const val HRFORECAST_QUERY_URL =
-            "https://mobile.weather.gov/wtf/MapClick.php?%s&FcstType=digitalJSON"
+            "https://forecast.weather.gov/MapClick.php?%s&FcstType=digitalJSON"
         private const val POINTS_QUERY_URL = "https://api.weather.gov/points/%s"
         private const val MAX_ATTEMPTS = 2
     }
