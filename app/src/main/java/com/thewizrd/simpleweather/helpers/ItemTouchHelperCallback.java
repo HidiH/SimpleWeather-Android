@@ -118,11 +118,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean canDropOver(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder current, @NonNull RecyclerView.ViewHolder target) {
-        if (!(target instanceof FavoritesPanelAdapter.LocationPanelViewHolder))
-            return false;
-
-        final FavoritesPanelAdapter adapter = (FavoritesPanelAdapter) target.getBindingAdapter();
-        return adapter == null || target.getBindingAdapterPosition() != 1;
+        return target instanceof FavoritesPanelAdapter.LocationPanelViewHolder;
     }
 
     @Override

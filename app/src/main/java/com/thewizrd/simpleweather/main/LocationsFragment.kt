@@ -107,6 +107,13 @@ class LocationsFragment : ToolbarFragment() {
     private var mDataChanged = false
     private var mHomeChanged = false
 
+    private val removeListeners = mutableListOf<Runnable>()
+    private val deleteRunnable = Runnable {
+        removeListeners.forEach {
+            mMainHandler.post(it)
+        }
+    }
+
     // Views
     private lateinit var binding: FragmentLocationsBinding
     private lateinit var mConcatAdapter: ConcatAdapter
@@ -381,9 +388,7 @@ class LocationsFragment : ToolbarFragment() {
                 target: RecyclerView.ViewHolder
             ) {
                 mDataChanged = true
-                if (mEditMode) {
-                    toggleEditMode()
-                } else {
+                if (!mEditMode) {
                     val dataSet = mFavoritesAdapter.getDataset()
                     for (view in dataSet) {
                         if (view.locationType != LocationType.GPS.value) {
@@ -640,30 +645,46 @@ class LocationsFragment : ToolbarFragment() {
     private val onListChangedListener =
         OnListChangedListener<LocationPanelUiModel> { _, e ->
             runWithView {
-                val dataMoved =
-                    e.action == ListChangedAction.REMOVE || e.action == ListChangedAction.MOVE
-                val onlyHomeIsLeft = mFavoritesAdapter.getFavoritesCount() <= 1
+                mMainHandler.removeCallbacks(deleteRunnable)
+                removeListeners.clear()
 
-                // Flag that data has changed
-                if (mEditMode && dataMoved)
-                    mDataChanged = true
+                removeListeners.add(Runnable {
+                    val dataMoved =
+                        e.action == ListChangedAction.REMOVE || e.action == ListChangedAction.MOVE
+                    val onlyHomeIsLeft = mFavoritesAdapter.getFavoritesCount() <= 1
 
-                if (mEditMode && (e.newStartingIndex == 0 || e.oldStartingIndex == 0))
-                    mHomeChanged = true
+                    // Flag that data has changed
+                    if (mEditMode && dataMoved)
+                        mDataChanged = true
 
-                // Hide FAB; Don't allow adding more locations
-                if (mFavoritesAdapter.getFavoritesCount() >= settingsManager.getMaxLocations()) {
-                    binding.fab.hide()
-                } else {
-                    binding.fab.show()
-                }
+                    if (mEditMode && (e.newStartingIndex == 0 || e.oldStartingIndex == 0))
+                        mHomeChanged = true
 
-                // Cancel edit Mode
-                if (mEditMode && onlyHomeIsLeft) toggleEditMode()
+                    // Hide FAB; Don't allow adding more locations
+                    if (mFavoritesAdapter.getFavoritesCount() >= settingsManager.getMaxLocations()) {
+                        binding.fab.hide()
+                    } else {
+                        binding.fab.show()
+                    }
 
-                // Disable EditMode if only single location
-                val editMenuBtn = toolbar.menu?.findItem(R.id.action_editmode)
-                editMenuBtn?.isVisible = if (mEditMode) false else !onlyHomeIsLeft
+                    // Cancel edit Mode
+                    if (mEditMode && onlyHomeIsLeft) toggleEditMode()
+
+                    // Disable EditMode if only single location
+                    val editMenuBtn = toolbar.menu?.findItem(R.id.action_editmode)
+                    editMenuBtn?.isVisible = if (mEditMode) false else !onlyHomeIsLeft
+
+                    if (dataMoved && !mEditMode) {
+                        val dataSet = mFavoritesAdapter.getDataset()
+                        for (view in dataSet) {
+                            if (view.locationType != LocationType.GPS.value) {
+                                updateFavoritesPosition(view)
+                            }
+                        }
+                    }
+                })
+
+                mMainHandler.postDelayed(deleteRunnable, 500)
             }
         }
     private val onSelectionChangedListener =
