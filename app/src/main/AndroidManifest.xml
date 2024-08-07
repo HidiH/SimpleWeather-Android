@@ -349,12 +349,6 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <service
-            android:name=".services.UpdaterTimerService"
-            android:exported="false"
-            android:process=":widget"
-            android:foregroundServiceType="dataSync" />
-
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

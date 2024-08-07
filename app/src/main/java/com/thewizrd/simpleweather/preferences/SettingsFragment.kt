@@ -128,7 +128,6 @@ class SettingsFragment : BaseSettingsFragment(),
     private var premiumPref: Preference? = null
 
     // Background ops
-    private lateinit var foregroundPref: SwitchPreferenceCompat
     private lateinit var batteryOptsPref: Preference
     private lateinit var notCategory: PreferenceCategory
     private lateinit var apiCategory: PreferenceCategory
@@ -764,7 +763,6 @@ class SettingsFragment : BaseSettingsFragment(),
             premiumPref = createPremiumPreference()
         }
 
-        foregroundPref = findPreference(PowerUtils.KEY_USE_FOREGROUNDSERVICE)!!
         batteryOptsPref = findPreference(PowerUtils.KEY_REQUESTIGNOREBATOPTS)!!
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
@@ -775,20 +773,11 @@ class SettingsFragment : BaseSettingsFragment(),
             batteryOptsPref.isVisible = false
         } else {
             batteryOptsPref.onPreferenceClickListener =
-                Preference.OnPreferenceClickListener { preference: Preference? ->
+                Preference.OnPreferenceClickListener { _: Preference? ->
                     PowerUtils.startIgnoreBatteryOptActivity(requireContext())
                     true
                 }
         }
-
-        foregroundPref.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { preference, newValue ->
-                UpdaterUtils.enableForegroundService(requireContext(), newValue as Boolean)
-                if (newValue) {
-                    checkBackgroundLocationAccess()
-                }
-                true
-            }
 
         val aboutPref = findPreference<Preference>(KEY_ABOUTAPP)!!
         aboutCategory = aboutPref.parent as PreferenceCategory

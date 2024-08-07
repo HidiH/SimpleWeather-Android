@@ -9,41 +9,19 @@ import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.thewizrd.shared_resources.AppState
-import com.thewizrd.shared_resources.appLib
-import com.thewizrd.shared_resources.utils.Logger
 
 class PowerUtils {
     companion object {
-        const val KEY_USE_FOREGROUNDSERVICE = "key_use_foregroundservice"
         const val KEY_REQUESTIGNOREBATOPTS = "key_request_ignorebatopts"
-
-        var useForegroundService: Boolean
-            get() {
-                return appLib.preferences.getBoolean(KEY_USE_FOREGROUNDSERVICE, false)
-            }
-            set(value) {
-                appLib.preferences.edit {
-                    putBoolean(KEY_USE_FOREGROUNDSERVICE, value)
-                }
-            }
 
         @JvmStatic
         fun checkBackgroundOptimizationPermission(context: Context): Boolean {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                return true
-            }
-
-            return false
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         }
 
         @RequiresApi(Build.VERSION_CODES.M)
@@ -71,23 +49,6 @@ class PowerUtils {
                 it.data = Uri.parse("package:${context.packageName}")
             }
             context.startActivity(intent)
-        }
-
-        @JvmStatic
-        fun startForegroundService(context: Context, intent: Intent, onBoot: Boolean = false) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || appLib.appState == AppState.FOREGROUND || onBoot) {
-                ContextCompat.startForegroundService(context, intent)
-            } else {
-                Logger.writeLine(
-                    Log.INFO,
-                    "Foreground service not started (action: ${intent.action};" +
-                            "SDK: ${Build.VERSION.SDK_INT}, AppState: ${appLib.appState}, onBoot: $onBoot"
-                )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    LocalBroadcastManager.getInstance(context.applicationContext)
-                        .sendBroadcast(intent)
-                }
-            }
         }
     }
 }

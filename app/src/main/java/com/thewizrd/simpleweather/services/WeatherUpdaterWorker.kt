@@ -33,7 +33,6 @@ import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.NOT_CHANNEL_ID
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.initChannel
 import com.thewizrd.simpleweather.shortcuts.ShortcutCreatorWorker
-import com.thewizrd.simpleweather.utils.PowerUtils
 import com.thewizrd.simpleweather.weatheralerts.WeatherAlertHandler
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper
 import com.thewizrd.simpleweather.widgets.WidgetUtils
@@ -87,10 +86,8 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
 
             Logger.writeLine(Log.INFO, "%s: One-time work enqueued", TAG)
 
-            if (!PowerUtils.useForegroundService) {
-                // Enqueue periodic task as well
-                enqueueWork(context.applicationContext)
-            }
+            // Enqueue periodic task as well
+            enqueueWork(context.applicationContext)
         }
 
         private fun enqueueWork(context: Context) {
@@ -114,7 +111,7 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                 .build()
 
             RemoteWorkManager.getInstance(context)
-                    .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.REPLACE, updateRequest)
+                .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.UPDATE, updateRequest)
 
             Logger.writeLine(Log.INFO, "%s: Work enqueued", TAG)
         }
@@ -146,7 +143,7 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                 .setContentTitle(context.getString(R.string.not_title_weather_update))
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setOnlyAlertOnce(true)
-                .setNotificationSilent()
+                .setSilent(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .build()
         }

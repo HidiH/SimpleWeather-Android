@@ -41,7 +41,7 @@ internal object ServiceNotificationHelper {
             setSubText(context.getString(R.string.app_name))
             setContentTitle(context.getString(R.string.message_widgetservice_running))
             setOnlyAlertOnce(true)
-            setNotificationSilent()
+            setSilent(true)
             setShowWhen(false)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationUtils.getAppNotificationChannelSettingsActivityIntent(context, NOT_CHANNEL_ID).also {
