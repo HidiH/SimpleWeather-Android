@@ -119,8 +119,11 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
 
             val vmPolicy = VmPolicy.Builder()
                 .detectActivityLeaks()
+                .detectIncorrectContextUse()
                 .detectLeakedClosableObjects()
+                .detectLeakedRegistrationObjects()
                 .detectLeakedSqlLiteObjects()
+                .detectUnsafeIntentLaunch()
                 .penaltyLog()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
