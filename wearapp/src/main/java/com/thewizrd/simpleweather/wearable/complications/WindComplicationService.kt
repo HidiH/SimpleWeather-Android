@@ -143,33 +143,36 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
         val unit = settingsManager.getSpeedUnit()
         val speedVal: Int
         val speedUnit: String
+        val speedUnitShort: String
 
         when (unit) {
             Units.MILES_PER_HOUR -> {
                 speedVal = windMph.roundToInt()
-                speedUnit = getString(R.string.unit_mph)
+                speedUnit = getString(R.string.unit_mph).also { speedUnitShort = it }
             }
             Units.KILOMETERS_PER_HOUR -> {
                 speedVal = windKph.roundToInt()
-                speedUnit = getString(R.string.unit_kph)
+                speedUnit = getString(R.string.unit_kph).also { speedUnitShort = it }
             }
             Units.METERS_PER_SECOND -> {
                 speedVal =
                     ConversionMethods.kphToMsec(windKph).roundToInt()
-                speedUnit = getString(R.string.unit_msec)
+                speedUnit = getString(R.string.unit_msec).also { speedUnitShort = it }
             }
             Units.KNOTS -> {
                 speedVal =
                     ConversionMethods.mphToKts(windMph).roundToInt()
                 speedUnit = getString(R.string.unit_knots)
+                speedUnitShort = "kn"
             }
             else -> {
                 speedVal = windMph.roundToInt()
-                speedUnit = getString(R.string.unit_mph)
+                speedUnit = getString(R.string.unit_mph).also { speedUnitShort = it }
             }
         }
 
-        val windSpeedShort = String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit)
+        val windSpeedShort =
+            String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnitShort)
         val windSpeedLong = String.format(
             LocaleUtils.getLocale(),
             "%d %s, %s",
