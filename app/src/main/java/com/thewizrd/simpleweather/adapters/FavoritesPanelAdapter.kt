@@ -33,7 +33,12 @@ import com.thewizrd.simpleweather.controls.LocationPanelUiModel
 import com.thewizrd.simpleweather.helpers.ItemTouchHelperAdapter
 import com.thewizrd.simpleweather.shortcuts.ShortcutCreatorWorker
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class FavoritesPanelAdapter : LocationPanelAdapter(), ItemTouchHelperAdapter,
     LifecycleEventObserver {
@@ -371,10 +376,10 @@ class FavoritesPanelAdapter : LocationPanelAdapter(), ItemTouchHelperAdapter,
 
         val dataPosition = getDataPosition(position)
 
-        return if (dataPosition >= mDataset.size) {
-            null
-        } else {
+        return if (dataPosition in 0 until mDataset.size) {
             mDataset[dataPosition]
+        } else {
+            null
         }
     }
 

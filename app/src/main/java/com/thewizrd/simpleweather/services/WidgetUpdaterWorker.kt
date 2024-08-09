@@ -125,12 +125,6 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
     }
 
     override suspend fun doWork(): Result {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            runCatching {
-                setForeground(getForegroundInfo())
-            }
-        }
-
         WidgetUpdaterWork.executeWork(applicationContext)
         return Result.success()
     }

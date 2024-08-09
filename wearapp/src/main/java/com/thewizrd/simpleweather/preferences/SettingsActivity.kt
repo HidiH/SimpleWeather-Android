@@ -695,11 +695,15 @@ class SettingsActivity : WearableListenerActivity() {
                     }
                 }
 
-                fragment.setTargetFragment(this, 0)
-                fragment.show(
-                    parentFragmentManager,
-                    KeyEntryPreferenceDialogFragment::class.java.name
-                )
+                runWithView {
+                    runCatching {
+                        fragment.setTargetFragment(this@SettingsFragment, 0)
+                        fragment.show(
+                            parentFragmentManager,
+                            KeyEntryPreferenceDialogFragment::class.java.name
+                        )
+                    }
+                }
             } else {
                 super.onDisplayPreferenceDialog(preference)
             }

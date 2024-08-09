@@ -134,12 +134,6 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
     override suspend fun doWork(): Result {
         Logger.writeLine(Log.INFO, "%s: Work started", TAG)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            runCatching {
-                setForeground(getForegroundInfo())
-            }
-        }
-
         if (!WeatherUpdaterHelper.executeWork(applicationContext))
             return Result.failure()
 

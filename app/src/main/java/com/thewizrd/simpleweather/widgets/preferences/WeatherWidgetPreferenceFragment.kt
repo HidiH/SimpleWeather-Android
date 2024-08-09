@@ -81,7 +81,7 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
             for (location in favorites) {
                 locationPref.insertEntry(
                     locationPref.entryCount - 1,
-                    location.name!!, location.query
+                    location.name ?: "Unknown", location.query
                 )
             }
             if (locationPref.entryCount > MAX_LOCATIONS)

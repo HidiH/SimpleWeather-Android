@@ -872,11 +872,13 @@ class SettingsFragment : BaseSettingsFragment(),
             }
 
             runWithView {
-                fragment.setTargetFragment(this@SettingsFragment, 0)
-                fragment.show(
-                    parentFragmentManager,
-                    KeyEntryPreferenceDialogFragment::class.java.name
-                )
+                runCatching {
+                    fragment.setTargetFragment(this@SettingsFragment, 0)
+                    fragment.show(
+                        parentFragmentManager,
+                        KeyEntryPreferenceDialogFragment::class.java.name
+                    )
+                }
             }
         } else if (preference.key == LocaleUtils.KEY_LANGUAGE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Disable dialog for SDK 33+
@@ -890,11 +892,13 @@ class SettingsFragment : BaseSettingsFragment(),
             val fragment = WeatherAPIPreferenceDialogFragment.newInstance(preference.getKey())
 
             runWithView {
-                fragment.setTargetFragment(this@SettingsFragment, 0)
-                fragment.show(
-                    parentFragmentManager,
-                    WeatherAPIPreferenceDialogFragment::class.java.name
-                )
+                runCatching {
+                    fragment.setTargetFragment(this@SettingsFragment, 0)
+                    fragment.show(
+                        parentFragmentManager,
+                        WeatherAPIPreferenceDialogFragment::class.java.name
+                    )
+                }
             }
         } else {
             super.onDisplayPreferenceDialog(preference)

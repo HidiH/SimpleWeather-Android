@@ -20,7 +20,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.StringUtils.lineSeparator
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.databinding.WeatherDetailPanelBinding
-import java.util.*
+import java.util.Locale
 
 class WeatherDetailItem : LinearLayout {
     companion object {
@@ -162,7 +162,7 @@ class WeatherDetailItem : LinearLayout {
             if (forecastView.conditionLongDesc.isNullOrBlank()) {
                 val paint = binding.forecastCondition.paint
                 val layout = binding.forecastCondition.layout
-                val textWidth = paint.measureText(forecastView.condition)
+                val textWidth = paint.measureText(forecastView.condition ?: "")
 
                 if (layout != null && textWidth > layout.width) {
                     sb.append(forecastView.condition)
@@ -302,7 +302,7 @@ class WeatherDetailItem : LinearLayout {
 
             binding.forecastCondition.post {
                 val paint = binding.forecastCondition.paint
-                val textWidth = paint.measureText(forecastView.condition)
+                val textWidth = paint.measureText(forecastView.condition ?: "")
 
                 if (textWidth > binding.forecastCondition.width) {
                     sb.insert(0, forecastView.condition)

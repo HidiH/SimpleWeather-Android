@@ -91,7 +91,7 @@ fun SettingsFragment.IconsFragment.navigateUnsupportedIconPack() {
     // Navigate to premium page
     if (isPremiumSupported()) {
         rootView.findNavController()
-            .navigate(`SettingsFragment$IconsFragmentDirections`.actionIconsFragmentToPremiumFragment())
+            .safeNavigate(`SettingsFragment$IconsFragmentDirections`.actionIconsFragmentToPremiumFragment())
     } else {
         showSnackbar(
             Snackbar.make(

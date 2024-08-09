@@ -189,7 +189,11 @@ object ImageUtils {
     fun tintBitmap(bitmap: Bitmap, @ColorInt color: Int): Bitmap {
         val paint = Paint()
         paint.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-        val bitmapResult = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+        val bitmapResult = Bitmap.createBitmap(
+            bitmap.width,
+            bitmap.height,
+            bitmap.config ?: Bitmap.Config.ARGB_8888
+        )
         val canvas = Canvas(bitmapResult)
         canvas.drawBitmap(bitmap, 0f, 0f, paint)
         return bitmapResult
