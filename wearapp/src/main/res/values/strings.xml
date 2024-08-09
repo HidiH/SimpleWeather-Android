@@ -44,5 +44,6 @@
     <!-- Weather (High/Low) -->
     <string name="complication_label_weather_hilo">Weather (Hi / Lo)</string>
     <string name="complication_label_weather_currentlocation">Weather (Current Location)</string>
+    <string name="complication_label_weather_currentlocation_feelslike">Weather (Current Location + Feels Like)</string>
 
 </resources>

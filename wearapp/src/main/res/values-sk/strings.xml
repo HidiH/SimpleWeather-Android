@@ -46,4 +46,5 @@ Weather (High/Low) -->
     <string name="complication_label_weather_hilo">"Počasie (V. / N.)"</string>
     <string name="complication_label_weather_currentlocation">"Počasie (súčasná poloha)"</string>
     <string name="tile_label_weather_hrforecast">"Počasie + hodinová predpoveď"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Počasie (súčasná poloha + pocitovo)"</string>
 </resources>
