@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -47,6 +46,7 @@ import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.theme.WearAppTheme
 import com.thewizrd.simpleweather.ui.theme.activityViewModel
 import com.thewizrd.simpleweather.ui.time.ZonedTimeSource
+import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.ForecastPanelsViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import kotlinx.coroutines.flow.map
@@ -84,7 +84,7 @@ fun WeatherNow(
     }.collectAsState(false)
 
     val scrollState = rememberScrollState()
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = rememberFocusRequester()
     val navController = rememberSwipeDismissableNavController()
 
     WearAppTheme {
@@ -131,7 +131,7 @@ fun WeatherNow(
 
             /* WeatherNow Detail Views */
             val currentBackStackEntry by navController.currentBackStackEntryAsState()
-            val swipeFocusRequester = remember { FocusRequester() }
+            val swipeFocusRequester = rememberFocusRequester()
 
             navController.setLifecycleOwner(LocalLifecycleOwner.current)
             navController.setViewModelStore(LocalViewModelStoreOwner.current!!.viewModelStore)

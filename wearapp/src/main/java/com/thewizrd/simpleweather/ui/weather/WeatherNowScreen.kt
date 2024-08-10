@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalLayoutApi::class)
+@file:OptIn(ExperimentalLayoutApi::class, ExperimentalHorologistApi::class)
 
 package com.thewizrd.simpleweather.ui.weather
 
@@ -68,8 +68,9 @@ import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Dialog
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.fillMaxRectangle
-import com.google.android.horologist.compose.navscaffold.scrollableColumn
+import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
 import com.thewizrd.common.controls.WeatherAlertViewModel
@@ -97,6 +98,7 @@ import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
+import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.viewmodels.WeatherNowStateModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
@@ -147,7 +149,7 @@ fun WeatherNowScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .scrollableColumn(focusRequester, scrollState)
+                .rotaryWithScroll(scrollState, focusRequester)
                 .verticalScroll(scrollState)
         ) {
             Column(
@@ -587,14 +589,15 @@ private fun WeatherSummary(
         initialCenterItemIndex = 0,
         initialCenterItemScrollOffset = 0
     )
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = rememberFocusRequester()
 
     Dialog(
         showDialog = showDialog,
         onDismissRequest = { showDialog = false },
     ) {
         Alert(
-            modifier = Modifier.scrollableColumn(focusRequester, dialogScrollState),
+            modifier = Modifier
+                .rotaryWithScroll(dialogScrollState, focusRequester),
             title = {
                 Text(
                     text = "",
@@ -621,7 +624,6 @@ private fun WeatherSummary(
         PositionIndicator(scalingLazyListState = dialogScrollState)
 
         LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
             dialogScrollState.scrollToItem(0, 0)
         }
     }

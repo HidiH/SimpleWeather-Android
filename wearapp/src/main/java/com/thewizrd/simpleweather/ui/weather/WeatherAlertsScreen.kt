@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalHorologistApi::class)
+
 package com.thewizrd.simpleweather.ui.weather
 
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +16,8 @@ import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.lazy.items
-import com.google.android.horologist.compose.navscaffold.scrollableColumn
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
 import com.thewizrd.simpleweather.ui.components.WeatherAlertPanel
@@ -31,7 +34,7 @@ fun WeatherAlertsScreen(
     ScalingLazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .scrollableColumn(focusRequester, scrollStateViewModel.scrollState),
+            .rotaryWithScroll(scrollStateViewModel.scrollState, focusRequester),
         state = scrollStateViewModel.scrollState,
         anchorType = if (alerts.size > 1) ScalingLazyListAnchorType.ItemStart else ScalingLazyListAnchorType.ItemCenter,
         autoCentering = AutoCenteringParams(itemIndex = if (alerts.size > 1) 1 else 0)
@@ -41,7 +44,7 @@ fun WeatherAlertsScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
             focusRequester.requestFocus()
         }

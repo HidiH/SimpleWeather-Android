@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalHorologistApi::class, ExperimentalWearFoundationApi::class)
+
 package com.thewizrd.simpleweather.ui.components
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,20 +22,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Dialog
 import androidx.wear.compose.ui.tooling.preview.WearPreviewFontScales
-import com.google.android.horologist.compose.navscaffold.scrollableColumn
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.shared_resources.utils.getColorFromAlertSeverity
 import com.thewizrd.shared_resources.utils.getDrawableFromAlertType
@@ -100,10 +105,9 @@ private fun WeatherAlertPanel(
         },
         scrollState = dialogScrollState
     ) {
-        val focusRequester = remember { FocusRequester() }
-
+        val focusRequester = rememberActiveFocusRequester()
         Alert(
-            modifier = Modifier.scrollableColumn(focusRequester, dialogScrollState),
+            modifier = Modifier.rotaryWithScroll(dialogScrollState, focusRequester),
             scrollState = dialogScrollState,
             title = {
                 Text(
@@ -137,6 +141,10 @@ private fun WeatherAlertPanel(
 
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
+            dialogScrollState.scrollToItem(0, 0)
+            if (dialogScrollState.canScrollBackward) {
+                dialogScrollState.scrollBy(dialogScrollState.centerItemScrollOffset.toFloat())
+            }
         }
     }
 }
