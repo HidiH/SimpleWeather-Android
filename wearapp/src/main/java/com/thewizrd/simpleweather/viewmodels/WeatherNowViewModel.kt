@@ -223,6 +223,7 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
                 val result = weatherDataLoader.loadWeatherResult(
                     WeatherRequest.Builder()
                         .forceRefresh(forceRefresh)
+                        .loadAlerts()
                         .build()
                 )
 
