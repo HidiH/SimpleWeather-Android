@@ -10,20 +10,20 @@ import androidx.databinding.DataBindingUtil
 import com.thewizrd.shared_resources.helpers.RecyclerOnClickListenerInterface
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
-import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphDataSet
+import com.thewizrd.simpleweather.controls.graphs.ForecastRangeBarGraphDataSet
 import com.thewizrd.simpleweather.databinding.LayoutRangebarBinding
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class SimpleRangeBarGraphView @JvmOverloads constructor(
+class ForecastRangeBarGraphView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : LinearLayout(context, attrs) {
     private var maxItemCount: Int = 7
     private var scale: Float = 1f
     private var isMeasured: Boolean = false
 
-    private var dataSet: RangeBarGraphDataSet? = null
+    private var dataSet: ForecastRangeBarGraphDataSet? = null
 
     // Event listeners
     private var onClickListener: RecyclerOnClickListenerInterface? = null
@@ -68,7 +68,7 @@ class SimpleRangeBarGraphView @JvmOverloads constructor(
         isMeasured = false
     }
 
-    fun setData(dataSet: RangeBarGraphDataSet?) {
+    fun setData(dataSet: ForecastRangeBarGraphDataSet?) {
         this.dataSet = dataSet
 
         if (dataSet != null && !dataSet.isEmpty) {
