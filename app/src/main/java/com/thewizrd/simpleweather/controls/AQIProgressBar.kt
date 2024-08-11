@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
@@ -30,7 +29,7 @@ class AQIProgressBar @JvmOverloads constructor(
     private var bottomTextHeight: Float = 0f
     private val thumbSize: Int
 
-    private val thumbDrawable: Drawable
+    private val thumbDrawable: MaterialShapeDrawable
     private val trackPaint: Paint
     private val bottomTextPaint: Paint
     private var bottomTextDescent: Int = 0
@@ -41,13 +40,15 @@ class AQIProgressBar @JvmOverloads constructor(
     private val backgroundGridWidth = context.dpToPx(45f)
 
     private var BOTTOM_TEXT_COLOR = Colors.WHITE
+    private var THUMB_COLOR = Colors.WHITE
 
     init {
         this.currentConfig = Configuration(context.resources.configuration)
 
         thumbDrawable = MaterialShapeDrawable().apply {
             shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
-            fillColor = ColorStateList.valueOf(Colors.WHITE)
+            fillColor = ColorStateList.valueOf(THUMB_COLOR)
+            elevation = context.resources.getDimension(R.dimen.m3_slider_thumb_elevation)
 
             thumbSize =
                 context.resources.getDimensionPixelSize(R.dimen.mtrl_slider_thumb_radius) * 3 / 4
@@ -89,6 +90,14 @@ class AQIProgressBar @JvmOverloads constructor(
         if (BOTTOM_TEXT_COLOR != color) {
             BOTTOM_TEXT_COLOR = color
             bottomTextPaint.color = BOTTOM_TEXT_COLOR
+            invalidate()
+        }
+    }
+
+    private fun setThumbColor(@ColorInt color: Int) {
+        if (THUMB_COLOR != color) {
+            THUMB_COLOR = color
+            thumbDrawable.fillColor = ColorStateList.valueOf(THUMB_COLOR)
             invalidate()
         }
     }

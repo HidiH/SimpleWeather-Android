@@ -45,6 +45,7 @@
             android:gravity="center_vertical"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
+            android:paddingVertical="12dp"
             app:animate="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/beaufort_description"
@@ -52,6 +53,7 @@
             app:layout_constraintBottom_toTopOf="@id/beaufort_progressBar"
             app:tint="@color/beaufort_color"
             app:weatherIcon="@{viewModel.weather.beaufort.beaufort.icon}"
+            tools:weatherIcon="&#xf0c2;"
             tools:src="@drawable/wi_wind_beaufort_11" />
 
         <androidx.appcompat.widget.AppCompatTextView

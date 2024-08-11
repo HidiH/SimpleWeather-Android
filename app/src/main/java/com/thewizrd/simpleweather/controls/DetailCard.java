@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.google.android.material.shape.MaterialShapeDrawable;
@@ -81,7 +82,7 @@ public class DetailCard extends LinearLayout {
                         .build());
         bgDrawable.initializeElevationOverlay(context);
         bgDrawable.setElevation(ContextUtils.dpToPx(context, 1f));
-        bgDrawable.setShadowCompatibilityMode(MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS);
+        bgDrawable.setStrokeWidth(ContextUtils.dpToPx(context, 1f));
 
         final int size = context.getResources().getDimensionPixelSize(R.dimen.detail_card_size);
         this.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
@@ -113,6 +114,7 @@ public class DetailCard extends LinearLayout {
     private void updateColors() {
         setBackgroundColor(ContextUtils.getAttrColor(getContext(), R.attr.colorSurfaceContainer));
         ImageViewCompat.setImageTintList(binding.detailIcon, ColorStateList.valueOf(ContextUtils.getAttrColor(getContext(), R.attr.colorPrimary)));
+        bgDrawable.setStrokeColor(ContextCompat.getColorStateList(getContext(), R.color.m3_card_stroke_color));
     }
 
     @Override

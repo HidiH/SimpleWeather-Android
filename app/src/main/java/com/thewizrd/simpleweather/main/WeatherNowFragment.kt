@@ -42,6 +42,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.bumptech.glide.Glide
@@ -60,6 +61,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.transition.MaterialFadeThrough
 import com.thewizrd.common.controls.IconControl
 import com.thewizrd.common.controls.WeatherAlertsViewModel
+import com.thewizrd.common.helpers.ColorsUtils
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.location.LocationResult
@@ -124,7 +126,9 @@ import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import com.thewizrd.simpleweather.weatheralerts.WeatherAlertHandler
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.Duration
@@ -163,6 +167,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
     private var mBannerMgr: BannerManager? = null
 
     private lateinit var mGlide: RequestManager
+    private var paletteJob: Job? = null
 
     // View Models
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
@@ -1188,6 +1193,32 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                             ): Boolean {
                                 // update image loading state
                                 wNowViewModel.onImageLoaded()
+                                paletteJob?.cancel()
+                                paletteJob = runWithView {
+                                    withContext(Dispatchers.IO) {
+                                        runCatching {
+                                            val palette = Palette.from(resource).generate()
+
+                                            if (isActive) {
+                                                if (ColorsUtils.isSuperLight(palette)) {
+                                                    conditionPanelBinding.bgAttribution.setTextColor(
+                                                        Colors.BLACK
+                                                    )
+                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
+                                                        Colors.BLACK
+                                                    )
+                                                } else {
+                                                    conditionPanelBinding.bgAttribution.setTextColor(
+                                                        Colors.WHITESMOKE
+                                                    )
+                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
+                                                        Colors.WHITESMOKE
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                                 return false
                             }
                         })

@@ -133,7 +133,7 @@
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
             android:paddingBottom="12dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             app:attribution="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.attribution : null}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

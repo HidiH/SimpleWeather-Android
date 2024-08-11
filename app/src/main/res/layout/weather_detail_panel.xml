@@ -110,7 +110,7 @@
                     android:visibility="gone"
                     app:drawableHeight="20dp"
                     app:drawableWidth="20dp"
-                    app:weatherIconStart="@{WeatherIcons.RAINDROP}"
+                    app:weatherIconStart="@{WeatherIcons.UMBRELLA}"
                     app:drawableTint="?attr/colorSecondary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/forecast_extra_clouds"
