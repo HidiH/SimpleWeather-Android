@@ -85,7 +85,7 @@ class ForecastsNowViewModel(app: Application) : AndroidViewModel(app) {
                     val hrInterval = weatherModule.weatherManager.getHourlyForecastInterval()
                     weatherDAO.getLiveHourlyForecastsByQueryOrderByDateByLimitFilterByDate(
                         location.query,
-                        12,
+                        24,
                         ZonedDateTime.now(location.tzOffset).minusHours((hrInterval * 0.5).toLong())
                             .truncatedTo(ChronoUnit.HOURS)
                     )

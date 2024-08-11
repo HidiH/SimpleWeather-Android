@@ -49,7 +49,7 @@ class ChartsViewModel(app: Application) : AndroidViewModel(app) {
                 currentHrForecastsData = withContext(Dispatchers.IO) {
                     weatherDAO.getLiveHourlyForecastsByQueryOrderByDateByLimitFilterByDate(
                         location.query,
-                        12,
+                        24,
                         ZonedDateTime.now(location.tzOffset).truncatedTo(ChronoUnit.HOURS)
                     )
                 }
