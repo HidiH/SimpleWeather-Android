@@ -47,7 +47,7 @@
 
         </LinearLayout>
 
-        <com.thewizrd.simpleweather.controls.graphs.RangeBarGraphPanel
+        <com.thewizrd.simpleweather.controls.SimpleRangeBarGraphView
             android:id="@+id/rangebar_graph_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

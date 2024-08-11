@@ -5,7 +5,14 @@ import com.thewizrd.shared_resources.weatherdata.model.Forecast
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
 import com.thewizrd.simpleweather.R
-import com.thewizrd.simpleweather.controls.graphs.*
+import com.thewizrd.simpleweather.controls.SimpleRangeBarGraphView
+import com.thewizrd.simpleweather.controls.graphs.BarGraphData
+import com.thewizrd.simpleweather.controls.graphs.BarGraphPanel
+import com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
+import com.thewizrd.simpleweather.controls.graphs.GraphData
+import com.thewizrd.simpleweather.controls.graphs.LineViewData
+import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphData
+import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphPanel
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
 import com.thewizrd.simpleweather.controls.viewmodels.RangeBarGraphMapper.createGraphData
 
@@ -65,6 +72,12 @@ object GraphBindingAdapter {
     fun updateForecastGraph(view: RangeBarGraphPanel, forecastData: List<Forecast>?) {
         val maxForecasts = view.context.resources.getInteger(R.integer.weathernow_max_forecasts)
         view.setGraphData(createGraphData(view.context, forecastData?.take(maxForecasts)))
+    }
+
+    @JvmStatic
+    @BindingAdapter("forecastData")
+    fun updateForecastGraph(view: SimpleRangeBarGraphView, forecastData: List<Forecast>?) {
+        view.setData(createGraphData(view.context, forecastData)?.getDataSet())
     }
 
     @JvmStatic

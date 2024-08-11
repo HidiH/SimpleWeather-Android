@@ -3,6 +3,7 @@ package com.thewizrd.simpleweather.controls.viewmodels
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.icons.AVDIconsProviderInterface
 import com.thewizrd.shared_resources.sharedDeps
@@ -10,7 +11,6 @@ import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.weatherdata.model.Forecast
-import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphData
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphDataSet
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphEntry
@@ -45,7 +45,7 @@ object RangeBarGraphMapper {
         for (forecast in forecastData) {
             val entry = RangeBarGraphEntry()
             val date =
-                forecast.date.format(DateTimeUtils.ofPatternForUserLocale(context.getString(R.string.forecast_date_format)))
+                forecast.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
 
             entry.xLabel = date
             entry.xIcon = createIconDrawable(context, forecast.icon)
