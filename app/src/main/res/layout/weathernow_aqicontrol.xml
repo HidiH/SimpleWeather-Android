@@ -24,13 +24,16 @@
             android:id="@+id/aqi_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="20dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+            android:paddingVertical="@dimen/section_label_vertical_padding"
             android:text="@string/label_airquality"
             android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
             app:layout_constraintEnd_toStartOf="@id/chevron_right"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHeight_min="48dp" />
 
         <ImageView
             android:id="@+id/chevron_right"

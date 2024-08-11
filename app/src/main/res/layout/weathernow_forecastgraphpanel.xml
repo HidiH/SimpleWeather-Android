@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingVertical="8dp"
+            android:gravity="center_vertical"
             app:showIfTrue="@{FeatureSettings.forecastEnabled &amp;&amp; forecastsView.forecastData != null}">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -33,7 +34,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="12dp"
+                android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+                android:paddingVertical="@dimen/section_label_vertical_padding"
                 android:text="@string/label_forecast"
                 android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel" />
 
@@ -51,7 +53,7 @@
             android:id="@+id/rangebar_graph_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="4dp"
             app:forecastData="@{forecastsView.forecastData}"
             app:showIfTrue="@{FeatureSettings.forecastEnabled &amp;&amp; forecastsView.forecastData != null}"
             tools:layout_height="@dimen/forecast_panel_height" />

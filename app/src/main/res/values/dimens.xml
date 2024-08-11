@@ -24,6 +24,9 @@
     <!-- WeatherNow -->
     <dimen name="label_location_size">18sp</dimen>
     <dimen name="label_updatetime_size">12sp</dimen>
+    <dimen name="section_label_horizontal_padding">16dp</dimen>
+    <dimen name="section_label_vertical_padding">16dp</dimen>
+    <dimen name="section_label_padding">16dp</dimen>
     <dimen name="forecast_panel_height">225dp</dimen>
     <dimen name="bargraph_panel_height">150dp</dimen>
     <dimen name="detail_card_size">100dp</dimen>

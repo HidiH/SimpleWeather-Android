@@ -25,8 +25,10 @@
             android:id="@+id/radar_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="20dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+            android:paddingVertical="@dimen/section_label_vertical_padding"
             android:text="@string/label_radar"
             android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
             app:layout_constraintBottom_toTopOf="@id/radar_webview_container"
@@ -34,7 +36,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintHeight_min="48dp" />
 
         <ImageView
             android:id="@+id/chevron_right"
