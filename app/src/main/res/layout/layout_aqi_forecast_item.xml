@@ -71,7 +71,7 @@
             app:layout_constraintTop_toBottomOf="@id/aqi_level"
             tools:text="@string/aqi_desc_300" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
+        <com.thewizrd.simpleweather.controls.AQIProgressBar
             android:id="@+id/aqi_progressBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -80,17 +80,13 @@
             android:layout_marginEnd="12dp"
             android:layout_marginRight="12dp"
             android:layout_marginBottom="12dp"
-            android:max="@{viewModel != null ? viewModel.progressMax : 1}"
             android:maxHeight="4dp"
             android:minHeight="4dp"
             android:progress="@{viewModel.progress}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/aqi_description"
-            app:progressColor="@{viewModel.progressColor}"
-            app:trackCornerRadius="@dimen/shape_corner_radius"
-            tools:max="12"
-            tools:progress="11" />
+            tools:progress="300" />
 
         <androidx.constraintlayout.helper.widget.Flow
             android:id="@+id/aqi_components_flow"
