@@ -214,18 +214,30 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
             if (settingsManager.getDataSync() == WearableDataSync.OFF) {
                 if (settingsManager.useFollowGPS()) {
                     val result = updateLocation()
+
                     if (result is LocationResult.Changed) {
                         settingsManager.updateLocation(result.data)
                         weatherDataLoader.updateLocation(result.data)
+                    } else if (result is LocationResult.NotChanged) {
+                        result.data?.takeIf { it.isValid }?.let { data ->
+                            if (!weatherDataLoader.isLocationValid()) {
+                                weatherDataLoader.updateLocation(data)
+                                viewModelState.update { it.copy(locationData = data) }
+                            }
+                        }
                     }
                 }
 
-                val result = weatherDataLoader.loadWeatherResult(
-                    WeatherRequest.Builder()
-                        .forceRefresh(forceRefresh)
-                        .loadAlerts()
-                        .build()
-                )
+                val result = if (weatherDataLoader.isLocationValid()) {
+                    weatherDataLoader.loadWeatherResult(
+                        WeatherRequest.Builder()
+                            .forceRefresh(forceRefresh)
+                            .loadAlerts()
+                            .build()
+                    )
+                } else {
+                    WeatherResult.NoWeather()
+                }
 
                 updateWeatherState(result)
             } else {

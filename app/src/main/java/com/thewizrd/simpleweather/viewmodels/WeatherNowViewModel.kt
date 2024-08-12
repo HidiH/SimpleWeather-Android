@@ -84,7 +84,8 @@ private data class WeatherNowViewModelState(
     val noLocationAvailable: Boolean = false,
     val showDisconnectedView: Boolean = false,
     val scrollViewPosition: Int = 0,
-    val isImageLoading: Boolean = false
+    val isImageLoading: Boolean = false,
+    val isInitialized: Boolean = false
 ) {
     fun toWeatherNowState(): WeatherNowState {
         return if (weather?.isValid == true) {
@@ -159,6 +160,14 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
         viewModelState.value.errorMessages
     )
 
+    val isInitialized = viewModelState.map {
+        it.isInitialized
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        viewModelState.value.isInitialized
+    )
+
     private fun getLocationData(): LocationData? {
         return viewModelState.value.locationData
     }
@@ -185,6 +194,10 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
             }
 
             updateLocation(locData)
+
+            viewModelState.update {
+                it.copy(isInitialized = true)
+            }
         }
     }
 
@@ -198,19 +211,31 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
 
             if (settingsManager.useFollowGPS()) {
                 val result = updateLocation()
+
                 if (result is LocationResult.Changed) {
                     settingsManager.updateLocation(result.data)
                     weatherDataLoader.updateLocation(result.data)
                     locationChanged = true
+                } else if (result is LocationResult.NotChanged) {
+                    result.data?.takeIf { it.isValid }?.let { data ->
+                        if (!weatherDataLoader.isLocationValid()) {
+                            weatherDataLoader.updateLocation(data)
+                            viewModelState.update { it.copy(locationData = data) }
+                        }
+                    }
                 }
             }
 
-            val result = weatherDataLoader.loadWeatherResult(
-                WeatherRequest.Builder()
-                    .forceRefresh(forceRefresh)
-                    .loadAlerts()
-                    .build()
-            )
+            val result = if (weatherDataLoader.isLocationValid()) {
+                weatherDataLoader.loadWeatherResult(
+                    WeatherRequest.Builder()
+                        .forceRefresh(forceRefresh)
+                        .loadAlerts()
+                        .build()
+                )
+            } else {
+                WeatherResult.NoWeather()
+            }
 
             if (result is WeatherResult.Success && !result.isSavedData) {
                 if (locationChanged) {

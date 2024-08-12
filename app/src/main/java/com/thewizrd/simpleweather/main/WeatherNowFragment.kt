@@ -891,7 +891,9 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                initializeState()
+                if (wNowViewModel.isInitialized.value) {
+                    initializeState()
+                }
             }
         }
 
