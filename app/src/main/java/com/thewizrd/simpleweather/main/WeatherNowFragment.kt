@@ -44,6 +44,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -85,11 +86,13 @@ import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase.MoonPhaseType
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.TwoPaneNavGraphDirections
 import com.thewizrd.simpleweather.adapters.DetailsItemGridAdapter
 import com.thewizrd.simpleweather.adapters.HourlyForecastItemAdapter
+import com.thewizrd.simpleweather.adapters.MoonPhaseAdapter
 import com.thewizrd.simpleweather.banner.Banner
 import com.thewizrd.simpleweather.banner.BannerManager
 import com.thewizrd.simpleweather.banner.BannerManagerInterface
@@ -748,6 +751,28 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
             moonphaseControlBinding!!.viewModel = wNowViewModel
             moonphaseControlBinding!!.lifecycleOwner = viewLifecycleOwner
+
+            moonphaseControlBinding!!.moonFlow.also { recyclerView ->
+                val adapter = MoonPhaseAdapter()
+                val layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                val phaseIconRadi = recyclerView.context.dpToPx(30f).toInt()
+
+                // Disable all touch events
+                recyclerView.setOnTouchListener { _, _ -> true }
+
+                recyclerView.viewTreeObserver.addOnPreDrawListener {
+                    layoutManager.scrollToPositionWithOffset(
+                        adapter.selectedMoonPhaseType.ordinal + MoonPhaseType.entries.size,
+                        recyclerView.measuredWidth / 2 - phaseIconRadi
+                    )
+
+                    true
+                }
+
+                recyclerView.adapter = adapter
+                recyclerView.layoutManager = layoutManager
+            }
 
             binding.listLayout.addView(moonphaseControlBinding!!.root)
             moonphaseControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
