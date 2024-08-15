@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -149,6 +150,9 @@ class WeatherListFragment : ToolbarFragment() {
         // use a linear layout manager
         binding.recyclerView.layoutManager =
             LinearLayoutManager(requireContext()).also { layoutManager = it }
+        binding.recyclerView.itemAnimator = DefaultItemAnimator().apply {
+            supportsChangeAnimations = true
+        }
 
         return root
     }

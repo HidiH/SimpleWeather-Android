@@ -1,28 +1,28 @@
 package com.thewizrd.simpleweather.controls
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
-import android.text.style.TabStopSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.FrameLayout
+import androidx.core.view.isVisible
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.transition.ChangeBounds
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.thewizrd.common.controls.BaseForecastItemViewModel
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
-import com.thewizrd.common.controls.WeatherDetailsType
-import com.thewizrd.shared_resources.sharedDeps
-import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
-import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
-import com.thewizrd.shared_resources.utils.StringUtils.lineSeparator
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.adapters.DetailsItemGridAdapter
 import com.thewizrd.simpleweather.databinding.WeatherDetailPanelBinding
 import java.util.Locale
 
-class WeatherDetailItem : LinearLayout {
+class WeatherDetailItem : FrameLayout {
     companion object {
         /**
          * State indicating the group is expanded.
@@ -34,6 +34,14 @@ class WeatherDetailItem : LinearLayout {
 
     private var expandable = true
     private var expanded = false
+    private var shouldShowBodyText = false
+
+    private var onToggleListener: OnClickListener? = null
+    fun setOnToggleListener(listener: OnClickListener?) {
+        onToggleListener = listener
+    }
+
+    private lateinit var transitionSet: TransitionSet
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -45,18 +53,50 @@ class WeatherDetailItem : LinearLayout {
         initialize(context)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initialize(context: Context) {
         val inflater = LayoutInflater.from(context)
 
         binding = WeatherDetailPanelBinding.inflate(inflater, this, true)
 
-        this.orientation = VERTICAL
         this.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
         binding.headerCard.setOnClickListener { toggle() }
+
+        clipChildren = false
+        clipToPadding = false
+
+        binding.detailsContainer.adapter =
+            DetailsItemGridAdapter(DetailsItemGridAdapter.ItemType.FORECAST)
+
+        // Disable touch events on container
+        // View does not scroll
+        binding.detailsContainer.isFocusable = false
+        binding.detailsContainer.isFocusableInTouchMode = false
+        binding.detailsContainer.setOnTouchListener { _, e ->
+            if (e.action == MotionEvent.ACTION_UP) {
+                toggle()
+            }
+            true
+        }
+
+        transitionSet = TransitionSet().apply {
+            duration = 250
+
+            addTransition(
+                ChangeBounds().apply {
+                    interpolator = AccelerateDecelerateInterpolator()
+                }
+            )
+            addTransition(
+                Fade().apply {
+                    interpolator = FastOutSlowInInterpolator()
+                }
+            )
+        }
     }
 
     fun isExpandable(): Boolean {
@@ -79,9 +119,16 @@ class WeatherDetailItem : LinearLayout {
 
     fun toggle() {
         if (isExpandable() && isEnabled) {
+            val entering = !expanded
+
+            TransitionManager.beginDelayedTransition(this, transitionSet)
+
             expanded = !expanded
-            binding.bodyCard.visibility = if (expanded) VISIBLE else GONE
+            binding.bodyTextview.isVisible = entering && shouldShowBodyText
+            binding.detailsContainer.isVisible = entering
             refreshDrawableState()
+
+            onToggleListener?.onClick(this)
         }
     }
 
@@ -100,132 +147,32 @@ class WeatherDetailItem : LinearLayout {
             else -> {
                 binding.forecastDate.setText(R.string.placeholder_text)
                 binding.forecastIcon.setImageResource(R.drawable.wi_na)
+                binding.forecastHilo.text = "• / •"
                 binding.forecastCondition.setText(R.string.placeholder_text)
-                clearForecastExtras()
                 setExpandable(false)
                 binding.bodyTextview.text = ""
             }
         }
 
+        model?.extras?.values?.let {
+            (binding.detailsContainer.adapter as? DetailsItemGridAdapter)?.updateItems(it)
+        }
+
         binding.executePendingBindings()
-
-        val wim = sharedDeps.weatherIconsManager
-        if (binding.forecastExtraPop.iconProvider != null) {
-            binding.forecastExtraPop.showAsMonochrome =
-                wim.shouldUseMonochrome(binding.forecastExtraPop.iconProvider)
-        } else {
-            binding.forecastExtraPop.showAsMonochrome = wim.shouldUseMonochrome()
-        }
-        if (binding.forecastExtraClouds.iconProvider != null) {
-            binding.forecastExtraClouds.showAsMonochrome =
-                wim.shouldUseMonochrome(binding.forecastExtraClouds.iconProvider)
-        } else {
-            binding.forecastExtraClouds.showAsMonochrome = wim.shouldUseMonochrome()
-        }
-        if (binding.forecastExtraWindspeed.iconProvider != null) {
-            binding.forecastExtraWindspeed.showAsMonochrome =
-                wim.shouldUseMonochrome(binding.forecastExtraWindspeed.iconProvider)
-        } else {
-            binding.forecastExtraWindspeed.showAsMonochrome = wim.shouldUseMonochrome()
-        }
-    }
-
-    private fun clearForecastExtras() {
-        binding.forecastExtraPop.visibility = GONE
-        binding.forecastExtraPop.text = ""
-        binding.forecastExtraClouds.visibility = GONE
-        binding.forecastExtraClouds.text = ""
-        binding.forecastExtraWindspeed.visibility = GONE
-        binding.forecastExtraWindspeed.text = ""
     }
 
     private fun bindModel(forecastView: ForecastItemViewModel) {
         binding.forecastDate.text = forecastView.date
         binding.forecastIcon.weatherIcon = forecastView.weatherIcon
-        binding.forecastCondition.text = String.format(
-            Locale.ROOT, "%s / %s - %s",
-            forecastView.hiTemp, forecastView.loTemp, forecastView.condition
+        binding.forecastHilo.text = String.format(
+            Locale.ROOT, "%s / %s", forecastView.hiTemp, forecastView.loTemp
         )
-        clearForecastExtras()
+        binding.forecastCondition.text = forecastView.condition
 
-        val lineSeparator = lineSeparator()
+        binding.bodyTextview.text = forecastView.conditionLongDesc
+        shouldShowBodyText = !forecastView.conditionLongDesc.isNullOrBlank()
 
-        val sb = SpannableStringBuilder()
-
-        if (!forecastView.conditionLongDesc.isNullOrBlank()) {
-            sb.append(forecastView.conditionLongDesc)
-                .append(lineSeparator)
-                .append(lineSeparator)
-        }
-
-        if (!forecastView.extras.isNullOrEmpty()) {
-            if (forecastView.conditionLongDesc.isNullOrBlank()) {
-                val paint = binding.forecastCondition.paint
-                val layout = binding.forecastCondition.layout
-                val textWidth = paint.measureText(forecastView.condition ?: "")
-
-                if (layout != null && textWidth > layout.width) {
-                    sb.append(forecastView.condition)
-                        .append(lineSeparator())
-                        .append(lineSeparator())
-                }
-            }
-
-            forecastView.extras.values.forEachIndexed { i, detailItem ->
-                if (detailItem.detailsType == WeatherDetailsType.POPCHANCE) {
-                    binding.forecastExtraPop.text = detailItem.value
-                    binding.forecastExtraPop.visibility = VISIBLE
-                    return@forEachIndexed
-                } else if (detailItem.detailsType == WeatherDetailsType.POPCLOUDINESS) {
-                    binding.forecastExtraClouds.text = detailItem.value
-                    binding.forecastExtraClouds.visibility = VISIBLE
-                    return@forEachIndexed
-                } else if (detailItem.detailsType == WeatherDetailsType.WINDSPEED) {
-                    binding.forecastExtraWindspeed.text = detailItem.value
-                    binding.forecastExtraWindspeed.visibility = VISIBLE
-                    return@forEachIndexed
-                }
-
-                var start = sb.length
-                sb.append(detailItem.label)
-                sb.append("\t")
-                val colorSecondary = context.getAttrColor(android.R.attr.textColorSecondary)
-                sb.setSpan(
-                    ForegroundColorSpan(colorSecondary),
-                    start,
-                    sb.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                sb.setSpan(
-                    TabStopSpan.Standard(context.dpToPx(150f).toInt()),
-                    start,
-                    sb.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-
-                start = sb.length
-                sb.append(detailItem.value)
-                if (i < forecastView.extras.size - 1) sb.append(lineSeparator)
-                val colorPrimary = context.getAttrColor(android.R.attr.textColorPrimary)
-                sb.setSpan(
-                    ForegroundColorSpan(colorPrimary),
-                    start,
-                    sb.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-
-            if (sb.length >= lineSeparator.length) {
-                val start = sb.length - lineSeparator.length
-                val lastSeq = sb.subSequence(start, sb.length).toString()
-                if (lastSeq == lineSeparator) {
-                    sb.replace(start, sb.length, "")
-                }
-            }
-        }
-
-        if (sb.isNotEmpty()) {
-            binding.bodyTextview.setText(sb, TextView.BufferType.SPANNABLE)
+        if (shouldShowBodyText || !forecastView.extras.isNullOrEmpty()) {
             setExpandable(true)
         } else {
             setExpandable(false)
@@ -235,89 +182,25 @@ class WeatherDetailItem : LinearLayout {
     private fun bindModel(forecastView: HourlyForecastItemViewModel) {
         binding.forecastDate.text = forecastView.date
         binding.forecastIcon.weatherIcon = forecastView.weatherIcon
-        binding.forecastCondition.text = String.format(
-            Locale.ROOT, "%s - %s",
-            forecastView.hiTemp, forecastView.condition
-        )
-        clearForecastExtras()
+        binding.forecastHilo.text = forecastView.hiTemp
+        binding.forecastCondition.text = forecastView.condition
+        shouldShowBodyText = false
 
-        val lineSeparator = lineSeparator()
+        binding.forecastCondition.post {
+            val paint = binding.forecastCondition.paint
+            val textWidth = paint.measureText(forecastView.condition ?: "")
 
-        if (!forecastView.extras.isNullOrEmpty()) {
-            setExpandable(true)
-
-            val sb = SpannableStringBuilder()
-
-            forecastView.extras.values.forEachIndexed { i, detailItem ->
-                if (detailItem.detailsType == WeatherDetailsType.POPCHANCE) {
-                    binding.forecastExtraPop.text = detailItem.value
-                    binding.forecastExtraPop.visibility = VISIBLE
-                    return@forEachIndexed
-                } else if (detailItem.detailsType == WeatherDetailsType.POPCLOUDINESS) {
-                    binding.forecastExtraClouds.text = detailItem.value
-                    binding.forecastExtraClouds.visibility = VISIBLE
-                    return@forEachIndexed
-                } else if (detailItem.detailsType == WeatherDetailsType.WINDSPEED) {
-                    binding.forecastExtraWindspeed.text = detailItem.value
-                    binding.forecastExtraWindspeed.visibility = VISIBLE
-                    return@forEachIndexed
-                }
-
-                var start = sb.length
-                sb.append(detailItem.label)
-                sb.append("\t")
-                val colorSecondary = context.getAttrColor(android.R.attr.textColorSecondary)
-                sb.setSpan(
-                    ForegroundColorSpan(colorSecondary),
-                    start,
-                    sb.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                sb.setSpan(
-                    TabStopSpan.Standard(context.dpToPx(150f).toInt()),
-                    start,
-                    sb.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-
-                start = sb.length
-                sb.append(detailItem.value)
-                if (i < forecastView.extras.size - 1) sb.append(lineSeparator)
-                val colorPrimary = context.getAttrColor(android.R.attr.textColorPrimary)
-                sb.setSpan(
-                    ForegroundColorSpan(colorPrimary),
-                    start,
-                    sb.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+            if (textWidth > binding.forecastCondition.width) {
+                binding.bodyTextview.text = forecastView.condition
+                shouldShowBodyText = true
+            } else if (forecastView.extras.isEmpty()) {
+                setExpandable(false)
             }
 
-            if (sb.length >= lineSeparator.length) {
-                val start = sb.length - lineSeparator.length
-                val lastSeq = sb.subSequence(start, sb.length).toString()
-                if (lastSeq == lineSeparator) {
-                    sb.replace(start, sb.length, "")
-                }
-            }
-
-            binding.forecastCondition.post {
-                val paint = binding.forecastCondition.paint
-                val textWidth = paint.measureText(forecastView.condition ?: "")
-
-                if (textWidth > binding.forecastCondition.width) {
-                    sb.insert(0, forecastView.condition)
-                        .append(lineSeparator())
-                        .append(lineSeparator())
-                } else if (sb.isEmpty()) {
-                    setExpandable(false)
-                    return@post
-                }
-
-                binding.bodyTextview.setText(sb, TextView.BufferType.SPANNABLE)
-            }
-        } else {
-            setExpandable(false)
+            binding.bodyTextview.isVisible = !binding.bodyTextview.text.isNullOrBlank()
         }
+
+        setExpandable(!forecastView.extras.isNullOrEmpty())
     }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray? {

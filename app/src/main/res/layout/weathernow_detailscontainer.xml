@@ -47,6 +47,8 @@
             android:stretchMode="columnWidth"
             android:horizontalSpacing="4dp"
             android:verticalSpacing="4dp"
+            android:scrollbars="none"
+            android:scrollIndicators="none"
             app:showIfTrue="@{FeatureSettings.detailsEnabled}"
             app:showIfNotEmpty="@{viewModel.weather.weatherDetailsMap}"
             app:details_data="@{viewModel.weather.weatherDetailsMap}"

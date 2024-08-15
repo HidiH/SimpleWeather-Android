@@ -141,6 +141,16 @@ public class DetailCard extends LinearLayout {
         bgDrawable.setFillColor(ColorStateList.valueOf(color));
     }
 
+    @Override
+    public float getElevation() {
+        return bgDrawable.getElevation();
+    }
+
+    @Override
+    public void setElevation(float elevation) {
+        bgDrawable.setElevation(elevation);
+    }
+
     public void setStrokeColor(@ColorInt int color) {
         bgDrawable.setStrokeColor(ColorStateList.valueOf(color));
     }
