@@ -14,6 +14,8 @@ class MoonPhaseAdapter : RecyclerView.Adapter<MoonPhaseAdapter.MoonPhaseViewHold
     private val dataset = MoonPhaseType.entries.toList()
     var selectedMoonPhaseType = MoonPhaseType.FULL_MOON
         private set
+    private val selectedIndex
+        get() = selectedMoonPhaseType.ordinal + MoonPhaseType.entries.size
 
     private val selectPayload: Any = "SELECT_PAYLOAD"
 
@@ -38,7 +40,16 @@ class MoonPhaseAdapter : RecyclerView.Adapter<MoonPhaseAdapter.MoonPhaseViewHold
         }
 
         fun setSelected(isSelected: Boolean) {
-            view.alpha = if (isSelected) 1.0f else 0.35f
+            view.alpha = if (isSelected) {
+                1.0f
+            } else {
+                when (bindingAdapterPosition) {
+                    selectedIndex - 1, selectedIndex + 1 -> 0.35f
+                    selectedIndex - 2, selectedIndex + 2 -> 0.20f
+                    selectedIndex - 3, selectedIndex + 3 -> 0.15f
+                    else -> 0.35f
+                }
+            }
         }
     }
 
