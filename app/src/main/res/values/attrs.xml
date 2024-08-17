@@ -40,4 +40,5 @@
     <declare-styleable name="AQIProgressBar">
         <attr name="android:progress" />
     </declare-styleable>
+    <attr name="graphHeight" format="dimension" />
 </resources>

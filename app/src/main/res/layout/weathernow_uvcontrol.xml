@@ -15,80 +15,90 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="@{!FeatureSettings.isUVEnabled || viewModel.weather.uvIndex == null ? View.GONE : View.VISIBLE}">
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="4dp"
+        android:visibility="@{!FeatureSettings.isUVEnabled || viewModel.weather.uvIndex == null ? View.GONE : View.VISIBLE}"
+        app:contentPaddingBottom="12dp"
+        style="@style/Widget.Material3.CardView.Elevated">
 
-        <TextView
-            android:id="@+id/uv_label"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/section_label_horizontal_padding"
-            android:paddingVertical="@dimen/section_label_vertical_padding"
-            android:text="@string/label_uv"
-            android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
-        <com.thewizrd.common.controls.IconControl
-            android:id="@+id/uv_icon"
-            android:layout_width="85dp"
-            android:layout_height="72dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:cropToPadding="false"
-            android:gravity="center_vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingVertical="12dp"
-            app:animate="true"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/uv_description"
-            app:layout_constraintTop_toBottomOf="@id/uv_label"
-            app:layout_constraintBottom_toTopOf="@id/uv_progressBar"
-            app:tint="@color/sun_color"
-            app:weatherIcon="@{viewModel.weather.uvIndex.icon}"
-            tools:src="@drawable/wi_day_sunny" />
+            <TextView
+                android:id="@+id/uv_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+                android:paddingVertical="@dimen/section_label_vertical_padding"
+                android:text="@string/label_uv"
+                android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/uv_description"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:gravity="center_vertical"
-            android:padding="6dp"
-            android:text="@{viewModel.weather.uvIndex != null ? viewModel.weather.uvIndex.index + `, ` + viewModel.weather.uvIndex.description : null}"
-            android:textAppearance="?textAppearanceBodyLarge"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintBottom_toTopOf="@id/uv_progressBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/uv_icon"
-            app:layout_constraintTop_toBottomOf="@id/uv_label"
-            tools:text="11, Extreme" />
+            <com.thewizrd.common.controls.IconControl
+                android:id="@+id/uv_icon"
+                android:layout_width="85dp"
+                android:layout_height="72dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:cropToPadding="false"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingVertical="12dp"
+                app:animate="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/uv_description"
+                app:layout_constraintTop_toBottomOf="@id/uv_label"
+                app:layout_constraintBottom_toTopOf="@id/uv_progressBar"
+                app:tint="@color/sun_color"
+                app:weatherIcon="@{viewModel.weather.uvIndex.icon}"
+                tools:src="@drawable/wi_day_sunny" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/uv_progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginBottom="12dp"
-            android:max="@{viewModel.weather.uvIndex.progressMax}"
-            android:maxHeight="4dp"
-            android:minHeight="4dp"
-            android:progress="@{viewModel.weather.uvIndex.progress}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/uv_icon"
-            app:progressColor="@{viewModel.weather.uvIndex.progressColor}"
-            app:trackCornerRadius="@dimen/shape_corner_radius"
-            tools:max="11"
-            tools:progress="7"
-            tools:indicatorColor="#aa00ff" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/uv_description"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:padding="6dp"
+                android:text="@{viewModel.weather.uvIndex != null ? viewModel.weather.uvIndex.index + `, ` + viewModel.weather.uvIndex.description : null}"
+                android:textAppearance="?textAppearanceBodyLarge"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintBottom_toTopOf="@id/uv_progressBar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/uv_icon"
+                app:layout_constraintTop_toBottomOf="@id/uv_label"
+                tools:text="11, Extreme" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/uv_progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="12dp"
+                android:max="@{viewModel.weather.uvIndex.progressMax}"
+                android:maxHeight="4dp"
+                android:minHeight="4dp"
+                android:progress="@{viewModel.weather.uvIndex.progress}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/uv_icon"
+                app:progressColor="@{viewModel.weather.uvIndex.progressColor}"
+                app:trackCornerRadius="@dimen/shape_corner_radius"
+                tools:max="11"
+                tools:progress="7"
+                tools:indicatorColor="#aa00ff" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

@@ -1,5 +1,6 @@
 package com.thewizrd.simpleweather.databinding
 
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.thewizrd.shared_resources.weatherdata.model.Forecast
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
@@ -34,7 +35,7 @@ object GraphBindingAdapter {
     @BindingAdapter("minForecastData")
     fun updateMinForecastGraph(view: ForecastGraphPanel, forecastData: List<MinutelyForecast>?) {
         if (!forecastData.isNullOrEmpty()) {
-            val vm = ForecastGraphViewModel()
+            val vm = ForecastGraphViewModel(view.context)
             vm.setMinutelyForecastData(forecastData)
             view.setGraphData(vm.graphData as LineViewData?)
         } else {
@@ -46,7 +47,7 @@ object GraphBindingAdapter {
     @BindingAdapter("forecastData")
     fun updateForecastGraph(view: ForecastGraphPanel, forecastData: List<HourlyForecast>?) {
         if (!forecastData.isNullOrEmpty()) {
-            val vm = ForecastGraphViewModel().apply {
+            val vm = ForecastGraphViewModel(view.context).apply {
                 setForecastData(
                     forecastData,
                     forecastData.getRecommendedGraphType()
@@ -55,6 +56,19 @@ object GraphBindingAdapter {
             view.setGraphData(vm.graphData as LineViewData?)
         } else {
             view.setGraphData(null)
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("forecastDataLabel")
+    fun updateForecastGraphLabel(view: TextView, forecastData: List<HourlyForecast>?) {
+        if (!forecastData.isNullOrEmpty()) {
+            view.text = ForecastGraphViewModel.getLabelForGraphType(
+                view.context,
+                forecastData.getRecommendedGraphType()
+            )
+        } else {
+            view.text = ""
         }
     }
 

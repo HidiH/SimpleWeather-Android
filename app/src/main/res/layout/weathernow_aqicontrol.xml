@@ -15,131 +15,141 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="@{!FeatureSettings.AQIndexEnabled || viewModel.weather.airQuality == null ? View.GONE : View.VISIBLE}">
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="4dp"
+        android:visibility="@{!FeatureSettings.AQIndexEnabled || viewModel.weather.airQuality == null ? View.GONE : View.VISIBLE}"
+        app:contentPaddingBottom="12dp"
+        style="@style/Widget.Material3.CardView.Elevated">
 
-        <TextView
-            android:id="@+id/aqi_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/section_label_horizontal_padding"
-            android:paddingVertical="@dimen/section_label_vertical_padding"
-            android:text="@string/label_airquality"
-            android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
-            app:layout_constraintEnd_toStartOf="@id/chevron_right"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHeight_min="48dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/chevron_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:src="@drawable/ic_chevron_right"
-            app:tint="?colorOnSurface"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/aqi_label"
-            app:layout_constraintBottom_toBottomOf="@id/aqi_label"
-            app:layout_constraintStart_toEndOf="@id/aqi_label" />
+            <TextView
+                android:id="@+id/aqi_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+                android:paddingVertical="@dimen/section_label_vertical_padding"
+                android:text="@string/label_airquality"
+                android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
+                app:layout_constraintEnd_toStartOf="@id/chevron_right"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHeight_min="48dp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/aqi_index"
-            android:layout_width="85dp"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:text="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.index + `` : null}"
-            android:textColor="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.progressColor : 0}"
-            android:textSize="36sp"
-            app:layout_constraintBottom_toTopOf="@id/aqi_progressBar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/aqi_label"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMaxTextSize="36sp"
-            app:layout_constraintHeight_min="72dp"
-            tools:text="300" />
+            <ImageView
+                android:id="@+id/chevron_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:src="@drawable/ic_chevron_right"
+                app:tint="?colorOnSurface"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/aqi_label"
+                app:layout_constraintBottom_toBottomOf="@id/aqi_label"
+                app:layout_constraintStart_toEndOf="@id/aqi_label" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/aqi_level"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="6dp"
-            android:text="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.level : null}"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/aqi_index"
-            app:layout_constraintTop_toBottomOf="@id/aqi_label"
-            app:layout_constraintBottom_toTopOf="@id/aqi_description"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="@string/aqi_level_300" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/aqi_index"
+                android:layout_width="85dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.index + `` : null}"
+                android:textColor="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.progressColor : 0}"
+                android:textSize="36sp"
+                app:layout_constraintBottom_toTopOf="@id/aqi_progressBar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/aqi_label"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMaxTextSize="36sp"
+                app:layout_constraintHeight_min="72dp"
+                tools:text="300" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/aqi_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="top"
-            android:padding="6dp"
-            android:text="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.description : null}"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/aqi_index"
-            app:layout_constraintTop_toBottomOf="@id/aqi_level"
-            app:layout_constraintBottom_toTopOf="@id/aqi_progressBar"
-            tools:text="@string/aqi_desc_201_300" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/aqi_level"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="6dp"
+                android:text="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.level : null}"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/aqi_index"
+                app:layout_constraintTop_toBottomOf="@id/aqi_label"
+                app:layout_constraintBottom_toTopOf="@id/aqi_description"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="@string/aqi_level_300" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/aqi_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="aqi_index,aqi_description" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/aqi_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="top"
+                android:padding="6dp"
+                android:text="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.description : null}"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/aqi_index"
+                app:layout_constraintTop_toBottomOf="@id/aqi_level"
+                app:layout_constraintBottom_toTopOf="@id/aqi_progressBar"
+                tools:text="@string/aqi_desc_201_300" />
 
-        <com.thewizrd.simpleweather.controls.AQIProgressBar
-            android:id="@+id/aqi_progressBar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginBottom="12dp"
-            android:maxHeight="4dp"
-            android:minHeight="4dp"
-            android:progress="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.progress : 0}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/aqi_barrier"
-            tools:progress="300" />
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/aqi_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="aqi_index,aqi_description" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/aqi_attribution"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center_horizontal"
-            android:paddingStart="12dp"
-            android:paddingLeft="12dp"
-            android:paddingTop="0dp"
-            android:paddingEnd="12dp"
-            android:paddingRight="12dp"
-            android:paddingBottom="12dp"
-            android:textAppearance="?attr/textAppearanceLabelSmall"
-            app:attribution="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.attribution : null}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/aqi_progressBar"
-            tools:text="Attribution goes here" />
+            <com.thewizrd.simpleweather.controls.AQIProgressBar
+                android:id="@+id/aqi_progressBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="12dp"
+                android:maxHeight="4dp"
+                android:minHeight="4dp"
+                android:progress="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.progress : 0}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/aqi_barrier"
+                tools:progress="300" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/aqi_attribution"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_horizontal"
+                android:paddingStart="12dp"
+                android:paddingLeft="12dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="12dp"
+                android:paddingRight="12dp"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                app:attribution="@{viewModel.weather.airQuality != null ? viewModel.weather.airQuality.attribution : null}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/aqi_progressBar"
+                tools:text="Attribution goes here"
+                tools:visibility="gone" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

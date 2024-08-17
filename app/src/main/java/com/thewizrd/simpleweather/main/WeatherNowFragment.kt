@@ -520,7 +520,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             forecastPanelBinding!!.forecastsView = forecastsView
             forecastPanelBinding!!.lifecycleOwner = viewLifecycleOwner
 
-            forecastPanelBinding!!.headerLayout.setOnClickListener {
+            forecastPanelBinding!!.root.setOnClickListener {
                 openDetails(
                     TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
                         .setWeatherListType(WeatherListType.FORECAST)
@@ -570,7 +570,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             })
 
-            hrForecastPanelBinding!!.headerLayout.setOnClickListener {
+            hrForecastPanelBinding!!.root.setOnClickListener {
                 openDetails(
                     TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
                         .setWeatherListType(WeatherListType.HOURLYFORECAST)
@@ -614,7 +614,10 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             }
 
-            precipPanelBinding!!.headerLayout.setOnClickListener {
+            precipPanelBinding!!.minutelyCard.setOnClickListener {
+                onClickListener.onClick(it, 0)
+            }
+            precipPanelBinding!!.precipCard.setOnClickListener {
                 onClickListener.onClick(it, 0)
             }
 
@@ -820,9 +823,8 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             }
 
+            radarControlBinding!!.root.setOnClickListener(onClickListener)
             radarControlBinding!!.radarWebviewCover.setOnClickListener(onClickListener)
-            radarControlBinding!!.radarLabel.setOnClickListener(onClickListener)
-            radarControlBinding!!.chevronRight.setOnClickListener(onClickListener)
 
             /*
              * NOTE

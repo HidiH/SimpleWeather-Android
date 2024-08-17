@@ -6,7 +6,6 @@ import android.text.format.DateFormat;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.thewizrd.shared_resources.ApplicationLibKt;
 import com.thewizrd.shared_resources.DateTimeConstants;
 import com.thewizrd.shared_resources.preferences.SettingsManager;
 import com.thewizrd.shared_resources.utils.Colors;
@@ -46,7 +45,9 @@ public class ForecastGraphViewModel {
         SNOW
     }
 
-    private final SettingsManager settingsMgr = ApplicationLibKt.getAppLib().getSettingsManager();
+    private final Context context;
+
+    private final SettingsManager settingsMgr;
 
     private GraphData<?> graphData;
 
@@ -58,6 +59,11 @@ public class ForecastGraphViewModel {
 
     public ForecastGraphType getGraphType() {
         return graphType;
+    }
+
+    public ForecastGraphViewModel(@NonNull Context context) {
+        this.context = context;
+        this.settingsMgr = new SettingsManager(context);
     }
 
     public void addForecastData(BaseForecast forecast, ForecastGraphType graphType) {
@@ -142,7 +148,6 @@ public class ForecastGraphViewModel {
     }
 
     private void addEntryData(BaseForecast forecast, LineDataSeries series, @NonNull ForecastGraphType graphType) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
         final boolean isFahrenheit = Units.FAHRENHEIT.equals(settingsMgr.getTemperatureUnit());
 
         final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
@@ -255,7 +260,6 @@ public class ForecastGraphViewModel {
 
     private void addMinutelyEntryData(@NonNull MinutelyForecast forecast, LineDataSeries series) {
         if (forecast.getRainMm() != null && forecast.getRainMm() >= 0) {
-            final Context context = ApplicationLibKt.getAppLib().getContext();
 
             final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
             df.applyPattern("0.##");
@@ -289,8 +293,6 @@ public class ForecastGraphViewModel {
 
     @NonNull
     private LineDataSeries createSeriesData(List<LineGraphEntry> entryData, @NonNull ForecastGraphType graphType) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
-
         LineDataSeries series;
 
         switch (graphType) {
@@ -334,7 +336,7 @@ public class ForecastGraphViewModel {
 
     @NonNull
     private LineViewData createGraphData(List<LineDataSeries> seriesData, @NonNull ForecastGraphType graphType) {
-        final String graphLabel = getLabelForGraphType(graphType);
+        final String graphLabel = getLabelForGraphType(context, graphType);
         this.graphType = graphType;
 
         return new LineViewData(graphLabel, seriesData);
@@ -355,7 +357,7 @@ public class ForecastGraphViewModel {
 
     @NonNull
     private BarGraphData createGraphData(BarGraphDataSet dataSet, @NonNull ForecastGraphType graphType) {
-        final String graphLabel = getLabelForGraphType(graphType);
+        final String graphLabel = getLabelForGraphType(context, graphType);
         this.graphType = graphType;
 
         return new BarGraphData(graphLabel, dataSet);
@@ -377,9 +379,8 @@ public class ForecastGraphViewModel {
     }
 
     private String getDateFromForecast(BaseForecast forecast) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
-
         String date;
+
         if (forecast instanceof Forecast) {
             Forecast fcast = (Forecast) forecast;
             date = fcast.getDate().format(DateTimeUtils.ofPatternForUserLocale(context.getString(R.string.forecast_date_format)));
@@ -400,9 +401,7 @@ public class ForecastGraphViewModel {
         return date;
     }
 
-    private String getLabelForGraphType(@NonNull ForecastGraphType graphType) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
-
+    public static String getLabelForGraphType(@NonNull Context context, @NonNull ForecastGraphType graphType) {
         String graphLabel;
 
         switch (graphType) {

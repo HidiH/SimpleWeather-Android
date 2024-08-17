@@ -23,54 +23,117 @@
         app:showIfNotEmpty1="@{forecastsView.minutelyForecastData}"
         app:showIfNotEmpty2="@{forecastsView.hourlyForecastData}">
 
-        <LinearLayout
-            android:id="@+id/header_layout"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/minutely_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/precip_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingHorizontal="@dimen/section_label_horizontal_padding"
-                android:paddingVertical="@dimen/section_label_vertical_padding"
-                android:text="@string/pref_title_feature_charts"
-                android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel" />
-
-            <ImageView
-                android:id="@+id/chevron_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:src="@drawable/ic_chevron_right"
-                app:tint="@color/colorTextPrimary"
-                tools:tint="@color/colorTextPrimary" />
-
-        </LinearLayout>
-
-        <com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
-            android:id="@+id/minutely_precip_graph_panel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:minForecastData="@{forecastsView.minutelyForecastData}"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="4dp"
+            style="@style/Widget.Material3.CardView.Elevated"
             app:showIfTrue="@{FeatureSettings.chartsEnabled}"
-            app:showIfNotEmpty="@{forecastsView.minutelyForecastData}"
-            tools:layout_height="@dimen/forecast_panel_height" />
+            app:showIfNotEmpty="@{forecastsView.minutelyForecastData}">
 
-        <com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
-            android:id="@+id/precip_graph_panel"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/minutely_header_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+                        android:paddingVertical="@dimen/section_label_vertical_padding"
+                        android:text="@string/label_minutelyforecast"
+                        android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@null"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/colorTextPrimary"
+                        tools:tint="@color/colorTextPrimary" />
+
+                </LinearLayout>
+
+                <com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
+                    android:id="@+id/minutely_precip_graph_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:padding="8dp"
+                    app:graphHeight="150dp"
+                    app:minForecastData="@{forecastsView.minutelyForecastData}" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/precip_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:forecastData="@{forecastsView.hourlyForecastData}"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="4dp"
+            style="@style/Widget.Material3.CardView.Elevated"
             app:showIfTrue="@{FeatureSettings.chartsEnabled}"
-            app:showIfNotEmpty="@{forecastsView.hourlyForecastData}"
-            tools:layout_height="@dimen/forecast_panel_height" />
+            app:showIfNotEmpty="@{forecastsView.hourlyForecastData}">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/precip_header_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+                        android:paddingVertical="@dimen/section_label_vertical_padding"
+                        android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
+                        app:forecastDataLabel="@{forecastsView.hourlyForecastData}"
+                        tools:text="@string/pref_title_feature_charts" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@null"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/colorTextPrimary"
+                        tools:tint="@color/colorTextPrimary" />
+
+                </LinearLayout>
+
+                <com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
+                    android:id="@+id/precip_graph_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:padding="8dp"
+                    app:graphHeight="150dp"
+                    app:forecastData="@{forecastsView.hourlyForecastData}" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 
