@@ -687,8 +687,8 @@ public class LineView extends BaseGraphHorizontalScrollView<LineViewData> {
                     Rect textBounds = new Rect();
                     bottomTextPaint.getTextBounds(title, 0, title.length(), textBounds);
 
-                    float xRectStart = paddingLength + textWidth * i + ((rectSize + rect2textPadding) * i);
-                    float xTextStart = paddingLength + textWidth * i + rectSize + ((rectSize + rect2textPadding) * i);
+                    float xRectStart = visibleRect.left + paddingLength + textWidth * i + ((rectSize + rect2textPadding) * i);
+                    float xTextStart = visibleRect.left + paddingLength + textWidth * i + rectSize + ((rectSize + rect2textPadding) * i);
 
                     RectF rectF = new RectF(xRectStart, bottomTextTopMargin + textDescent, xRectStart + rectSize, rectSize + bottomTextTopMargin + textDescent);
                     seriesRectPaint.setColor(seriesColor);
