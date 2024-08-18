@@ -50,7 +50,6 @@
     <application
         android:name=".App"
         android:allowBackup="${allowBackup}"
-        android:allowCrossUidActivitySwitchFromBelow="false"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:hardwareAccelerated="true"
