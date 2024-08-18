@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.core.location.LocationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.perf.metrics.Trace
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.controls.toUiModel
 import com.thewizrd.common.helpers.locationPermissionEnabled
@@ -206,6 +207,11 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
     }
 
     fun refreshWeather(forceRefresh: Boolean = false) {
+        val trace = Trace.create("wnow_refreshWeather").apply {
+            putAttribute("forceRefresh", forceRefresh.toString())
+            start()
+        }
+
         viewModelState.update {
             it.copy(isLoading = true)
         }
@@ -243,6 +249,8 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
             } else {
                 syncWeather(forceRefresh)
             }
+
+            trace.stop()
         }
     }
 

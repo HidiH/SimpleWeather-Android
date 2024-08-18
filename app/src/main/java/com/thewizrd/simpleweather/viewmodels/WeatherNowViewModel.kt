@@ -32,6 +32,7 @@ import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.ImageDataViewModel
+import com.thewizrd.simpleweather.performance.PerfTrace
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -202,6 +203,11 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun refreshWeather(forceRefresh: Boolean = false) {
+        val trace = PerfTrace("wnow_refreshWeather").apply {
+            putAttribute("forceRefresh", forceRefresh.toString())
+            startTrace()
+        }
+
         viewModelState.update {
             it.copy(isLoading = true)
         }
@@ -249,6 +255,8 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
             }
 
             updateWeatherState(result)
+
+            trace.stopTrace()
         }
     }
 
