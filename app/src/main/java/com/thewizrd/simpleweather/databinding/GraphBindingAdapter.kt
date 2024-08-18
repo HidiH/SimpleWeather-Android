@@ -23,6 +23,7 @@ object GraphBindingAdapter {
     @BindingAdapter("graphData")
     fun updateForecastGraph(view: ForecastGraphPanel, graphData: GraphData<*>?) {
         view.setGraphData(graphData as LineViewData?)
+        view.setDrawSeriesLabels(graphData?.dataSets?.any { !it.seriesLabel.isNullOrEmpty() } == true)
     }
 
     @JvmStatic
@@ -38,6 +39,7 @@ object GraphBindingAdapter {
             val vm = ForecastGraphViewModel(view.context)
             vm.setMinutelyForecastData(forecastData)
             view.setGraphData(vm.graphData as LineViewData?)
+            view.setDrawSeriesLabels((vm.graphData as? LineViewData)?.dataSets?.any { !it.seriesLabel.isNullOrEmpty() } == true)
         } else {
             view.setGraphData(null)
         }
@@ -53,7 +55,8 @@ object GraphBindingAdapter {
                     forecastData.getRecommendedGraphType()
                 )
             }
-            view.setGraphData(vm.graphData as LineViewData?)
+            view.setGraphData(vm.graphData as? LineViewData)
+            view.setDrawSeriesLabels((vm.graphData as? LineViewData)?.dataSets?.any { !it.seriesLabel.isNullOrEmpty() } == true)
         } else {
             view.setGraphData(null)
         }

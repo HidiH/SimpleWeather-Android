@@ -83,6 +83,7 @@ class ForecastGraphPanel @JvmOverloads constructor(
         lineView.setDrawGraphBackground(true)
         lineView.setDrawDotPoints(false)
         lineView.setFillParentWidth(true)
+        lineView.setDrawSeriesLabels(false)
 
         removeAllViews()
         this.addView(lineView)
@@ -141,6 +142,10 @@ class ForecastGraphPanel @JvmOverloads constructor(
 
     override fun setDrawDataLabels(drawDataLabels: Boolean) {
         lineView.setDrawDataLabels(drawDataLabels)
+    }
+
+    fun setDrawSeriesLabels(drawSeriesLabels: Boolean) {
+        lineView.setDrawSeriesLabels(drawSeriesLabels)
     }
 
     override fun setScrollingEnabled(enabled: Boolean) {
