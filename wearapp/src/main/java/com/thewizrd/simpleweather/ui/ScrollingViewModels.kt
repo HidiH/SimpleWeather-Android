@@ -16,7 +16,7 @@ class ScalingLazyListStateViewModel(savedStateHandle: SavedStateHandle) : ViewMo
         key = SCROLL_STATE_KEY,
         saver = ScalingLazyListState.Saver
     ) {
-        ScalingLazyListState()
+        ScalingLazyListState(initialCenterItemIndex = 0)
     }
 }
 
