@@ -10,6 +10,7 @@ import android.widget.GridView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.util.ObjectsCompat
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thewizrd.common.controls.DetailItemViewModel
@@ -132,5 +133,27 @@ object WeatherNowBindingAdapter {
                 selectMoonPhase(moonPhaseType)
             }
         }
+    }
+
+    @JvmStatic
+    @BindingAdapter("feelsLike")
+    fun setFeelsLikeText(
+        view: TextView,
+        map: Map<WeatherDetailsType, DetailItemViewModel>?
+    ) {
+        if (map != null && map.containsKey(WeatherDetailsType.FEELSLIKE)) {
+            val detail = map[WeatherDetailsType.FEELSLIKE]
+            if (detail != null) {
+                view.text = view.context.getString(
+                    R.string.text_label_value,
+                    detail.label.toString(),
+                    detail.value
+                )
+                view.isVisible = true
+                return
+            }
+        }
+
+        view.isVisible = false
     }
 }
