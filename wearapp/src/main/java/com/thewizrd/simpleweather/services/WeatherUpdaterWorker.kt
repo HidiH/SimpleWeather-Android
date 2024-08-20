@@ -1,9 +1,7 @@
 package com.thewizrd.simpleweather.services
 
 import android.content.Context
-import android.content.pm.ServiceInfo
 import android.location.LocationManager
-import android.os.Build
 import android.util.Log
 import androidx.core.location.LocationManagerCompat
 import androidx.work.*
@@ -120,15 +118,7 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
         initChannel(applicationContext)
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ForegroundInfo(
-                JOB_ID, getForegroundNotification(applicationContext),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC or ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
-            )
-        } else {
-            ForegroundInfo(JOB_ID, getForegroundNotification(applicationContext))
-        }
+        return ForegroundInfo(JOB_ID, getForegroundNotification(applicationContext))
     }
 
     override suspend fun doWork(): Result {
