@@ -158,6 +158,8 @@ class WeatherDetailItem : FrameLayout {
             (binding.detailsContainer.adapter as? DetailsItemGridAdapter)?.updateItems(it)
         }
 
+        binding.expandIcon.isVisible = isExpandable()
+
         binding.executePendingBindings()
     }
 
@@ -198,6 +200,7 @@ class WeatherDetailItem : FrameLayout {
             }
 
             binding.bodyTextview.isVisible = !binding.bodyTextview.text.isNullOrBlank()
+            binding.expandIcon.isVisible = isExpandable() || shouldShowBodyText
         }
 
         setExpandable(!forecastView.extras.isNullOrEmpty())

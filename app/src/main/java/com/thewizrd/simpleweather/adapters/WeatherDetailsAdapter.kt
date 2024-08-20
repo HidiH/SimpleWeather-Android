@@ -38,7 +38,9 @@ class WeatherDetailsAdapter<T : BaseForecastItemViewModel> :
         fun bind(model: BaseForecastItemViewModel?) {
             mDetailPanel.bind(model)
             mDetailPanel.setOnToggleListener {
-                notifyItemChanged(bindingAdapterPosition, "animation")
+                mDetailPanel.postOnAnimation {
+                    notifyItemChanged(bindingAdapterPosition, "animation")
+                }
             }
         }
     }
