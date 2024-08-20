@@ -160,7 +160,7 @@ class MetnoWeatherProvider : WeatherProviderImpl() {
                 requireNotNull(sunRoot)
                 requireNotNull(moonRoot)
 
-                weather = createWeatherData(foreRoot, sunRoot, moonRoot)
+                weather = createWeatherData(foreRoot, sunRoot, moonRoot, location)
             } catch (ex: Exception) {
                 weather = null
                 if (ex is IOException) {
@@ -223,7 +223,7 @@ class MetnoWeatherProvider : WeatherProviderImpl() {
             weather.condition!!.observationTime.withZoneSameInstant(offset)
 
         for (forecast in weather.forecast!!) {
-            forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
+            //forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
             forecast.condition = getWeatherCondition(forecast.icon)
             forecast.icon = getWeatherIcon(forecast.icon)
         }

@@ -1,5 +1,6 @@
 package com.thewizrd.weather_api.metno
 
+import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.getBeaufortScale
@@ -26,11 +27,19 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
-import kotlin.math.roundToInt
 
-fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonResponse?): Weather {
+fun createWeatherData(
+    foreRoot: Response,
+    sunRoot: SunResponse?,
+    moonRoot: MoonResponse?,
+    locationData: LocationData? = null
+): Weather {
     return Weather().apply {
-        val now = ZonedDateTime.now(ZoneOffset.UTC)
+        val now = if (locationData?.tzOffset != null) {
+            ZonedDateTime.now(ZoneOffset.UTC).withZoneSameInstant(locationData.tzOffset)
+        } else {
+            ZonedDateTime.now(ZoneOffset.UTC)
+        }
 
         location = createLocation(foreRoot)
         updateTime = now
@@ -49,7 +58,21 @@ fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonR
         // Metno data is troublesome to parse thru
         for (i in foreRoot.properties.timeseries.indices) {
             val time = foreRoot.properties.timeseries[i]
-            val date = LocalDateTime.ofInstant(Instant.from(DateTimeFormatter.ISO_INSTANT.parse(time.time)), ZoneOffset.UTC)
+            val date = if (locationData?.tzOffset != null) {
+                LocalDateTime.ofInstant(
+                    Instant.from(DateTimeFormatter.ISO_INSTANT.parse(time.time)),
+                    locationData.tzOffset
+                )
+            } else {
+                LocalDateTime.ofInstant(
+                    Instant.from(DateTimeFormatter.ISO_INSTANT.parse(time.time)),
+                    ZoneOffset.UTC
+                )
+            }
+
+            if (currentDate.isEqual(DateTimeUtils.LOCALDATETIME_MIN)) {
+                currentDate = date
+            }
 
             // Create condition for next 2hrs from data
             if (i == 0) {
@@ -63,8 +86,7 @@ fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonR
                 hrForecast!!.add(createHourlyForecast(time))
 
             // Create new forecast
-            if (!currentDate.toLocalDate().isEqual(date.toLocalDate()) &&
-                    !date.isBefore(currentDate.plusDays(1))) {
+            if (i == 0 || !currentDate.toLocalDate().isEqual(date.toLocalDate())) {
                 // Last forecast for day; create forecast
                 if (fcast != null) {
                     // condition (set in provider GetWeather method)
@@ -72,10 +94,10 @@ fun createWeatherData(foreRoot: Response, sunRoot: SunResponse?, moonRoot: MoonR
                     fcast.date = currentDate
                     // high
                     fcast.highF = ConversionMethods.CtoF(dayMax)
-                    fcast.highC = dayMax.roundToInt().toFloat()
+                    fcast.highC = dayMax
                     // low
                     fcast.lowF = ConversionMethods.CtoF(dayMin)
-                    fcast.lowC = dayMin.roundToInt().toFloat()
+                    fcast.lowC = dayMin
 
                     forecast!!.add(fcast)
                 }
@@ -160,20 +182,14 @@ fun createCondition(time: TimeseriesItem): Condition {
         tempF = ConversionMethods.CtoF(time.data.instant.details.airTemperature)
         tempC = time.data.instant.details.airTemperature
         windDegrees = Math.round(time.data.instant.details.windFromDirection)
-        windMph =
-            Math.round(ConversionMethods.msecToMph(time.data.instant.details.windSpeed)).toFloat()
-        windKph =
-            Math.round(ConversionMethods.msecToKph(time.data.instant.details.windSpeed)).toFloat()
+        windMph = ConversionMethods.msecToMph(time.data.instant.details.windSpeed)
+        windKph = ConversionMethods.msecToKph(time.data.instant.details.windSpeed)
         feelslikeF =
             getFeelsLikeTemp(tempF, windMph, Math.round(time.data.instant.details.relativeHumidity))
         feelslikeC = ConversionMethods.FtoC(feelslikeF)
         if (time.data.instant.details.windSpeedOfGust != null) {
-            windGustMph =
-                Math.round(ConversionMethods.msecToMph(time.data.instant.details.windSpeedOfGust))
-                    .toFloat()
-            windGustKph =
-                Math.round(ConversionMethods.msecToKph(time.data.instant.details.windSpeedOfGust))
-                    .toFloat()
+            windGustMph = ConversionMethods.msecToMph(time.data.instant.details.windSpeedOfGust)
+            windGustKph = ConversionMethods.msecToKph(time.data.instant.details.windSpeedOfGust)
         }
 
         if (time.data.next1Hours != null) {
@@ -239,12 +255,8 @@ fun createHourlyForecast(hr_forecast: TimeseriesItem): HourlyForecast {
         highF = ConversionMethods.CtoF(hr_forecast.data.instant.details.airTemperature)
         highC = hr_forecast.data.instant.details.airTemperature
         windDegrees = Math.round(hr_forecast.data.instant.details.windFromDirection)
-        windMph =
-            ConversionMethods.msecToMph(hr_forecast.data.instant.details.windSpeed).roundToInt()
-                .toFloat()
-        windKph =
-            ConversionMethods.msecToKph(hr_forecast.data.instant.details.windSpeed).roundToInt()
-                .toFloat()
+        windMph = ConversionMethods.msecToMph(hr_forecast.data.instant.details.windSpeed)
+        windKph = ConversionMethods.msecToKph(hr_forecast.data.instant.details.windSpeed)
 
         if (hr_forecast.data.next1Hours != null) {
             icon = hr_forecast.data.next1Hours.summary.symbolCode
@@ -281,8 +293,10 @@ fun createHourlyForecast(hr_forecast: TimeseriesItem): HourlyForecast {
         extras.windMph = windMph
         extras.windKph = windKph
         if (hr_forecast.data.instant.details.windSpeedOfGust != null) {
-            extras.windGustMph = ConversionMethods.msecToMph(hr_forecast.data.instant.details.windSpeedOfGust).roundToInt().toFloat()
-            extras.windGustKph = ConversionMethods.msecToKph(hr_forecast.data.instant.details.windSpeedOfGust).roundToInt().toFloat()
+            extras.windGustMph =
+                ConversionMethods.msecToMph(hr_forecast.data.instant.details.windSpeedOfGust)
+            extras.windGustKph =
+                ConversionMethods.msecToKph(hr_forecast.data.instant.details.windSpeedOfGust)
         }
         if (hr_forecast.data.instant.details.fogAreaFraction != null) {
             val visMi = 10.0f
