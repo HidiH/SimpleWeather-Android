@@ -105,21 +105,21 @@ fun createForecast(day: DaysItem): Forecast {
         // Extras
         extras = ForecastExtras()
         extras.humidity = ((day.humidMinPct + day.humidMaxPct) / 2).roundToInt()
-        extras.pressureMb = ((day.slpMinMb + day.slpMaxMb) / 2).roundToInt().toFloat()
-        extras.pressureIn = ((day.slpMinIn + day.slpMaxIn) / 2).roundToInt().toFloat()
+        extras.pressureMb = ((day.slpMinMb + day.slpMaxMb) / 2f)
+        extras.pressureIn = ((day.slpMinIn + day.slpMaxIn) / 2f)
         if (day.windspdMaxMph > 0 && day.humidMaxPct > 0) {
             extras.feelslikeF = getFeelsLikeTemp(highF, day.windspdMaxMph, day.humidMaxPct.roundToInt())
             extras.feelslikeC = ConversionMethods.FtoC(extras.feelslikeF)
         }
         if (highC > 0 && highC < 60 && day.humidMaxPct > 1) {
-            extras.dewpointC = calculateDewpointC(highC, day.humidMaxPct.roundToInt()).roundToInt().toFloat()
-            extras.dewpointF = ConversionMethods.CtoF(extras.dewpointC).roundToInt().toFloat()
+            extras.dewpointC = calculateDewpointC(highC, day.humidMaxPct.roundToInt())
+            extras.dewpointF = ConversionMethods.CtoF(extras.dewpointC)
         }
-        extras.windMph = day.windspdMaxMph.roundToInt().toFloat()
-        extras.windKph = day.windspdMaxKmh.roundToInt().toFloat()
+        extras.windMph = day.windspdMaxMph
+        extras.windKph = day.windspdMaxKmh
         extras.pop = day.probPrecipPct.roundToInt()
-        extras.windGustMph = day.windgstMaxMph.roundToInt().toFloat()
-        extras.windGustKph = day.windgstMaxKmh.roundToInt().toFloat()
+        extras.windGustMph = day.windgstMaxMph
+        extras.windGustKph = day.windgstMaxKmh
         extras.qpfRainMm = day.rainTotalMm
         extras.qpfRainIn = day.rainTotalIn
         extras.qpfSnowCm = day.snowTotalMm / 10f
@@ -145,8 +145,8 @@ fun createHourlyForecast(timeframe: TimeframesItem): HourlyForecast {
         icon = timeframe.wxCode.toString()
 
         windDegrees = timeframe.winddirDeg.roundToInt()
-        windMph = timeframe.windspdMph.roundToInt().toFloat()
-        windKph = timeframe.windspdKmh.roundToInt().toFloat()
+        windMph = timeframe.windspdMph
+        windKph = timeframe.windspdKmh
 
         // Extras
         extras = ForecastExtras()
@@ -157,13 +157,13 @@ fun createHourlyForecast(timeframe: TimeframesItem): HourlyForecast {
         extras.windDegrees = windDegrees
         extras.windMph = windMph
         extras.windKph = windKph
-        extras.dewpointF = timeframe.dewpointF.roundToInt().toFloat()
-        extras.dewpointC = timeframe.dewpointC.roundToInt().toFloat()
-        extras.feelslikeF = timeframe.feelslikeF.roundToInt().toFloat()
-        extras.feelslikeC = timeframe.feelslikeC.roundToInt().toFloat()
+        extras.dewpointF = timeframe.dewpointF
+        extras.dewpointC = timeframe.dewpointC
+        extras.feelslikeF = timeframe.feelslikeF
+        extras.feelslikeC = timeframe.feelslikeC
         extras.pop = timeframe.probPrecipPct?.toIntOrNull()
-        extras.windGustMph = timeframe.windgstMph.roundToInt().toFloat()
-        extras.windGustKph = timeframe.windgstKmh.roundToInt().toFloat()
+        extras.windGustMph = timeframe.windgstMph
+        extras.windGustKph = timeframe.windgstKmh
         extras.visibilityMi = timeframe.visMi
         extras.visibilityKm = timeframe.visKm
         extras.qpfRainMm = timeframe.rainMm

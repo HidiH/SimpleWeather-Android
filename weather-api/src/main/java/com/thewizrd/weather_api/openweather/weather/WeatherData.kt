@@ -100,10 +100,8 @@ fun createWeatherData(currRoot: CurrentRootobject, foreRoot: ForecastRootobject)
         }
 
         if (atmosphere!!.dewpointC == null && condition!!.tempC != null && atmosphere!!.humidity != null && condition!!.tempC > 0 && condition!!.tempC < 60 && atmosphere!!.humidity > 1) {
-            atmosphere!!.dewpointC =
-                calculateDewpointC(condition!!.tempC, atmosphere!!.humidity).roundToInt().toFloat()
-            atmosphere!!.dewpointF =
-                ConversionMethods.CtoF(atmosphere!!.dewpointC).roundToInt().toFloat()
+            atmosphere!!.dewpointC = calculateDewpointC(condition!!.tempC, atmosphere!!.humidity)
+            atmosphere!!.dewpointF = ConversionMethods.CtoF(atmosphere!!.dewpointC)
         }
 
         source = WeatherAPI.OPENWEATHERMAP
@@ -142,8 +140,8 @@ fun createHourlyForecast(hr_forecast: ListItem): HourlyForecast {
             .getWeatherIcon(hr_forecast.weather[0].id.toString() + dn)
 
         windDegrees = hr_forecast.wind.deg.roundToInt()
-        windMph = ConversionMethods.msecToMph(hr_forecast.wind.speed).roundToInt().toFloat()
-        windKph = ConversionMethods.msecToKph(hr_forecast.wind.speed).roundToInt().toFloat()
+        windMph = ConversionMethods.msecToMph(hr_forecast.wind.speed)
+        windKph = ConversionMethods.msecToKph(hr_forecast.wind.speed)
 
         // Extras
         extras = ForecastExtras()
@@ -156,8 +154,8 @@ fun createHourlyForecast(hr_forecast: ListItem): HourlyForecast {
         extras.windMph = windMph
         extras.windKph = windKph
         if (highC > 0 && highC < 60 && hr_forecast.main.humidity > 1) {
-            extras.dewpointC = calculateDewpointC(highC, hr_forecast.main.humidity).roundToInt().toFloat()
-            extras.dewpointF = ConversionMethods.CtoF(extras.dewpointC).roundToInt().toFloat()
+            extras.dewpointC = calculateDewpointC(highC, hr_forecast.main.humidity)
+            extras.dewpointF = ConversionMethods.CtoF(extras.dewpointC)
         }
         if (hr_forecast.main.feelsLike != null) {
             extras.feelslikeF = ConversionMethods.KtoF(hr_forecast.main.feelsLike)
@@ -167,8 +165,8 @@ fun createHourlyForecast(hr_forecast: ListItem): HourlyForecast {
             extras.pop = (hr_forecast.pop * 100).roundToInt()
         }
         if (hr_forecast.wind.gust != null) {
-            extras.windGustMph = ConversionMethods.msecToMph(hr_forecast.wind.gust).roundToInt().toFloat()
-            extras.windGustKph = ConversionMethods.msecToKph(hr_forecast.wind.gust).roundToInt().toFloat()
+            extras.windGustMph = ConversionMethods.msecToMph(hr_forecast.wind.gust)
+            extras.windGustKph = ConversionMethods.msecToKph(hr_forecast.wind.gust)
         }
         if (hr_forecast.visibility != null) {
             extras.visibilityKm = hr_forecast.visibility.toFloat() / 1000
@@ -204,12 +202,12 @@ fun createForecast(forecast: ListItem): Forecast {
         extras.pressureMb = forecast.main.pressure
         extras.pressureIn = ConversionMethods.mbToInHg(forecast.main.pressure)
         extras.windDegrees = forecast.wind.deg.roundToInt()
-        extras.windMph = ConversionMethods.msecToMph(forecast.wind.speed).roundToInt().toFloat()
-        extras.windKph = ConversionMethods.msecToKph(forecast.wind.speed).roundToInt().toFloat()
+        extras.windMph = ConversionMethods.msecToMph(forecast.wind.speed)
+        extras.windKph = ConversionMethods.msecToKph(forecast.wind.speed)
         val temp_c = ConversionMethods.KtoC(forecast.main.temp)
         if (temp_c > 0 && temp_c < 60 && forecast.main.humidity > 1) {
-            extras.dewpointC = calculateDewpointC(temp_c, forecast.main.humidity).roundToInt().toFloat()
-            extras.dewpointF = ConversionMethods.CtoF(extras.dewpointC).roundToInt().toFloat()
+            extras.dewpointC = calculateDewpointC(temp_c, forecast.main.humidity)
+            extras.dewpointF = ConversionMethods.CtoF(extras.dewpointC)
         }
         if (forecast.main.feelsLike != null) {
             extras.feelslikeF = ConversionMethods.KtoF(forecast.main.feelsLike)
@@ -223,8 +221,8 @@ fun createForecast(forecast: ListItem): Forecast {
             extras.visibilityMi = ConversionMethods.kmToMi(extras.visibilityKm)
         }
         if (forecast.wind.gust != null) {
-            extras.windGustMph = ConversionMethods.msecToMph(forecast.wind.gust).roundToInt().toFloat()
-            extras.windGustKph = ConversionMethods.msecToKph(forecast.wind.gust).roundToInt().toFloat()
+            extras.windGustMph = ConversionMethods.msecToMph(forecast.wind.gust)
+            extras.windGustKph = ConversionMethods.msecToKph(forecast.wind.gust)
         }
         if (forecast.rain != null && forecast.rain._3h != null) {
             extras.qpfRainMm = forecast.rain._3h

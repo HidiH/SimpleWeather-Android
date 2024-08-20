@@ -135,8 +135,8 @@ fun createHourlyForecast(hr_forecast: HourlyItem): HourlyForecast {
             .getWeatherIcon(hr_forecast.weather[0].id.toString() + dn)
 
         windDegrees = hr_forecast.windDeg
-        windMph = ConversionMethods.msecToMph(hr_forecast.windSpeed).roundToInt().toFloat()
-        windKph = ConversionMethods.msecToKph(hr_forecast.windSpeed).roundToInt().toFloat()
+        windMph = ConversionMethods.msecToMph(hr_forecast.windSpeed)
+        windKph = ConversionMethods.msecToKph(hr_forecast.windSpeed)
 
         // Extras
         extras = ForecastExtras()
@@ -156,8 +156,8 @@ fun createHourlyForecast(hr_forecast: HourlyItem): HourlyForecast {
         extras.windMph = windMph
         extras.windKph = windKph
         if (hr_forecast.windGust != null) {
-            extras.windGustMph = ConversionMethods.msecToMph(hr_forecast.windGust).roundToInt().toFloat()
-            extras.windGustKph = ConversionMethods.msecToKph(hr_forecast.windGust).roundToInt().toFloat()
+            extras.windGustMph = ConversionMethods.msecToMph(hr_forecast.windGust)
+            extras.windGustKph = ConversionMethods.msecToKph(hr_forecast.windGust)
         }
         if (hr_forecast.visibility != null) {
             extras.visibilityKm = hr_forecast.visibility.toFloat() / 1000
@@ -201,16 +201,16 @@ fun createForecast(forecast: DailyItem): Forecast {
         extras.pressureMb = forecast.pressure
         extras.pressureIn = ConversionMethods.mbToInHg(forecast.pressure)
         extras.windDegrees = forecast.windDeg
-        extras.windMph = ConversionMethods.msecToMph(forecast.windSpeed).roundToInt().toFloat()
-        extras.windKph = ConversionMethods.msecToKph(forecast.windSpeed).roundToInt().toFloat()
+        extras.windMph = ConversionMethods.msecToMph(forecast.windSpeed)
+        extras.windKph = ConversionMethods.msecToKph(forecast.windSpeed)
         extras.uvIndex = forecast.uvi
         if (forecast.visibility != null) {
             extras.visibilityKm = forecast.visibility.toFloat() / 1000
             extras.visibilityMi = ConversionMethods.kmToMi(extras.visibilityKm)
         }
         if (forecast.windGust != null) {
-            extras.windGustMph = ConversionMethods.msecToMph(forecast.windGust).roundToInt().toFloat()
-            extras.windGustKph = ConversionMethods.msecToKph(forecast.windGust).roundToInt().toFloat()
+            extras.windGustMph = ConversionMethods.msecToMph(forecast.windGust)
+            extras.windGustKph = ConversionMethods.msecToKph(forecast.windGust)
         }
         if (forecast.rain != null) {
             extras.qpfRainMm = forecast.rain
