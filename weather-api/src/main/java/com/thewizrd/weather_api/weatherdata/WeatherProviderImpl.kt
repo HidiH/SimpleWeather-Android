@@ -23,7 +23,7 @@ import com.thewizrd.shared_resources.weatherdata.auth.AuthType
 import com.thewizrd.shared_resources.weatherdata.model.*
 import com.thewizrd.weather_api.aqicn.AQICNData
 import com.thewizrd.weather_api.aqicn.AQICNProvider
-import com.thewizrd.weather_api.extras.isExtrasEnabled
+import com.thewizrd.weather_api.extras.isPremiumEnabled
 import com.thewizrd.weather_api.google.pollen.GooglePollenProvider
 import com.thewizrd.weather_api.nws.alerts.NWSAlertProvider
 import com.thewizrd.weather_api.tomorrow.TomorrowIOWeatherProvider
@@ -186,7 +186,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
         }
 
         if (weather.condition?.pollen == null) {
-            if (isExtrasEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE)) {
+            if (isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE)) {
                 weather.condition!!.pollen = GooglePollenProvider().getPollenData(location)?.apply {
                     attribution = context.getString(R.string.api_google)
                 }

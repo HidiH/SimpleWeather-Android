@@ -6,4 +6,5 @@ object AnalyticsProps {
     const val USER_LOCALE = "user_locale"
     const val DEVICE_TYPE = "device_type"
     const val IS_PREMIUM = "is_premium"
+    const val IS_PRO = "is_pro"
 }
