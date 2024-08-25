@@ -128,4 +128,8 @@ class RemoteConfigServiceImpl : RemoteConfigService {
                 }
         }
     }
+
+    override fun getBoolean(key: String): Boolean {
+        return FirebaseRemoteConfig.getInstance().getBoolean(key)
+    }
 }

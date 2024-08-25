@@ -70,4 +70,6 @@ class RemoteConfigServiceImpl : RemoteConfigService {
     override suspend fun checkConfigAsync(): Boolean {
         return false
     }
+
+    override fun getBoolean(key: String): Boolean = false
 }
