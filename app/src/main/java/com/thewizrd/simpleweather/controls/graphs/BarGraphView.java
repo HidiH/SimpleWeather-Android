@@ -8,7 +8,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -256,14 +255,9 @@ public class BarGraphView extends BaseGraphHorizontalScrollView<BarGraphData> {
                         getScrollViewer().getScrollY(),
                         getScrollViewer().getScrollX() + getScrollViewer().getWidth(),
                         getScrollViewer().getScrollY() + getScrollViewer().getHeight());
-                Log.d(TAG, "onDraw: rect = " + visibleRect);
             }
 
             if (mData != null) {
-                if (!drawDotLists.isEmpty()) {
-                    Log.d(TAG, "onDraw: first x = " + CollectionsKt.first(drawDotLists).toString());
-                    Log.d(TAG, "onDraw: last x = " + CollectionsKt.last(drawDotLists).toString());
-                }
                 drawTextAndIcons(canvas);
                 drawLines(canvas);
             }
