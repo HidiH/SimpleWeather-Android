@@ -8,8 +8,8 @@ import androidx.preference.Preference
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.simpleweather.App
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
-import com.thewizrd.simpleweather.preferences.SettingsFragment
 import com.thewizrd.simpleweather.preferences.BaseSettingsFragment
+import com.thewizrd.simpleweather.preferences.SettingsFragment
 
 fun initializeExtras() {
     // no-op
@@ -50,7 +50,7 @@ fun SettingsFragment.IconsFragment.navigateUnsupportedIconPack() {
 }
 
 fun enableAdditionalRefreshIntervals(): Boolean {
-    return false
+    return true
 }
 
 fun checkPremiumStatus() {
@@ -62,11 +62,11 @@ fun isPremiumSupported(): Boolean {
 }
 
 fun isRadarInteractionEnabled(): Boolean {
-    return false
+    return true
 }
 
 fun areNotificationExtrasEnabled(): Boolean {
-    return false
+    return true
 }
 
 fun SettingsFragment.createPremiumPreference(): Preference? {

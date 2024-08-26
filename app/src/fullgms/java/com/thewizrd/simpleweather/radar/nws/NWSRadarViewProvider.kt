@@ -1,6 +1,7 @@
-package com.thewizrd.simpleweather.radar.tomorrowio
+package com.thewizrd.simpleweather.radar.nws
 
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -10,36 +11,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.TileOverlay
+import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.material.slider.Slider
 import com.thewizrd.shared_resources.DateTimeConstants
-import com.thewizrd.shared_resources.di.settingsManager
-import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
-import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.databinding.RadarAnimateContainerBinding
+import com.thewizrd.simpleweather.extras.isRadarInteractionEnabled
+import com.thewizrd.simpleweather.radar.CachingUrlTileProvider
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider
-import com.thewizrd.weather_api.keys.Keys
-import org.osmdroid.tileprovider.MapTileProviderBasic
-import org.osmdroid.tileprovider.modules.TileWriter
-import org.osmdroid.tileprovider.tilesource.XYTileSource
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.util.MapTileIndex
-import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.TilesOverlay
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Locale
+import kotlin.math.atan
+import kotlin.math.pow
+import kotlin.math.sinh
+
 
 @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
-class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
+class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
     MapTileRadarViewProvider(context, rootView) {
     private val availableRadarFrames: MutableList<RadarFrame>
-    private val radarLayers: MutableMap<String, TilesOverlay>
+    private val radarLayers: MutableMap<String, TileOverlay>
 
+    private var googleMap: GoogleMap? = null
     private var radarContainerBinding: RadarAnimateContainerBinding? = null
 
     private var animationPosition = 0
@@ -90,38 +88,35 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
     }
 
     override fun updateRadarView() {
-        super.updateRadarView()
         radarContainerBinding!!.radarToolbar.visibility =
-            if (interactionsEnabled()/* && isRadarInteractionEnabled()*/) View.VISIBLE else View.GONE
+            if (interactionsEnabled() && isRadarInteractionEnabled()) View.VISIBLE else View.GONE
+        mapView.getMapAsync(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        this.googleMap = null
         availableRadarFrames.clear()
         radarLayers.clear()
         radarContainerBinding = null
     }
 
-    override fun onMapReady() {
-        super.onMapReady()
-
-        mapCameraPosition?.let { cameraPosition ->
-            if (interactionsEnabled()) {
-                if (locationMarker == null) {
-                    locationMarker = Marker(mapView)
-                    locationMarker.setDefaultIcon()
-                    mapView.overlays.add(locationMarker)
-                }
-                locationMarker.position =
-                    GeoPoint(cameraPosition.latitude, cameraPosition.longitude)
-            }
-        }
+    override fun onMapReady(googleMap: GoogleMap) {
+        super.onMapReady(googleMap)
+        this.googleMap = googleMap
 
         getRadarFrames()
     }
 
     private fun getRadarFrames() {
         mProcessingFrames = true
+
+        // Remove already added tile overlays
+        val overlaysToDelete = radarLayers.values.toList()
+        radarLayers.clear()
+        for (overlay in overlaysToDelete) {
+            mMainHandler.post { overlay.remove() }
+        }
 
         availableRadarFrames.clear()
         animationPosition = 0
@@ -132,13 +127,13 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         now = now.minus(minute % 10, ChronoUnit.MINUTES)
 
         val start = now.minus(2, ChronoUnit.HOURS)
-        val end = now.plus(2, ChronoUnit.HOURS)
+        val end = now
 
         var current = start
         var nowIndex = -1
 
         while (current <= end) {
-            availableRadarFrames.add(RadarFrame(DateTimeFormatter.ISO_INSTANT.format(current)))
+            availableRadarFrames.add(RadarFrame(current.toEpochMilli().toString()))
 
             if (current == now) {
                 nowIndex = availableRadarFrames.size - 1
@@ -161,17 +156,13 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         if (mProcessingFrames) return
 
         if (!radarLayers.containsKey(mapFrame.timestamp)) {
-            val overlay = TilesOverlay(
-                MapTileProviderBasic(context, TomorrowIoTileProvider(mapFrame), TileWriter()),
-                context,
-                false,
-                false
+            val overlay = googleMap!!.addTileOverlay(
+                TileOverlayOptions().tileProvider(NWSTileProvider(context, mapFrame))
+                    .transparency(1f)
             )
-            overlay.loadingBackgroundColor = Colors.TRANSPARENT
-            overlay.loadingLineColor = Colors.TRANSPARENT
-            overlay.isEnabled = false
-            mapView.overlays.add(overlay)
-            radarLayers[mapFrame.timestamp] = overlay
+            if (overlay != null) {
+                radarLayers[mapFrame.timestamp] = overlay
+            }
         }
 
         radarContainerBinding!!.animationSeekbar.stepSize = 1f
@@ -212,15 +203,13 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         if (radarLayers.containsKey(currentTimeStamp)) {
             val currentOverlay = radarLayers[currentTimeStamp]
             if (currentOverlay != null) {
-                currentOverlay.isEnabled = false
+                currentOverlay.transparency = 1f
             }
         }
         val nextOverlay = radarLayers[nextTimeStamp]
         if (nextOverlay != null) {
-            nextOverlay.isEnabled = true
+            nextOverlay.transparency = 0f
         }
-
-        mapView.postInvalidate()
 
         updateToolbar(position, nextFrame)
     }
@@ -232,7 +221,10 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         radarContainerBinding!!.animationSeekbar.value = position.toFloat()
 
         val dateTime =
-            ZonedDateTime.ofInstant(Instant.parse(mapFrame.timestamp), ZoneOffset.systemDefault())
+            ZonedDateTime.ofInstant(
+                Instant.ofEpochMilli(mapFrame.timestamp.toLong()),
+                ZoneOffset.systemDefault()
+            )
         val fmt = if (DateFormat.is24HourFormat(context)) {
             DateTimeUtils.ofPatternForUserLocale(
                 DateTimeUtils.getBestPatternForSkeleton(
@@ -271,42 +263,81 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         }
     }
 
-    private class TomorrowIoTileProvider(private val mapFrame: RadarFrame?) : XYTileSource(
-        "TomorrowIo",
-        MIN_ZOOM_LEVEL,
-        MAX_ZOOM_LEVEL,
-        256,
-        "${mapFrame?.timestamp ?: ""}.png",
-        arrayOf("https://api.tomorrow.io")
-    ) {
-        override fun getTileURLString(pMapTileIndex: Long): String? {
-            val zoom = MapTileIndex.getZoom(pMapTileIndex)
-            val x = MapTileIndex.getX(pMapTileIndex)
-            val y = MapTileIndex.getY(pMapTileIndex)
+    private class NWSTileProvider(context: Context, private val mapFrame: RadarFrame?) :
+        CachingUrlTileProvider(context, 256, 256) {
+        override fun getTileUrl(x: Int, y: Int, zoom: Int): String? {
+            if (!checkTileExists(x, y, zoom)) {
+                return null
+            }
 
             if (mapFrame != null) {
+                val bbox = BoundingBox.fromTile(x, y, zoom)
+
                 /* Define the URL pattern for the tile images */
-                return String.format(
-                    Locale.ROOT,
-                    "https://api.tomorrow.io/v4/map/tile/%d/%d/%d/precipitationIntensity/%s.png?apikey=%s",
-                    zoom,
-                    x,
-                    y,
-                    mapFrame.timestamp,
-                    getKey()
-                )
+                val uri =
+                    Uri.parse("https://mapservices.weather.noaa.gov/eventdriven/rest/services/radar/radar_base_reflectivity_time/ImageServer/exportImage")
+                        .buildUpon()
+                        .appendQueryParameter("bbox", bbox.toString())
+                        .appendQueryParameter("bboxSR", "4326")
+                        .appendQueryParameter("size", "256,256")
+                        .appendQueryParameter("time", mapFrame.timestamp)
+                        .appendQueryParameter("format", "png")
+                        .appendQueryParameter("f", "image")
+                        .build()
+
+                return uri.toString()
             }
 
             return null
         }
 
-        private fun getKey(): String? {
-            val key = settingsManager.getAPIKey(WeatherAPI.TOMORROWIO)
-            return if (key.isNullOrBlank()) Keys.getTomorrowIoKey() else key
+        /*
+         * Check that the tile server supports the requested x, y and zoom.
+         * Complete this stub according to the tile range you support.
+         * If you support a limited range of tiles at different zoom levels, then you
+         * need to define the supported x, y range at each zoom level.
+         */
+        private fun checkTileExists(x: Int, y: Int, zoom: Int): Boolean {
+            val minZoom = MIN_ZOOM_LEVEL
+            val maxZoom = MAX_ZOOM_LEVEL
+
+            return zoom in minZoom..maxZoom
         }
     }
 
     private data class RadarFrame(
         val timestamp: String
     )
+
+    private data class BoundingBox(
+        val xMin: Double,
+        val yMin: Double,
+        val xMax: Double,
+        val yMax: Double,
+    ) {
+        override fun toString(): String {
+            return "$xMin,$yMin,$xMax,$yMax"
+        }
+
+        companion object {
+            fun fromTile(x: Int, y: Int, zoom: Int): BoundingBox {
+                return BoundingBox(
+                    yMin = tile2lat(y, zoom),
+                    yMax = tile2lat(y + 1, zoom),
+                    xMin = tile2lon(x, zoom),
+                    xMax = tile2lon(x + 1, zoom)
+                )
+            }
+
+            // Source: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Common_programming_languages
+            private fun tile2lon(x: Int, z: Int): Double {
+                return x / 2.0.pow(z.toDouble()) * 360.0 - 180
+            }
+
+            private fun tile2lat(y: Int, z: Int): Double {
+                val n: Double = Math.PI - (2.0 * Math.PI * y) / 2.0.pow(z.toDouble())
+                return Math.toDegrees(atan(sinh(n)))
+            }
+        }
+    }
 }

@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.thewizrd.shared_resources.di.UtilsModuleKt;
+import com.thewizrd.shared_resources.utils.Colors;
 import com.thewizrd.shared_resources.utils.StringUtils;
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI;
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider;
@@ -18,6 +19,7 @@ import com.thewizrd.weather_api.keys.Keys;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.MapTileProviderBase;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.modules.TileWriter;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
@@ -60,8 +62,10 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
         }
 
         if (tilesOverlay == null) {
-            MapTileProviderBase tileProvider = new MapTileProviderBasic(getContext(), new OWMTileProvider());
+            MapTileProviderBase tileProvider = new MapTileProviderBasic(getContext(), new OWMTileProvider(), new TileWriter());
             tilesOverlay = new TilesOverlay(tileProvider, getContext(), false, false);
+            tilesOverlay.setLoadingLineColor(Colors.TRANSPARENT);
+            tilesOverlay.setLoadingBackgroundColor(Colors.TRANSPARENT);
             getMapView().getOverlays().add(tilesOverlay);
         }
 

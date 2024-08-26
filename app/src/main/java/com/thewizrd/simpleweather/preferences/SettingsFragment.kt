@@ -687,6 +687,7 @@ class SettingsFragment : BaseSettingsFragment(),
 
         radarProviderPref = findPreference(RadarProvider.KEY_RADARPROVIDER)!!
         val radarProviders = RadarProvider.getRadarProviders()
+            .filter { remoteConfigService.isProviderEnabled(it.value) }
         entries = arrayOfNulls(radarProviders.size)
         entryValues = arrayOfNulls(radarProviders.size)
 

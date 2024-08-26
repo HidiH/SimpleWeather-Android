@@ -12,10 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import com.google.android.material.slider.Slider
-import com.squareup.moshi.JsonReader
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
 import com.thewizrd.shared_resources.sharedDeps
+import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.JSONParser
@@ -24,7 +24,6 @@ import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.databinding.RadarAnimateContainerBinding
 import com.thewizrd.simpleweather.extras.isRadarInteractionEnabled
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider
-import com.thewizrd.simpleweather.radar.RadarProvider
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.RateLimitedRequest
 import okhttp3.Call
@@ -33,17 +32,17 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 import okhttp3.Response
 import org.osmdroid.tileprovider.MapTileProviderBasic
+import org.osmdroid.tileprovider.modules.TileWriter
 import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.TilesOverlay
 import java.io.IOException
-import java.io.InputStreamReader
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Locale
 
 @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
 class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
@@ -228,11 +227,13 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
 
         if (!radarLayers.containsKey(mapFrame.timeStamp)) {
             val overlay = TilesOverlay(
-                MapTileProviderBasic(context, RainViewTileProvider(mapFrame)),
+                MapTileProviderBasic(context, RainViewTileProvider(mapFrame), TileWriter()),
                 context,
                 false,
                 false
             )
+            overlay.loadingBackgroundColor = Colors.TRANSPARENT
+            overlay.loadingLineColor = Colors.TRANSPARENT
             overlay.isEnabled = false
             mapView.overlays.add(overlay)
             radarLayers[mapFrame.timeStamp] = overlay
@@ -334,7 +335,7 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
             MIN_ZOOM_LEVEL,
             MAX_ZOOM_LEVEL,
             256,
-            ".png",
+            "${mapFrame?.timeStamp ?: ""}.png",
             arrayOf(mapFrame?.host)
         ) {
         override fun getTileURLString(pMapTileIndex: Long): String? {

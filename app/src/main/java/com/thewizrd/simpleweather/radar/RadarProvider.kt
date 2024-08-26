@@ -9,7 +9,9 @@ import androidx.annotation.StringDef
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.controls.ProviderEntry
 import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
+import com.thewizrd.simpleweather.radar.nws.NWSRadarViewProvider
 import com.thewizrd.simpleweather.radar.openweather.OWMRadarViewProvider
 import com.thewizrd.simpleweather.radar.rainviewer.RainViewerViewProvider
 import com.thewizrd.simpleweather.radar.tomorrowio.TomorrowIoRadarViewProvider
@@ -18,7 +20,12 @@ import com.thewizrd.weather_api.weatherModule
 object RadarProvider {
     const val KEY_RADARPROVIDER = "key_radarprovider"
 
-    @StringDef(WeatherAPI.RAINVIEWER, WeatherAPI.OPENWEATHERMAP, WeatherAPI.TOMORROWIO)
+    @StringDef(
+        WeatherAPI.RAINVIEWER,
+        WeatherAPI.NWS,
+        WeatherAPI.OPENWEATHERMAP,
+        WeatherAPI.TOMORROWIO
+    )
     @Retention(AnnotationRetention.SOURCE)
     annotation class RadarProviders
 
@@ -45,6 +52,10 @@ object RadarProvider {
         ProviderEntry(
             "RainViewer", WeatherAPI.RAINVIEWER,
             "https://www.rainviewer.com/", "https://www.rainviewer.com/api.html"
+        ),
+        ProviderEntry(
+            "National Weather Service (United States)", WeatherAPI.NWS,
+            "https://radar.weather.gov/", "https://radar.weather.gov/"
         ),
         ProviderEntry(
             "OpenWeatherMap", WeatherAPI.OPENWEATHERMAP,
@@ -82,12 +93,22 @@ object RadarProvider {
     @JvmStatic
     @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
     fun getRadarViewProvider(context: Context, rootView: ViewGroup): RadarViewProvider {
-        return if (getRadarProvider() == WeatherAPI.OPENWEATHERMAP) {
+        val radarProvider = getRadarProvider()
+        val isEnabled = isRadarProviderEnabled(radarProvider)
+
+        return if (radarProvider == WeatherAPI.OPENWEATHERMAP && isEnabled) {
             OWMRadarViewProvider(context, rootView)
-        } else if (getRadarProvider() == WeatherAPI.TOMORROWIO) {
+        } else if (radarProvider == WeatherAPI.TOMORROWIO && isEnabled) {
             TomorrowIoRadarViewProvider(context, rootView)
-        } else {
+        } else if (radarProvider == WeatherAPI.NWS && isEnabled) {
+            NWSRadarViewProvider(context, rootView)
+        } else if (radarProvider == WeatherAPI.RAINVIEWER && isEnabled) {
             RainViewerViewProvider(context, rootView)
+        } else {
+            EmptyRadarViewProvider(context, rootView)
         }
     }
+
+    private fun isRadarProviderEnabled(provider: String): Boolean =
+        remoteConfigService.isProviderEnabled(provider)
 }
