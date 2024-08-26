@@ -174,7 +174,7 @@ dependencies {
     fullgmsImplementation 'com.google.android.play:feature-delivery-ktx:2.1.0'
     fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
 
-    nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.18'
+    nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.20'
 }
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Fullgms")) {
