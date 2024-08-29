@@ -30,6 +30,10 @@ object LocationUtils {
     private val AS_BOUNDING_BOX =
         BoundingBox(-14.6018129466, -10.9972026743, -171.141907163, -168.1016121805)
 
+    // Germany
+    private val DE_BOUNDING_BOX =
+        BoundingBox(47.2701114, 55.099161, 5.8663153, 15.0419319)
+
     private val NWS_SUPPORTED_COUNTRIES = setOf("US", "AS", "UM", "GU", "MP", "PR", "VI")
     private val NWS_SUPPORTED_LOCATIONS = listOf(
         US_BOUNDING_BOX,
@@ -142,6 +146,33 @@ object LocationUtils {
                     location.locationLong
                 )
             }
+        }
+    }
+
+    fun isGermany(countryCode: String?): Boolean {
+        return if (countryCode.isNullOrBlank()) {
+            false
+        } else {
+            countryCode.equals("de", ignoreCase = true) || countryCode.equals(
+                "germany",
+                ignoreCase = true
+            )
+        }
+    }
+
+    fun isGermany(location: LocationData): Boolean {
+        return if (!location.countryCode.isNullOrBlank()) {
+            isGermany(location.countryCode)
+        } else {
+            DE_BOUNDING_BOX.intersects(location.latitude, location.longitude)
+        }
+    }
+
+    fun isGermany(location: LocationQuery): Boolean {
+        return if (!location.locationCountry.isNullOrBlank()) {
+            isGermany(location.locationCountry)
+        } else {
+            DE_BOUNDING_BOX.intersects(location.locationLat, location.locationLong)
         }
     }
 

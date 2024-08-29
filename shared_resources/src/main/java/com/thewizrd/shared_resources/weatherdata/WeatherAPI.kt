@@ -23,6 +23,7 @@ object WeatherAPI {
     const val WEATHERBITIO = "weatherbitio"
     const val METEOMATICS = "meteomatics"
     const val APPLE = "apple"
+    const val DWD = "dwd"
 
     // Location APIs
     const val ANDROID = "android"
@@ -55,7 +56,8 @@ object WeatherAPI {
         ACCUWEATHER,
         WEATHERBITIO,
         METEOMATICS,
-        APPLE
+        APPLE,
+        DWD
     )
     @Retention(AnnotationRetention.SOURCE)
     annotation class WeatherProviders
@@ -127,6 +129,10 @@ object WeatherAPI {
                 "https://www.met.no/en", "https://www.met.no/en"
             ),
             ProviderEntry(
+                "BrightSky (DWD) [Germany]", DWD,
+                "https://brightsky.dev/", "https://brightsky.dev/"
+            ),
+            ProviderEntry(
                 "Tomorrow.io", TOMORROWIO,
                 "https://www.tomorrow.io/weather-api/", "https://www.tomorrow.io/weather-api/"
             ),
@@ -159,6 +165,10 @@ object WeatherAPI {
             ProviderEntry(
                 "National Weather Service (United States)", NWS,
                 "https://www.weather.gov", "https://www.weather.gov"
+            ),
+            ProviderEntry(
+                "BrightSky (DWD) [Germany]", DWD,
+                "https://brightsky.dev/", "https://brightsky.dev/"
             ),
             ProviderEntry(
                 "WeatherAPI.com", WEATHERAPI,

@@ -6,6 +6,7 @@ import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.weather_api.accuweather.weather.AccuWeatherProvider
+import com.thewizrd.weather_api.brightsky.BrightSkyProvider
 import com.thewizrd.weather_api.here.weather.HEREWeatherProvider
 import com.thewizrd.weather_api.meteofrance.weather.MeteoFranceProvider
 import com.thewizrd.weather_api.meteomatics.weather.MeteomaticsWeatherProvider
@@ -58,6 +59,7 @@ class WeatherProviderFactoryImpl : WeatherProviderFactory {
             WeatherAPI.WEATHERBITIO -> WeatherBitIOProvider()
             WeatherAPI.METEOMATICS -> MeteomaticsWeatherProvider()
             WeatherAPI.APPLE -> WeatherKitProvider()
+            WeatherAPI.DWD -> BrightSkyProvider()
             else -> {
                 if (!BuildConfig.DEBUG) {
                     if (!BuildConfig.IS_NONGMS)
