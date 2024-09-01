@@ -11,6 +11,7 @@ import com.thewizrd.shared_resources.controls.ProviderEntry
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
+import com.thewizrd.simpleweather.radar.eccc.ECCCRadarViewProvider
 import com.thewizrd.simpleweather.radar.nws.NWSRadarViewProvider
 import com.thewizrd.simpleweather.radar.openweather.OWMRadarViewProvider
 import com.thewizrd.simpleweather.radar.rainviewer.RainViewerViewProvider
@@ -23,6 +24,7 @@ object RadarProvider {
     @StringDef(
         WeatherAPI.RAINVIEWER,
         WeatherAPI.NWS,
+        WeatherAPI.ECCC,
         WeatherAPI.OPENWEATHERMAP,
         WeatherAPI.TOMORROWIO
     )
@@ -56,6 +58,10 @@ object RadarProvider {
         ProviderEntry(
             "National Weather Service (United States)", WeatherAPI.NWS,
             "https://radar.weather.gov/", "https://radar.weather.gov/"
+        ),
+        ProviderEntry(
+            "Environment and Climate Change Canada (ECCC)", WeatherAPI.ECCC,
+            "https://weather.gc.ca/", "https://weather.gc.ca/"
         ),
         ProviderEntry(
             "OpenWeatherMap", WeatherAPI.OPENWEATHERMAP,
@@ -102,6 +108,8 @@ object RadarProvider {
             TomorrowIoRadarViewProvider(context, rootView)
         } else if (radarProvider == WeatherAPI.NWS && isEnabled) {
             NWSRadarViewProvider(context, rootView)
+        } else if (radarProvider == WeatherAPI.ECCC && isEnabled) {
+            ECCCRadarViewProvider(context, rootView)
         } else if (radarProvider == WeatherAPI.RAINVIEWER && isEnabled) {
             RainViewerViewProvider(context, rootView)
         } else {
