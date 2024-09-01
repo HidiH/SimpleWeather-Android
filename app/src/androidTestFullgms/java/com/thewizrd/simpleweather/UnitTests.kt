@@ -23,6 +23,7 @@ import com.thewizrd.shared_resources.remoteconfig.WeatherProviderConfig
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.ZoneIdCompat
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
@@ -569,6 +570,47 @@ class UnitTests {
             val weather =
                 getWeather(provider, Coordinate(34.0207305, -118.6919157))
             assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
+        }
+    }
+
+    @Throws(WeatherException::class)
+    @Test
+    fun getDWDWeather() {
+        runBlocking(Dispatchers.Default) {
+            val provider =
+                weatherModule.weatherManager.getWeatherProvider(WeatherAPI.DWD)
+            val weather =
+                getWeather(provider, Coordinate(52.52, 13.4)) // Berlin
+            assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
+        }
+    }
+
+    @Throws(WeatherException::class)
+    @Test
+    fun getECCCWeather() {
+        runBlocking(Dispatchers.Default) {
+            val provider =
+                weatherModule.weatherManager.getWeatherProvider(WeatherAPI.ECCC)
+            val weather =
+                getWeather(provider, Coordinate(48.737, -91.984)) // Banning, ON
+            assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
+        }
+    }
+
+    @Throws(WeatherException::class)
+    @Test
+    fun getECCCWeather_FR() {
+        runBlocking(Dispatchers.Default) {
+            val locale = LocaleUtils.getLocale()
+            LocaleUtils.setLocaleCode(Locale.CANADA_FRENCH.toLanguageTag())
+
+            val provider =
+                weatherModule.weatherManager.getWeatherProvider(WeatherAPI.ECCC)
+            val weather =
+                getWeather(provider, Coordinate(48.737, -91.984)) // Banning, ON
+            assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
+            // Restore
+            LocaleUtils.setLocaleCode(locale.toLanguageTag())
         }
     }
 

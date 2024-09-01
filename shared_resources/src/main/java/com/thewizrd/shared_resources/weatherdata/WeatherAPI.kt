@@ -24,6 +24,7 @@ object WeatherAPI {
     const val METEOMATICS = "meteomatics"
     const val APPLE = "apple"
     const val DWD = "dwd"
+    const val ECCC = "eccc"
 
     // Location APIs
     const val ANDROID = "android"
@@ -40,7 +41,7 @@ object WeatherAPI {
      * 2) Add constructor for [Weather] data objects
      * 3) Update [LocationQuery] (if needed)
      * 4) Add API to provider list below
-     * 5) Add API to WeatherProviderManager / WeatherProviderFactory
+     * 5) Add API to WeatherProviderManager / [com.thewizrd.weather_api.weatherdata.WeatherProviderFactoryImpl]
      * 6) Add to remote_config_defaults.xml
      */
     @StringDef(
@@ -57,7 +58,8 @@ object WeatherAPI {
         WEATHERBITIO,
         METEOMATICS,
         APPLE,
-        DWD
+        DWD,
+        ECCC
     )
     @Retention(AnnotationRetention.SOURCE)
     annotation class WeatherProviders
@@ -121,16 +123,20 @@ object WeatherAPI {
                 "https://www.weather.gov", "https://www.weather.gov"
             ),
             ProviderEntry(
+                "BrightSky (DWD) [Germany]", DWD,
+                "https://brightsky.dev/", "https://brightsky.dev/"
+            ),
+            ProviderEntry(
+                "Environment and Climate Change Canada (ECCC)", ECCC,
+                "https://www.weather.gc.ca/", "https://www.weather.gc.ca/canada_e.html"
+            ),
+            ProviderEntry(
                 "Meteo France", METEOFRANCE,
                 "https://meteofrance.com/", "https://meteofrance.com/"
             ),
             ProviderEntry(
                 "MET Norway", METNO,
                 "https://www.met.no/en", "https://www.met.no/en"
-            ),
-            ProviderEntry(
-                "BrightSky (DWD) [Germany]", DWD,
-                "https://brightsky.dev/", "https://brightsky.dev/"
             ),
             ProviderEntry(
                 "Tomorrow.io", TOMORROWIO,
@@ -159,16 +165,20 @@ object WeatherAPI {
                 "https://www.met.no/en", "https://www.met.no/en"
             ),
             ProviderEntry(
-                "OpenWeatherMap", OPENWEATHERMAP,
-                "http://www.openweathermap.org", "https://home.openweathermap.org/users/sign_up"
-            ),
-            ProviderEntry(
                 "National Weather Service (United States)", NWS,
                 "https://www.weather.gov", "https://www.weather.gov"
             ),
             ProviderEntry(
                 "BrightSky (DWD) [Germany]", DWD,
                 "https://brightsky.dev/", "https://brightsky.dev/"
+            ),
+            ProviderEntry(
+                "Environment and Climate Change Canada (ECCC)", ECCC,
+                "https://www.weather.gc.ca/", "https://www.weather.gc.ca/canada_e.html"
+            ),
+            ProviderEntry(
+                "OpenWeatherMap", OPENWEATHERMAP,
+                "http://www.openweathermap.org", "https://home.openweathermap.org/users/sign_up"
             ),
             ProviderEntry(
                 "WeatherAPI.com", WEATHERAPI,
