@@ -326,8 +326,8 @@ class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
         companion object {
             fun fromTile(x: Int, y: Int, zoom: Int): BoundingBox {
                 return BoundingBox(
-                    yMin = tile2lat(y, zoom),
-                    yMax = tile2lat(y + 1, zoom),
+                    yMin = tile2lat(y + 1, zoom),
+                    yMax = tile2lat(y, zoom),
                     xMin = tile2lon(x, zoom),
                     xMax = tile2lon(x + 1, zoom)
                 )
