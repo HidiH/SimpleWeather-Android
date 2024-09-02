@@ -396,17 +396,16 @@ private fun IconTempRow(
             modifier = Modifier
                 .height(60.dp)
                 .weight(1f)
-                .padding(end = 8.dp)
                 .align(Alignment.CenterVertically),
             alignment = IconAlignment.End,
             weatherIcon = weatherIcon,
             iconProvider = iconProvider,
             shouldAnimate = true
         )
+        Spacer(modifier = Modifier.size(8.dp))
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 8.dp)
                 .align(Alignment.CenterVertically),
             text = curTemp ?: WeatherIcons.PLACEHOLDER,
             textAlign = TextAlign.Start,
