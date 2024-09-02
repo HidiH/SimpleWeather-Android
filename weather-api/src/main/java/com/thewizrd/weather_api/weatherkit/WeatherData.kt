@@ -54,9 +54,7 @@ fun createWeatherData(root: com.thewizrd.weather_api.weatherkit.Weather): Weathe
             forecast!!.add(dailyFcast)
             txtForecast!!.add(txtFcast)
 
-            if (todaysForecast == null && dailyFcast.date.toLocalDate()
-                    .isEqual(now.toLocalDate())
-            ) {
+            if (todaysForecast == null) {
                 todaysForecast = dailyFcast
                 todaysTxtForecast = txtFcast
             }
