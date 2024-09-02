@@ -341,7 +341,7 @@
 
             <meta-data
                 android:name="androidx.wear.tiles.PREVIEW"
-                android:resource="@drawable/tile_preview_forecast" />
+                android:resource="@drawable/tile_preview_hrforecast" />
         </service>
 
         <service
