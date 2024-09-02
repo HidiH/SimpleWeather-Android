@@ -175,4 +175,9 @@ object ContextUtils {
         val uiModeMgr = this.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
         return uiModeMgr.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
     }
+
+    @JvmStatic
+    fun Context.isLargeWatch(): Boolean {
+        return (isScreenRound() && isSmallestWidth(210)) || (!isScreenRound() && isSmallestWidth(180))
+    }
 }

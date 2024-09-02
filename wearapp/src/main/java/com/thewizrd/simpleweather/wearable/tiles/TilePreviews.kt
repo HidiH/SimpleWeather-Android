@@ -2,6 +2,7 @@ package com.thewizrd.simpleweather.wearable.tiles
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.wear.protolayout.DimensionBuilders.expand
 import androidx.wear.protolayout.LayoutElementBuilders
@@ -136,15 +137,17 @@ fun CurrentWeatherGoogleTilePreview() {
 @Composable
 fun ForecastWeatherTilePreview() {
     val context = LocalContext.current
-    val forecasts = MutableList(4) {
-        ForecastTileModel(context, Locale.getDefault(), Forecast().apply {
-            date = LocalDateTime.now().plusDays(it.toLong())
-            highF = 70f
-            highC = ConversionMethods.FtoC(70f)
-            lowF = 65f
-            lowC = ConversionMethods.FtoC(65f)
-            icon = WeatherIcons.CLOUDY
-        })
+    val forecasts = remember {
+        MutableList(4) {
+            ForecastTileModel(context, Locale.getDefault(), Forecast().apply {
+                date = LocalDateTime.now().plusDays(it.toLong())
+                highF = 70f
+                highC = ConversionMethods.FtoC(70f)
+                lowF = 65f
+                lowC = ConversionMethods.FtoC(65f)
+                icon = WeatherIcons.CLOUDY
+            })
+        }
     }
 
     LayoutRootPreview(
@@ -157,11 +160,11 @@ fun ForecastWeatherTilePreview() {
                 forecastWeatherTileLayout(
                     context,
                     context.deviceParams(),
+                    location = "New York",
                     weatherIconId = "$ID_WEATHER_ICON_PREFIX${WeatherIcons.DAY_SUNNY}",
                     currentTemperature = "70°",
-                    popChance = "90%",
-                    popCloudiness = "95%",
-                    windSpeed = "7 mph",
+                    tempHi = "75°",
+                    tempLo = "60°",
                     forecasts = forecasts
                 )
             )
@@ -231,11 +234,11 @@ fun HourlyForecastWeatherTilePreview() {
                 hourlyForecastWeatherTileLayout(
                     context,
                     context.deviceParams(),
+                    location = "New York",
                     weatherIconId = "$ID_WEATHER_ICON_PREFIX${WeatherIcons.DAY_SUNNY}",
                     currentTemperature = "70°",
-                    popChance = "90%",
-                    popCloudiness = "95%",
-                    windSpeed = "7 mph",
+                    tempHi = "75°",
+                    tempLo = "60°",
                     forecasts = forecasts
                 )
             )
