@@ -45,7 +45,9 @@ public class WeatherAlertPanelAdapter extends ListAdapter<WeatherAlertViewModel,
         public void bind(WeatherAlertViewModel model) {
             mAlertPanel.bindModel(model);
             mAlertPanel.setOnToggleListener(v -> {
-                notifyItemChanged(getBindingAdapterPosition(), "animation");
+                mAlertPanel.postOnAnimation(() -> {
+                    notifyItemChanged(getBindingAdapterPosition(), "animation");
+                });
             });
         }
     }

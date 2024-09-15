@@ -110,7 +110,7 @@ class WeatherAlertViewModel(weatherAlert: WeatherAlert) {
             }
             .append(StringUtils.lineSeparator())
             .append(StringUtils.lineSeparator())
-            .append(attribution)
+            .append(attribution ?: "")
 
     @get:ColorInt
     val alertSeverityColor: Int
