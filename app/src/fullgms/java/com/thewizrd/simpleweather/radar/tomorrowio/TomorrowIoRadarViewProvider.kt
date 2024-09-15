@@ -266,7 +266,9 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
                 return null
             }
 
-            if (mapFrame != null) {
+            val key = getKey()
+
+            if (mapFrame != null && !key.isNullOrBlank()) {
                 /* Define the URL pattern for the tile images */
                 return String.format(
                     Locale.ROOT,
@@ -275,7 +277,7 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
                     x,
                     y,
                     mapFrame.timestamp,
-                    getKey()
+                    key
                 )
             }
 

@@ -277,6 +277,10 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                }
+
                 val request = Request.Builder()
                     .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
                     .url(

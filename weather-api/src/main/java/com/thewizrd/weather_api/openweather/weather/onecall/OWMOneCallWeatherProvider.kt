@@ -310,6 +310,10 @@ class OWMOneCallWeatherProvider : WeatherProviderImpl, AirQualityProvider {
                     // If were under rate limit, deny request
                     checkRateLimit()
 
+                    if (key.isNullOrBlank()) {
+                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                    }
+
                     val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
                     df.applyPattern("0.####")
 

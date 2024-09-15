@@ -75,6 +75,10 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
             // If were under rate limit, deny request
             checkRateLimit()
 
+            if (key.isNullOrBlank()) {
+                throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+            }
+
             val request = Request.Builder()
                 .cacheControl(
                     CacheControl.Builder()
@@ -163,6 +167,10 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
         try {
             // If were under rate limit, deny request
             checkRateLimit()
+
+            if (key.isNullOrBlank()) {
+                throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+            }
 
             val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
             df.applyPattern("0.##")
