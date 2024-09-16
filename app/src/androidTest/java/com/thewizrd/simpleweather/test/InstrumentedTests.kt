@@ -1,4 +1,4 @@
-package com.thewizrd.simpleweather
+package com.thewizrd.simpleweather.test
 
 import android.content.Context
 import android.content.SharedPreferences
