@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.transition.platform.MaterialFadeThrough
+import com.google.android.material.transition.MaterialFadeThrough
 import com.thewizrd.common.adapters.WeatherAlertPanelAdapter
 import com.thewizrd.common.controls.WeatherAlertsViewModel
 import com.thewizrd.common.helpers.SimpleRecyclerViewAdapterObserver

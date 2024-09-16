@@ -134,4 +134,11 @@
     <string name="pref_title_iconsize">"Pictogramgrootte"</string>
     <string name="precipitation_minutely_starting_text_format">"De regen zal over ongeveer %1$s beginnen"</string>
     <string name="precipitation_minutely_stopping_text_format">"Regen zal stoppen in ongeveer %1$s"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Minimumwaarschuwingsniveau"</string>
+    <string name="alertsev_all">"Geen (toon alle waarschuwingen)"</string>
+    <string name="alertsev_moderate">"Matig"</string>
+    <string name="alertsev_severe">"Ernstig"</string>
+    <string name="alertsev_extreme">"Extreem"</string>
 </resources>

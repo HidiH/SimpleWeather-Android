@@ -23,8 +23,12 @@ import com.google.android.material.color.DynamicColors
 import com.thewizrd.common.CommonModule
 import com.thewizrd.common.commonModule
 import com.thewizrd.common.preferences.SettingsListener
-import com.thewizrd.shared_resources.*
+import com.thewizrd.shared_resources.AppState
+import com.thewizrd.shared_resources.ApplicationLib
+import com.thewizrd.shared_resources.SharedModule
+import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.preferences.SettingsManager
+import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
@@ -258,12 +262,13 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
         }
     }
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
-            .setMinimumLoggingLevel(if (BuildConfig.DEBUG) Log.DEBUG else Log.INFO)
-            .setDefaultProcessName(packageName) // Main process
-            .build()
-    }
+    override val workManagerConfiguration: Configuration
+        get() {
+            return Configuration.Builder()
+                .setMinimumLoggingLevel(if (BuildConfig.DEBUG) Log.DEBUG else Log.INFO)
+                .setDefaultProcessName(packageName) // Main process
+                .build()
+        }
 
     private fun getProcessNameCompat(): String? {
         return if (Build.VERSION.SDK_INT >= 28) {

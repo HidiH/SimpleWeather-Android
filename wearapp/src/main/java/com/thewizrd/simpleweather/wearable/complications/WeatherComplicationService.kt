@@ -1,7 +1,17 @@
 package com.thewizrd.simpleweather.wearable.complications
 
 import android.graphics.drawable.Icon
-import androidx.wear.watchface.complications.data.*
+import androidx.wear.watchface.complications.data.ComplicationData
+import androidx.wear.watchface.complications.data.ComplicationType
+import androidx.wear.watchface.complications.data.LongTextComplicationData
+import androidx.wear.watchface.complications.data.MonochromaticImage
+import androidx.wear.watchface.complications.data.MonochromaticImageComplicationData
+import androidx.wear.watchface.complications.data.NoDataComplicationData
+import androidx.wear.watchface.complications.data.PlainComplicationText
+import androidx.wear.watchface.complications.data.ShortTextComplicationData
+import androidx.wear.watchface.complications.data.SmallImage
+import androidx.wear.watchface.complications.data.SmallImageComplicationData
+import androidx.wear.watchface.complications.data.SmallImageType
 import com.thewizrd.common.utils.ImageUtils
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
@@ -98,9 +108,9 @@ class WeatherComplicationService : WeatherForecastComplicationService() {
 
         // Temperature
         val currTemp =
-            if (weather.condition.tempF != null && weather.condition.tempF != weather.condition.tempC) {
+            if (weather.condition?.tempF != null && weather.condition!!.tempF != weather.condition!!.tempC) {
                 val temp =
-                    if (isFahrenheit) Math.round(weather.condition.tempF) else Math.round(weather.condition.tempC)
+                    if (isFahrenheit) Math.round(weather.condition!!.tempF) else Math.round(weather.condition!!.tempC)
                 String.format(LocaleUtils.getLocale(), "%d", temp)
             } else {
                 WeatherIcons.PLACEHOLDER
@@ -113,13 +123,13 @@ class WeatherComplicationService : WeatherForecastComplicationService() {
         // Condition text
         val provider = weatherModule.weatherManager.getWeatherProvider(weather.source)
         val condition = if (provider.supportsWeatherLocale()) {
-            weather.condition.weather
+            weather.condition!!.weather
         } else {
-            provider.getWeatherCondition(weather.condition.icon)
+            provider.getWeatherCondition(weather.condition!!.icon)
         }
 
         val wim = sharedDeps.weatherIconsManager
-        val weatherIcon = wim.getWeatherIconResource(weather.condition.icon)
+        val weatherIcon = wim.getWeatherIconResource(weather.condition!!.icon)
         val icon = Icon.createWithBitmap(
             ImageUtils.bitmapFromDrawable(
                 getThemeContextOverride(false),
@@ -145,7 +155,7 @@ class WeatherComplicationService : WeatherForecastComplicationService() {
                                 Icon.createWithBitmap(
                                     ImageUtils.tintedBitmapFromDrawable(
                                         this@WeatherComplicationService,
-                                        wip.getWeatherIconResource(weather.condition.icon),
+                                        wip.getWeatherIconResource(weather.condition!!.icon),
                                         Colors.WHITE
                                     )
                                 )
@@ -179,7 +189,7 @@ class WeatherComplicationService : WeatherForecastComplicationService() {
                                 Icon.createWithBitmap(
                                     ImageUtils.tintedBitmapFromDrawable(
                                         this,
-                                        wip.getWeatherIconResource(weather.condition.icon),
+                                        wip.getWeatherIconResource(weather.condition!!.icon),
                                         Colors.WHITE
                                     )
                                 )
@@ -198,7 +208,7 @@ class WeatherComplicationService : WeatherForecastComplicationService() {
                     MonochromaticImage.Builder(
                         Icon.createWithResource(
                             this,
-                            wip.getWeatherIconResource(weather.condition.icon)
+                            wip.getWeatherIconResource(weather.condition!!.icon)
                         )
                             .setTint(Colors.WHITESMOKE)
                     ).build(),
@@ -218,7 +228,7 @@ class WeatherComplicationService : WeatherForecastComplicationService() {
                         Icon.createWithBitmap(
                             ImageUtils.tintedBitmapFromDrawable(
                                 this,
-                                wip.getWeatherIconResource(weather.condition.icon),
+                                wip.getWeatherIconResource(weather.condition!!.icon),
                                 Colors.WHITE
                             )
                         )

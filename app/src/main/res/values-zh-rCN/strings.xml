@@ -202,4 +202,20 @@
     <!-- Fuzzy -->
     <string name="precipitation_minutely_starting_text_format">"大约%1$s后将开始下雨"</string>
     <string name="precipitation_minutely_stopping_text_format">"雨将在大约%1$s后停止"</string>
+
+    <!-- Minimum Alert Severity -->
+    <!-- Fuzzy -->
+    <string name="pref_title_minalertseverity">"最低警报严重程度"</string>
+
+    <!-- Fuzzy -->
+    <string name="alertsev_all">"无（显示所有警报）"</string>
+
+    <!-- Fuzzy -->
+    <string name="alertsev_moderate">"中度"</string>
+
+    <!-- Fuzzy -->
+    <string name="alertsev_severe">"严重"</string>
+
+    <!-- Fuzzy -->
+    <string name="alertsev_extreme">"极端"</string>
 </resources>

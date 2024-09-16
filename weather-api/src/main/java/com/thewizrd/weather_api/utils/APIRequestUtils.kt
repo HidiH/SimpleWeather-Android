@@ -1,5 +1,6 @@
 package com.thewizrd.weather_api.utils
 
+import android.content.Context
 import androidx.core.content.edit
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
@@ -8,6 +9,7 @@ import com.thewizrd.shared_resources.locationdata.WeatherLocationProvider
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.weather_api.locationdata.WeatherLocationProviderImpl
 import com.thewizrd.weather_api.weatherdata.WeatherProviderImpl
+import okhttp3.Request
 import okhttp3.Response
 import java.net.HttpURLConnection
 import kotlin.random.Random
@@ -219,5 +221,16 @@ object APIRequestUtils {
     @JvmName("createThrowableExt")
     fun Response.createThrowable(): Throwable {
         return createThrowable(this)
+    }
+
+    fun Request.Builder.addUserAgent(context: Context): Request.Builder {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val version = String.format("v%s", packageInfo.versionName)
+
+        return addUserAgent(String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version))
+    }
+
+    fun Request.Builder.addUserAgent(value: String): Request.Builder {
+        return addHeader("User-Agent", value)
     }
 }

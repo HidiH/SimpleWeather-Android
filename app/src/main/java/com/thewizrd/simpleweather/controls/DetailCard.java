@@ -75,7 +75,7 @@ public class DetailCard extends LinearLayout {
         binding = CardWeatherDetailBinding.inflate(inflater, this, true);
 
         bgDrawable = new MaterialShapeDrawable(
-                ShapeAppearanceModel.builder(context, R.style.ShapeAppearance_Material_MediumComponent, 0)
+                ShapeAppearanceModel.builder(context, R.style.ShapeAppearance_Material3_MediumComponent, 0)
                         .build());
         bgDrawable.initializeElevationOverlay(context);
         bgDrawable.setElevation(ContextUtils.dpToPx(context, 2f));

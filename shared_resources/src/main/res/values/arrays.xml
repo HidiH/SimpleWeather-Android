@@ -61,11 +61,13 @@
         <item>@string/unit_mph</item>
         <item>@string/unit_kph</item>
         <item>@string/unit_msec</item>
+        <item>@string/unit_knots</item>
     </string-array>
     <string-array name="speedunit_values">
         <item>MPH</item>
         <item>KMPH</item>
         <item>MSEC</item>
+        <item>KNOTS</item>
     </string-array>
     <string-array name="pressureunit_entries">
         <item>@string/unit_inHg</item>

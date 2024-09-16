@@ -24,4 +24,28 @@ object AnalyticsLogger {
             analytics.logEvent(eventName.replace("[^a-zA-Z0-9]".toRegex(), "_"), properties)
         }
     }
+
+    @JvmStatic
+    fun setUserProperty(
+        @Size(min = 1L, max = 24L) property: String,
+        @Size(max = 36L) value: String?
+    ) {
+        analytics.setUserProperty(property, value)
+    }
+
+    @JvmStatic
+    fun setUserProperty(
+        @Size(min = 1L, max = 24L) property: String,
+        @Size(max = 36L) value: Boolean
+    ) {
+        analytics.setUserProperty(property, value.toString())
+    }
+
+    @JvmStatic
+    fun setUserProperty(
+        @Size(min = 1L, max = 24L) property: String,
+        @Size(max = 36L) value: Number
+    ) {
+        analytics.setUserProperty(property, value.toString())
+    }
 }

@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,15 +34,24 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.transition.TransitionManager
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.transition.platform.MaterialFade
-import com.google.android.material.transition.platform.MaterialFadeThrough
-import com.thewizrd.common.helpers.*
+import com.google.android.material.transition.MaterialFade
+import com.google.android.material.transition.MaterialFadeThrough
+import com.thewizrd.common.helpers.ColorsUtils
+import com.thewizrd.common.helpers.ListChangedAction
+import com.thewizrd.common.helpers.LocationPermissionLauncher
+import com.thewizrd.common.helpers.OnListChangedListener
 import com.thewizrd.common.utils.ActivityUtils.setLightStatusBar
 import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.viewmodels.LocationSearchResult
@@ -65,11 +73,21 @@ import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.activities.LocationSearch
-import com.thewizrd.simpleweather.adapters.*
+import com.thewizrd.simpleweather.adapters.FavoritesPanelAdapter
+import com.thewizrd.simpleweather.adapters.GPSPanelAdapter
+import com.thewizrd.simpleweather.adapters.LocationPanelItemType
+import com.thewizrd.simpleweather.adapters.LocationPanelPayload
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
+import com.thewizrd.simpleweather.adapters.ViewHolderLongClickListener
 import com.thewizrd.simpleweather.controls.LocationPanelUiModel
 import com.thewizrd.simpleweather.databinding.FragmentLocationsBinding
 import com.thewizrd.simpleweather.fragments.ToolbarFragment
-import com.thewizrd.simpleweather.helpers.*
+import com.thewizrd.simpleweather.helpers.ItemTouchCallbackListener
+import com.thewizrd.simpleweather.helpers.ItemTouchHelperCallback
+import com.thewizrd.simpleweather.helpers.LocationPanelOffsetDecoration
+import com.thewizrd.simpleweather.helpers.OffsetMargin
+import com.thewizrd.simpleweather.helpers.SwipeToDeleteOffSetItemDecoration
+import com.thewizrd.simpleweather.helpers.WindowColorManager
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
@@ -88,6 +106,13 @@ class LocationsFragment : ToolbarFragment() {
     private var mEditMode = false
     private var mDataChanged = false
     private var mHomeChanged = false
+
+    private val removeListeners = mutableListOf<Runnable>()
+    private val deleteRunnable = Runnable {
+        removeListeners.forEach {
+            mMainHandler.post(it)
+        }
+    }
 
     // Views
     private lateinit var binding: FragmentLocationsBinding
@@ -363,9 +388,7 @@ class LocationsFragment : ToolbarFragment() {
                 target: RecyclerView.ViewHolder
             ) {
                 mDataChanged = true
-                if (mEditMode) {
-                    toggleEditMode()
-                } else {
+                if (!mEditMode) {
                     val dataSet = mFavoritesAdapter.getDataset()
                     for (view in dataSet) {
                         if (view.locationType != LocationType.GPS.value) {
@@ -619,52 +642,59 @@ class LocationsFragment : ToolbarFragment() {
         }
     }
 
-    private val onListChangedListener = object : OnListChangedListener<LocationPanelUiModel>() {
-        override fun onChanged(
-            sender: ArrayList<LocationPanelUiModel>,
-            e: ListChangedArgs<LocationPanelUiModel>
-        ) {
+    private val onListChangedListener =
+        OnListChangedListener<LocationPanelUiModel> { _, e ->
             runWithView {
-                val dataMoved =
-                    e.action == ListChangedAction.REMOVE || e.action == ListChangedAction.MOVE
-                val onlyHomeIsLeft = mFavoritesAdapter.getFavoritesCount() <= 1
+                mMainHandler.removeCallbacks(deleteRunnable)
+                removeListeners.clear()
 
-                // Flag that data has changed
-                if (mEditMode && dataMoved)
-                    mDataChanged = true
+                removeListeners.add(Runnable {
+                    val dataMoved =
+                        e.action == ListChangedAction.REMOVE || e.action == ListChangedAction.MOVE
+                    val onlyHomeIsLeft = mFavoritesAdapter.getFavoritesCount() <= 1
 
-                if (mEditMode && (e.newStartingIndex == 0 || e.oldStartingIndex == 0))
-                    mHomeChanged = true
+                    // Flag that data has changed
+                    if (mEditMode && dataMoved)
+                        mDataChanged = true
 
-                // Hide FAB; Don't allow adding more locations
-                if (mFavoritesAdapter.getFavoritesCount() >= settingsManager.getMaxLocations()) {
-                    binding.fab.hide()
-                } else {
-                    binding.fab.show()
-                }
+                    if (mEditMode && (e.newStartingIndex == 0 || e.oldStartingIndex == 0))
+                        mHomeChanged = true
 
-                // Cancel edit Mode
-                if (mEditMode && onlyHomeIsLeft) toggleEditMode()
+                    // Hide FAB; Don't allow adding more locations
+                    if (mFavoritesAdapter.getFavoritesCount() >= settingsManager.getMaxLocations()) {
+                        binding.fab.hide()
+                    } else {
+                        binding.fab.show()
+                    }
 
-                // Disable EditMode if only single location
-                val editMenuBtn = toolbar.menu?.findItem(R.id.action_editmode)
-                editMenuBtn?.isVisible = if (mEditMode) false else !onlyHomeIsLeft
+                    // Cancel edit Mode
+                    if (mEditMode && onlyHomeIsLeft) toggleEditMode()
+
+                    // Disable EditMode if only single location
+                    val editMenuBtn = toolbar.menu?.findItem(R.id.action_editmode)
+                    editMenuBtn?.isVisible = if (mEditMode) false else !onlyHomeIsLeft
+
+                    if (dataMoved && !mEditMode) {
+                        val dataSet = mFavoritesAdapter.getDataset()
+                        for (view in dataSet) {
+                            if (view.locationType != LocationType.GPS.value) {
+                                updateFavoritesPosition(view)
+                            }
+                        }
+                    }
+                })
+
+                mMainHandler.postDelayed(deleteRunnable, 500)
             }
         }
-    }
     private val onSelectionChangedListener =
-        object : OnListChangedListener<LocationPanelUiModel>() {
-            override fun onChanged(
-                sender: ArrayList<LocationPanelUiModel>,
-                args: ListChangedArgs<LocationPanelUiModel>
-            ) {
-                runWithView {
-                    if (mEditMode) {
-                        toolbar.title = if (sender.isNotEmpty()) sender.size.toString() else ""
+        OnListChangedListener<LocationPanelUiModel> { sender, _ ->
+            runWithView {
+                if (mEditMode) {
+                    toolbar.title = if (sender.isNotEmpty()) sender.size.toString() else ""
 
-                        val deleteBtnItem = toolbar.menu.findItem(R.id.action_delete)
-                        deleteBtnItem?.isVisible = sender.isNotEmpty()
-                    }
+                    val deleteBtnItem = toolbar.menu.findItem(R.id.action_delete)
+                    deleteBtnItem?.isVisible = sender.isNotEmpty()
                 }
             }
         }

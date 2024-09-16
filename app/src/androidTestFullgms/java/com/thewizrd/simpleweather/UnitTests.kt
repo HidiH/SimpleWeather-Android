@@ -13,6 +13,7 @@ import com.thewizrd.common.CommonModule
 import com.thewizrd.common.commonModule
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.shared_resources.*
+import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.WeatherLocationProvider
@@ -25,6 +26,7 @@ import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.ZoneIdCompat
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
+import com.thewizrd.shared_resources.weatherdata.auth.BasicAuthProviderKey
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.images.ImageDatabase
 import com.thewizrd.simpleweather.images.model.ImageData
@@ -97,11 +99,11 @@ class UnitTests {
         }
 
         runBlocking {
-            appLib.settingsManager.loadIfNeeded()
+            settingsManager.loadIfNeeded()
         }
 
-        if (appLib.settingsManager.usePersonalKey()) {
-            appLib.settingsManager.setPersonalKey(false)
+        if (settingsManager.usePersonalKey()) {
+            settingsManager.setPersonalKey(false)
             wasUsingPersonalKey = true
         }
     }
@@ -109,7 +111,7 @@ class UnitTests {
     @After
     fun destroy() {
         if (wasUsingPersonalKey) {
-            appLib.settingsManager.setPersonalKey(true)
+            settingsManager.setPersonalKey(true)
             wasUsingPersonalKey = false
         }
     }
@@ -470,17 +472,26 @@ class UnitTests {
     @Throws(WeatherException::class)
     @Test
     fun getTomorrowIOWeather() {
+        settingsManager.setPersonalKey(true)
+        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, "TomorrowIo_REPLACE_VALUE")
+
         runBlocking(Dispatchers.Default) {
             val provider = weatherModule.weatherManager.getWeatherProvider(WeatherAPI.TOMORROWIO)
             val weather =
                 getWeather(provider, Coordinate(34.0207305, -118.6919157)) // ~ Los Angeles
             assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
         }
+
+        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, null)
+        settingsManager.setPersonalKey(false)
     }
 
     @Throws(WeatherException::class)
     @Test
     fun getWeatherbitIOWeather() {
+        settingsManager.setPersonalKey(true)
+        settingsManager.setAPIKey(WeatherAPI.WEATHERBITIO, "WeatherBitIo_REPLACE_VALUE")
+
         runBlocking(Dispatchers.Default) {
             val provider =
                 weatherModule.weatherManager.getWeatherProvider(WeatherAPI.WEATHERBITIO)
@@ -488,10 +499,16 @@ class UnitTests {
                 getWeather(provider, Coordinate(39.9, -105.1)) // ~ Denver, CO
             assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
         }
+
+        settingsManager.setAPIKey(WeatherAPI.WEATHERBITIO, null)
+        settingsManager.setPersonalKey(false)
     }
 
     @Test
     fun getPollenData() {
+        settingsManager.setPersonalKey(true)
+        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, "TomorrowIo_REPLACE_VALUE")
+
         runBlocking(Dispatchers.Default) {
             val provider = TomorrowIOWeatherProvider()
             val location =
@@ -500,11 +517,20 @@ class UnitTests {
             val pollenData = provider.getPollenData(location!!)
             assertNotNull(pollenData)
         }
+
+        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, null)
+        settingsManager.setPersonalKey(false)
     }
 
     @Throws(WeatherException::class)
     @Test
     fun getMeteomaticsWeather() {
+        settingsManager.setPersonalKey(true)
+        settingsManager.setAPIKey(
+            WeatherAPI.METEOMATICS,
+            BasicAuthProviderKey("username", "password").toString()
+        )
+
         runBlocking(Dispatchers.Default) {
             val provider =
                 weatherModule.weatherManager.getWeatherProvider(WeatherAPI.METEOMATICS)
@@ -512,6 +538,9 @@ class UnitTests {
                 getWeather(provider, Coordinate(52.22, 20.97))
             assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
         }
+
+        settingsManager.setAPIKey(WeatherAPI.METEOMATICS, null)
+        settingsManager.setPersonalKey(false)
     }
 
     @Test

@@ -5,7 +5,13 @@ import androidx.annotation.MainThread
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.thewizrd.shared_resources.database.WeatherDAO
 import com.thewizrd.shared_resources.database.WeatherDatabase
 import com.thewizrd.shared_resources.locationdata.LocationData
@@ -18,7 +24,12 @@ import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.lastOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -235,21 +246,21 @@ class ForecastsListViewModel(app: Application) : AndroidViewModel(app) {
             val textForecastSize = forecasts?.txtForecast?.size ?: 0
 
             val isDayAndNt = textForecastSize == forecasts!!.forecast!!.size * 2
-            val addTextFct = isDayAndNt || textForecastSize == forecasts.forecast.size
+            val addTextFct = isDayAndNt || textForecastSize == forecasts.forecast!!.size
 
             for (i in position until min(totalCount, position + loadSize)) {
                 val forecast = if (addTextFct) {
                     if (isDayAndNt) {
                         ForecastItemViewModel(
-                            forecasts.forecast[i],
-                            forecasts.txtForecast[i * 2],
-                            forecasts.txtForecast[i * 2 + 1]
+                            forecasts.forecast!![i],
+                            forecasts.txtForecast!![i * 2],
+                            forecasts.txtForecast!![i * 2 + 1]
                         )
                     } else {
-                        ForecastItemViewModel(forecasts.forecast[i], forecasts.txtForecast[i])
+                        ForecastItemViewModel(forecasts.forecast!![i], forecasts.txtForecast!![i])
                     }
                 } else {
-                    ForecastItemViewModel(forecasts.forecast[i])
+                    ForecastItemViewModel(forecasts.forecast!![i])
                 }
 
                 models.add(forecast)

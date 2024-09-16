@@ -81,7 +81,7 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
             for (location in favorites) {
                 locationPref.insertEntry(
                     locationPref.entryCount - 1,
-                    location.name, location.query
+                    location.name!!, location.query
                 )
             }
             if (locationPref.entryCount > MAX_LOCATIONS)
@@ -252,7 +252,7 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
                             // Add location to adapter and select it
                             favorites.add(locData)
                             val idx = locationPref.entryCount - 1
-                            locationPref.insertEntry(idx, locData.name, locData.query)
+                            locationPref.insertEntry(idx, locData.name!!, locData.query)
                             locationPref.setValueIndex(idx)
                             locationPref.callChangeListener(locData.query)
                         } else {

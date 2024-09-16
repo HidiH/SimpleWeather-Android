@@ -12,6 +12,7 @@ object WeatherAPI {
     const val YAHOO = "Yahoo"
     const val WEATHERUNDERGROUND = "WUnderground"
     const val OPENWEATHERMAP = "openweather"
+    const val OPENWEATHERMAP_ONECALL = "openweather_onecall"
     const val METNO = "Metno"
     const val HERE = "Here"
     const val NWS = "NWS"
@@ -28,6 +29,9 @@ object WeatherAPI {
     const val LOCATIONIQ = "LocIQ"
     const val GOOGLE = "google"
     const val WEATHERAPI = "weatherapi"
+
+    // Radar
+    const val RAINVIEWER = "rainviewer"
 
     /**
      * Note to self: Common steps to adding a new weather provider

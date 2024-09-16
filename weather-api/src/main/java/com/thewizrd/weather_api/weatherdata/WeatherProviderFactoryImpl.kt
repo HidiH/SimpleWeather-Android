@@ -2,6 +2,7 @@ package com.thewizrd.weather_api.weatherdata
 
 import com.thewizrd.shared_resources.BuildConfig
 import com.thewizrd.shared_resources.appLib
+import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.weather_api.accuweather.weather.AccuWeatherProvider
@@ -28,10 +29,19 @@ class WeatherProviderFactoryImpl : WeatherProviderFactory {
 
                 when {
                     BuildConfig.IS_NONGMS -> {
-                        OWMOneCallWeatherProvider(OpenWeatherMapLocationProvider())
+                        // TODO: Remove after OneCall 3.0 is implemented - June 2024
+                        if (remoteConfigService.isProviderEnabled(WeatherAPI.OPENWEATHERMAP_ONECALL)) {
+                            OWMOneCallWeatherProvider(OpenWeatherMapLocationProvider())
+                        } else {
+                            OpenWeatherMapProvider(OpenWeatherMapLocationProvider())
+                        }
                     }
                     settingsMgr.usePersonalKey() -> {
-                        OWMOneCallWeatherProvider()
+                        if (remoteConfigService.isProviderEnabled(WeatherAPI.OPENWEATHERMAP_ONECALL)) {
+                            OWMOneCallWeatherProvider()
+                        } else {
+                            OpenWeatherMapProvider()
+                        }
                     }
                     else -> {
                         OpenWeatherMapProvider()

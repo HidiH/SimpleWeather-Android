@@ -29,6 +29,10 @@ public class Keys {
         return null;
     }
 
+    public static String getGPollenKey() {
+        return null;
+    }
+
     public static String getWeatherApiKey() {
         return null;
     }

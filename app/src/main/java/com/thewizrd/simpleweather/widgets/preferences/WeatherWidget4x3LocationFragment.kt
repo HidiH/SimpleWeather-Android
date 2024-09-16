@@ -63,7 +63,7 @@ class WeatherWidget4x3LocationFragment : BaseWeatherWidgetPreferenceFragment() {
 
             val favs = settingsManager.getFavorites() ?: emptyList()
             favs.forEach { location ->
-                locationPref.addEntry(location.name, location.query)
+                locationPref.addEntry(location.name!!, location.query)
             }
 
             // Reset value
@@ -141,7 +141,7 @@ class WeatherWidget4x3LocationFragment : BaseWeatherWidgetPreferenceFragment() {
 
                         if (locData?.locationType == LocationType.SEARCH) {
                             // Add location to adapter and select it
-                            locationPref.addEntry(locData.name, locData.query)
+                            locationPref.addEntry(locData.name!!, locData.query)
                             locationPref.values = locationPref.values?.let {
                                 LinkedHashSet(it).apply {
                                     add(locData.query)

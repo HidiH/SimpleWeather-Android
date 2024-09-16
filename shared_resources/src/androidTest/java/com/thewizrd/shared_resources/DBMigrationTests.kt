@@ -21,7 +21,7 @@ class DBMigrationTests {
     @JvmField
     val weatherDBHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        WeatherDatabase::class.java.canonicalName,
+        WeatherDatabase::class.java.canonicalName!!,
         FrameworkSQLiteOpenHelperFactory()
     )
 
@@ -29,7 +29,7 @@ class DBMigrationTests {
     @JvmField
     val locationDBHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        LocationsDatabase::class.java.canonicalName,
+        LocationsDatabase::class.java.canonicalName!!,
         FrameworkSQLiteOpenHelperFactory()
     )
 
@@ -37,7 +37,7 @@ class DBMigrationTests {
     @JvmField
     val tzdbDBHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        TZDatabase::class.java.canonicalName,
+        TZDatabase::class.java.canonicalName!!,
         FrameworkSQLiteOpenHelperFactory()
     )
 
@@ -139,7 +139,7 @@ class DBMigrationTests {
         // Re-open the database with version 2 and provide
         // MIGRATION_1_2 as the migration process.
         db = weatherDBHelper.runMigrationsAndValidate(
-            TEST_DB, to, true,
+            dbName, to, true,
             *WeatherDatabase.W_MIGRATION_SET
         )
 

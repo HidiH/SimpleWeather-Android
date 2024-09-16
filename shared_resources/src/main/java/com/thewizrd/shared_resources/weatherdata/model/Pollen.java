@@ -34,6 +34,8 @@ public class Pollen extends CustomJsonObject {
     @Json(name = "ragweed_pollen")
     private PollenCount ragweedPollenCount;
 
+    private String attribution;
+
     @RestrictTo({RestrictTo.Scope.LIBRARY})
     public Pollen() {
         // Needed for deserialization
@@ -61,6 +63,14 @@ public class Pollen extends CustomJsonObject {
 
     public void setRagweedPollenCount(PollenCount ragweedPollenCount) {
         this.ragweedPollenCount = ragweedPollenCount;
+    }
+
+    public String getAttribution() {
+        return attribution;
+    }
+
+    public void setAttribution(String attribution) {
+        this.attribution = attribution;
     }
 
     @Override
@@ -103,6 +113,9 @@ public class Pollen extends CustomJsonObject {
                     case "ragweed_pollen":
                         this.ragweedPollenCount = PollenCount.valueOf(reader.nextString());
                         break;
+                    case "attribution":
+                        this.attribution = reader.nextString();
+                        break;
                     default:
                         reader.skipValue();
                         break;
@@ -122,16 +135,26 @@ public class Pollen extends CustomJsonObject {
             writer.beginObject();
 
             // "tree_pollen" : ""
-            writer.name("tree_pollen");
-            writer.value(treePollenCount.name());
+            if (treePollenCount != null) {
+                writer.name("tree_pollen");
+                writer.value(treePollenCount.name());
+            }
 
             // "grass_pollen" : ""
-            writer.name("grass_pollen");
-            writer.value(grassPollenCount.name());
+            if (grassPollenCount != null) {
+                writer.name("grass_pollen");
+                writer.value(grassPollenCount.name());
+            }
 
             // "ragweed_pollen" : ""
-            writer.name("ragweed_pollen");
-            writer.value(ragweedPollenCount.name());
+            if (ragweedPollenCount != null) {
+                writer.name("ragweed_pollen");
+                writer.value(ragweedPollenCount.name());
+            }
+
+            // "attribution" : ""
+            writer.name("attribution");
+            writer.value(attribution);
 
             // }
             writer.endObject();

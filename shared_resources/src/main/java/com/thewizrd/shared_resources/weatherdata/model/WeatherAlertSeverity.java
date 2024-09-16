@@ -19,7 +19,6 @@ public enum WeatherAlertSeverity {
         this.value = value;
     }
 
-
     private static final SparseArray<WeatherAlertSeverity> map = new SparseArray<>();
 
     static {

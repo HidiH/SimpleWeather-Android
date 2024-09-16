@@ -9,6 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.thewizrd.shared_resources.di.UtilsModuleKt;
+import com.thewizrd.shared_resources.utils.StringUtils;
+import com.thewizrd.shared_resources.weatherdata.WeatherAPI;
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider;
 import com.thewizrd.weather_api.keys.Keys;
 
@@ -67,7 +70,7 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
 
     private static class OWMTileProvider extends XYTileSource {
         public OWMTileProvider() {
-            super("OWM", DEFAULT_ZOOM_LEVEL, DEFAULT_ZOOM_LEVEL, 256, ".png",
+            super("OWM", MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, 256, ".png",
                     new String[]{"https://tile.openweathermap.org/"});
         }
 
@@ -78,7 +81,19 @@ public class OWMRadarViewProvider extends MapTileRadarViewProvider {
             int y = MapTileIndex.getY(pMapTileIndex);
 
             /* Define the URL pattern for the tile images */
-            return String.format(Locale.ROOT, "https://tile.openweathermap.org/map/precipitation_new/%d/%d/%d.png?appid=%s", zoom, x, y, Keys.getOWMKey());
+            return String.format(Locale.ROOT,
+                    "https://tile.openweathermap.org/map/precipitation_new/%d/%d/%d.png?appid=%s", zoom, x, y,
+                    getKey()
+            );
+        }
+
+        private String getKey() {
+            String key = UtilsModuleKt.getSettingsManager().getAPIKey(WeatherAPI.OPENWEATHERMAP);
+
+            if (StringUtils.isNullOrWhitespace(key))
+                return Keys.getOWMKey();
+
+            return key;
         }
     }
 }

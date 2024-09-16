@@ -163,68 +163,67 @@ class WeatherApiProvider : WeatherProviderImpl(), WeatherAlertProvider {
             val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
             val query = updateLocationQuery(location)
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = getProviderKey()
 
-                val client = sharedDeps.httpClient
-                var response: Response? = null
-                var wEx: WeatherException? = null
+            val client = sharedDeps.httpClient
+            var response: Response? = null
+            var wEx: WeatherException? = null
 
-                try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                    }
-
-                    val request = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 20, TimeUnit.MINUTES)
-                        .url(String.format(WEATHER_QUERY_URL, query, locale, key))
-                        .build()
-
-                    // Connect to webstream
-                    response = client.newCall(request).await()
-                    checkForErrors(response)
-
-                    val stream = response.getStream()
-
-                    // Load weather
-                    val root = JSONParser.deserializer<ForecastResponse>(
-                        stream,
-                        ForecastResponse::class.java
-                    )
-
-                    // End Stream
-                    stream.closeQuietly()
-
-                    requireNotNull(root)
-
-                    weather = createWeatherData(root)
-                } catch (ex: Exception) {
-                    weather = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "WeatherApiProvider: error getting weather data")
-                } finally {
-                    response?.closeQuietly()
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                if (wEx == null && weather.isNullOrInvalid()) {
-                    wEx = WeatherException(ErrorStatus.NOWEATHER)
-                } else if (weather != null) {
-                    if (supportsWeatherLocale()) weather.locale = locale
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 20, TimeUnit.MINUTES)
+                    .url(String.format(WEATHER_QUERY_URL, query, locale, key))
+                    .build()
 
-                    weather.query = query
+                // Connect to webstream
+                response = client.newCall(request).await()
+                checkForErrors(response)
+
+                val stream = response.getStream()
+
+                // Load weather
+                val root = JSONParser.deserializer<ForecastResponse>(
+                    stream,
+                    ForecastResponse::class.java
+                )
+
+                // End Stream
+                stream.closeQuietly()
+
+                requireNotNull(root)
+
+                weather = createWeatherData(root)
+            } catch (ex: Exception) {
+                weather = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
+                } else if (ex is WeatherException) {
+                    wEx = ex
                 }
-
-                if (wEx != null) throw wEx
-
-                return@withContext weather!!
+                Logger.writeLine(Log.ERROR, ex, "WeatherApiProvider: error getting weather data")
+            } finally {
+                response?.closeQuietly()
             }
+
+            if (wEx == null && weather.isNullOrInvalid()) {
+                wEx = WeatherException(ErrorStatus.NOWEATHER)
+            } else if (weather != null) {
+                if (supportsWeatherLocale()) weather.locale = locale
+
+                weather.query = query
+            }
+
+            if (wEx != null) throw wEx
+
+            return@withContext weather!!
+        }
 
     @Throws(WeatherException::class)
     override suspend fun getAlerts(location: LocationData): Collection<WeatherAlert>? =
@@ -234,58 +233,61 @@ class WeatherApiProvider : WeatherProviderImpl(), WeatherAlertProvider {
             val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
             val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = settingsManager.getAPIKey(getWeatherAPI()) ?: getAPIKey()
 
             val client = sharedDeps.httpClient
             var response: Response? = null
 
-                try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    val request = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
-                        .url(
-                            String.format(
-                                ALERTS_QUERY_URL,
-                                updateLocationQuery(location),
-                                locale,
-                                key
-                            )
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
+                    .url(
+                        String.format(
+                            ALERTS_QUERY_URL,
+                            updateLocationQuery(location),
+                            locale,
+                            key
                         )
-                        .build()
-
-                    // Connect to webstream
-                    response = client.newCall(request).await()
-                    checkForErrors(response)
-
-                    val stream = response.getStream()
-
-                    // Load weather
-                    val root = JSONParser.deserializer<ForecastResponse>(
-                        stream,
-                        ForecastResponse::class.java
                     )
+                    .build()
 
-                    // End Stream
-                    stream.closeQuietly()
+                // Connect to webstream
+                response = client.newCall(request).await()
+                checkForErrors(response)
 
-                    requireNotNull(root)
+                val stream = response.getStream()
 
-                    alerts = createWeatherAlerts(root.alerts)
-                } catch (ex: Exception) {
-                    Logger.writeLine(Log.ERROR, ex, "WeatherApiProvider: error getting weather alert data")
-                } finally {
-                    response?.closeQuietly()
-                }
+                // Load weather
+                val root = JSONParser.deserializer<ForecastResponse>(
+                    stream,
+                    ForecastResponse::class.java
+                )
 
-                if (alerts == null) {
-                    alerts = emptyList()
-                }
+                // End Stream
+                stream.closeQuietly()
 
-                return@withContext alerts
+                requireNotNull(root)
+
+                alerts = createWeatherAlerts(root.alerts)
+            } catch (ex: Exception) {
+                Logger.writeLine(
+                    Log.ERROR,
+                    ex,
+                    "WeatherApiProvider: error getting weather alert data"
+                )
+            } finally {
+                response?.closeQuietly()
             }
+
+            if (alerts == null) {
+                alerts = emptyList()
+            }
+
+            return@withContext alerts
+        }
 
     @Throws(WeatherException::class)
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
@@ -295,7 +297,12 @@ class WeatherApiProvider : WeatherProviderImpl(), WeatherAlertProvider {
     override fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
-        return String.format(Locale.ROOT, "%s,%s", df.format(weather.location.latitude), df.format(weather.location.longitude))
+        return String.format(
+            Locale.ROOT,
+            "%s,%s",
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
+        )
     }
 
     override fun updateLocationQuery(location: LocationData): String {
@@ -555,12 +562,12 @@ class WeatherApiProvider : WeatherProviderImpl(), WeatherAlertProvider {
         if (!isNight) {
             // Fallback to sunset/rise time just in case
             var tz: ZoneOffset? = null
-            if (!weather.location.tzLong.isNullOrBlank()) {
-                val id = ZoneIdCompat.of(weather.location.tzLong)
+            if (!weather.location!!.tzLong.isNullOrBlank()) {
+                val id = ZoneIdCompat.of(weather.location!!.tzLong)
                 tz = id.rules.getOffset(Instant.now())
             }
             if (tz == null) {
-                tz = weather.location.tzOffset
+                tz = weather.location!!.tzOffset
             }
 
             val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

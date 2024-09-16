@@ -1,7 +1,18 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package com.thewizrd.simpleweather.ui.components
 
 import android.text.format.DateFormat
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -117,9 +128,9 @@ fun WeatherHourlyForecastPanel(
                 maxLines = 1
             )
         }
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.Center,
             horizontalArrangement = Arrangement.Center
         ) {
             if (popData != null) {
@@ -127,12 +138,14 @@ fun WeatherHourlyForecastPanel(
                     Icon(
                         modifier = Modifier
                             .size(20.dp)
-                            .padding(end = 2.dp),
+                            .padding(end = 2.dp)
+                            .align(Alignment.CenterVertically),
                         painter = painterResource(R.drawable.wi_umbrella),
                         tint = colorResource(R.color.colorPrimaryLight),
                         contentDescription = null
                     )
                     Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
                         text = spannableStringToAnnotatedString(popData.value),
                         style = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
                         textAlign = TextAlign.End,
@@ -142,7 +155,7 @@ fun WeatherHourlyForecastPanel(
                 }
             }
             if (popData != null && windData != null) {
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(8.dp))
             }
             if (windData != null) {
                 val windSpeed = remember(windData.value) {
@@ -158,12 +171,14 @@ fun WeatherHourlyForecastPanel(
                         modifier = Modifier
                             .size(20.dp)
                             .padding(end = 2.dp)
-                            .rotate(windData.iconRotation.toFloat()),
+                            .rotate(windData.iconRotation.toFloat())
+                            .align(Alignment.CenterVertically),
                         painter = painterResource(R.drawable.wi_wind_direction),
                         tint = Color(0xFF20B2AA),
                         contentDescription = null
                     )
                     Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
                         text = spannableStringToAnnotatedString(windSpeed),
                         style = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
                         textAlign = TextAlign.End,

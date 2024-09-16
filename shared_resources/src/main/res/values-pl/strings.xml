@@ -205,4 +205,6 @@
     <string name="hint_password">"Hasło"</string>
     <string name="pref_title_privacypolicy">"Polityka prywatności"</string>
     <string name="pref_title_termsofservice">"Warunki korzystania z usługi"</string>
+    <string name="label_moreinfo">"Więcej informacji"</string>
+    <string name="action_reset">"Resetuj"</string>
 </resources>

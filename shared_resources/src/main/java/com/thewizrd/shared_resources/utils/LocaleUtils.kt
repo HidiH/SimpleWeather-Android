@@ -12,7 +12,7 @@ import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.sharedDeps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Locale
 
 object LocaleUtils {
     const val KEY_LANGUAGE = "key_language"
@@ -63,6 +63,8 @@ object LocaleUtils {
         appLib.appScope.launch(Dispatchers.Main.immediate) {
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(getLocale()))
         }
+
+        AnalyticsLogger.setUserProperty(AnalyticsProps.USER_LOCALE, getLocale().toLanguageTag())
     }
 
     private fun getPreferences(context: Context): SharedPreferences {
@@ -95,6 +97,11 @@ object LocaleUtils {
         return getLocale().let {
             it.getDisplayName(it)
         }
+    }
+
+    @JvmStatic
+    fun getLocaleDisplayName(locale: Locale): String {
+        return getLocale().getDisplayName(locale)
     }
 
     @JvmStatic

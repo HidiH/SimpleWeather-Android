@@ -20,6 +20,7 @@ import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.databinding.RadarAnimateContainerBinding
 import com.thewizrd.simpleweather.extras.isRadarInteractionEnabled
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider
@@ -107,6 +108,8 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
 
     override fun onDestroyView() {
         super.onDestroyView()
+        availableRadarFrames.clear()
+        radarLayers.clear()
         radarContainerBinding = null
     }
 
@@ -154,7 +157,7 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
         @Synchronized
         override fun onResponse(call: Call, response: Response) {
             try {
-                response.checkForErrors(RadarProvider.RAINVIEWER, this)
+                response.checkForErrors(WeatherAPI.RAINVIEWER, this)
 
                 val stream = response.getStream()
 
@@ -328,8 +331,8 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) :
     private class RainViewTileProvider(private val mapFrame: RadarFrame?) :
         XYTileSource(
             "RainViewer",
-            DEFAULT_ZOOM_LEVEL,
-            DEFAULT_ZOOM_LEVEL,
+            MIN_ZOOM_LEVEL,
+            MAX_ZOOM_LEVEL,
             256,
             ".png",
             arrayOf(mapFrame?.host)

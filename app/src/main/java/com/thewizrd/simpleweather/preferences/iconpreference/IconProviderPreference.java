@@ -18,6 +18,7 @@ import com.thewizrd.shared_resources.icons.WeatherIconProvider;
 import com.thewizrd.shared_resources.icons.WeatherIcons;
 import com.thewizrd.simpleweather.R;
 import com.thewizrd.simpleweather.databinding.PreferenceIconViewBinding;
+import com.thewizrd.simpleweather.extras.ExtrasKt;
 import com.thewizrd.simpleweather.preferences.radiopreference.RadioButtonPreference;
 
 import java.util.Stack;
@@ -27,6 +28,8 @@ public class IconProviderPreference extends RadioButtonPreference {
 
     private View mIconFrame;
     private int mIconVisibility = View.GONE;
+
+    private ImageView mPremiumIcon;
 
     private final Stack<Animatable> animatedDrawables = new Stack<>();
 
@@ -53,6 +56,7 @@ public class IconProviderPreference extends RadioButtonPreference {
         setWidgetLayoutResource(R.layout.preference_widget_radiobutton);
         setLayoutResource(R.layout.preference_icon);
         setIconSpaceReserved(false);
+
     }
 
     @NonNull
@@ -66,6 +70,9 @@ public class IconProviderPreference extends RadioButtonPreference {
 
         mIconFrame = holder.findViewById(R.id.icon_frame);
         setIconFrameVisibility(mIconVisibility);
+
+        mPremiumIcon = (ImageView) holder.findViewById(R.id.premium_icon);
+        mPremiumIcon.setVisibility(ExtrasKt.isIconPackSupported(getKey()) ? View.GONE : View.VISIBLE);
 
         ViewGroup iconsContainer = (ViewGroup) holder.findViewById(R.id.icons_container);
         if (iconsContainer != null) {

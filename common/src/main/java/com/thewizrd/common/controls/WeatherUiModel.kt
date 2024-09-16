@@ -10,8 +10,14 @@ import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.sharedDeps
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.ConversionMethods
+import com.thewizrd.shared_resources.utils.Coordinate
+import com.thewizrd.shared_resources.utils.DateTimeUtils
+import com.thewizrd.shared_resources.utils.LocaleUtils
+import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.utils.Units.TemperatureUnits
+import com.thewizrd.shared_resources.utils.getLastBuildDate
+import com.thewizrd.shared_resources.utils.getWindDirection
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
@@ -117,16 +123,16 @@ class WeatherUiModel() {
                 weatherData = weather
 
                 // Location
-                location = weather.location.name
+                location = weather.location?.name
 
                 // Summary
-                weatherSummary = weather.condition.summary
+                weatherSummary = weather.condition?.summary
 
                 // Additional Details
-                if (weather.location.latitude != null && weather.location.longitude != null) {
+                if (weather.location?.latitude != null && weather.location?.longitude != null) {
                     locationCoord.setCoordinate(
-                        weather.location.latitude.toDouble(),
-                        weather.location.longitude.toDouble()
+                        weather.location!!.latitude.toDouble(),
+                        weather.location!!.longitude.toDouble()
                     )
                 } else {
                     locationCoord.setCoordinate(0.0, 0.0)
@@ -168,10 +174,11 @@ class WeatherUiModel() {
 
         // Update current condition
         curTemp = if (weatherData?.condition?.tempF != null &&
-            weatherData!!.condition.tempF != weatherData!!.condition.tempC
+            weatherData!!.condition!!.tempF != weatherData!!.condition!!.tempC
         ) {
-            val temp = if (isFahrenheit) Math.round(weatherData!!.condition.tempF) else Math.round(
-                weatherData!!.condition.tempC
+            val temp =
+                if (isFahrenheit) Math.round(weatherData!!.condition!!.tempF) else Math.round(
+                    weatherData!!.condition!!.tempC
             )
             String.format(LocaleUtils.getLocale(), "%d°%s", temp, tempUnit)
         } else {
@@ -179,13 +186,13 @@ class WeatherUiModel() {
         }
 
         val weatherCondition =
-            if (provider.supportsWeatherLocale()) weatherData!!.condition.weather else provider.getWeatherCondition(
-                weatherData!!.condition.icon
+            if (provider.supportsWeatherLocale()) weatherData!!.condition!!.weather else provider.getWeatherCondition(
+                weatherData!!.condition!!.icon
             )
         curCondition =
             if (weatherCondition.isNullOrBlank()) WeatherIcons.EM_DASH else weatherCondition
 
-        weatherIcon = weatherData!!.condition.icon
+        weatherIcon = weatherData!!.condition!!.icon
 
         run {
             var shouldHideHi = false
@@ -193,11 +200,11 @@ class WeatherUiModel() {
 
             val newHiTemp: String
             if (weatherData?.condition?.highF != null &&
-                weatherData!!.condition.highF != weatherData!!.condition.highC
+                weatherData!!.condition!!.highF != weatherData!!.condition!!.highC
             ) {
                 newHiTemp =
-                    (if (isFahrenheit) Math.round(weatherData!!.condition.highF) else Math.round(
-                        weatherData!!.condition.highC
+                    (if (isFahrenheit) Math.round(weatherData!!.condition!!.highF) else Math.round(
+                        weatherData!!.condition!!.highC
                     )).toString() + "°"
             } else {
                 newHiTemp = WeatherIcons.PLACEHOLDER
@@ -207,8 +214,12 @@ class WeatherUiModel() {
 
             val newLoTemp: String
             if (weatherData?.condition?.lowF != null &&
-                weatherData!!.condition.lowF != weatherData!!.condition.lowC) {
-                newLoTemp = (if (isFahrenheit) Math.round(weatherData!!.condition.lowF) else Math.round(weatherData!!.condition.lowC)).toString() + "°"
+                weatherData!!.condition!!.lowF != weatherData!!.condition!!.lowC
+            ) {
+                newLoTemp =
+                    (if (isFahrenheit) Math.round(weatherData!!.condition!!.lowF) else Math.round(
+                        weatherData!!.condition!!.lowC
+                    )).toString() + "°"
             } else {
                 newLoTemp = WeatherIcons.PLACEHOLDER
                 shouldHideLo = true
@@ -222,29 +233,29 @@ class WeatherUiModel() {
         weatherDetailsMap.clear()
         // Precipitation
         if (weatherData?.precipitation != null) {
-            if (weatherData?.precipitation?.pop != null && weatherData!!.precipitation.pop >= 0) {
+            if (weatherData?.precipitation?.pop != null && weatherData!!.precipitation!!.pop >= 0) {
                 weatherDetailsMap[WeatherDetailsType.POPCHANCE] =
                     DetailItemViewModel(
                         WeatherDetailsType.POPCHANCE,
-                        weatherData!!.precipitation.pop.toString() + "%"
+                        weatherData!!.precipitation!!.pop.toString() + "%"
                     )
             }
-            if (weatherData?.precipitation?.qpfRainIn != null && weatherData!!.precipitation.qpfRainIn >= 0) {
+            if (weatherData?.precipitation?.qpfRainIn != null && weatherData!!.precipitation!!.qpfRainIn >= 0) {
                 val unit = settingsManager.getPrecipitationUnit()
                 val precipValue: Float
                 val precipUnit: String
 
                 when (unit) {
                     Units.INCHES -> {
-                        precipValue = weatherData!!.precipitation.qpfRainIn
+                        precipValue = weatherData!!.precipitation!!.qpfRainIn
                         precipUnit = context.getString(R.string.unit_in)
                     }
                     Units.MILLIMETERS -> {
-                        precipValue = weatherData!!.precipitation.qpfRainMm
+                        precipValue = weatherData!!.precipitation!!.qpfRainMm
                         precipUnit = context.getString(R.string.unit_mm)
                     }
                     else -> {
-                        precipValue = weatherData!!.precipitation.qpfRainIn
+                        precipValue = weatherData!!.precipitation!!.qpfRainIn
                         precipUnit = context.getString(R.string.unit_in)
                     }
                 }
@@ -258,44 +269,39 @@ class WeatherUiModel() {
                     )
                 )
             }
-            if (weatherData?.precipitation?.qpfSnowIn != null && weatherData!!.precipitation.qpfSnowIn >= 0) {
+            if (weatherData?.precipitation?.qpfSnowIn != null && weatherData!!.precipitation!!.qpfSnowIn >= 0) {
                 val unit = settingsManager.getPrecipitationUnit()
                 val precipValue: Float
                 val precipUnit: String
 
                 when (unit) {
                     Units.INCHES -> {
-                        precipValue = weatherData!!.precipitation.qpfSnowIn
+                        precipValue = weatherData!!.precipitation!!.qpfSnowIn
                         precipUnit = context.getString(R.string.unit_in)
                     }
                     Units.MILLIMETERS -> {
-                        precipValue = weatherData!!.precipitation.qpfSnowCm * 10
+                        precipValue = weatherData!!.precipitation!!.qpfSnowCm * 10
                         precipUnit = context.getString(R.string.unit_mm)
                     }
                     else -> {
-                        precipValue = weatherData!!.precipitation.qpfSnowIn
+                        precipValue = weatherData!!.precipitation!!.qpfSnowIn
                         precipUnit = context.getString(R.string.unit_in)
                     }
                 }
-                weatherDetailsMap.put(
-                    WeatherDetailsType.POPSNOW, DetailItemViewModel(
-                        WeatherDetailsType.POPSNOW,
-                        String.format(
-                            LocaleUtils.getLocale(),
-                            "%s %s",
-                            df.format(precipValue.toDouble()),
-                            precipUnit
-                        )
+                weatherDetailsMap[WeatherDetailsType.POPSNOW] = DetailItemViewModel(
+                    WeatherDetailsType.POPSNOW,
+                    String.format(
+                        LocaleUtils.getLocale(),
+                        "%s %s",
+                        df.format(precipValue.toDouble()),
+                        precipUnit
                     )
                 )
             }
-            if (weatherData?.precipitation?.cloudiness != null && weatherData!!.precipitation.cloudiness >= 0) {
-                weatherDetailsMap.put(
+            if (weatherData?.precipitation?.cloudiness != null && weatherData!!.precipitation!!.cloudiness >= 0) {
+                weatherDetailsMap[WeatherDetailsType.POPCLOUDINESS] = DetailItemViewModel(
                     WeatherDetailsType.POPCLOUDINESS,
-                    DetailItemViewModel(
-                        WeatherDetailsType.POPCLOUDINESS,
-                        weatherData!!.precipitation.cloudiness.toString() + "%"
-                    )
+                    weatherData!!.precipitation!!.cloudiness.toString() + "%"
                 )
             }
         }
@@ -308,22 +314,23 @@ class WeatherUiModel() {
 
             when (unit) {
                 Units.INHG -> {
-                    pressureVal = weatherData!!.atmosphere.pressureIn
+                    pressureVal = weatherData!!.atmosphere!!.pressureIn
                     pressureUnit = context.getString(R.string.unit_inHg)
                 }
 
                 Units.MILLIBAR -> {
-                    pressureVal = weatherData!!.atmosphere.pressureMb
+                    pressureVal = weatherData!!.atmosphere!!.pressureMb
                     pressureUnit = context.getString(R.string.unit_mBar)
                 }
 
                 Units.MMHG -> {
-                    pressureVal = ConversionMethods.inHgToMmHg(weatherData!!.atmosphere.pressureIn)
+                    pressureVal =
+                        ConversionMethods.inHgToMmHg(weatherData!!.atmosphere!!.pressureIn)
                     pressureUnit = context.getString(R.string.unit_mmHg)
                 }
 
                 else -> {
-                    pressureVal = weatherData!!.atmosphere.pressureIn
+                    pressureVal = weatherData!!.atmosphere!!.pressureIn
                     pressureUnit = context.getString(R.string.unit_inHg)
                 }
             }
@@ -340,68 +347,66 @@ class WeatherUiModel() {
         }
 
         if (weatherData?.atmosphere?.humidity != null) {
-            weatherDetailsMap.put(
-                WeatherDetailsType.HUMIDITY, DetailItemViewModel(
-                    WeatherDetailsType.HUMIDITY,
-                    String.format(
-                        LocaleUtils.getLocale(),
-                        "%d%%",
-                        weatherData!!.atmosphere.humidity
-                    )
+            weatherDetailsMap[WeatherDetailsType.HUMIDITY] = DetailItemViewModel(
+                WeatherDetailsType.HUMIDITY,
+                String.format(
+                    LocaleUtils.getLocale(),
+                    "%d%%",
+                    weatherData!!.atmosphere!!.humidity
                 )
             )
         }
 
-        if (weatherData?.atmosphere?.dewpointF != null && !ObjectsCompat.equals(weatherData!!.atmosphere.dewpointF, weatherData!!.atmosphere.dewpointC)) {
-            weatherDetailsMap.put(
-                WeatherDetailsType.DEWPOINT, DetailItemViewModel(
-                    WeatherDetailsType.DEWPOINT,
-                    String.format(
-                        LocaleUtils.getLocale(), "%d°",
-                        if (isFahrenheit) {
-                            Math.round(weatherData!!.atmosphere.dewpointF)
-                        } else {
-                            Math.round(weatherData!!.atmosphere.dewpointC)
-                        }
-                    )
+        if (weatherData?.atmosphere?.dewpointF != null && !ObjectsCompat.equals(
+                weatherData!!.atmosphere!!.dewpointF,
+                weatherData!!.atmosphere!!.dewpointC
+            )
+        ) {
+            weatherDetailsMap[WeatherDetailsType.DEWPOINT] = DetailItemViewModel(
+                WeatherDetailsType.DEWPOINT,
+                String.format(
+                    LocaleUtils.getLocale(), "%d°",
+                    if (isFahrenheit) {
+                        Math.round(weatherData!!.atmosphere!!.dewpointF)
+                    } else {
+                        Math.round(weatherData!!.atmosphere!!.dewpointC)
+                    }
                 )
             )
         }
 
-        if (weatherData?.atmosphere?.visibilityMi != null && weatherData!!.atmosphere.visibilityMi >= 0) {
+        if (weatherData?.atmosphere?.visibilityMi != null && weatherData!!.atmosphere!!.visibilityMi >= 0) {
             val unit = settingsManager.getDistanceUnit()
             val visibilityVal: Int
             val visibilityUnit: String
 
             when (unit) {
                 Units.MILES -> {
-                    visibilityVal = Math.round(weatherData!!.atmosphere.visibilityMi)
+                    visibilityVal = Math.round(weatherData!!.atmosphere!!.visibilityMi)
                     visibilityUnit = context.getString(R.string.unit_miles)
                 }
                 Units.KILOMETERS -> {
-                    visibilityVal = Math.round(weatherData!!.atmosphere.visibilityKm)
+                    visibilityVal = Math.round(weatherData!!.atmosphere!!.visibilityKm)
                     visibilityUnit = context.getString(R.string.unit_kilometers)
                 }
                 else -> {
-                    visibilityVal = Math.round(weatherData!!.atmosphere.visibilityMi)
+                    visibilityVal = Math.round(weatherData!!.atmosphere!!.visibilityMi)
                     visibilityUnit = context.getString(R.string.unit_miles)
                 }
             }
 
-            weatherDetailsMap.put(
-                WeatherDetailsType.VISIBILITY, DetailItemViewModel(
-                    WeatherDetailsType.VISIBILITY,
-                    String.format(LocaleUtils.getLocale(), "%d %s", visibilityVal, visibilityUnit)
-                )
+            weatherDetailsMap[WeatherDetailsType.VISIBILITY] = DetailItemViewModel(
+                WeatherDetailsType.VISIBILITY,
+                String.format(LocaleUtils.getLocale(), "%d %s", visibilityVal, visibilityUnit)
             )
         }
 
         if (weatherData?.condition?.uv?.index != null) {
             if (isPhone) {
-                uvIndex = UVIndexViewModel(weatherData!!.condition.uv)
+                uvIndex = UVIndexViewModel(weatherData!!.condition!!.uv)
             } else {
                 weatherDetailsMap[WeatherDetailsType.UV] =
-                    DetailItemViewModel(weatherData!!.condition.uv)
+                    DetailItemViewModel(weatherData!!.condition!!.uv)
             }
         } else {
             uvIndex = null
@@ -410,20 +415,21 @@ class WeatherUiModel() {
         // Additional Details
         if (weatherData?.condition?.airQuality?.index != null) {
             if (isPhone) {
-                airQuality = AirQualityViewModel(weatherData!!.condition.airQuality)
+                airQuality = AirQualityViewModel(weatherData!!.condition!!.airQuality)
             } else {
                 weatherDetailsMap[WeatherDetailsType.AIRQUALITY] =
-                    DetailItemViewModel(weatherData!!.condition.airQuality)
+                    DetailItemViewModel(weatherData!!.condition!!.airQuality)
             }
         } else {
             airQuality = null
         }
 
         if (weatherData?.condition?.feelslikeF != null &&
-            weatherData!!.condition.feelslikeF != weatherData!!.condition.feelslikeC) {
+            weatherData!!.condition!!.feelslikeF != weatherData!!.condition!!.feelslikeC
+        ) {
             val value =
-                if (isFahrenheit) Math.round(weatherData!!.condition.feelslikeF) else Math.round(
-                    weatherData!!.condition.feelslikeC
+                if (isFahrenheit) Math.round(weatherData!!.condition!!.feelslikeF) else Math.round(
+                    weatherData!!.condition!!.feelslikeC
                 )
 
             weatherDetailsMap[WeatherDetailsType.FEELSLIKE] = DetailItemViewModel(
@@ -434,32 +440,38 @@ class WeatherUiModel() {
 
         // Wind
         if (weatherData?.condition?.windMph != null &&
-            weatherData!!.condition.windMph != weatherData!!.condition.windKph) {
+            weatherData!!.condition!!.windMph != weatherData!!.condition!!.windKph
+        ) {
             val unit = settingsManager.getSpeedUnit()
             val speedVal: Int
             val speedUnit: String
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition.windMph)
+                    speedVal = weatherData!!.condition!!.windMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
                 Units.KILOMETERS_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition.windKph)
+                    speedVal = weatherData!!.condition!!.windKph.roundToInt()
                     speedUnit = context.getString(R.string.unit_kph)
                 }
                 Units.METERS_PER_SECOND -> {
                     speedVal =
-                        ConversionMethods.kphToMsec(weatherData!!.condition.windKph).roundToInt()
+                        ConversionMethods.kphToMsec(weatherData!!.condition!!.windKph).roundToInt()
                     speedUnit = context.getString(R.string.unit_msec)
                 }
+                Units.KNOTS -> {
+                    speedVal =
+                        ConversionMethods.mphToKts(weatherData!!.condition!!.windMph).roundToInt()
+                    speedUnit = context.getString(R.string.unit_knots)
+                }
                 else -> {
-                    speedVal = Math.round(weatherData!!.condition.windMph)
+                    speedVal = weatherData!!.condition!!.windMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
             }
 
-            if (weatherData!!.condition.windDegrees != null) {
+            if (weatherData!!.condition!!.windDegrees != null) {
                 weatherDetailsMap[WeatherDetailsType.WINDSPEED] = DetailItemViewModel(
                     WeatherDetailsType.WINDSPEED,
                     String.format(
@@ -467,9 +479,9 @@ class WeatherUiModel() {
                         "%d %s, %s",
                         speedVal,
                         speedUnit,
-                        getWindDirection(weatherData!!.condition.windDegrees.toFloat())
+                        getWindDirection(weatherData!!.condition!!.windDegrees.toFloat())
                     ),
-                    weatherData!!.condition.windDegrees + 180
+                    weatherData!!.condition!!.windDegrees + 180
                 )
             } else {
                 weatherDetailsMap[WeatherDetailsType.WINDSPEED] = DetailItemViewModel(
@@ -479,28 +491,36 @@ class WeatherUiModel() {
             }
         }
 
-        if (weatherData?.condition?.windGustMph != null && weatherData!!.condition.windGustKph != null &&
-            weatherData!!.condition.windGustMph != weatherData!!.condition.windGustKph) {
+        if (weatherData?.condition?.windGustMph != null && weatherData!!.condition!!.windGustKph != null &&
+            weatherData!!.condition!!.windGustMph != weatherData!!.condition!!.windGustKph
+        ) {
             val unit = settingsManager.getSpeedUnit()
             val speedVal: Int
             val speedUnit: String
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition.windGustMph)
+                    speedVal = weatherData!!.condition!!.windGustMph.roundToInt()
                     speedUnit = context.getString(R.string.unit_mph)
                 }
                 Units.KILOMETERS_PER_HOUR -> {
-                    speedVal = Math.round(weatherData!!.condition.windGustKph)
+                    speedVal = weatherData!!.condition!!.windGustKph.roundToInt()
                     speedUnit = context.getString(R.string.unit_kph)
                 }
                 Units.METERS_PER_SECOND -> {
                     speedVal =
-                        Math.round(ConversionMethods.kphToMsec(weatherData!!.condition.windGustKph))
+                        ConversionMethods.kphToMsec(weatherData!!.condition!!.windGustKph)
+                            .roundToInt()
                     speedUnit = context.getString(R.string.unit_msec)
                 }
+
+                Units.KNOTS -> {
+                    speedVal =
+                        ConversionMethods.mphToKts(weatherData!!.condition!!.windMph).roundToInt()
+                    speedUnit = context.getString(R.string.unit_knots)
+                }
                 else -> {
-                    speedVal = Math.round(weatherData!!.condition.windGustMph)
+                    speedVal = Math.round(weatherData!!.condition!!.windGustMph)
                     speedUnit = context.getString(R.string.unit_mph)
                 }
             }
@@ -511,21 +531,19 @@ class WeatherUiModel() {
             )
         }
 
-        if (weatherData!!.condition.beaufort != null) {
+        if (weatherData!!.condition!!.beaufort != null) {
             if (isPhone) {
-                beaufort = BeaufortViewModel(weatherData!!.condition.beaufort)
+                beaufort = BeaufortViewModel(weatherData!!.condition!!.beaufort)
             } else {
-                weatherDetailsMap.put(
-                    WeatherDetailsType.BEAUFORT,
-                    DetailItemViewModel(weatherData!!.condition.beaufort.scale)
-                )
+                weatherDetailsMap[WeatherDetailsType.BEAUFORT] =
+                    DetailItemViewModel(weatherData!!.condition!!.beaufort.scale)
             }
         } else {
             beaufort = null
         }
 
         if (weatherData!!.condition?.pollen != null) {
-            val pollenVM = PollenViewModel(weatherData!!.condition.pollen)
+            val pollenVM = PollenViewModel(weatherData!!.condition!!.pollen)
             if (isPhone) {
                 pollen = pollenVM
             } else {
@@ -559,7 +577,7 @@ class WeatherUiModel() {
 
             if (weatherData?.astronomy?.sunrise != null && weatherData?.astronomy?.sunset != null) {
                 sunPhase =
-                    SunPhaseViewModel(weatherData!!.astronomy, weatherData!!.location.tzOffset)
+                    SunPhaseViewModel(weatherData!!.astronomy!!, weatherData!!.location!!.tzOffset)
             }
 
             weatherData?.astronomy?.sunrise?.let {
@@ -572,26 +590,26 @@ class WeatherUiModel() {
             }
 
             if (weatherData?.astronomy?.moonrise != null && weatherData?.astronomy?.moonset != null) {
-                if (weatherData!!.astronomy.moonrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN)) {
+                if (weatherData!!.astronomy!!.moonrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN)) {
                     weatherDetailsMap[WeatherDetailsType.MOONRISE] = DetailItemViewModel(
                         WeatherDetailsType.MOONRISE,
-                        weatherData!!.astronomy.moonrise.format(astroTimeFormatter)
+                        weatherData!!.astronomy!!.moonrise.format(astroTimeFormatter)
                     )
                 }
-                if (weatherData!!.astronomy.moonset.isAfter(DateTimeUtils.LOCALDATETIME_MIN)) {
+                if (weatherData!!.astronomy!!.moonset.isAfter(DateTimeUtils.LOCALDATETIME_MIN)) {
                     weatherDetailsMap[WeatherDetailsType.MOONSET] = DetailItemViewModel(
                         WeatherDetailsType.MOONSET,
-                        weatherData!!.astronomy.moonset.format(astroTimeFormatter)
+                        weatherData!!.astronomy!!.moonset.format(astroTimeFormatter)
                     )
                 }
             }
 
             if (weatherData?.astronomy?.moonPhase != null) {
-                moonPhase = MoonPhaseViewModel(weatherData!!.astronomy)
+                moonPhase = MoonPhaseViewModel(weatherData!!.astronomy!!)
 
                 if (!isPhone) {
                     weatherDetailsMap[WeatherDetailsType.MOONPHASE] =
-                        DetailItemViewModel(weatherData!!.astronomy.moonPhase.phase)
+                        DetailItemViewModel(weatherData!!.astronomy!!.moonPhase.phase)
                 }
             }
         } else {

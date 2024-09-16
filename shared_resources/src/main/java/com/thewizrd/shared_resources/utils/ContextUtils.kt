@@ -1,5 +1,6 @@
 package com.thewizrd.shared_resources.utils
 
+import android.app.UiModeManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
@@ -8,7 +9,11 @@ import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.TypedValue
-import androidx.annotation.*
+import androidx.annotation.AnyRes
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.IntDef
+import androidx.annotation.RequiresApi
 import com.thewizrd.shared_resources.R
 
 object ContextUtils {
@@ -163,5 +168,11 @@ object ContextUtils {
     @JvmStatic
     fun Context.isPhone(): Boolean {
         return this.resources.getBoolean(R.bool.isPhone)
+    }
+
+    @JvmStatic
+    fun Context.isTv(): Boolean {
+        val uiModeMgr = this.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        return uiModeMgr.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
     }
 }

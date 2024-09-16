@@ -71,6 +71,9 @@ public class DailyItem {
     @Json(name = "moon_phase")
     private Float moon_phase;
 
+    @Json(name = "summary")
+    private String summary;
+
     public long getSunrise() {
         return sunrise;
     }
@@ -237,5 +240,13 @@ public class DailyItem {
 
     public void setMoon_phase(Float moon_phase) {
         this.moon_phase = moon_phase;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

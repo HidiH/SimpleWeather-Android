@@ -7,14 +7,27 @@ import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.AirQuality
+import com.thewizrd.shared_resources.weatherdata.model.Astronomy
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase
+import com.thewizrd.shared_resources.weatherdata.model.Pollen
 import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.TextForecast
+import com.thewizrd.shared_resources.weatherdata.model.UV
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @SuppressLint("VisibleForTests")
@@ -39,13 +52,13 @@ fun createWeatherData(dailyRoot: DailyResponse, hourlyRoot: HourlyResponse, curr
                 haveTodaysForecast = true
             }
 
-            forecast.add(createForecast(fcast!!))
-            txtForecast.add(createTextForecast(fcast))
+            forecast!!.add(createForecast(fcast!!))
+            txtForecast!!.add(createTextForecast(fcast))
         }
 
         hrForecast = ArrayList(hourlyRoot.hourlyResponse!!.size)
         for (fcast in hourlyRoot.hourlyResponse!!) {
-            hrForecast.add(createHourlyForecast(fcast!!))
+            hrForecast!!.add(createHourlyForecast(fcast!!))
         }
 
         if (condition == null) {
@@ -66,7 +79,7 @@ fun createWeatherData(dailyRoot: DailyResponse, hourlyRoot: HourlyResponse, curr
                 .withZoneSameInstant(observationTime.offset)
 
             if (!observationTime.isBefore(effectiveDate) && !observationTime.isAfter(endDate)) {
-                condition.summary = dailyRoot.headline?.text
+                condition!!.summary = dailyRoot.headline?.text
             }
         }
 

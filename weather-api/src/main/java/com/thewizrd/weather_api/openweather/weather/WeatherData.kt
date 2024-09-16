@@ -1,9 +1,22 @@
 package com.thewizrd.weather_api.openweather.weather
 
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.ConversionMethods
+import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.StringUtils.toUpperCase
+import com.thewizrd.shared_resources.utils.calculateDewpointC
+import com.thewizrd.shared_resources.utils.getBeaufortScale
+import com.thewizrd.shared_resources.utils.getFeelsLikeTemp
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.Astronomy
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
 import java.time.Instant
 import java.time.LocalDateTime
@@ -27,7 +40,7 @@ fun createWeatherData(currRoot: CurrentRootobject, foreRoot: ForecastRootobject)
         var lastDay = -1
 
         for (i in foreRoot.list.indices) {
-            hrForecast.add(createHourlyForecast(foreRoot.list[i]))
+            hrForecast!!.add(createHourlyForecast(foreRoot.list[i]))
 
             val max = foreRoot.list[i].main.tempMax
             if (!max.isNaN() && (dayMax.isNaN() || max > dayMax)) {
@@ -40,10 +53,10 @@ fun createWeatherData(currRoot: CurrentRootobject, foreRoot: ForecastRootobject)
             }
 
             // Add mid-day forecast
-            val currHour = hrForecast[i].date.plusSeconds(currRoot.timezone.toLong()).hour
+            val currHour = hrForecast!![i].date.plusSeconds(currRoot.timezone.toLong()).hour
             if (currHour >= 11 && currHour <= 13) {
-                forecast.add(createForecast(foreRoot.list[i]))
-                lastDay = forecast.size - 1
+                forecast!!.add(createForecast(foreRoot.list[i]))
+                lastDay = forecast!!.size - 1
             }
 
             // This is possibly the last forecast for the day (3-hrly forecast)
@@ -51,12 +64,12 @@ fun createWeatherData(currRoot: CurrentRootobject, foreRoot: ForecastRootobject)
             if (currHour >= 21) {
                 if (lastDay >= 0) {
                     if (!dayMax.isNaN()) {
-                        forecast[lastDay].highF = ConversionMethods.KtoF(dayMax)
-                        forecast[lastDay].highC = ConversionMethods.KtoC(dayMax)
+                        forecast!![lastDay].highF = ConversionMethods.KtoF(dayMax)
+                        forecast!![lastDay].highC = ConversionMethods.KtoC(dayMax)
                     }
                     if (!dayMin.isNaN()) {
-                        forecast[lastDay].lowF = ConversionMethods.KtoF(dayMin)
-                        forecast[lastDay].lowC = ConversionMethods.KtoC(dayMin)
+                        forecast!![lastDay].lowF = ConversionMethods.KtoF(dayMin)
+                        forecast!![lastDay].lowC = ConversionMethods.KtoC(dayMin)
                     }
                 }
                 dayMax = Float.NaN
@@ -73,21 +86,24 @@ fun createWeatherData(currRoot: CurrentRootobject, foreRoot: ForecastRootobject)
         query = currRoot.id.toString()
 
         // Set feelslike temp
-        if (condition.feelslikeF == null && condition.tempF != null && condition.windMph != null && atmosphere.humidity != null) {
-            condition.feelslikeF = getFeelsLikeTemp(condition.tempF, condition.windMph, atmosphere.humidity)
-            condition.feelslikeC = ConversionMethods.FtoC(condition.feelslikeF)
+        if (condition!!.feelslikeF == null && condition!!.tempF != null && condition!!.windMph != null && atmosphere!!.humidity != null) {
+            condition!!.feelslikeF =
+                getFeelsLikeTemp(condition!!.tempF, condition!!.windMph, atmosphere!!.humidity)
+            condition!!.feelslikeC = ConversionMethods.FtoC(condition!!.feelslikeF)
         }
 
-        if ((condition.highF == null || condition.highC == null) && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition!!.highF == null || condition!!.highC == null) && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
-        if (atmosphere.dewpointC == null && condition.tempC != null && atmosphere.humidity != null && condition.tempC > 0 && condition.tempC < 60 && atmosphere.humidity > 1) {
-            atmosphere.dewpointC = calculateDewpointC(condition.tempC, atmosphere.humidity).roundToInt().toFloat()
-            atmosphere.dewpointF = ConversionMethods.CtoF(atmosphere.dewpointC).roundToInt().toFloat()
+        if (atmosphere!!.dewpointC == null && condition!!.tempC != null && atmosphere!!.humidity != null && condition!!.tempC > 0 && condition!!.tempC < 60 && atmosphere!!.humidity > 1) {
+            atmosphere!!.dewpointC =
+                calculateDewpointC(condition!!.tempC, atmosphere!!.humidity).roundToInt().toFloat()
+            atmosphere!!.dewpointF =
+                ConversionMethods.CtoF(atmosphere!!.dewpointC).roundToInt().toFloat()
         }
 
         source = WeatherAPI.OPENWEATHERMAP

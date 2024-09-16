@@ -51,6 +51,16 @@
         </value>
     </entry>
     <entry>
+        <key>openweather_onecall</key>
+        <value>
+            {
+            "enabled": true,
+            "locSource": "LocIQ",
+            "newWeatherSource": ""
+            }
+        </value>
+    </entry>
+    <entry>
         <key>wunlocked</key>
         <value>
             {
@@ -112,6 +122,16 @@
     </entry>
     <entry>
         <key>apple</key>
+        <value>
+            {
+            "enabled": true,
+            "locSource": "google",
+            "newWeatherSource": ""
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>google</key>
         <value>
             {
             "enabled": true,

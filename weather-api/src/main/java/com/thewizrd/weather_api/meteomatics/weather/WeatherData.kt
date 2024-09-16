@@ -3,7 +3,16 @@ package com.thewizrd.weather_api.meteomatics.weather
 import android.annotation.SuppressLint
 import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.Astronomy
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.UV
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
 import java.time.Instant
 import java.time.LocalDateTime
@@ -33,14 +42,14 @@ fun createWeatherData(
 
         ttl = 120
 
-        if ((condition.highF == null || condition.highC == null) && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition?.highF == null || condition?.highC == null) && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
-        condition.observationTime = updateTime
+        condition!!.observationTime = updateTime
 
         source = WeatherAPI.METEOMATICS
     }
@@ -64,54 +73,54 @@ private fun Weather.updateWeather(currRoot: WeatherResponse) {
             CURRENT_TEMP_C -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.toFloatOrNull()
                     ?.let { value ->
-                        condition.tempC = value
-                        condition.tempF = ConversionMethods.CtoF(value)
+                        condition!!.tempC = value
+                        condition!!.tempF = ConversionMethods.CtoF(value)
                     }
             }
             MSL_PRESSURE_HPA -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.toFloatOrNull()
                     ?.let { value ->
-                        atmosphere.pressureMb = value
-                        atmosphere.pressureIn = ConversionMethods.mbToInHg(value)
+                        atmosphere!!.pressureMb = value
+                        atmosphere!!.pressureIn = ConversionMethods.mbToInHg(value)
                     }
             }
             WIND_SPEED_MS -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.toFloatOrNull()
                     ?.let { value ->
-                        condition.windKph = ConversionMethods.msecToKph(value)
-                        condition.windMph = ConversionMethods.msecToMph(value)
+                        condition!!.windKph = ConversionMethods.msecToKph(value)
+                        condition!!.windMph = ConversionMethods.msecToMph(value)
                     }
             }
             WIND_DIR -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.toFloatOrNull()
                     ?.roundToInt()?.let { value ->
-                    condition.windDegrees = value
+                        condition!!.windDegrees = value
                 }
             }
             WIND_GUSTS_1H_MS -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.toFloatOrNull()
                     ?.let { value ->
-                        condition.windGustKph = ConversionMethods.msecToKph(value)
-                        condition.windGustMph = ConversionMethods.msecToMph(value)
+                        condition!!.windGustKph = ConversionMethods.msecToKph(value)
+                        condition!!.windGustMph = ConversionMethods.msecToMph(value)
                     }
             }
             PRECIP_1H_MM -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.toFloatOrNull()
                     ?.let { value ->
-                        precipitation.qpfRainMm = value
-                        precipitation.qpfRainIn = ConversionMethods.mmToIn(value)
+                        precipitation!!.qpfRainMm = value
+                        precipitation!!.qpfRainIn = ConversionMethods.mmToIn(value)
                     }
             }
             SUNRISE -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.let { value ->
-                    astronomy.sunrise = runCatching {
+                    astronomy!!.sunrise = runCatching {
                         LocalDateTime.ofInstant(Instant.parse(value), ZoneOffset.UTC)
                     }.getOrDefault(LocalDateTime.now().plusYears(1).minusNanos(1))
                 }
             }
             SUNSET -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.let { value ->
-                    astronomy.sunset = runCatching {
+                    astronomy!!.sunset = runCatching {
                         LocalDateTime.ofInstant(Instant.parse(value), ZoneOffset.UTC)
                     }.getOrDefault(LocalDateTime.now().plusYears(1).minusNanos(1))
                 }
@@ -119,7 +128,7 @@ private fun Weather.updateWeather(currRoot: WeatherResponse) {
             UV_IDX -> {
                 it.coordinates?.firstOrNull()?.dates?.firstOrNull()?.value?.toFloatOrNull()
                     ?.let { value ->
-                        condition.uv = UV(value)
+                        condition!!.uv = UV(value)
                     }
             }
             WEATHER_SYMBOL_1H -> {
@@ -127,8 +136,8 @@ private fun Weather.updateWeather(currRoot: WeatherResponse) {
                     ?.let { value ->
                         val provider =
                             weatherModule.weatherProviderFactory.getWeatherProvider(WeatherAPI.METEOMATICS)
-                        condition.icon = provider.getWeatherIcon(false, value.toString())
-                        condition.weather = provider.getWeatherCondition(value.toString())
+                        condition!!.icon = provider.getWeatherIcon(false, value.toString())
+                        condition!!.weather = provider.getWeatherCondition(value.toString())
                     }
             }
         }

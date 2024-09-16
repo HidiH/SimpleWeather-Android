@@ -151,8 +151,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
         withContext(Dispatchers.IO) {
             var weather: Weather?
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = getProviderKey()
 
             val providerKey = BasicAuthProviderKey().apply {
                 fromString(key ?: "")
@@ -309,47 +308,47 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
 
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         val offset = location.tzOffset
-        weather.updateTime = weather.updateTime.withZoneSameInstant(offset)
-        weather.condition.observationTime =
-            weather.condition.observationTime.withZoneSameInstant(offset)
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(offset)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(offset)
 
         // The time of day is set to max if the sun never sets/rises and
         // DateTime is set to min if not found
         // Don't change this if its set that way
-        if (weather.astronomy.sunrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-            weather.astronomy.sunrise.toLocalTime().isBefore(LocalTime.MAX)
-        ) weather.astronomy.sunrise =
-            weather.astronomy.sunrise.plusSeconds(offset.totalSeconds.toLong())
-        if (weather.astronomy.sunset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-            weather.astronomy.sunset.toLocalTime().isBefore(LocalTime.MAX)
-        ) weather.astronomy.sunset =
-            weather.astronomy.sunset.plusSeconds(offset.totalSeconds.toLong())
+        if (weather.astronomy!!.sunrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+            weather.astronomy!!.sunrise.toLocalTime().isBefore(LocalTime.MAX)
+        ) weather.astronomy!!.sunrise =
+            weather.astronomy!!.sunrise.plusSeconds(offset.totalSeconds.toLong())
+        if (weather.astronomy!!.sunset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+            weather.astronomy!!.sunset.toLocalTime().isBefore(LocalTime.MAX)
+        ) weather.astronomy!!.sunset =
+            weather.astronomy!!.sunset.plusSeconds(offset.totalSeconds.toLong())
 
         val old = weather.astronomy
         runCatching {
             val newAstro = SunMoonCalcProvider().getAstronomyData(
                 location,
-                weather.condition.observationTime
+                weather.condition!!.observationTime
             )
-            newAstro.sunrise = old.sunrise
+            newAstro.sunrise = old!!.sunrise
             newAstro.sunset = old.sunset
             weather.astronomy = newAstro
         }.onFailure {
             Logger.writeLine(Log.ERROR, it)
         }
 
-        for (forecast in weather.forecast) {
+        for (forecast in weather.forecast!!) {
             // NOTE: forecast looks at weather from the past 24hrs at midnight the next day
             // which is why a day is subtracted here
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong()).minusDays(1)
         }
 
-        for (hr_forecast in weather.hrForecast) {
+        for (hr_forecast in weather.hrForecast!!) {
             hr_forecast.date = hr_forecast.date.withZoneSameInstant(offset)
         }
 
         if (!weather.minForecast.isNullOrEmpty()) {
-            for (min_forecast in weather.minForecast) {
+            for (min_forecast in weather.minForecast!!) {
                 min_forecast.date = min_forecast.date.withZoneSameInstant(offset)
             }
         }
@@ -361,8 +360,8 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
         return String.format(
             Locale.ROOT,
             "%s,%s",
-            df.format(weather.location.latitude),
-            df.format(weather.location.longitude)
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
         )
     }
 
@@ -442,7 +441,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
     override fun isNight(weather: Weather): Boolean {
         var isNight = super.isNight(weather)
 
-        when (weather.condition.icon) {
+        when (weather.condition!!.icon) {
             // The following cases can be present at any time of day
             WeatherIcons.CLOUDY,
             WeatherIcons.RAIN,
@@ -456,12 +455,12 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
                 if (!isNight) {
                     // Fallback to sunset/rise time just in case
                     var tz: ZoneOffset? = null
-                    if (!weather.location.tzLong.isNullOrBlank()) {
-                        val id = ZoneIdCompat.of(weather.location.tzLong)
+                    if (!weather.location?.tzLong.isNullOrBlank()) {
+                        val id = ZoneIdCompat.of(weather.location!!.tzLong)
                         tz = id.rules.getOffset(Instant.now())
                     }
                     if (tz == null) {
-                        tz = weather.location.tzOffset
+                        tz = weather.location!!.tzOffset
                     }
 
                     val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

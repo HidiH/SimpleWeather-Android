@@ -5,7 +5,12 @@ import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.getFeelsLikeTemp
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
 import com.thewizrd.shared_resources.weatherdata.model.Precipitation
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
@@ -13,7 +18,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -29,11 +34,11 @@ fun createWeatherData(currRoot: CurrentsResponse, foreRoot: ForecastResponse,
 
         // Forecast
         for (daily in foreRoot.dailyForecast!!) {
-            forecast.add(createForecast(daily!!))
+            forecast!!.add(createForecast(daily!!))
         }
 
         for (hourly in foreRoot.forecast!!) {
-            hrForecast.add(createHourlyForecast(hourly!!, foreRoot.probabilityForecast))
+            hrForecast!!.add(createHourlyForecast(hourly!!, foreRoot.probabilityForecast))
         }
 
         condition = createCondition(currRoot)
@@ -42,11 +47,11 @@ fun createWeatherData(currRoot: CurrentsResponse, foreRoot: ForecastResponse,
         ttl = 180
 
         // Observation only gives temp & wind
-        if (hrForecast.isNotEmpty()) {
-            val firstHr = hrForecast[0]
-            atmosphere.humidity = firstHr.extras.humidity
-            atmosphere.pressureMb = firstHr.extras.pressureMb
-            atmosphere.pressureIn = firstHr.extras.pressureIn
+        if (!hrForecast.isNullOrEmpty()) {
+            val firstHr = hrForecast!![0]
+            atmosphere!!.humidity = firstHr.extras.humidity
+            atmosphere!!.pressureMb = firstHr.extras.pressureMb
+            atmosphere!!.pressureIn = firstHr.extras.pressureIn
 
             precipitation = Precipitation().apply {
                 cloudiness = firstHr.extras.cloudiness
@@ -59,16 +64,17 @@ fun createWeatherData(currRoot: CurrentsResponse, foreRoot: ForecastResponse,
         }
 
         // Set feelslike temp
-        if (condition.feelslikeF == null && condition.tempF != null && condition.windMph != null && atmosphere.humidity != null) {
-            condition.feelslikeF = getFeelsLikeTemp(condition.tempF, condition.windMph, atmosphere.humidity)
-            condition.feelslikeC = ConversionMethods.FtoC(condition.feelslikeF)
+        if (condition?.feelslikeF == null && condition?.tempF != null && condition?.windMph != null && atmosphere?.humidity != null) {
+            condition!!.feelslikeF =
+                getFeelsLikeTemp(condition!!.tempF, condition!!.windMph, atmosphere!!.humidity)
+            condition!!.feelslikeC = ConversionMethods.FtoC(condition!!.feelslikeF)
         }
 
-        if ((condition.highF == null || condition.highC == null) && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition?.highF == null || condition?.highC == null) && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
         weatherAlerts = createWeatherAlerts(alertRoot)

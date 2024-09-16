@@ -73,11 +73,11 @@ class RemoteConfigServiceImpl : RemoteConfigService {
     @WeatherAPI.WeatherProviders
     override fun getDefaultWeatherProvider(location: LocationQuery): String {
         return when {
-            LocationUtils.isUS(location) -> {
+            LocationUtils.isNWSSupported(location) && isProviderEnabled(WeatherAPI.NWS) -> {
                 WeatherAPI.NWS
             }
 
-            LocationUtils.isFrance(location) -> {
+            LocationUtils.isFrance(location) && isProviderEnabled(WeatherAPI.METEOFRANCE) -> {
                 WeatherAPI.METEOFRANCE
             }
 
@@ -90,11 +90,11 @@ class RemoteConfigServiceImpl : RemoteConfigService {
     @WeatherAPI.WeatherProviders
     override fun getDefaultWeatherProvider(location: LocationData): String {
         return when {
-            LocationUtils.isUS(location) -> {
+            LocationUtils.isNWSSupported(location) && isProviderEnabled(WeatherAPI.NWS) -> {
                 WeatherAPI.NWS
             }
 
-            LocationUtils.isFrance(location) -> {
+            LocationUtils.isFrance(location) && isProviderEnabled(WeatherAPI.METEOFRANCE) -> {
                 WeatherAPI.METEOFRANCE
             }
 
@@ -123,9 +123,9 @@ class RemoteConfigServiceImpl : RemoteConfigService {
                             continuation.resume(it.result)
                         } else {
                             continuation.resumeWithException(it.exception!!)
-                            }
                         }
                     }
+                }
         }
     }
 }

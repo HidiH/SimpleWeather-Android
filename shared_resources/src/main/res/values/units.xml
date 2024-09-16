@@ -22,4 +22,6 @@
     <string name="unit_miles" translatable="false">mi</string>
     <!-- Pressure: kilometers -->
     <string name="unit_kilometers" translatable="false">km</string>
+    <!-- Distance: knots -->
+    <string name="unit_knots" translatable="false">knots</string>
 </resources>

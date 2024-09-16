@@ -6,14 +6,21 @@ import com.thewizrd.shared_resources.utils.calculateDewpointC
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.utils.getFeelsLikeTemp
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @SuppressLint("VisibleForTests")
@@ -42,10 +49,10 @@ fun createWeatherData(currRoot: CurrentResponse, foreRoot: ForecastResponse): We
                     fcast.condition = hrfcast.condition
                 }
 
-                hrForecast.add(hrfcast)
+                hrForecast!!.add(hrfcast)
             }
 
-            forecast.add(fcast)
+            forecast!!.add(fcast)
         }
 
         condition = createCondition(currRoot)
@@ -55,19 +62,20 @@ fun createWeatherData(currRoot: CurrentResponse, foreRoot: ForecastResponse): We
         ttl = 180
 
         // Set feelslike temp
-        if (condition.feelslikeF == null && condition.tempF != null && condition.windMph != null && atmosphere.humidity != null) {
-            condition.feelslikeF = getFeelsLikeTemp(condition.tempF, condition.windMph, atmosphere.humidity)
-            condition.feelslikeC = ConversionMethods.FtoC(condition.feelslikeF)
+        if (condition!!.feelslikeF == null && condition!!.tempF != null && condition!!.windMph != null && atmosphere!!.humidity != null) {
+            condition!!.feelslikeF =
+                getFeelsLikeTemp(condition!!.tempF, condition!!.windMph, atmosphere!!.humidity)
+            condition!!.feelslikeC = ConversionMethods.FtoC(condition!!.feelslikeF)
         }
 
-        if ((condition.highF == null || condition.highC == null) && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition!!.highF == null || condition!!.highC == null) && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
-        condition.observationTime = updateTime
+        condition!!.observationTime = updateTime
 
         source = WeatherAPI.WEATHERUNLOCKED
     }

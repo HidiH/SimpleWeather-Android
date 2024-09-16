@@ -112,9 +112,9 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
 
         // Temperature
         val currTemp =
-            if (weather.condition.tempF != null && weather.condition.tempF != weather.condition.tempC) {
+            if (weather.condition?.tempF != null && weather.condition!!.tempF != weather.condition!!.tempC) {
                 val temp =
-                    if (isFahrenheit) Math.round(weather.condition.tempF) else Math.round(weather.condition.tempC)
+                    if (isFahrenheit) Math.round(weather.condition!!.tempF) else Math.round(weather.condition!!.tempC)
                 String.format(LocaleUtils.getLocale(), "%d", temp)
             } else {
                 WeatherIcons.PLACEHOLDER
@@ -127,13 +127,13 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
         // Condition text
         val provider = weatherModule.weatherManager.getWeatherProvider(weather.source)
         val condition = if (provider.supportsWeatherLocale()) {
-            weather.condition.weather
+            weather.condition!!.weather
         } else {
-            provider.getWeatherCondition(weather.condition.icon)
+            provider.getWeatherCondition(weather.condition!!.icon)
         }
 
         val wim = sharedDeps.weatherIconsManager
-        val weatherIcon = wim.getWeatherIconResource(weather.condition.icon)
+        val weatherIcon = wim.getWeatherIconResource(weather.condition!!.icon)
         val icon = Icon.createWithBitmap(
             ImageUtils.bitmapFromDrawable(
                 getThemeContextOverride(false),
@@ -159,7 +159,7 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
                                 Icon.createWithBitmap(
                                     ImageUtils.tintedBitmapFromDrawable(
                                         this@CurrentLocationWeatherComplicationService,
-                                        wip.getWeatherIconResource(weather.condition.icon),
+                                        wip.getWeatherIconResource(weather.condition!!.icon),
                                         Colors.WHITE
                                     )
                                 )
@@ -175,7 +175,7 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
 
             ComplicationType.LONG_TEXT -> {
                 val builder = LongTextComplicationData.Builder(
-                    PlainComplicationText.Builder(weather.location.name).build(),
+                    PlainComplicationText.Builder(weather.location!!.name).build(),
                     contentDescription
                 ).setTitle(
                     PlainComplicationText.Builder(temp).build()
@@ -194,7 +194,7 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
                                 Icon.createWithBitmap(
                                     ImageUtils.tintedBitmapFromDrawable(
                                         this,
-                                        wip.getWeatherIconResource(weather.condition.icon),
+                                        wip.getWeatherIconResource(weather.condition!!.icon),
                                         Colors.WHITE
                                     )
                                 )
@@ -214,7 +214,7 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
                     MonochromaticImage.Builder(
                         Icon.createWithResource(
                             this,
-                            wip.getWeatherIconResource(weather.condition.icon)
+                            wip.getWeatherIconResource(weather.condition!!.icon)
                         )
                             .setTint(Colors.WHITESMOKE)
                     ).build(),
@@ -235,7 +235,7 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
                         Icon.createWithBitmap(
                             ImageUtils.tintedBitmapFromDrawable(
                                 this,
-                                wip.getWeatherIconResource(weather.condition.icon),
+                                wip.getWeatherIconResource(weather.condition!!.icon),
                                 Colors.WHITE
                             )
                         )

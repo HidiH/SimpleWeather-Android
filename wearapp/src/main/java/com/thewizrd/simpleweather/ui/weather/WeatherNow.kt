@@ -3,7 +3,15 @@ package com.thewizrd.simpleweather.ui.weather
 import android.text.format.DateFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalConfiguration
@@ -14,13 +22,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.createGraph
 import androidx.navigation.navArgument
-import androidx.wear.compose.material.*
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.PositionIndicator
+import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.material.SwipeToDismissBox
+import androidx.wear.compose.material.SwipeToDismissKeys
+import androidx.wear.compose.material.Vignette
+import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.currentBackStackEntryAsState
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import com.google.android.horologist.compose.layout.fadeAway
-import com.google.android.horologist.compose.layout.fadeAwayScalingLazyList
+import com.google.android.horologist.compose.layout.scrollAway
 import com.thewizrd.common.controls.WeatherAlertsViewModel
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.DateTimeConstants
@@ -81,7 +94,7 @@ fun WeatherNow(
             modifier = modifier.background(MaterialTheme.colors.background),
             timeText = {
                 CustomTimeText(
-                    modifier = Modifier.fadeAway { scrollState },
+                    modifier = Modifier.scrollAway { scrollState },
                     visible = showScaffolding,
                     timeSource = ZonedTimeSource(
                         timeFormat = if (DateFormat.is24HourFormat(LocalContext.current)) {
@@ -228,14 +241,14 @@ fun WeatherNow(
                                         DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING -> {
                                             val scrollViewModel: ScalingLazyListStateViewModel =
                                                 viewModel(currentBackStackEntry!!)
-                                            Modifier.fadeAwayScalingLazyList {
+                                            Modifier.scrollAway {
                                                 scrollViewModel.scrollState
                                             }
                                         }
                                         DestinationScrollType.COLUMN_SCROLLING -> {
                                             val scrollViewModel: ScrollStateViewModel =
                                                 viewModel(currentBackStackEntry!!)
-                                            Modifier.fadeAway {
+                                            Modifier.scrollAway {
                                                 scrollViewModel.scrollState
                                             }
                                         }

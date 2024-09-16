@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import androidx.core.text.method.LinkMovementMethodCompat;
+
 import com.thewizrd.common.R;
 import com.thewizrd.common.databinding.WeatherAlertPanelBinding;
 
@@ -43,6 +45,7 @@ public class WeatherAlertPanel extends RelativeLayout {
         this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         binding.headerCard.setOnClickListener(v -> toggle());
+        binding.bodyTextview.setMovementMethod(LinkMovementMethodCompat.getInstance());
     }
 
     public boolean isExpandable() {

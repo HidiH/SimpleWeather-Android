@@ -198,4 +198,6 @@
     <string name="hint_password">"Mot de passe"</string>
     <string name="pref_title_privacypolicy">"Politique de confidentialité"</string>
     <string name="pref_title_termsofservice">"Conditions d'utilisation"</string>
+    <string name="label_moreinfo">"Plus d'informations"</string>
+    <string name="action_reset">"Réinitialiser"</string>
 </resources>

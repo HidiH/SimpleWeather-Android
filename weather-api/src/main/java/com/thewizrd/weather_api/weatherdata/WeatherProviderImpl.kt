@@ -11,6 +11,7 @@ import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.LocationQuery
 import com.thewizrd.shared_resources.locationdata.WeatherLocationProvider
+import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.LocationUtils
@@ -22,11 +23,14 @@ import com.thewizrd.shared_resources.weatherdata.auth.AuthType
 import com.thewizrd.shared_resources.weatherdata.model.*
 import com.thewizrd.weather_api.aqicn.AQICNData
 import com.thewizrd.weather_api.aqicn.AQICNProvider
+import com.thewizrd.weather_api.extras.isExtrasEnabled
+import com.thewizrd.weather_api.google.pollen.GooglePollenProvider
 import com.thewizrd.weather_api.nws.alerts.NWSAlertProvider
 import com.thewizrd.weather_api.tomorrow.TomorrowIOWeatherProvider
 import com.thewizrd.weather_api.utils.RateLimitedRequest
 import com.thewizrd.weather_api.utils.logMissingIcon
 import com.thewizrd.weather_api.weatherModule
+import com.thewizrd.weather_api.weatherapi.weather.WeatherApiProvider
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -146,8 +150,8 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
         val weather = getWeatherData(location)
 
         if (location.tzLong.isNullOrBlank()) {
-            if (!weather.location.tzLong.isNullOrBlank()) {
-                location.tzLong = weather.location.tzLong
+            if (!weather.location!!.tzLong.isNullOrBlank()) {
+                location.tzLong = weather.location!!.tzLong
             } else if (location.latitude != 0.0 && location.longitude != 0.0) {
                 val tzId =
                     weatherModule.tzdbService.getTimeZone(location.latitude, location.longitude)
@@ -159,20 +163,20 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
             settingsManager.updateLocation(location)
         }
 
-        if (weather.location.tzLong.isNullOrBlank())
-            weather.location.tzLong = location.tzLong
+        if (weather.location?.tzLong.isNullOrBlank())
+            weather.location!!.tzLong = location.tzLong
 
-        if (weather.location.name.isNullOrBlank())
-            weather.location.name = location.name
+        if (weather.location?.name.isNullOrBlank())
+            weather.location!!.name = location.name
 
-        weather.location.latitude = location.latitude.toFloat()
-        weather.location.longitude = location.longitude.toFloat()
+        weather.location!!.latitude = location.latitude.toFloat()
+        weather.location!!.longitude = location.longitude.toFloat()
 
         // Provider-specifc updates/fixes
         updateWeatherData(location, weather)
 
         // Additional external data
-        if (weather.condition.airQuality == null && weather.aqiForecast == null) {
+        if (weather.condition?.airQuality == null && weather.aqiForecast == null) {
             if (!BuildConfig.IS_NONGMS) {
                 updateAQIData(location, weather)
             } else if (this is AirQualityProvider) {
@@ -181,9 +185,16 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
             }
         }
 
-        if (weather.condition.pollen == null) {
-            if (settingsManager.isDevSettingsEnabled()) {
-                weather.condition.pollen = TomorrowIOWeatherProvider().getPollenData(location)
+        if (weather.condition?.pollen == null) {
+            if (isExtrasEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE)) {
+                weather.condition!!.pollen = GooglePollenProvider().getPollenData(location)?.apply {
+                    attribution = context.getString(R.string.api_google)
+                }
+            } else if (settingsManager.isDevSettingsEnabled()) {
+                weather.condition!!.pollen =
+                    TomorrowIOWeatherProvider().getPollenData(location)?.apply {
+                        attribution = context.getString(R.string.api_tomorrowio)
+                    }
             }
         }
 
@@ -206,7 +217,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     }
 
     private fun updateAQIData(location: LocationData, weather: Weather, aqiData: AirQualityData?) {
-        weather.condition.airQuality = aqiData?.current
+        weather.condition!!.airQuality = aqiData?.current
 
         if (aqiData is AQICNData) {
             try {
@@ -218,44 +229,44 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
                             DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT)
                         )
 
-                        if (weather.condition.uv == null && date.isEqual(weather.condition.observationTime.toLocalDate())) {
-                            if (weather.astronomy.sunrise != null && weather.astronomy.sunset != null) {
-                                val obsLocalTime = weather.condition.observationTime.toLocalTime()
+                        if (weather.condition?.uv == null && date.isEqual(weather.condition!!.observationTime.toLocalDate())) {
+                            if (weather.astronomy!!.sunrise != null && weather.astronomy!!.sunset != null) {
+                                val obsLocalTime = weather.condition!!.observationTime.toLocalTime()
                                 // if before sunrise, after sunset, or +/- 2hrs before/after sunrise/sunset, uv min
-                                if (obsLocalTime.isBefore(weather.astronomy.sunrise.toLocalTime()) ||
-                                    obsLocalTime.isAfter(weather.astronomy.sunset.toLocalTime()) ||
+                                if (obsLocalTime.isBefore(weather.astronomy!!.sunrise.toLocalTime()) ||
+                                    obsLocalTime.isAfter(weather.astronomy!!.sunset.toLocalTime()) ||
                                     Duration.between(
-                                        weather.astronomy.sunrise.toLocalTime(),
+                                        weather.astronomy!!.sunrise.toLocalTime(),
                                         obsLocalTime
                                     ).abs().toHours() <= 2 ||
                                     Duration.between(
-                                        weather.astronomy.sunset.toLocalTime(),
+                                        weather.astronomy!!.sunset.toLocalTime(),
                                         obsLocalTime
                                     ).abs().toHours() <= 2
                                 ) {
-                                    weather.condition.uv = UV(uviData.min?.toFloat() ?: 0f)
+                                    weather.condition!!.uv = UV(uviData.min?.toFloat() ?: 0f)
                                 } else {
                                     val totalSunlightTime =
-                                        weather.astronomy.sunset.toEpochSecond(location.tzOffset) - weather.astronomy.sunrise.toEpochSecond(
+                                        weather.astronomy!!.sunset.toEpochSecond(location.tzOffset) - weather.astronomy!!.sunrise.toEpochSecond(
                                             location.tzOffset
                                         )
                                     val solarNoon =
-                                        weather.astronomy.sunrise.plusSeconds(totalSunlightTime / 2)
+                                        weather.astronomy!!.sunrise.plusSeconds(totalSunlightTime / 2)
 
                                     // If +/- 2hrs within solar noon, UV max
                                     if (Duration.between(solarNoon.toLocalTime(), obsLocalTime)
                                             .abs().toHours() <= 2
                                     ) {
-                                        weather.condition.uv = UV(uviData.max?.toFloat() ?: 0f)
+                                        weather.condition!!.uv = UV(uviData.max?.toFloat() ?: 0f)
                                     } else { // else uv avg
-                                        weather.condition.uv = UV(uviData.avg?.toFloat() ?: 0f)
+                                        weather.condition!!.uv = UV(uviData.avg?.toFloat() ?: 0f)
                                     }
                                 }
                             }
                         }
 
                         val forecastObj =
-                            weather.forecast.find { it.date.toLocalDate().isEqual(date) }
+                            weather.forecast?.find { it.date.toLocalDate().isEqual(date) }
                         if (forecastObj != null && forecastObj.extras?.uvIndex == null) {
                             if (forecastObj.extras == null) {
                                 forecastObj.extras = ForecastExtras()
@@ -268,24 +279,23 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
                 Logger.writeLine(Log.ERROR, e, "Error parsing AQI data")
             }
 
-            weather.condition.airQuality?.attribution = context.getString(R.string.api_waqi)
+            weather.condition?.airQuality?.attribution = context.getString(R.string.api_waqi)
         }
 
         weather.aqiForecast = aqiData?.aqiForecast
     }
 
     /**
-     * Query the alert provider for current available weather alerts (currently US-only supported)
+     * Query the alert provider for current available weather alerts
      *
      * @param location The location data used to search for weather alerts
      * @return A collection of weather alerts currently available
      */
     override suspend fun getAlerts(location: LocationData): Collection<WeatherAlert>? {
-        return if (LocationUtils.isUS(location)) {
+        return if (LocationUtils.isNWSSupported(location)) {
             NWSAlertProvider().getAlerts(location)
         } else {
-            //WeatherApiProvider().getAlerts(location)
-            null
+            WeatherApiProvider().getAlerts(location)
         }
     }
 
@@ -300,6 +310,14 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     abstract override suspend fun isKeyValid(key: String?): Boolean
 
     abstract override fun getAPIKey(): String?
+
+    protected fun getProviderKey(): String? {
+        return if (settingsManager.usePersonalKey()) {
+            settingsManager.getAPIKey(getWeatherAPI())
+        } else {
+            getAPIKey()
+        }
+    }
 
     // Utils Methods
     /**
@@ -503,7 +521,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     override fun isNight(weather: Weather): Boolean {
         var isNight = false
 
-        when (weather.condition.icon) {
+        when (weather.condition?.icon) {
             WeatherIcons.NIGHT_CLEAR,
             WeatherIcons.NIGHT_ALT_CLOUDY,
             WeatherIcons.NIGHT_ALT_CLOUDY_GUSTS,

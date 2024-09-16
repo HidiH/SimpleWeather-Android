@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.room.ColumnInfo;
@@ -31,36 +32,50 @@ public class Weather extends CustomJsonObject {
     @Ignore
     public static final transient String NA = "N/A";
 
+    @Nullable
     @ColumnInfo(name = "locationblob")
     private Location location;
+    @Nullable
     @ColumnInfo(name = "update_time")
     private ZonedDateTime updateTime;
+    @Nullable
     @Ignore
     private List<Forecast> forecast;
+    @Nullable
     @Ignore
     private List<HourlyForecast> hrForecast;
+    @Nullable
     @Ignore
     private List<TextForecast> txtForecast;
+    @Nullable
     @Ignore
     private List<MinutelyForecast> minForecast;
+    @Nullable
     @Ignore
     private List<AirQuality> aqiForecast;
+    @Nullable
     @ColumnInfo(name = "conditionblob")
     private Condition condition;
+    @Nullable
     @ColumnInfo(name = "atmosphereblob")
     private Atmosphere atmosphere;
+    @Nullable
     @ColumnInfo(name = "astronomyblob")
     private Astronomy astronomy;
+    @Nullable
     @ColumnInfo(name = "precipitationblob")
     private Precipitation precipitation;
+    @Nullable
     @Ignore
     // Just for passing along to where its needed
     private Collection<WeatherAlert> weather_alerts;
     private int ttl;
+    @Nullable
     private String source;
     @PrimaryKey
     @NonNull
     private String query;
+    @Nullable
     private String locale;
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -69,91 +84,102 @@ public class Weather extends CustomJsonObject {
         // Needed for deserialization
     }
 
+    @Nullable
     public Location getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(@Nullable Location location) {
         this.location = location;
     }
 
+    @Nullable
     public ZonedDateTime getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(ZonedDateTime value) {
+    public void setUpdateTime(@Nullable ZonedDateTime value) {
         updateTime = value;
     }
 
+    @Nullable
     public List<Forecast> getForecast() {
         return forecast;
     }
 
-    public void setForecast(List<Forecast> forecast) {
+    public void setForecast(@Nullable List<Forecast> forecast) {
         this.forecast = forecast;
     }
 
+    @Nullable
     public List<HourlyForecast> getHrForecast() {
         return hrForecast;
     }
 
-    public void setHrForecast(List<HourlyForecast> hr_forecast) {
+    public void setHrForecast(@Nullable List<HourlyForecast> hr_forecast) {
         this.hrForecast = hr_forecast;
     }
 
+    @Nullable
     public List<TextForecast> getTxtForecast() {
         return txtForecast;
     }
 
-    public void setTxtForecast(List<TextForecast> txt_forecast) {
+    public void setTxtForecast(@Nullable List<TextForecast> txt_forecast) {
         this.txtForecast = txt_forecast;
     }
 
+    @Nullable
     public List<MinutelyForecast> getMinForecast() {
         return minForecast;
     }
 
-    public void setMinForecast(List<MinutelyForecast> minForecast) {
+    public void setMinForecast(@Nullable List<MinutelyForecast> minForecast) {
         this.minForecast = minForecast;
     }
 
+    @Nullable
     public List<AirQuality> getAqiForecast() {
         return aqiForecast;
     }
 
-    public void setAqiForecast(List<AirQuality> aqiForecast) {
+    public void setAqiForecast(@Nullable List<AirQuality> aqiForecast) {
         this.aqiForecast = aqiForecast;
     }
 
+    @Nullable
     public Condition getCondition() {
         return condition;
     }
 
-    public void setCondition(Condition condition) {
+    public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
     }
 
+    @Nullable
     public Atmosphere getAtmosphere() {
         return atmosphere;
     }
 
-    public void setAtmosphere(Atmosphere atmosphere) {
+    public void setAtmosphere(@Nullable Atmosphere atmosphere) {
         this.atmosphere = atmosphere;
     }
 
+    @Nullable
     public Astronomy getAstronomy() {
         return astronomy;
     }
 
-    public void setAstronomy(Astronomy astronomy) {
+    public void setAstronomy(@Nullable Astronomy astronomy) {
         this.astronomy = astronomy;
     }
 
+    @Nullable
     public Precipitation getPrecipitation() {
         return precipitation;
     }
 
-    public void setPrecipitation(Precipitation precipitation) {
+    public void setPrecipitation(@Nullable Precipitation precipitation) {
         this.precipitation = precipitation;
     }
 
@@ -173,12 +199,13 @@ public class Weather extends CustomJsonObject {
         this.ttl = ttl;
     }
 
+    @Nullable
     @WeatherAPI.WeatherProviders
     public String getSource() {
         return source;
     }
 
-    public void setSource(@WeatherAPI.WeatherProviders String source) {
+    public void setSource(@Nullable @WeatherAPI.WeatherProviders String source) {
         this.source = source;
     }
 
@@ -191,11 +218,12 @@ public class Weather extends CustomJsonObject {
         this.query = query;
     }
 
+    @Nullable
     public String getLocale() {
         return locale;
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(@Nullable String locale) {
         this.locale = locale;
     }
 
@@ -220,7 +248,7 @@ public class Weather extends CustomJsonObject {
                         break;
                     case "update_time":
                         String json = reader.nextString();
-                        ZonedDateTime result = null;
+                        ZonedDateTime result;
                         try {
                             result = ZonedDateTime.parse(json, DateTimeUtils.getZonedDateTimeFormatter());
                             if (this.getLocation().getTzOffset() != null && result.getOffset().getTotalSeconds() == 0) {

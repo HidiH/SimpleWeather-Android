@@ -15,44 +15,64 @@ import java.time.ZonedDateTime
 import java.util.*
 import kotlin.math.absoluteValue
 
-fun createWeatherAlerts(root: Rootobject, lat: Float, lon: Float): Collection<WeatherAlert>? {
+fun createWeatherAlerts(root: PlacesItem, lat: Float, lon: Float): Collection<WeatherAlert>? {
     var weatherAlerts: Collection<WeatherAlert>? = null
 
-    if (!root.alerts?.alerts.isNullOrEmpty()) {
-        weatherAlerts = ArrayList(root.alerts.alerts.size)
-        for (result in root.alerts.alerts) {
+    if (!root.alerts.isNullOrEmpty()) {
+        weatherAlerts = ArrayList(root.alerts!!.size)
+        for (result in root.alerts!!) {
+            if (result.description.isNullOrBlank() || result.timeSegments.isNullOrEmpty()) continue
+
             weatherAlerts.add(createWeatherAlert(result))
         }
-    } else if (root.nwsAlerts?.watch != null || root.nwsAlerts?.warning != null) {
-        val numOfAlerts = (root.nwsAlerts?.watch?.size
-                ?: 0) + (root.nwsAlerts?.warning?.size ?: 0)
+    } else if (root.nwsAlerts?.watches != null || root.nwsAlerts?.warnings != null) {
+        val numOfAlerts = (root.nwsAlerts?.watches?.size
+            ?: 0) + (root.nwsAlerts?.warnings?.size ?: 0)
 
         weatherAlerts = HashSet(numOfAlerts)
 
-        if (root.nwsAlerts?.watch != null) {
-            for (watchItem in root.nwsAlerts.watch) {
+        if (root.nwsAlerts?.watches != null) {
+            for (watchItem in root.nwsAlerts!!.watches!!) {
+                val locations =
+                    watchItem.counties?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: watchItem.zones?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: watchItem.provinces?.mapNotNull { it.location }
+                            ?.takeIf { it.isNotEmpty() }
+
+                if (locations == null) continue
+
                 // Add watch item if location is within 20km of the center of the alert zone
-                if (ConversionMethods.calculateHaversine(
-                        lat.toDouble(),
-                        lon.toDouble(),
-                        watchItem.latitude,
-                        watchItem.longitude
-                    ).absoluteValue < 20000
-                ) {
+                if (locations.any {
+                        ConversionMethods.calculateHaversine(
+                            lat.toDouble(),
+                            lon.toDouble(),
+                            it.lat!!.toDouble(),
+                            it.lng!!.toDouble()
+                        ).absoluteValue < 20000
+                    }) {
                     weatherAlerts.add(createWeatherAlert(watchItem))
                 }
             }
         }
-        if (root.nwsAlerts?.warning != null) {
-            for (warningItem in root.nwsAlerts.warning) {
-                // Add warning item if location is within 25km of the center of the alert zone
-                if (ConversionMethods.calculateHaversine(
-                        lat.toDouble(),
-                        lon.toDouble(),
-                        warningItem.latitude,
-                        warningItem.longitude
-                    ).absoluteValue < 25000
-                ) {
+        if (root.nwsAlerts?.warnings != null) {
+            for (warningItem in root.nwsAlerts!!.warnings!!) {
+                val locations =
+                    warningItem.counties?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: warningItem.zones?.mapNotNull { it.location }?.takeIf { it.isNotEmpty() }
+                        ?: warningItem.provinces?.mapNotNull { it.location }
+                            ?.takeIf { it.isNotEmpty() }
+
+                if (locations == null) continue
+
+                // Add warning item if location is within 20km of the center of the alert zone
+                if (locations.any {
+                        ConversionMethods.calculateHaversine(
+                            lat.toDouble(),
+                            lon.toDouble(),
+                            it.lat!!.toDouble(),
+                            it.lng!!.toDouble()
+                        ).absoluteValue < 20000
+                    }) {
                     weatherAlerts.add(createWeatherAlert(warningItem))
                 }
             }
@@ -198,18 +218,18 @@ fun createWeatherAlert(alert: AlertsItem): WeatherAlert {
         }
 
         // NOTE: Alert description may be encoded; unescape encoded characters
-        title = alert.description.unescapeUnicode().also { message = it }
+        title = alert.description?.unescapeUnicode().also { message = it }
 
-        setDateTimeFromSegment(alert.timeSegment)
+        setDateTimeFromSegment(alert.timeSegments!!)
 
         attribution = "HERE Weather"
     }
 }
 
 // HERE NWS Alerts
-fun createWeatherAlert(alert: WatchItem): WeatherAlert {
+fun createWeatherAlert(alert: WatchesItem): WeatherAlert {
     return WeatherAlert().apply {
-        type = getAlertType(alert.type.tryParseInt(-1), alert.description)
+        type = getAlertType(alert.type.tryParseInt(-1), alert.description!!)
         severity = getAlertSeverity(alert.severity)
 
         title = alert.description
@@ -223,9 +243,9 @@ fun createWeatherAlert(alert: WatchItem): WeatherAlert {
 }
 
 // HERE NWS Alerts
-fun createWeatherAlert(alert: WarningItem): WeatherAlert {
+fun createWeatherAlert(alert: WarningsItem): WeatherAlert {
     return WeatherAlert().apply {
-        type = getAlertType(alert.type.tryParseInt(-1), alert.description)
+        type = getAlertType(alert.type.tryParseInt(-1), alert.description!!)
         severity = getAlertSeverity(alert.severity)
 
         title = alert.description
@@ -238,7 +258,10 @@ fun createWeatherAlert(alert: WarningItem): WeatherAlert {
     }
 }
 
-private fun getAlertType(@IntRange(from = 0, to = 38) type: Int, alertDescription: String): WeatherAlertType? {
+private fun getAlertType(
+    @IntRange(from = 0, to = 38) type: Int,
+    alertDescription: String
+): WeatherAlertType {
     return when (type) {
         /*
          * 2: Coastal Flood Warning, Watch, or Statement
@@ -355,97 +378,126 @@ private fun getAlertType(@IntRange(from = 0, to = 38) type: Int, alertDescriptio
     }
 }
 
-private fun getAlertSeverity(@IntRange(from = 0, to = 100) severity: Int): WeatherAlertSeverity {
-    return when {
-        severity >= 75 -> {
-            WeatherAlertSeverity.EXTREME
+private fun getAlertSeverity(@IntRange(from = 0, to = 100) severity: Int?): WeatherAlertSeverity {
+    return if (severity != null) {
+        when {
+            severity >= 75 -> {
+                WeatherAlertSeverity.EXTREME
+            }
+
+            severity >= 50 -> {
+                WeatherAlertSeverity.SEVERE
+            }
+
+            severity >= 25 -> {
+                WeatherAlertSeverity.MODERATE
+            }
+
+            else -> {
+                WeatherAlertSeverity.MINOR
+            }
         }
-        severity >= 50 -> {
-            WeatherAlertSeverity.SEVERE
-        }
-        severity >= 25 -> {
-            WeatherAlertSeverity.MODERATE
-        }
-        else -> {
-            WeatherAlertSeverity.MINOR
-        }
+    } else {
+        WeatherAlertSeverity.MODERATE
     }
 }
 
-private fun getDayOfWeekFromSegment(dayofweek: String): DayOfWeek {
+private fun getDayOfWeekFromSegment(dayofweek: String?): DayOfWeek {
     return when (dayofweek) {
-        "1" -> DayOfWeek.SUNDAY
-        "2" -> DayOfWeek.MONDAY
-        "3" -> DayOfWeek.TUESDAY
-        "4" -> DayOfWeek.WEDNESDAY
-        "5" -> DayOfWeek.THURSDAY
-        "6" -> DayOfWeek.FRIDAY
-        "7" -> DayOfWeek.SATURDAY
+        "su" -> DayOfWeek.SUNDAY
+        "mo" -> DayOfWeek.MONDAY
+        "tu" -> DayOfWeek.TUESDAY
+        "we" -> DayOfWeek.WEDNESDAY
+        "th" -> DayOfWeek.THURSDAY
+        "fr" -> DayOfWeek.FRIDAY
+        "sa" -> DayOfWeek.SATURDAY
         else -> DayOfWeek.SUNDAY
     }
 }
 
-private fun WeatherAlert.setDateTimeFromSegment(timeSegment: List<TimeSegmentItem>) {
+private fun WeatherAlert.setDateTimeFromSegment(timeSegment: List<TimeSegmentsItem>) {
     if (timeSegment.size > 1) {
         val last = timeSegment.size - 1
-        val startDate = DateTimeUtils.getClosestWeekday(getDayOfWeekFromSegment(timeSegment[0].dayOfWeek))
-        val endDate = DateTimeUtils.getClosestWeekday(getDayOfWeekFromSegment(timeSegment[last].dayOfWeek))
+        val startDate =
+            DateTimeUtils.getClosestWeekday(getDayOfWeekFromSegment(timeSegment[0].weekday))
+        val endDate =
+            DateTimeUtils.getClosestWeekday(getDayOfWeekFromSegment(timeSegment[last].weekday))
         date = ZonedDateTime.of(startDate.plusSeconds(
                 getTimeFromSegment(timeSegment[0].segment).toSecondOfDay().toLong()), ZoneOffset.UTC)
         expiresDate = ZonedDateTime.of(endDate.plusSeconds(
                 getTimeFromSegment(timeSegment[last].segment).toSecondOfDay().toLong()), ZoneOffset.UTC)
     } else {
-        val today = DateTimeUtils.getClosestWeekday(getDayOfWeekFromSegment(timeSegment[0].dayOfWeek))
+        val today = DateTimeUtils.getClosestWeekday(getDayOfWeekFromSegment(timeSegment[0].weekday))
         when (timeSegment[0].segment) {
             /* Morning */
-            "M" -> {
+            "morning" -> {
                 date = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("M").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("morning").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
                 expiresDate = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("A").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("afternoon").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
             }
             /* Afternoon */
-            "A" -> {
+            "afternoon" -> {
                 date = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("A").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("afternoon").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
                 expiresDate = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("E").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("evening").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
             }
             /* Evening */
-            "E" -> {
+            "evening" -> {
                 date = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("E").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("evening").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
                 expiresDate = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("N").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("night").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
             }
             /* Night */
-            "N" -> {
+            "night" -> {
                 date = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("N").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("night").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
                 expiresDate = ZonedDateTime.of(today.plusDays(1).plusSeconds(
-                        getTimeFromSegment("M").toSecondOfDay().toLong()), ZoneOffset.UTC) // The next morning
+                    getTimeFromSegment("morning").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                ) // The next morning
             }
             else -> {
                 date = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("M").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("morning").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
                 expiresDate = ZonedDateTime.of(today.plusSeconds(
-                        getTimeFromSegment("A").toSecondOfDay().toLong()), ZoneOffset.UTC)
+                    getTimeFromSegment("afternoon").toSecondOfDay().toLong()
+                ), ZoneOffset.UTC
+                )
             }
         }
     }
 }
 
-private fun getTimeFromSegment(segment: String): LocalTime {
+private fun getTimeFromSegment(segment: String?): LocalTime {
     var span = LocalTime.MIN
     when (segment) {
         /* Morning */
-        "M" -> span = LocalTime.of(5, 0, 0) // hh:mm:ss
+        "morning" -> span = LocalTime.of(5, 0, 0) // hh:mm:ss
         /* Afternoon */
-        "A" -> span = LocalTime.of(12, 0, 0) // hh:mm:ss
+        "afternoon" -> span = LocalTime.of(12, 0, 0) // hh:mm:ss
         /* Evening */
-        "E" -> span = LocalTime.of(17, 0, 0) // hh:mm:ss
+        "evening" -> span = LocalTime.of(17, 0, 0) // hh:mm:ss
         /* Night */
-        "N" -> span = LocalTime.of(21, 0, 0) // hh:mm:ss
+        "night" -> span = LocalTime.of(21, 0, 0) // hh:mm:ss
     }
     return span
 }

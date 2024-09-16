@@ -130,7 +130,7 @@ class WeatherKitProvider : WeatherProviderImpl() {
                     .appendPath("weather")
                     .appendPath(locale)
                     .appendEncodedPath(query)
-                    .appendQueryParameter("countryCode", location.countryCode)
+                    .appendQueryParameter("country", location.countryCode)
                     .appendQueryParameter(
                         "dataSets",
                         "currentWeather,forecastDaily,forecastHourly,forecastNextHour,weatherAlerts"
@@ -192,18 +192,18 @@ class WeatherKitProvider : WeatherProviderImpl() {
         val offset = location.tzOffset
 
         // Update tz for weather properties
-        weather.updateTime = weather.updateTime.withZoneSameInstant(offset)
-        weather.condition.observationTime =
-            weather.condition.observationTime.withZoneSameInstant(offset)
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(offset)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(offset)
 
-        for (hr_forecast in weather.hrForecast) {
+        for (hr_forecast in weather.hrForecast!!) {
             hr_forecast.date = hr_forecast.date.withZoneSameInstant(offset)
         }
-        for (forecast in weather.forecast) {
+        for (forecast in weather.forecast!!) {
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
         }
         if (!weather.minForecast.isNullOrEmpty()) {
-            for (min_forecast in weather.minForecast) {
+            for (min_forecast in weather.minForecast!!) {
                 min_forecast.date = min_forecast.date.withZoneSameInstant(offset)
             }
         }
@@ -218,28 +218,34 @@ class WeatherKitProvider : WeatherProviderImpl() {
             // The time of day is set to max if the sun never sets/rises and
             // DateTime is set to min if not found
             // Don't change this if its set that way
-            if (weather.astronomy.sunrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-                weather.astronomy.sunrise.toLocalTime().isBefore(LocalTime.MAX)
-            ) weather.astronomy.sunrise =
-                weather.astronomy.sunrise.plusSeconds(offset.totalSeconds.toLong())
-            if (weather.astronomy.sunset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-                weather.astronomy.sunset.toLocalTime().isBefore(LocalTime.MAX)
-            ) weather.astronomy.sunset =
-                weather.astronomy.sunset.plusSeconds(offset.totalSeconds.toLong())
-            if (weather.astronomy.moonrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-                weather.astronomy.moonrise.toLocalTime().isBefore(LocalTime.MAX)
-            ) weather.astronomy.moonrise =
-                weather.astronomy.moonrise.plusSeconds(offset.totalSeconds.toLong())
-            if (weather.astronomy.moonset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
-                weather.astronomy.moonset.toLocalTime().isBefore(LocalTime.MAX)
-            ) weather.astronomy.moonset =
-                weather.astronomy.moonset.plusSeconds(offset.totalSeconds.toLong())
+            if (weather.astronomy!!.sunrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+                weather.astronomy!!.sunrise.toLocalTime().isBefore(LocalTime.MAX)
+            ) weather.astronomy!!.sunrise =
+                weather.astronomy!!.sunrise.plusSeconds(offset.totalSeconds.toLong())
+            if (weather.astronomy!!.sunset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+                weather.astronomy!!.sunset.toLocalTime().isBefore(LocalTime.MAX)
+            ) weather.astronomy!!.sunset =
+                weather.astronomy!!.sunset.plusSeconds(offset.totalSeconds.toLong())
+            if (weather.astronomy!!.moonrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+                weather.astronomy!!.moonrise.toLocalTime().isBefore(LocalTime.MAX)
+            ) weather.astronomy!!.moonrise =
+                weather.astronomy!!.moonrise.plusSeconds(offset.totalSeconds.toLong())
+            if (weather.astronomy!!.moonset.isAfter(DateTimeUtils.LOCALDATETIME_MIN) &&
+                weather.astronomy!!.moonset.toLocalTime().isBefore(LocalTime.MAX)
+            ) weather.astronomy!!.moonset =
+                weather.astronomy!!.moonset.plusSeconds(offset.totalSeconds.toLong())
         } else {
             weather.astronomy = try {
-                SunMoonCalcProvider().getAstronomyData(location, weather.condition.observationTime)
+                SunMoonCalcProvider().getAstronomyData(
+                    location,
+                    weather.condition!!.observationTime
+                )
             } catch (e: WeatherException) {
                 Logger.writeLine(Log.ERROR, e)
-                SolCalcAstroProvider().getAstronomyData(location, weather.condition.observationTime)
+                SolCalcAstroProvider().getAstronomyData(
+                    location,
+                    weather.condition!!.observationTime
+                )
             }
         }
     }
@@ -250,8 +256,8 @@ class WeatherKitProvider : WeatherProviderImpl() {
         return String.format(
             Locale.ROOT,
             "%s/%s",
-            df.format(weather.location.latitude),
-            df.format(weather.location.longitude)
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
         )
     }
 
@@ -400,12 +406,12 @@ class WeatherKitProvider : WeatherProviderImpl() {
         if (!isNight) {
             // Fallback to sunset/rise time just in case
             var tz: ZoneOffset? = null
-            if (!weather.location.tzLong.isNullOrBlank()) {
-                val id = ZoneIdCompat.of(weather.location.tzLong)
+            if (!weather.location?.tzLong.isNullOrBlank()) {
+                val id = ZoneIdCompat.of(weather.location!!.tzLong)
                 tz = id.rules.getOffset(Instant.now())
             }
             if (tz == null) {
-                tz = weather.location.tzOffset
+                tz = weather.location!!.tzOffset
             }
 
             val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

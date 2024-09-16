@@ -16,22 +16,25 @@ fun getLastBuildDate(weather: Weather): String {
     val context = sharedDeps.context
     val date: String
     val prefix: String
-    val update_time = weather.updateTime.toLocalDateTime()
+    val updateTime = weather.updateTime!!.toLocalDateTime()
 
     var timeformat = if (DateFormat.is24HourFormat(context)) {
-        update_time.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_24HR))
+        updateTime.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_24HR))
     } else {
-        update_time.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM))
+        updateTime.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM))
     }
 
-    timeformat = String.format("%s %s", timeformat, weather.location.tzShort)
+    timeformat = String.format("%s %s", timeformat, weather.location?.tzShort)
 
-    if (update_time.dayOfWeek == ZonedDateTime.now().dayOfWeek) {
+    if (updateTime.dayOfWeek == ZonedDateTime.now().dayOfWeek) {
         prefix = context.getString(R.string.update_prefix_day)
         date = String.format("%s %s", prefix, timeformat)
     } else {
         prefix = context.getString(R.string.update_prefix)
-        date = String.format("%s %s %s", prefix, update_time.format(
+        date = String.format(
+            "%s %s %s",
+            prefix,
+            updateTime.format(
                 DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK)), timeformat)
     }
 

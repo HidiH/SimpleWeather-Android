@@ -10,6 +10,7 @@ import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherAlertProvider
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
+import com.thewizrd.weather_api.utils.APIRequestUtils.addUserAgent
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkRateLimit
 import com.thewizrd.weather_api.utils.RateLimitedRequest
@@ -19,7 +20,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class NWSAlertProvider : WeatherAlertProvider, RateLimitedRequest {
@@ -44,8 +45,6 @@ class NWSAlertProvider : WeatherAlertProvider, RateLimitedRequest {
                 checkRateLimit(WeatherAPI.NWS)
 
                 val context = sharedDeps.context
-                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                val version = String.format("v%s", packageInfo.versionName)
 
                 val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
                 df.applyPattern("0.####")
@@ -60,10 +59,7 @@ class NWSAlertProvider : WeatherAlertProvider, RateLimitedRequest {
                         )
                     )
                     .addHeader("Accept", "application/ld+json")
-                    .addHeader(
-                        "User-Agent",
-                        String.format("SimpleWeather (thewizrd.dev@gmail.com) %s", version)
-                    )
+                    .addUserAgent(context)
                     .build()
 
                 // Connect to webstream

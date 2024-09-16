@@ -1,5 +1,6 @@
 package com.thewizrd.shared_resources.database;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 import com.thewizrd.shared_resources.utils.DateTimeUtils;
@@ -16,22 +17,22 @@ public class SortableDateTimeConverters {
     private static final DateTimeFormatter lDTF = DateTimeFormatter.ISO_INSTANT.withLocale(Locale.ROOT);
 
     @TypeConverter
-    public static ZonedDateTime zonedDateTimeFromString(String value) {
+    public static @Nullable ZonedDateTime zonedDateTimeFromString(@Nullable String value) {
         return value == null ? null : ZonedDateTime.parse(value, zDTF);
     }
 
     @TypeConverter
-    public static String zonedDateTimetoString(ZonedDateTime value) {
+    public static @Nullable String zonedDateTimetoString(@Nullable ZonedDateTime value) {
         return value == null ? null : value.format(zDTF);
     }
 
     @TypeConverter
-    public static LocalDateTime localDateTimeFromString(String value) {
+    public static @Nullable LocalDateTime localDateTimeFromString(@Nullable String value) {
         return value == null ? null : LocalDateTime.ofInstant(Instant.from(lDTF.parse(value)), ZoneOffset.UTC);
     }
 
     @TypeConverter
-    public static String localDateTimetoString(LocalDateTime value) {
+    public static @Nullable String localDateTimetoString(@Nullable LocalDateTime value) {
         return value == null ? null : value.toInstant(ZoneOffset.UTC).toString();
     }
 }

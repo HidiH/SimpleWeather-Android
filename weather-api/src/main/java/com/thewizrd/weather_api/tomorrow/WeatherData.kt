@@ -13,7 +13,20 @@ import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.AirQuality
+import com.thewizrd.shared_resources.weatherdata.model.Astronomy
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase
+import com.thewizrd.shared_resources.weatherdata.model.Pollen
+import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.TextForecast
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.R
 import com.thewizrd.weather_api.weatherModule
 import java.time.LocalDateTime
@@ -34,7 +47,7 @@ fun createWeatherData(root: Rootobject, minutelyRoot: Rootobject?, alertRoot: Al
                     hrForecast = ArrayList(timeline.intervals.size)
 
                     for (interval in timeline.intervals) {
-                        hrForecast.add(createHourlyForecast(interval))
+                        hrForecast!!.add(createHourlyForecast(interval))
                     }
                 }
                 "1d" -> {
@@ -43,18 +56,18 @@ fun createWeatherData(root: Rootobject, minutelyRoot: Rootobject?, alertRoot: Al
                     aqiForecast = ArrayList(timeline.intervals.size)
 
                     for (interval in timeline.intervals) {
-                        if (astronomy == null && updateTime.truncatedTo(ChronoUnit.DAYS).isEqual(
+                        if (astronomy == null && updateTime!!.truncatedTo(ChronoUnit.DAYS).isEqual(
                                 ZonedDateTime.parse(interval.startTime).truncatedTo(ChronoUnit.DAYS)
                             )
                         ) {
                             astronomy = createAstronomy(interval)
                         }
 
-                        forecast.add(createForecast(interval))
-                        txtForecast.add(createTextForecast(interval))
+                        forecast!!.add(createForecast(interval))
+                        txtForecast!!.add(createTextForecast(interval))
 
                         if (interval.values.epaIndex != null) {
-                            aqiForecast.add(createAQIForecast(interval))
+                            aqiForecast!!.add(createAQIForecast(interval))
                         }
                     }
                 }
@@ -72,17 +85,17 @@ fun createWeatherData(root: Rootobject, minutelyRoot: Rootobject?, alertRoot: Al
                     minForecast = ArrayList(timeline.intervals.size)
 
                     for (interval in timeline.intervals) {
-                        minForecast.add(createMinutelyForecast(interval))
+                        minForecast!!.add(createMinutelyForecast(interval))
                     }
                 }
             }
         }
 
-        if ((condition.highF == null || condition.highC == null || condition.highF == condition.lowF) && forecast.isNotEmpty()) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition!!.highF == null || condition!!.highC == null || condition!!.highF == condition!!.lowF) && forecast!!.isNotEmpty()) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
         weatherAlerts = createWeatherAlerts(alertRoot)

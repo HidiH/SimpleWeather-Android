@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package com.thewizrd.simpleweather.ui.weather
 
 import android.app.Activity
@@ -9,6 +11,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -64,9 +68,6 @@ import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Dialog
-import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
-import com.google.accompanist.flowlayout.FlowMainAxisAlignment
-import com.google.accompanist.flowlayout.FlowRow
 import com.google.android.horologist.compose.layout.fillMaxRectangle
 import com.google.android.horologist.compose.navscaffold.scrollableColumn
 import com.thewizrd.common.controls.ForecastItemViewModel
@@ -357,9 +358,8 @@ private fun ColumnScope.WeatherLocation(
             )
             .defaultMinSize(minHeight = 56.dp)
             .wrapContentHeight(Alignment.CenterVertically),
-        mainAxisAlignment = FlowMainAxisAlignment.Center,
-        crossAxisAlignment = FlowCrossAxisAlignment.Center,
-        mainAxisSpacing = 7.dp
+        verticalArrangement = Arrangement.spacedBy(7.dp),
+        horizontalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         if (isGPSLocation) {
             Icon(
@@ -514,7 +514,7 @@ private fun ConditionDetails(
         weather.weatherDetailsMap[WeatherDetailsType.WINDSPEED]
     }
 
-    Row(
+    FlowRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = dimensionResource(id = R.dimen.list_item_padding))
@@ -522,7 +522,7 @@ private fun ConditionDetails(
             .clickable {
                 navController.navigate(Screen.Details.route)
             },
-        verticalAlignment = Alignment.CenterVertically,
+        verticalArrangement = Arrangement.Center,
         horizontalArrangement = Arrangement.Center,
     ) {
         if (popData != null) {
@@ -532,12 +532,14 @@ private fun ConditionDetails(
                 Icon(
                     modifier = Modifier
                         .size(20.dp)
-                        .padding(end = 4.dp),
+                        .padding(end = 4.dp)
+                        .align(Alignment.CenterVertically),
                     painter = painterResource(id = R.drawable.wi_umbrella),
                     tint = colorResource(R.color.colorPrimaryLight),
                     contentDescription = null
                 )
                 Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = spannableStringToAnnotatedString(popData.value),
                     style = MaterialTheme.typography.caption1,
                     textAlign = TextAlign.End,
@@ -547,7 +549,7 @@ private fun ConditionDetails(
             }
         }
         if (popData != null && windData != null) {
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
         }
         if (windData != null) {
             Row(
@@ -557,12 +559,14 @@ private fun ConditionDetails(
                     modifier = Modifier
                         .size(20.dp)
                         .padding(end = 4.dp)
-                        .rotate(windData.iconRotation.toFloat()),
+                        .rotate(windData.iconRotation.toFloat())
+                        .align(Alignment.CenterVertically),
                     painter = painterResource(id = R.drawable.wi_wind_direction),
                     tint = Color(0xFF20B2AA),
                     contentDescription = null
                 )
                 Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = spannableStringToAnnotatedString(windData.value),
                     style = MaterialTheme.typography.caption1,
                     textAlign = TextAlign.End,

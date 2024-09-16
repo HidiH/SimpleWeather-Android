@@ -5,13 +5,14 @@ import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CrashlyticsLoggingTree
 import com.thewizrd.shared_resources.utils.Logger
 
 object FirebaseConfigurator {
     @SuppressLint("MissingPermission")
     fun initialize(context: Context) {
-        FirebaseAnalytics.getInstance(context).setUserProperty("device_type", "watch")
+        FirebaseAnalytics.getInstance(context).setUserProperty(AnalyticsProps.DEVICE_TYPE, "watch")
 
         FirebaseCrashlytics.getInstance().apply {
             setCrashlyticsCollectionEnabled(true)

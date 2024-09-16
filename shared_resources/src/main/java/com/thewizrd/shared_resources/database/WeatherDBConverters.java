@@ -3,6 +3,7 @@ package com.thewizrd.shared_resources.database;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 import com.squareup.moshi.JsonReader;
@@ -39,37 +40,37 @@ public class WeatherDBConverters {
     private static final DateTimeFormatter lDTF = DateTimeFormatter.ISO_INSTANT;
 
     @TypeConverter
-    public static Location locationFromJson(String value) {
+    public static @Nullable Location locationFromJson(@Nullable String value) {
         return JSONParser.deserializer(value, Location.class);
     }
 
     @TypeConverter
-    public static String locationToJson(Location value) {
+    public static @Nullable String locationToJson(@Nullable Location value) {
         return JSONParser.serializer(value, Location.class);
     }
 
     @TypeConverter
-    public static ZonedDateTime zonedDateTimeFromString(String value) {
+    public static @Nullable ZonedDateTime zonedDateTimeFromString(@Nullable String value) {
         return value == null ? null : ZonedDateTime.parse(value, zDTF);
     }
 
     @TypeConverter
-    public static String zonedDateTimetoString(ZonedDateTime value) {
+    public static @Nullable String zonedDateTimetoString(@Nullable ZonedDateTime value) {
         return value == null ? null : value.format(zDTF);
     }
 
     @TypeConverter
-    public static LocalDateTime localDateTimeFromString(String value) {
+    public static @Nullable LocalDateTime localDateTimeFromString(@Nullable String value) {
         return value == null ? null : LocalDateTime.ofInstant(Instant.from(lDTF.parse(value)), ZoneOffset.UTC);
     }
 
     @TypeConverter
-    public static String localDateTimetoString(LocalDateTime value) {
+    public static @Nullable String localDateTimetoString(@Nullable LocalDateTime value) {
         return value == null ? null : value.toInstant(ZoneOffset.UTC).toString();
     }
 
     @TypeConverter
-    public static List<Forecast> forecastArrfromJson(String value) {
+    public static @Nullable List<Forecast> forecastArrfromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -95,7 +96,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String forecastArrtoJson(List<Forecast> value) {
+    public static @Nullable String forecastArrtoJson(@Nullable List<Forecast> value) {
         if (value == null)
             return null;
         else {
@@ -121,7 +122,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static HourlyForecast hrforecastFromJson(String value) {
+    public static @Nullable HourlyForecast hrforecastFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -132,12 +133,12 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String hrforecastToJson(HourlyForecast value) {
+    public static @Nullable String hrforecastToJson(@Nullable HourlyForecast value) {
         return JSONParser.serializer(value, HourlyForecast.class);
     }
 
     @TypeConverter
-    public static List<HourlyForecast> hrforecastArrfromJson(String value) {
+    public static @Nullable List<HourlyForecast> hrforecastArrfromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -163,7 +164,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String hrforecastArrtoJson(List<HourlyForecast> value) {
+    public static @Nullable String hrforecastArrtoJson(@Nullable List<HourlyForecast> value) {
         if (value == null)
             return null;
         else {
@@ -189,7 +190,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static List<TextForecast> txtforecastArrfromJson(String value) {
+    public static @Nullable List<TextForecast> txtforecastArrfromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -215,7 +216,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String txtforecastArrtoJson(List<TextForecast> value) {
+    public static @Nullable String txtforecastArrtoJson(@Nullable List<TextForecast> value) {
         if (value == null)
             return null;
         else {
@@ -241,7 +242,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static MinutelyForecast minforecastFromJson(String value) {
+    public static @Nullable MinutelyForecast minforecastFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -252,12 +253,12 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String minforecastToJson(MinutelyForecast value) {
+    public static @Nullable String minforecastToJson(@Nullable MinutelyForecast value) {
         return JSONParser.serializer(value, MinutelyForecast.class);
     }
 
     @TypeConverter
-    public static List<MinutelyForecast> minforecastArrfromJson(String value) {
+    public static @Nullable List<MinutelyForecast> minforecastArrfromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -283,7 +284,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String minforecastArrtoJson(List<MinutelyForecast> value) {
+    public static @Nullable String minforecastArrtoJson(@Nullable List<MinutelyForecast> value) {
         if (value == null)
             return null;
         else {
@@ -309,7 +310,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static Condition conditionFromJson(String value) {
+    public static @Nullable Condition conditionFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -320,12 +321,12 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String conditionToJson(Condition value) {
+    public static @Nullable String conditionToJson(@Nullable Condition value) {
         return JSONParser.serializer(value, Condition.class);
     }
 
     @TypeConverter
-    public static Atmosphere atmosphereFromJson(String value) {
+    public static @Nullable Atmosphere atmosphereFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -336,12 +337,12 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String atmosphereToJson(Atmosphere value) {
+    public static @Nullable String atmosphereToJson(@Nullable Atmosphere value) {
         return JSONParser.serializer(value, Atmosphere.class);
     }
 
     @TypeConverter
-    public static Astronomy astronomyFromJson(String value) {
+    public static @Nullable Astronomy astronomyFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -352,12 +353,12 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String astronomyToJson(Astronomy value) {
+    public static @Nullable String astronomyToJson(@Nullable Astronomy value) {
         return JSONParser.serializer(value, Astronomy.class);
     }
 
     @TypeConverter
-    public static Precipitation precipitationFromJson(String value) {
+    public static @Nullable Precipitation precipitationFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -368,12 +369,12 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String precipitationToJson(Precipitation value) {
+    public static @Nullable String precipitationToJson(@Nullable Precipitation value) {
         return JSONParser.serializer(value, Precipitation.class);
     }
 
     @TypeConverter
-    public static Collection<WeatherAlert> alertsListFromJson(String value) {
+    public static @Nullable Collection<WeatherAlert> alertsListFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -399,7 +400,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String alertsListToJson(Collection<WeatherAlert> value) {
+    public static @Nullable String alertsListToJson(@Nullable Collection<WeatherAlert> value) {
         if (value == null)
             return null;
         else {
@@ -425,7 +426,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static AirQuality aqiFromJson(String value) {
+    public static @Nullable AirQuality aqiFromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -436,12 +437,12 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String aqiToJson(AirQuality value) {
+    public static @Nullable String aqiToJson(@Nullable AirQuality value) {
         return JSONParser.serializer(value, AirQuality.class);
     }
 
     @TypeConverter
-    public static List<AirQuality> aqiForecastArrfromJson(String value) {
+    public static @Nullable List<AirQuality> aqiForecastArrfromJson(@Nullable String value) {
         if (value == null)
             return null;
         else {
@@ -467,7 +468,7 @@ public class WeatherDBConverters {
     }
 
     @TypeConverter
-    public static String aqiForecastArrtoJson(List<AirQuality> value) {
+    public static @Nullable String aqiForecastArrtoJson(@Nullable List<AirQuality> value) {
         if (value == null)
             return null;
         else {

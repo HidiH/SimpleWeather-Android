@@ -168,143 +168,151 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
             val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
             val query = updateLocationQuery(location)
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = getProviderKey()
 
-                val client = sharedDeps.httpClient
-                var response: Response? = null
-                var minutelyResponse: Response? = null
-                var alertsResponse: Response? = null
-                var wEx: WeatherException? = null
+            val client = sharedDeps.httpClient
+            var response: Response? = null
+            var minutelyResponse: Response? = null
+            var alertsResponse: Response? = null
+            var wEx: WeatherException? = null
 
-                try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                }
+
+                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("location", query)
+                    .appendQueryParameter(
+                        "fields",
+                        "temperature,temperatureApparent,temperatureMin,temperatureMax,dewPoint,humidity,windSpeed,windDirection,windGust,pressureSeaLevel,precipitationIntensity,precipitationProbability,snowAccumulation,sunriseTime,sunsetTime,visibility,cloudCover,moonPhase,weatherCode,weatherCodeFullDay,weatherCodeDay,weatherCodeNight,treeIndex,grassIndex,weedIndex,epaIndex,particulateMatter25,particulateMatter10,pollutantO3,pollutantNO2,pollutantCO,pollutantSO2"
+                    )
+                    .appendQueryParameter("timesteps", "current,1h,1d")
+                    .appendQueryParameter("units", "metric")
+                    .appendQueryParameter("timezone", "UTC")
+                    .build()
+
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 20, TimeUnit.MINUTES)
+                    .url(requestUri.toString())
+                    .header("Accept", "application/json")
+                    .build()
+
+                val minutelyRequestUri = Uri.parse(BASE_URL).buildUpon()
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("location", query)
+                    .appendQueryParameter(
+                        "fields",
+                        "precipitationIntensity,precipitationProbability"
+                    )
+                    .appendQueryParameter("timesteps", "1m")
+                    .appendQueryParameter("units", "metric")
+                    .appendQueryParameter("timezone", "UTC")
+                    .build()
+
+                val minutelyRequest = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
+                    .url(minutelyRequestUri.toString())
+                    .header("Accept", "application/json")
+                    .build()
+
+                val alertsRequestUri = Uri.parse(EVENTS_BASE_URL).buildUpon()
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("location", query)
+                    .appendQueryParameter("insights", "air")
+                    .appendQueryParameter("insights", "fires")
+                    .appendQueryParameter("insights", "wind")
+                    .appendQueryParameter("insights", "winter")
+                    .appendQueryParameter("insights", "thunderstorms")
+                    .appendQueryParameter("insights", "floods")
+                    .appendQueryParameter("insights", "temperature")
+                    .appendQueryParameter("insights", "tropical")
+                    .appendQueryParameter("insights", "marine")
+                    .appendQueryParameter("insights", "fog")
+                    .appendQueryParameter("insights", "tornado")
+                    .appendQueryParameter("buffer", "20")
+                    .build()
+
+                val alertsRequest = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
+                    .url(alertsRequestUri.toString())
+                    .header("Accept", "application/json")
+                    .build()
+
+                // Connect to webstream
+                response = client.newCall(request).await()
+                checkForErrors(response)
+                // Load weather
+                val root = response.getStream().use {
+                    JSONParser.deserializer<Rootobject>(it, Rootobject::class.java)
+                }
+
+                requireNotNull(root)
+
+                var minutelyRoot: Rootobject? = null
+                var alertsRoot: AlertsRootobject? = null
+
+                runCatching {
+                    minutelyResponse = client.newCall(minutelyRequest).await()
+                    checkForErrors(minutelyResponse!!)
+                    minutelyResponse!!.getStream().use {
+                        minutelyRoot =
+                            JSONParser.deserializer<Rootobject>(it, Rootobject::class.java)
                     }
+                }
 
-                    val requestUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter("apikey", key)
-                        .appendQueryParameter("location", query)
-                        .appendQueryParameter(
-                            "fields",
-                            "temperature,temperatureApparent,temperatureMin,temperatureMax,dewPoint,humidity,windSpeed,windDirection,windGust,pressureSeaLevel,precipitationIntensity,precipitationProbability,snowAccumulation,sunriseTime,sunsetTime,visibility,cloudCover,moonPhase,weatherCode,weatherCodeFullDay,weatherCodeDay,weatherCodeNight,treeIndex,grassIndex,weedIndex,epaIndex,particulateMatter25,particulateMatter10,pollutantO3,pollutantNO2,pollutantCO,pollutantSO2"
+                runCatching {
+                    alertsResponse = client.newCall(alertsRequest).await()
+                    checkForErrors(alertsResponse!!)
+                    alertsResponse!!.getStream().use {
+                        alertsRoot = JSONParser.deserializer<AlertsRootobject>(
+                            it,
+                            AlertsRootobject::class.java
                         )
-                        .appendQueryParameter("timesteps", "current,1h,1d")
-                        .appendQueryParameter("units", "metric")
-                        .appendQueryParameter("timezone", "UTC")
-                        .build()
-
-                    val request = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 20, TimeUnit.MINUTES)
-                        .url(requestUri.toString())
-                        .header("Accept", "application/json")
-                        .build()
-
-                    val minutelyRequestUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter("apikey", key)
-                        .appendQueryParameter("location", query)
-                            .appendQueryParameter("fields", "precipitationIntensity,precipitationProbability")
-                            .appendQueryParameter("timesteps", "1m")
-                            .appendQueryParameter("units", "metric")
-                            .appendQueryParameter("timezone", "UTC")
-                            .build()
-
-                    val minutelyRequest = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
-                        .url(minutelyRequestUri.toString())
-                        .header("Accept", "application/json")
-                        .build()
-
-                    val alertsRequestUri = Uri.parse(EVENTS_BASE_URL).buildUpon()
-                        .appendQueryParameter("apikey", key)
-                        .appendQueryParameter("location", query)
-                        .appendQueryParameter("insights", "air")
-                        .appendQueryParameter("insights", "fires")
-                        .appendQueryParameter("insights", "wind")
-                        .appendQueryParameter("insights", "winter")
-                        .appendQueryParameter("insights", "thunderstorms")
-                        .appendQueryParameter("insights", "floods")
-                        .appendQueryParameter("insights", "temperature")
-                        .appendQueryParameter("insights", "tropical")
-                        .appendQueryParameter("insights", "marine")
-                        .appendQueryParameter("insights", "fog")
-                        .appendQueryParameter("insights", "tornado")
-                            .appendQueryParameter("buffer", "20")
-                            .build()
-
-                    val alertsRequest = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 30, TimeUnit.MINUTES)
-                        .url(alertsRequestUri.toString())
-                        .header("Accept", "application/json")
-                        .build()
-
-                    // Connect to webstream
-                    response = client.newCall(request).await()
-                    checkForErrors(response)
-                    // Load weather
-                    val root = response.getStream().use {
-                        JSONParser.deserializer<Rootobject>(it, Rootobject::class.java)
                     }
-
-                    requireNotNull(root)
-
-                    var minutelyRoot: Rootobject? = null
-                    var alertsRoot: AlertsRootobject? = null
-
-                    runCatching {
-                        minutelyResponse = client.newCall(minutelyRequest).await()
-                        checkForErrors(minutelyResponse!!)
-                        minutelyResponse!!.getStream().use {
-                            minutelyRoot =
-                                JSONParser.deserializer<Rootobject>(it, Rootobject::class.java)
-                        }
-                    }
-
-                    runCatching {
-                        alertsResponse = client.newCall(alertsRequest).await()
-                        checkForErrors(alertsResponse!!)
-                        alertsResponse!!.getStream().use {
-                            alertsRoot = JSONParser.deserializer<AlertsRootobject>(it, AlertsRootobject::class.java)
-                        }
-                    }
-
-                    weather = createWeatherData(root, minutelyRoot, alertsRoot)
-                } catch (ex: Exception) {
-                    weather = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "TomorrowIOWeatherProvider: error getting weather data")
-                } finally {
-                    response?.closeQuietly()
-                    minutelyResponse?.closeQuietly()
-                    alertsResponse?.closeQuietly()
                 }
 
-                if (wEx == null && weather.isNullOrInvalid()) {
-                    wEx = WeatherException(ErrorStatus.NOWEATHER)
-                } else if (weather != null) {
-                    if (supportsWeatherLocale()) weather.locale = locale
-
-                    weather.query = query
+                weather = createWeatherData(root, minutelyRoot, alertsRoot)
+            } catch (ex: Exception) {
+                weather = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
+                } else if (ex is WeatherException) {
+                    wEx = ex
                 }
-
-                if (wEx != null) throw wEx
-
-                return@withContext weather!!
+                Logger.writeLine(
+                    Log.ERROR,
+                    ex,
+                    "TomorrowIOWeatherProvider: error getting weather data"
+                )
+            } finally {
+                response?.closeQuietly()
+                minutelyResponse?.closeQuietly()
+                alertsResponse?.closeQuietly()
             }
+
+            if (wEx == null && weather.isNullOrInvalid()) {
+                wEx = WeatherException(ErrorStatus.NOWEATHER)
+            } else if (weather != null) {
+                if (supportsWeatherLocale()) weather.locale = locale
+
+                weather.query = query
+            }
+
+            if (wEx != null) throw wEx
+
+            return@withContext weather!!
+        }
 
     override suspend fun getPollenData(location: LocationData): Pollen? =
         withContext(Dispatchers.IO) {
             var pollenData: Pollen? = null
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getWeatherAPI()) else getAPIKey()
+            val key = settingsManager.getAPIKey(getWeatherAPI()) ?: getAPIKey()
 
             val client = sharedDeps.httpClient
             var response: Response? = null
@@ -387,40 +395,40 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
         val offset = location.tzOffset
 
         // Update tz for weather properties
-        weather.updateTime = weather.updateTime.withZoneSameInstant(offset)
-        weather.condition.observationTime =
-            weather.condition.observationTime.withZoneSameInstant(offset)
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(offset)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(offset)
 
         val newAstro = try {
-            SunMoonCalcProvider().getAstronomyData(location, weather.condition.observationTime)
+            SunMoonCalcProvider().getAstronomyData(location, weather.condition!!.observationTime)
         } catch (e: WeatherException) {
             Logger.writeLine(Log.ERROR, e)
-            SolCalcAstroProvider().getAstronomyData(location, weather.condition.observationTime)
+            SolCalcAstroProvider().getAstronomyData(location, weather.condition!!.observationTime)
         }
 
         if (weather.astronomy != null) {
-            weather.astronomy.sunrise =
-                weather.astronomy.sunrise.plusSeconds(offset.totalSeconds.toLong())
-            weather.astronomy.sunset =
-                weather.astronomy.sunset.plusSeconds(offset.totalSeconds.toLong())
-            weather.astronomy.moonrise = newAstro.moonrise
-            weather.astronomy.moonset = newAstro.moonset
+            weather.astronomy!!.sunrise =
+                weather.astronomy!!.sunrise.plusSeconds(offset.totalSeconds.toLong())
+            weather.astronomy!!.sunset =
+                weather.astronomy!!.sunset.plusSeconds(offset.totalSeconds.toLong())
+            weather.astronomy!!.moonrise = newAstro.moonrise
+            weather.astronomy!!.moonset = newAstro.moonset
         } else {
             weather.astronomy = newAstro
         }
 
         // Update icons
         val now = ZonedDateTime.now(ZoneOffset.UTC).withZoneSameInstant(offset).toLocalTime()
-        val sunrise = weather.astronomy.sunrise.toLocalTime()
-        val sunset = weather.astronomy.sunset.toLocalTime()
+        val sunrise = weather.astronomy!!.sunrise.toLocalTime()
+        val sunset = weather.astronomy!!.sunset.toLocalTime()
 
-        weather.condition.icon.let {
-            weather.condition.icon =
+        weather.condition!!.icon.let {
+            weather.condition!!.icon =
                 getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), it)
-            weather.condition.weather = getWeatherCondition(it)
+            weather.condition!!.weather = getWeatherCondition(it)
         }
 
-        for (forecast in weather.forecast) {
+        for (forecast in weather.forecast!!) {
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
 
             forecast.icon.let {
@@ -429,7 +437,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
             }
         }
 
-        for (hr_forecast in weather.hrForecast) {
+        for (hr_forecast in weather.hrForecast!!) {
             val hrfDate = hr_forecast.date.withZoneSameInstant(offset)
             hr_forecast.date = hrfDate
 
@@ -445,7 +453,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
         }
 
         if (!weather.minForecast.isNullOrEmpty()) {
-            for (min_forecast in weather.minForecast) {
+            for (min_forecast in weather.minForecast!!) {
                 min_forecast.date = min_forecast.date.withZoneSameInstant(offset)
             }
         }
@@ -466,7 +474,12 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
     override fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
-        return String.format(Locale.ROOT, "%s,%s", df.format(weather.location.latitude), df.format(weather.location.longitude))
+        return String.format(
+            Locale.ROOT,
+            "%s,%s",
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
+        )
     }
 
     override fun updateLocationQuery(location: LocationData): String {
@@ -1133,12 +1146,12 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
         if (!isNight) {
             // Fallback to sunset/rise time just in case
             var tz: ZoneOffset? = null
-            if (!weather.location.tzLong.isNullOrBlank()) {
-                val id = ZoneIdCompat.of(weather.location.tzLong)
+            if (!weather.location!!.tzLong.isNullOrBlank()) {
+                val id = ZoneIdCompat.of(weather.location!!.tzLong)
                 tz = id.rules.getOffset(Instant.now())
             }
             if (tz == null) {
-                tz = weather.location.tzOffset
+                tz = weather.location!!.tzOffset
             }
 
             val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

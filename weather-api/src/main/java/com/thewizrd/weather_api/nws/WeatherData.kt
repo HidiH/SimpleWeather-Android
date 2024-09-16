@@ -8,7 +8,16 @@ import com.thewizrd.shared_resources.utils.NumberUtils.tryParseFloat
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.utils.getFeelsLikeTemp
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.TextForecast
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.nws.hourly.HourlyForecastResponse
 import com.thewizrd.weather_api.nws.hourly.PeriodItem
 import com.thewizrd.weather_api.nws.observation.ForecastResponse
@@ -19,7 +28,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @SuppressLint("VisibleForTests")
@@ -54,13 +63,13 @@ fun createWeatherData(
                         forecastResponse.data.text[i]
                     )
 
-                if (forecast.isEmpty() && !forecastItem.isDaytime || forecast.size == periodsSize - 1 && forecastItem.isDaytime) {
-                    forecast.add(createForecast(forecastItem))
-                    txtForecast.add(createTextForecast(forecastItem).also {
-                        if (condition.summary == null && !condition.observationTime.toLocalDate()
+                if (forecast!!.isEmpty() && !forecastItem.isDaytime || forecast!!.size == periodsSize - 1 && forecastItem.isDaytime) {
+                    forecast!!.add(createForecast(forecastItem))
+                    txtForecast!!.add(createTextForecast(forecastItem).also {
+                        if (condition!!.summary == null && !condition!!.observationTime.toLocalDate()
                                 .isBefore(it.date.toLocalDate())
                         ) {
-                            condition.summary = String.format(
+                            condition!!.summary = String.format(
                                 Locale.ROOT,
                                 "%s - %s", forecastItem.name, forecastItem.detailedForecast
                             )
@@ -79,12 +88,12 @@ fun createWeatherData(
                             forecastResponse.data.text[i + 1]
                         )
 
-                    forecast.add(createForecast(forecastItem, nightForecastItem))
-                    txtForecast.add(createTextForecast(forecastItem, nightForecastItem).also {
-                        if (condition.summary == null && !condition.observationTime.toLocalDate()
+                    forecast!!.add(createForecast(forecastItem, nightForecastItem))
+                    txtForecast!!.add(createTextForecast(forecastItem, nightForecastItem).also {
+                        if (condition!!.summary == null && !condition!!.observationTime.toLocalDate()
                                 .isBefore(it.date.toLocalDate())
                         ) {
-                            condition.summary = String.format(
+                            condition!!.summary = String.format(
                                 Locale.ROOT,
                                 "%s - %s\n%s - %s",
                                 forecastItem.name, forecastItem.detailedForecast,
@@ -112,7 +121,9 @@ fun createWeatherData(
                     // BUG: NWS MapClick API
                     // The epoch time sometimes is a day ahead
                     // If this is the case, adjust all dates accordingly
-                    if (i == 0 && period.periodName?.contains("night") == true && "6 pm" == period.time[i]) {
+                    if (i == 0 && period.periodName?.lowercase()
+                            ?.contains("night") == true && "6 pm" == period.time[i]
+                    ) {
                         val hrDate = instant.atZone(creationDate.zone)
                         if (creationDate.plusDays(1).truncatedTo(ChronoUnit.DAYS).isEqual(hrDate.truncatedTo(ChronoUnit.DAYS))) {
                             adjustDate = true
@@ -140,7 +151,7 @@ fun createWeatherData(
                         period.weather[i]
                     )
 
-                    hrForecast.add(createHourlyForecast(forecastItem, adjustDate))
+                    hrForecast!!.add(createHourlyForecast(forecastItem, adjustDate))
                 }
             }
         }
@@ -150,13 +161,13 @@ fun createWeatherData(
         precipitation = createPrecipitation(forecastResponse)
         ttl = 180
 
-        if (condition.highF == null && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
+        if (condition!!.highF == null && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
         }
-        if (condition.lowF == null && forecast.size > 0) {
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if (condition!!.lowF == null && forecast!!.size > 0) {
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
         source = WeatherAPI.NWS

@@ -131,7 +131,7 @@ class WeatherDataLoader {
             coroutineContext.ensureActive()
 
             // Is the timezone valid? If not try to fetch a valid zone id
-            if (!wm.isRegionSupported(location) && (location.tzLong == "unknown" || location.tzLong == "UTC")) {
+            if (!wm.isRegionSupported(location) && (location.tzLong.isNullOrBlank() || location.tzLong == "unknown" || location.tzLong == "UTC")) {
                 if (location.latitude != 0.0 && location.longitude != 0.0) {
                     val tzId =
                         weatherModule.tzdbService.getTimeZone(location.latitude, location.longitude)
@@ -144,24 +144,30 @@ class WeatherDataLoader {
             }
 
             if (!wm.isRegionSupported(location)) {
-                // If location data hasn't been updated, try loading weather from the previous provider
-                if (!location.weatherSource.isNullOrBlank()) {
-                    val provider =
-                        weatherModule.weatherManager.getWeatherProvider(location.weatherSource)
-                    if (provider.isRegionSupported(location)) {
-                        weather = provider.getWeather(location)
+                if (location.latitude != 0.0 && location.longitude != 0.0) {
+                    // If location data hasn't been updated, try loading weather from the previous provider
+                    if (!location.weatherSource.isNullOrBlank()) {
+                        val provider =
+                            weatherModule.weatherManager.getWeatherProvider(location.weatherSource)
+                        if (provider.isRegionSupported(location)) {
+                            weather = provider.getWeather(location)
+                        }
                     }
-                }
 
-                // Nothing to fallback on; error out
-                if (weather == null) {
-                    Logger.writeLine(
-                        Log.WARN,
-                        "Location: %s; countryCode: %s",
-                        JSONParser.serializer(location),
-                        location.countryCode
-                    )
-                    throw WeatherException(ErrorStatus.QUERYNOTFOUND).initCause(CustomException(R.string.error_message_weather_region_unsupported))
+                    // Nothing to fallback on; error out
+                    if (weather == null) {
+                        Logger.writeLine(
+                            Log.WARN,
+                            "Location: %s; countryCode: %s",
+                            JSONParser.serializer(location),
+                            location.countryCode
+                        )
+                        throw WeatherException(ErrorStatus.QUERYNOTFOUND).initCause(
+                            CustomException(
+                                R.string.error_message_weather_region_unsupported
+                            )
+                        )
+                    }
                 }
             } else {
                 // Load weather from provider
@@ -190,8 +196,8 @@ class WeatherDataLoader {
             if (weather != null) {
                 // Handle upgrades
                 if (location.name.isNullOrBlank() || location.tzLong.isNullOrBlank()) {
-                    location.name = weather.location.name
-                    location.tzLong = weather.location.tzLong
+                    location.name = weather.location?.name
+                    location.tzLong = weather.location?.tzLong
 
                     settingsMgr.updateLocation(location)
                 }
@@ -200,8 +206,8 @@ class WeatherDataLoader {
                         0f
                     ) != 0f && weather.location?.longitude.getValueOrDefault(0f) != 0f
                 ) {
-                    location.latitude = weather.location.latitude.toDouble()
-                    location.longitude = weather.location.longitude.toDouble()
+                    location.latitude = weather.location!!.latitude.toDouble()
+                    location.longitude = weather.location!!.longitude.toDouble()
 
                     settingsMgr.updateLocation(location)
                 }
@@ -402,7 +408,7 @@ class WeatherDataLoader {
             if (weather.condition?.observationTime == null) {
                 61
             } else {
-                Duration.between(weather.condition.observationTime, now).toMinutes()
+                Duration.between(weather.condition!!.observationTime, now).toMinutes()
             }
         if (duraMins > 90) {
             val interval =
@@ -420,64 +426,65 @@ class WeatherDataLoader {
             }
 
             if (hrf != null) {
-                weather.condition.weather = hrf.condition
-                weather.condition.icon = hrf.icon
+                weather.condition!!.weather = hrf.condition
+                weather.condition!!.icon = hrf.icon
 
-                weather.condition.tempF = hrf.highF
-                weather.condition.tempC = hrf.highC
+                weather.condition!!.tempF = hrf.highF
+                weather.condition!!.tempC = hrf.highC
 
-                weather.condition.windMph = hrf.windMph
-                weather.condition.windKph = hrf.windKph
-                weather.condition.windDegrees = hrf.windDegrees
+                weather.condition!!.windMph = hrf.windMph
+                weather.condition!!.windKph = hrf.windKph
+                weather.condition!!.windDegrees = hrf.windDegrees
 
                 if (hrf.windMph != null) {
-                    weather.condition.beaufort = Beaufort(getBeaufortScale(Math.round(hrf.windMph)))
+                    weather.condition!!.beaufort =
+                        Beaufort(getBeaufortScale(Math.round(hrf.windMph)))
                 }
-                weather.condition.feelslikeF = hrf.extras?.feelslikeF
-                weather.condition.feelslikeC = hrf.extras?.feelslikeC
-                weather.condition.uv =
+                weather.condition!!.feelslikeF = hrf.extras?.feelslikeF
+                weather.condition!!.feelslikeC = hrf.extras?.feelslikeC
+                weather.condition!!.uv =
                     if ((hrf.extras?.uvIndex ?: -1f) >= 0) UV(hrf.extras.uvIndex) else null
 
-                weather.condition.observationTime = hrf.date
+                weather.condition!!.observationTime = hrf.date
 
-                if (duraMins > 60 * 6 || weather.condition?.highF == null || weather.condition.highF == weather.condition.lowF) {
+                if (duraMins > 60 * 6 || weather.condition?.highF == null || weather.condition!!.highF == weather.condition!!.lowF) {
                     val fcasts = settingsMgr.getWeatherForecastData(location.query)
                     val fcast = fcasts?.forecast?.find { input ->
                         input != null && input.date.toLocalDate().isEqual(now.toLocalDate())
                     }
 
                     if (fcast != null) {
-                        weather.condition.highF = fcast.highF
-                        weather.condition.highC = fcast.highC
-                        weather.condition.lowF = fcast.lowF
-                        weather.condition.lowC = fcast.lowC
+                        weather.condition!!.highF = fcast.highF
+                        weather.condition!!.highC = fcast.highC
+                        weather.condition!!.lowF = fcast.lowF
+                        weather.condition!!.lowC = fcast.lowC
                     } else {
-                        weather.condition.highF = 0f
-                        weather.condition.highC = 0f
-                        weather.condition.lowF = 0f
-                        weather.condition.lowC = 0f
+                        weather.condition!!.highF = 0f
+                        weather.condition!!.highC = 0f
+                        weather.condition!!.lowF = 0f
+                        weather.condition!!.lowC = 0f
                     }
                 }
 
-                weather.atmosphere.dewpointF = hrf.extras?.dewpointF
-                weather.atmosphere.dewpointC = hrf.extras?.dewpointC
-                weather.atmosphere.humidity = hrf.extras?.humidity
-                weather.atmosphere.pressureTrend = null
-                weather.atmosphere.pressureIn = hrf.extras?.pressureIn
-                weather.atmosphere.pressureMb = hrf.extras?.pressureMb
-                weather.atmosphere.visibilityMi = hrf.extras?.visibilityMi
-                weather.atmosphere.visibilityKm = hrf.extras?.visibilityKm
+                weather.atmosphere!!.dewpointF = hrf.extras?.dewpointF
+                weather.atmosphere!!.dewpointC = hrf.extras?.dewpointC
+                weather.atmosphere!!.humidity = hrf.extras?.humidity
+                weather.atmosphere!!.pressureTrend = null
+                weather.atmosphere!!.pressureIn = hrf.extras?.pressureIn
+                weather.atmosphere!!.pressureMb = hrf.extras?.pressureMb
+                weather.atmosphere!!.visibilityMi = hrf.extras?.visibilityMi
+                weather.atmosphere!!.visibilityKm = hrf.extras?.visibilityKm
 
                 if (weather.precipitation != null) {
-                    weather.precipitation.pop = hrf.extras?.pop
-                    weather.precipitation.cloudiness = hrf.extras?.cloudiness
-                    weather.precipitation.qpfRainIn =
+                    weather.precipitation!!.pop = hrf.extras?.pop
+                    weather.precipitation!!.cloudiness = hrf.extras?.cloudiness
+                    weather.precipitation!!.qpfRainIn =
                         if ((hrf.extras?.qpfRainIn ?: -1f) >= 0) hrf.extras.qpfRainIn else 0.0f
-                    weather.precipitation.qpfRainMm =
+                    weather.precipitation!!.qpfRainMm =
                         if ((hrf.extras?.qpfRainMm ?: -1f) >= 0) hrf.extras.qpfRainMm else 0.0f
-                    weather.precipitation.qpfSnowIn =
+                    weather.precipitation!!.qpfSnowIn =
                         if ((hrf.extras?.qpfSnowIn ?: -1f) >= 0) hrf.extras.qpfSnowIn else 0.0f
-                    weather.precipitation.qpfSnowCm =
+                    weather.precipitation!!.qpfSnowCm =
                         if ((hrf.extras?.qpfSnowCm ?: -1f) >= 0) hrf.extras.qpfSnowCm else 0.0f
                 }
 
@@ -489,14 +496,14 @@ class WeatherDataLoader {
 
         // Check for outdated forecasts
         if (!weather.forecast.isNullOrEmpty()) {
-            weather.forecast.removeIf { input ->
+            weather.forecast!!.removeIf { input ->
                 input == null || input.date.truncatedTo(ChronoUnit.DAYS)
                     .isBefore(now.toLocalDateTime().truncatedTo(ChronoUnit.DAYS))
             }
         }
 
         if (!weather.hrForecast.isNullOrEmpty()) {
-            weather.hrForecast.removeIf { input ->
+            weather.hrForecast!!.removeIf { input ->
                 input == null || input.date.truncatedTo(
                     ChronoUnit.HOURS
                 ).isBefore(now.truncatedTo(ChronoUnit.HOURS))
@@ -538,7 +545,7 @@ class WeatherDataLoader {
 
         if (!appLib.isPhone) {
             settingsMgr.setUpdateTime(
-                weather.updateTime.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()
+                weather.updateTime!!.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()
             )
         }
     }

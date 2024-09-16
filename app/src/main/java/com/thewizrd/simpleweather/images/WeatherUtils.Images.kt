@@ -26,7 +26,7 @@ import java.io.FileInputStream
 import java.net.URI
 
 suspend fun Weather.getImageData(): ImageDataViewModel? {
-    val icon: String = this.condition.icon
+    val icon: String = this.condition!!.icon
     val backgroundCode: String
     val wm = weatherModule.weatherManager
 
@@ -187,7 +187,7 @@ suspend fun Weather.getImageData(): ImageDataViewModel? {
 @ColorInt
 fun Weather.getBackgroundColor(): Int {
     var rgb = -1
-    val icon: String = this.condition.icon
+    val icon: String = this.condition!!.icon
     val wm = weatherModule.weatherManager
 
     // Apply background based on weather condition

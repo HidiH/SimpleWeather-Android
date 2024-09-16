@@ -86,4 +86,16 @@
         <item>80</item>
         <item>90</item>
     </string-array>
+    <string-array name="min_alert_severity_entries">
+        <item>@string/alertsev_all</item>
+        <item>@string/alertsev_moderate</item>
+        <item>@string/alertsev_severe</item>
+        <item>@string/alertsev_extreme</item>
+    </string-array>
+    <string-array name="min_alert_severity_values">
+        <item>-1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>

@@ -92,18 +92,18 @@ class WeatherHiLoComplicationService : WeatherForecastComplicationService() {
 
         // Temperature
         val currTemp =
-            if (weather.condition.tempF != null && weather.condition.tempF != weather.condition.tempC) {
+            if (weather.condition?.tempF != null && weather.condition!!.tempF != weather.condition!!.tempC) {
                 val temp =
-                    if (isFahrenheit) Math.round(weather.condition.tempF) else Math.round(weather.condition.tempC)
+                    if (isFahrenheit) Math.round(weather.condition!!.tempF) else Math.round(weather.condition!!.tempC)
                 String.format(LocaleUtils.getLocale(), "%d", temp)
             } else {
                 WeatherIcons.PLACEHOLDER
             }
 
         val hiTemp =
-            if (weather.condition.highF != null && weather.condition.highF != weather.condition.highC) {
+            if (weather.condition?.highF != null && weather.condition!!.highF != weather.condition!!.highC) {
                 val temp =
-                    if (isFahrenheit) Math.round(weather.condition.highF) else Math.round(weather.condition.highC)
+                    if (isFahrenheit) Math.round(weather.condition!!.highF) else Math.round(weather.condition!!.highC)
                 String.format(LocaleUtils.getLocale(), "%d°", temp)
             } else if (forecast?.highF != null && forecast.highF != forecast.highC) {
                 val temp =
@@ -115,9 +115,9 @@ class WeatherHiLoComplicationService : WeatherForecastComplicationService() {
             }
 
         val loTemp =
-            if (weather.condition.lowF != null && weather.condition.lowF != weather.condition.lowC) {
+            if (weather.condition?.lowF != null && weather.condition!!.lowF != weather.condition!!.lowC) {
                 val temp =
-                    if (isFahrenheit) Math.round(weather.condition.lowF) else Math.round(weather.condition.lowC)
+                    if (isFahrenheit) Math.round(weather.condition!!.lowF) else Math.round(weather.condition!!.lowC)
                 String.format(LocaleUtils.getLocale(), "%d°", temp)
             } else if (forecast?.lowF != null && forecast.lowF != forecast.lowC) {
                 val temp =
@@ -137,13 +137,13 @@ class WeatherHiLoComplicationService : WeatherForecastComplicationService() {
         // Condition text
         val provider = weatherModule.weatherManager.getWeatherProvider(weather.source)
         val condition = if (provider.supportsWeatherLocale()) {
-            weather.condition.weather
+            weather.condition!!.weather
         } else {
-            provider.getWeatherCondition(weather.condition.icon)
+            provider.getWeatherCondition(weather.condition!!.icon)
         }
 
         val wim = sharedDeps.weatherIconsManager
-        val weatherIcon = wim.getWeatherIconResource(weather.condition.icon)
+        val weatherIcon = wim.getWeatherIconResource(weather.condition!!.icon)
         val icon = Icon.createWithBitmap(
             ImageUtils.bitmapFromDrawable(
                 getThemeContextOverride(false),
@@ -177,7 +177,7 @@ class WeatherHiLoComplicationService : WeatherForecastComplicationService() {
                                 Icon.createWithBitmap(
                                     ImageUtils.tintedBitmapFromDrawable(
                                         this@WeatherHiLoComplicationService,
-                                        wip.getWeatherIconResource(weather.condition.icon),
+                                        wip.getWeatherIconResource(weather.condition!!.icon),
                                         Colors.WHITE
                                     )
                                 )
@@ -211,7 +211,7 @@ class WeatherHiLoComplicationService : WeatherForecastComplicationService() {
                                 Icon.createWithBitmap(
                                     ImageUtils.tintedBitmapFromDrawable(
                                         this,
-                                        wip.getWeatherIconResource(weather.condition.icon),
+                                        wip.getWeatherIconResource(weather.condition!!.icon),
                                         Colors.WHITE
                                     )
                                 )
@@ -230,7 +230,7 @@ class WeatherHiLoComplicationService : WeatherForecastComplicationService() {
                     MonochromaticImage.Builder(
                         Icon.createWithResource(
                             this,
-                            wip.getWeatherIconResource(weather.condition.icon)
+                            wip.getWeatherIconResource(weather.condition!!.icon)
                         )
                             .setTint(Colors.WHITESMOKE)
                     ).build(),
@@ -250,7 +250,7 @@ class WeatherHiLoComplicationService : WeatherForecastComplicationService() {
                         Icon.createWithBitmap(
                             ImageUtils.tintedBitmapFromDrawable(
                                 this,
-                                wip.getWeatherIconResource(weather.condition.icon),
+                                wip.getWeatherIconResource(weather.condition!!.icon),
                                 Colors.WHITE
                             )
                         )

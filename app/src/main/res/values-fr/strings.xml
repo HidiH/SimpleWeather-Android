@@ -145,4 +145,11 @@
     <!-- Example: Rain will stop in about 20 minutes
 (%1$s) - Time in minutes or hours -->
     <string name="precipitation_minutely_stopping_text_format">"La pluie s'arrêtera dans environ %1$s"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Sévérité minimale de l'alerte"</string>
+    <string name="alertsev_all">"Aucune (Afficher toutes les alertes)"</string>
+    <string name="alertsev_moderate">"Modéré"</string>
+    <string name="alertsev_severe">"Sévère"</string>
+    <string name="alertsev_extreme">"Extrême"</string>
 </resources>

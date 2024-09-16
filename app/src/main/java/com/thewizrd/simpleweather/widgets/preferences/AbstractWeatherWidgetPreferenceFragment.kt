@@ -11,8 +11,6 @@ import android.content.res.Configuration
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +30,8 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.thewizrd.common.controls.WeatherUiModel
@@ -54,7 +54,17 @@ import com.thewizrd.shared_resources.utils.ContextUtils.isLandscape
 import com.thewizrd.shared_resources.utils.ContextUtils.isNightMode
 import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
 import com.thewizrd.shared_resources.utils.Logger
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.AirQuality
+import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Forecast
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.LocationType
+import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.activities.LocationSearch
 import com.thewizrd.simpleweather.databinding.FragmentWidgetSetupBinding

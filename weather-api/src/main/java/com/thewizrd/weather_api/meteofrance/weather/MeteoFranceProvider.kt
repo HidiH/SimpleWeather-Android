@@ -230,31 +230,31 @@ class MeteoFranceProvider : WeatherProviderImpl() {
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         // MeteoFrance reports datetime in UTC; add location tz_offset
         val offset = location.tzOffset
-        weather.updateTime = weather.updateTime.withZoneSameInstant(offset)
-        weather.condition.observationTime =
-            weather.condition.observationTime.withZoneSameInstant(offset)
+        weather.updateTime = weather.updateTime!!.withZoneSameInstant(offset)
+        weather.condition!!.observationTime =
+            weather.condition!!.observationTime.withZoneSameInstant(offset)
 
         // Calculate astronomy
         weather.astronomy = try {
-            SunMoonCalcProvider().getAstronomyData(location, weather.condition.observationTime)
+            SunMoonCalcProvider().getAstronomyData(location, weather.condition!!.observationTime)
         } catch (e: WeatherException) {
             Logger.writeLine(Log.ERROR, e)
-            SolCalcAstroProvider().getAstronomyData(location, weather.condition.observationTime)
+            SolCalcAstroProvider().getAstronomyData(location, weather.condition!!.observationTime)
         }
 
         // Update icons
         val now = ZonedDateTime.now(ZoneOffset.UTC).withZoneSameInstant(offset).toLocalTime()
-        val sunrise = weather.astronomy.sunrise.toLocalTime()
-        val sunset = weather.astronomy.sunset.toLocalTime()
+        val sunrise = weather.astronomy!!.sunrise.toLocalTime()
+        val sunset = weather.astronomy!!.sunset.toLocalTime()
 
-        weather.condition.icon =
-            getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), weather.condition.icon)
+        weather.condition!!.icon =
+            getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), weather.condition!!.icon)
 
-        for (forecast in weather.forecast) {
+        for (forecast in weather.forecast!!) {
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
         }
 
-        for (hr_forecast in weather.hrForecast) {
+        for (hr_forecast in weather.hrForecast!!) {
             val hrf_date = hr_forecast.date.withZoneSameInstant(offset)
             hr_forecast.date = hrf_date
             val hrf_localTime = hrf_date.toLocalTime()
@@ -283,8 +283,8 @@ class MeteoFranceProvider : WeatherProviderImpl() {
         return String.format(
             Locale.ROOT,
             "lat=%s&lon=%s",
-            df.format(weather.location.latitude),
-            df.format(weather.location.longitude)
+            df.format(weather.location!!.latitude),
+            df.format(weather.location!!.longitude)
         )
     }
 
@@ -430,12 +430,12 @@ class MeteoFranceProvider : WeatherProviderImpl() {
         if (!isNight) {
             // Fallback to sunset/rise time just in case
             var tz: ZoneOffset? = null
-            if (!weather.location.tzLong.isNullOrBlank()) {
-                val id = ZoneIdCompat.of(weather.location.tzLong)
+            if (!weather.location!!.tzLong.isNullOrBlank()) {
+                val id = ZoneIdCompat.of(weather.location!!.tzLong)
                 tz = id.rules.getOffset(Instant.now())
             }
             if (tz == null) {
-                tz = weather.location.tzOffset
+                tz = weather.location!!.tzOffset
             }
 
             val sunrise = weather.astronomy?.sunrise?.toLocalTime() ?: LocalTime.of(6, 0)

@@ -136,4 +136,11 @@
     <string name="pref_title_iconsize">"Rozmiar ikony"</string>
     <string name="precipitation_minutely_starting_text_format">"Opady rozpoczną się za około %1$s"</string>
     <string name="precipitation_minutely_stopping_text_format">"Opady zakończą się za około %1$s"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Minimalny poziom ważności alertu"</string>
+    <string name="alertsev_all">"Brak (Pokaż wszystkie alerty)"</string>
+    <string name="alertsev_moderate">"Umiarkowany"</string>
+    <string name="alertsev_severe">"Ciężki"</string>
+    <string name="alertsev_extreme">"Ekstremalny"</string>
 </resources>

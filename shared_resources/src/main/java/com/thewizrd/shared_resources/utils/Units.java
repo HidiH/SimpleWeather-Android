@@ -17,7 +17,8 @@ public final class Units {
     @StringDef({
             MILES_PER_HOUR,
             KILOMETERS_PER_HOUR,
-            METERS_PER_SECOND
+            METERS_PER_SECOND,
+            KNOTS
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface SpeedUnits {
@@ -53,6 +54,7 @@ public final class Units {
     public static final String MILES_PER_HOUR = "MPH";
     public static final String KILOMETERS_PER_HOUR = "KMPH";
     public static final String METERS_PER_SECOND = "MSEC";
+    public static final String KNOTS = "KNOTS";
     public static final String INHG = "INMERCURY";
     public static final String MILLIBAR = "MILLIBAR";
     public static final String MMHG = "MMMERCURY";

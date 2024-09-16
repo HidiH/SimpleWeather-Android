@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
+import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
@@ -99,6 +100,21 @@ object WeatherAlertNotificationBuilder {
                         || WeatherAlertNotificationService.getNotificationsCount() >= MIN_GROUPCOUNT
                     ) {
                         setGroup(TAG)
+                    }
+
+                    if (alertVM.message.startsWith("https://weatherkit.apple.com")) {
+                        setContentIntent(
+                            runCatching {
+                                PendingIntent.getActivity(
+                                    context,
+                                    alertVM.message.hashCode(),
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(alertVM.message)),
+                                    0.toImmutableCompatFlag()
+                                )
+                            }.getOrDefault(
+                                clickPendingIntent
+                            )
+                        )
                     }
                 }.build()
 

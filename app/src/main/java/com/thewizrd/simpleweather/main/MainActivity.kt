@@ -8,7 +8,6 @@ import android.content.res.Configuration
 import android.graphics.Outline
 import android.os.Build
 import android.os.Bundle
-import android.transition.TransitionManager
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,8 @@ import androidx.core.util.ObjectsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.PredictiveBackControl
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -26,6 +27,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
+import androidx.transition.TransitionManager
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.thewizrd.common.utils.ActivityUtils.setFullScreen
@@ -74,7 +76,10 @@ class MainActivity : UserLocaleActivity(), OnThemeChangeListener, WindowColorMan
         return binding.bottomNavBar ?: binding.navigationRail
     }
 
+    @OptIn(PredictiveBackControl::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Disable until its more stable with other transitions/animations
+        FragmentManager.enablePredictiveBack(false)
         super.onCreate(savedInstanceState)
 
         AnalyticsLogger.logEvent("$TAG: onCreate")

@@ -48,6 +48,7 @@ import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.store.PlayStoreUtils
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.utils.LocaleUtils
@@ -295,6 +296,14 @@ class SettingsActivity : WearableListenerActivity() {
                             )
                         }
                         AnalyticsLogger.logEvent("Update_API", bundle)
+                        AnalyticsLogger.setUserProperty(
+                            AnalyticsProps.WEATHER_PROVIDER,
+                            settingsManager.getAPI()
+                        )
+                        AnalyticsLogger.setUserProperty(
+                            AnalyticsProps.USING_PERSONAL_KEY,
+                            settingsManager.usePersonalKey()
+                        )
                     }
                     CommonActions.ACTION_SETTINGS_UPDATEGPS -> {
                         localBroadcastManager.sendBroadcast(
@@ -464,8 +473,10 @@ class SettingsActivity : WearableListenerActivity() {
                 true
             }
 
-            val providers = WeatherAPI.APIs
+            val providers =
+                WeatherAPI.APIs.filter { remoteConfigService.isProviderEnabled(it.value) }
             providerPref = findPreference(SettingsManager.KEY_API)!!
+            providerPref.setDefaultValue(remoteConfigService.getDefaultWeatherProvider())
 
             val entries = arrayOfNulls<String>(providers.size)
             val entryValues = arrayOfNulls<String>(providers.size)

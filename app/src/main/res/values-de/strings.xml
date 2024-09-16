@@ -154,4 +154,11 @@
 
     <!-- Fuzzy -->
     <string name="precipitation_minutely_stopping_text_format">"Der Regen wird in etwa %1$s aufhören"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Mindestschwere der Warnung"</string>
+    <string name="alertsev_all">"Keine (Alle Warnungen anzeigen)"</string>
+    <string name="alertsev_moderate">"Mäßig"</string>
+    <string name="alertsev_severe">"Schwere"</string>
+    <string name="alertsev_extreme">"Extrem"</string>
 </resources>

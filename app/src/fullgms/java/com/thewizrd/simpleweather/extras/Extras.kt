@@ -9,11 +9,16 @@ import android.content.Intent
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.thewizrd.extras.extrasModule
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.store.PlayStoreUtils
-import com.thewizrd.simpleweather.*
+import com.thewizrd.simpleweather.App
+import com.thewizrd.simpleweather.BuildConfig
+import com.thewizrd.simpleweather.FirebaseConfigurator
+import com.thewizrd.simpleweather.NavGraphDirections
+import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.preferences.BaseSettingsFragment
 import com.thewizrd.simpleweather.preferences.SettingsFragment
@@ -25,13 +30,16 @@ import timber.log.Timber
 fun initializeExtras() {
     extrasModule.initialize()
 
-    MapsInitializer.initialize(appLib.context, MapsInitializer.Renderer.LATEST) {
+    MapsInitializer.initialize(
+        appLib.context,
+        if (BuildConfig.DEBUG) Renderer.LEGACY else Renderer.LATEST
+    ) {
         when (it) {
-            MapsInitializer.Renderer.LATEST -> {
+            Renderer.LATEST -> {
                 Timber.tag("Application").d("The latest version of the renderer is used.")
             }
 
-            MapsInitializer.Renderer.LEGACY -> {
+            Renderer.LEGACY -> {
                 Timber.tag("Application").d("The legacy version of the renderer is used.")
             }
         }

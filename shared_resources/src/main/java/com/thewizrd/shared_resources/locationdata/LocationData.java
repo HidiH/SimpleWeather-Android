@@ -3,6 +3,7 @@ package com.thewizrd.shared_resources.locationdata;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -34,15 +35,20 @@ public class LocationData extends CustomJsonObject {
     @PrimaryKey
     @NonNull
     private String query;
+    @Nullable
     private String name;
     private double latitude;
     private double longitude;
 
+    @Nullable
     @ColumnInfo(name = "tz_long")
     private String tzLong;
+    @Nullable
     private LocationType locationType = LocationType.SEARCH;
+    @Nullable
     @ColumnInfo(name = "source")
     private String weatherSource;
+    @Nullable
     @ColumnInfo(name = "locsource")
     private String locationSource;
 
@@ -55,11 +61,12 @@ public class LocationData extends CustomJsonObject {
         this.query = query;
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@Nullable String name) {
         this.name = name;
     }
 
@@ -107,37 +114,41 @@ public class LocationData extends CustomJsonObject {
         return "";
     }
 
+    @Nullable
     public String getTzLong() {
         return tzLong;
     }
 
-    public void setTzLong(String tzLong) {
+    public void setTzLong(@Nullable String tzLong) {
         this.tzLong = tzLong;
     }
 
+    @Nullable
     public LocationType getLocationType() {
         return locationType;
     }
 
-    public void setLocationType(LocationType locationType) {
+    public void setLocationType(@Nullable LocationType locationType) {
         this.locationType = locationType;
     }
 
+    @Nullable
     @WeatherAPI.WeatherProviders
     public String getWeatherSource() {
         return weatherSource;
     }
 
-    public void setWeatherSource(@WeatherAPI.WeatherProviders String source) {
+    public void setWeatherSource(@Nullable @WeatherAPI.WeatherProviders String source) {
         this.weatherSource = source;
     }
 
+    @Nullable
     @WeatherAPI.LocationProviders
     public String getLocationSource() {
         return locationSource;
     }
 
-    public void setLocationSource(@WeatherAPI.LocationProviders String locationSource) {
+    public void setLocationSource(@Nullable @WeatherAPI.LocationProviders String locationSource) {
         this.locationSource = locationSource;
     }
 

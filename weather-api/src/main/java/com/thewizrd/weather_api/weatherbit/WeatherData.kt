@@ -49,14 +49,14 @@ fun createWeatherData(
 
         for (day in foreRoot.data!!) {
             val fcast = createForecast(day!!)
-            forecast.add(fcast)
+            forecast!!.add(fcast)
         }
 
         hourlyRoot?.data?.let {
             hrForecast = ArrayList(it.size)
 
             it.forEach { hourly ->
-                hrForecast.add(createHourlyForecast(hourly!!).apply {
+                hrForecast!!.add(createHourlyForecast(hourly!!).apply {
                     date = date.withZoneSameInstant(zoneId)
                 })
             }
@@ -66,7 +66,7 @@ fun createWeatherData(
             minForecast = ArrayList(it.size)
 
             it.forEach { minute ->
-                minForecast.add(createMinutelyForecast(minute!!).apply {
+                minForecast!!.add(createMinutelyForecast(minute!!).apply {
                     date = date.withZoneSameInstant(zoneId)
                 })
             }
@@ -83,15 +83,15 @@ fun createWeatherData(
         query = String.format(
             Locale.ROOT,
             "lat=%s&lon=%s",
-            df.format(location.latitude),
-            location.longitude
+            df.format(location!!.latitude),
+            df.format(location!!.longitude)
         )
 
-        if ((condition.highF == null || condition.highC == null) && forecast.size > 0) {
-            condition.highF = forecast[0].highF
-            condition.highC = forecast[0].highC
-            condition.lowF = forecast[0].lowF
-            condition.lowC = forecast[0].lowC
+        if ((condition!!.highF == null || condition!!.highC == null) && forecast!!.size > 0) {
+            condition!!.highF = forecast!![0].highF
+            condition!!.highC = forecast!![0].highC
+            condition!!.lowF = forecast!![0].lowF
+            condition!!.lowC = forecast!![0].lowC
         }
 
         weatherAlerts = createWeatherAlerts(currRoot.alerts, tzLong)
