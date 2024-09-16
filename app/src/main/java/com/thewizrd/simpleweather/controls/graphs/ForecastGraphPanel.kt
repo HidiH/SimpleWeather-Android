@@ -3,7 +3,6 @@ package com.thewizrd.simpleweather.controls.graphs
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
@@ -11,14 +10,18 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.LinearLayout
 import androidx.annotation.Px
-import androidx.annotation.RequiresApi
+import androidx.core.content.res.use
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewGroupCompat
 import com.thewizrd.shared_resources.helpers.RecyclerOnClickListenerInterface
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.simpleweather.R
+import kotlin.random.Random
+import kotlin.random.nextInt
 
-class ForecastGraphPanel : LinearLayout, GraphPanel {
+class ForecastGraphPanel @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null
+) : LinearLayout(context, attrs), GraphPanel {
     private lateinit var lineView: LineView
 
     private var graphData: LineViewData? = null
@@ -28,34 +31,12 @@ class ForecastGraphPanel : LinearLayout, GraphPanel {
     // Event listeners
     private var onClickListener: RecyclerOnClickListenerInterface? = null
 
+    init {
+        initialize(context, attrs)
+    }
+
     fun setOnClickPositionListener(onClickListener: RecyclerOnClickListenerInterface?) {
         this.onClickListener = onClickListener
-    }
-
-    constructor(context: Context) : super(context) {
-        initialize(context)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        initialize(context)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        initialize(context)
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        initialize(context)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -69,12 +50,18 @@ class ForecastGraphPanel : LinearLayout, GraphPanel {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun initialize(context: Context) {
+    private fun initialize(context: Context, attrs: AttributeSet?) {
         currentConfig = Configuration(context.resources.configuration)
         orientation = VERTICAL
         lineView = LineView(context)
 
-        val lineViewHeight = context.resources.getDimensionPixelSize(R.dimen.forecast_panel_height)
+        val lineViewHeight =
+            context.obtainStyledAttributes(attrs, intArrayOf(R.attr.graphHeight)).use {
+                it.getDimensionPixelSize(
+                    0,
+                    context.resources.getDimensionPixelSize(R.dimen.forecast_panel_height)
+                )
+            }
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, lineViewHeight).apply {
             gravity = Gravity.CENTER
         }
@@ -96,6 +83,7 @@ class ForecastGraphPanel : LinearLayout, GraphPanel {
         lineView.setDrawGraphBackground(true)
         lineView.setDrawDotPoints(false)
         lineView.setFillParentWidth(true)
+        lineView.setDrawSeriesLabels(false)
 
         removeAllViews()
         this.addView(lineView)
@@ -105,6 +93,13 @@ class ForecastGraphPanel : LinearLayout, GraphPanel {
         ViewGroupCompat.setTransitionGroup(this, true)
 
         resetView()
+
+        if (isInEditMode) {
+            setGraphData(LineViewData(listOf(LineDataSeries(List(10) {
+                val value = Random.nextInt(0..100)
+                LineGraphEntry("Label ${it + 1}", YEntryData(value.toFloat(), "$value"))
+            }))))
+        }
     }
 
     private fun updateViewColors() {
@@ -147,6 +142,10 @@ class ForecastGraphPanel : LinearLayout, GraphPanel {
 
     override fun setDrawDataLabels(drawDataLabels: Boolean) {
         lineView.setDrawDataLabels(drawDataLabels)
+    }
+
+    fun setDrawSeriesLabels(drawSeriesLabels: Boolean) {
+        lineView.setDrawSeriesLabels(drawSeriesLabels)
     }
 
     override fun setScrollingEnabled(enabled: Boolean) {

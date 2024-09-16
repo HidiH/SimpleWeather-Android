@@ -27,7 +27,7 @@ class HourlyForecastNowViewModel(forecast: HourlyForecast) {
     var windSpeed: String = ""
     var windDirection: Int = 0
 
-    val popChanceIcon = WeatherIcons.RAINDROP
+    val popChanceIcon = WeatherIcons.UMBRELLA
     val windIcon = WeatherIcons.DIRECTION_UP
 
     init {

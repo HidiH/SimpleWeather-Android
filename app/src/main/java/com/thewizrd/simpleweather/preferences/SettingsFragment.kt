@@ -128,7 +128,6 @@ class SettingsFragment : BaseSettingsFragment(),
     private var premiumPref: Preference? = null
 
     // Background ops
-    private lateinit var foregroundPref: SwitchPreferenceCompat
     private lateinit var batteryOptsPref: Preference
     private lateinit var notCategory: PreferenceCategory
     private lateinit var apiCategory: PreferenceCategory
@@ -688,6 +687,7 @@ class SettingsFragment : BaseSettingsFragment(),
 
         radarProviderPref = findPreference(RadarProvider.KEY_RADARPROVIDER)!!
         val radarProviders = RadarProvider.getRadarProviders()
+            .filter { remoteConfigService.isProviderEnabled(it.value) }
         entries = arrayOfNulls(radarProviders.size)
         entryValues = arrayOfNulls(radarProviders.size)
 
@@ -764,7 +764,6 @@ class SettingsFragment : BaseSettingsFragment(),
             premiumPref = createPremiumPreference()
         }
 
-        foregroundPref = findPreference(PowerUtils.KEY_USE_FOREGROUNDSERVICE)!!
         batteryOptsPref = findPreference(PowerUtils.KEY_REQUESTIGNOREBATOPTS)!!
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
@@ -775,20 +774,11 @@ class SettingsFragment : BaseSettingsFragment(),
             batteryOptsPref.isVisible = false
         } else {
             batteryOptsPref.onPreferenceClickListener =
-                Preference.OnPreferenceClickListener { preference: Preference? ->
+                Preference.OnPreferenceClickListener { _: Preference? ->
                     PowerUtils.startIgnoreBatteryOptActivity(requireContext())
                     true
                 }
         }
-
-        foregroundPref.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { preference, newValue ->
-                UpdaterUtils.enableForegroundService(requireContext(), newValue as Boolean)
-                if (newValue) {
-                    checkBackgroundLocationAccess()
-                }
-                true
-            }
 
         val aboutPref = findPreference<Preference>(KEY_ABOUTAPP)!!
         aboutCategory = aboutPref.parent as PreferenceCategory
@@ -883,11 +873,13 @@ class SettingsFragment : BaseSettingsFragment(),
             }
 
             runWithView {
-                fragment.setTargetFragment(this@SettingsFragment, 0)
-                fragment.show(
-                    parentFragmentManager,
-                    KeyEntryPreferenceDialogFragment::class.java.name
-                )
+                runCatching {
+                    fragment.setTargetFragment(this@SettingsFragment, 0)
+                    fragment.show(
+                        parentFragmentManager,
+                        KeyEntryPreferenceDialogFragment::class.java.name
+                    )
+                }
             }
         } else if (preference.key == LocaleUtils.KEY_LANGUAGE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Disable dialog for SDK 33+
@@ -901,11 +893,13 @@ class SettingsFragment : BaseSettingsFragment(),
             val fragment = WeatherAPIPreferenceDialogFragment.newInstance(preference.getKey())
 
             runWithView {
-                fragment.setTargetFragment(this@SettingsFragment, 0)
-                fragment.show(
-                    parentFragmentManager,
-                    WeatherAPIPreferenceDialogFragment::class.java.name
-                )
+                runCatching {
+                    fragment.setTargetFragment(this@SettingsFragment, 0)
+                    fragment.show(
+                        parentFragmentManager,
+                        WeatherAPIPreferenceDialogFragment::class.java.name
+                    )
+                }
             }
         } else {
             super.onDisplayPreferenceDialog(preference)

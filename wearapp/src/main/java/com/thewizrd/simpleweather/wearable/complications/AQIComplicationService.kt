@@ -22,6 +22,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDate
+import kotlin.math.max
 
 class AQIComplicationService : BaseWeatherComplicationService() {
     companion object {
@@ -149,7 +150,9 @@ class AQIComplicationService : BaseWeatherComplicationService() {
         return when (dataType) {
             ComplicationType.RANGED_VALUE -> {
                 RangedValueComplicationData.Builder(
-                    aqiModel.progress.toFloat(), 0f, aqiModel.progressMax.toFloat(),
+                    aqiModel.progress.toFloat(),
+                    0f,
+                    max(aqiModel.progressMax, aqiModel.progress).toFloat(),
                     PlainComplicationText.Builder(
                         "${getString(R.string.label_airquality_short)}: $aqiIndex, ${aqiModel.level}"
                     ).build()

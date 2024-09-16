@@ -19,11 +19,15 @@
             android:id="@+id/aqi_date_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+            android:paddingVertical="@dimen/section_label_vertical_padding"
             android:text="@{viewModel.date}"
             android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintVertical_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Monday" />
@@ -71,7 +75,7 @@
             app:layout_constraintTop_toBottomOf="@id/aqi_level"
             tools:text="@string/aqi_desc_300" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
+        <com.thewizrd.simpleweather.controls.AQIProgressBar
             android:id="@+id/aqi_progressBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -80,17 +84,13 @@
             android:layout_marginEnd="12dp"
             android:layout_marginRight="12dp"
             android:layout_marginBottom="12dp"
-            android:max="@{viewModel != null ? viewModel.progressMax : 1}"
             android:maxHeight="4dp"
             android:minHeight="4dp"
             android:progress="@{viewModel.progress}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/aqi_description"
-            app:progressColor="@{viewModel.progressColor}"
-            app:trackCornerRadius="@dimen/shape_corner_radius"
-            tools:max="12"
-            tools:progress="11" />
+            tools:progress="300" />
 
         <androidx.constraintlayout.helper.widget.Flow
             android:id="@+id/aqi_components_flow"

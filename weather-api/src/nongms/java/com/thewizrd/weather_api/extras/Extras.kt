@@ -18,4 +18,4 @@ fun Request.Builder.cacheRequestIfNeeded(keyRequired: Boolean, maxAge: Int, time
         }
     }
 
-fun isExtrasEnabled(): Boolean = false
+fun isPremiumEnabled(): Boolean = false

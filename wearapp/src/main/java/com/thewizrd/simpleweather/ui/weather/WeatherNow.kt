@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -29,6 +28,7 @@ import androidx.wear.compose.material.SwipeToDismissBox
 import androidx.wear.compose.material.SwipeToDismissKeys
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
+import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.currentBackStackEntryAsState
@@ -47,6 +47,7 @@ import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.theme.WearAppTheme
 import com.thewizrd.simpleweather.ui.theme.activityViewModel
 import com.thewizrd.simpleweather.ui.time.ZonedTimeSource
+import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.ForecastPanelsViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import kotlinx.coroutines.flow.map
@@ -84,7 +85,7 @@ fun WeatherNow(
     }.collectAsState(false)
 
     val scrollState = rememberScrollState()
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = rememberFocusRequester()
     val navController = rememberSwipeDismissableNavController()
 
     WearAppTheme {
@@ -131,7 +132,7 @@ fun WeatherNow(
 
             /* WeatherNow Detail Views */
             val currentBackStackEntry by navController.currentBackStackEntryAsState()
-            val swipeFocusRequester = remember { FocusRequester() }
+            val swipeFocusRequester = rememberFocusRequester()
 
             navController.setLifecycleOwner(LocalLifecycleOwner.current)
             navController.setViewModelStore(LocalViewModelStoreOwner.current!!.viewModelStore)
@@ -227,40 +228,40 @@ fun WeatherNow(
                         navController.popBackStack(Screen.WeatherNow.route, true)
                     },
                     backgroundKey = SwipeToDismissKeys.Background,
-                    contentKey = currentBackStackEntry?.destination?.route ?: "",
+                    contentKey = currentBackStackEntry?.destination?.route
+                        ?: SwipeToDismissKeys.Content,
                     hasBackground = true
                 ) { isBackground ->
                     if (!isBackground) {
                         Scaffold(
                             modifier = Modifier.background(MaterialTheme.colors.background),
                             timeText = {
-                                // Scaffold places time at top of screen to follow Material Design guidelines.
-                                // (Time is hidden while scrolling.)
-                                val timeTextModifier =
-                                    when (scrollType) {
-                                        DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING -> {
-                                            val scrollViewModel: ScalingLazyListStateViewModel =
-                                                viewModel(currentBackStackEntry!!)
-                                            Modifier.scrollAway {
-                                                scrollViewModel.scrollState
-                                            }
-                                        }
-                                        DestinationScrollType.COLUMN_SCROLLING -> {
-                                            val scrollViewModel: ScrollStateViewModel =
-                                                viewModel(currentBackStackEntry!!)
-                                            Modifier.scrollAway {
-                                                scrollViewModel.scrollState
-                                            }
-                                        }
-                                        DestinationScrollType.TIME_TEXT_ONLY -> {
-                                            Modifier
-                                        }
-                                        else -> {
-                                            null
-                                        }
-                                    }
-
                                 key(currentBackStackEntry?.destination?.route) {
+                                    // Scaffold places time at top of screen to follow Material Design guidelines.
+                                    // (Time is hidden while scrolling.)
+                                    val timeTextModifier =
+                                        when (scrollType) {
+                                            DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING -> {
+                                                val scrollViewModel: ScalingLazyListStateViewModel =
+                                                    viewModel(currentBackStackEntry!!)
+                                                Modifier.scrollAway(scrollViewModel.scrollState)
+                                            }
+
+                                            DestinationScrollType.COLUMN_SCROLLING -> {
+                                                val scrollViewModel: ScrollStateViewModel =
+                                                    viewModel(currentBackStackEntry!!)
+                                                Modifier.scrollAway(scrollViewModel.scrollState)
+                                            }
+
+                                            DestinationScrollType.TIME_TEXT_ONLY -> {
+                                                Modifier
+                                            }
+
+                                            else -> {
+                                                null
+                                            }
+                                        }
+
                                     CustomTimeText(
                                         modifier = timeTextModifier ?: Modifier,
                                         visible = timeTextModifier != null,
@@ -276,29 +277,35 @@ fun WeatherNow(
                                 }
                             },
                             vignette = {
-                                // Only show vignette for screens with scrollable content.
-                                if (scrollType == DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING ||
-                                    scrollType == DestinationScrollType.COLUMN_SCROLLING
-                                ) {
-                                    Vignette(vignettePosition = VignettePosition.TopAndBottom)
+                                key(currentBackStackEntry?.destination?.route) {
+                                    // Only show vignette for screens with scrollable content.
+                                    if (scrollType == DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING ||
+                                        scrollType == DestinationScrollType.COLUMN_SCROLLING
+                                    ) {
+                                        Vignette(vignettePosition = VignettePosition.TopAndBottom)
+                                    }
                                 }
                             },
                             positionIndicator = {
-                                // Only displays the position indicator for scrollable content.
-                                when (scrollType) {
-                                    DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING -> {
-                                        // Get or create the ViewModel associated with the current back stack entry
-                                        val scrollViewModel: ScalingLazyListStateViewModel =
-                                            viewModel(currentBackStackEntry!!)
-                                        PositionIndicator(scalingLazyListState = scrollViewModel.scrollState)
+                                key(currentBackStackEntry?.destination?.route) {
+                                    // Only displays the position indicator for scrollable content.
+                                    when (scrollType) {
+                                        DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING -> {
+                                            // Get or create the ViewModel associated with the current back stack entry
+                                            val scrollViewModel: ScalingLazyListStateViewModel =
+                                                viewModel(currentBackStackEntry!!)
+                                            PositionIndicator(scalingLazyListState = scrollViewModel.scrollState)
+                                        }
+
+                                        DestinationScrollType.COLUMN_SCROLLING -> {
+                                            // Get or create the ViewModel associated with the current back stack entry
+                                            val scrollViewModel: ScrollStateViewModel =
+                                                viewModel(currentBackStackEntry!!)
+                                            PositionIndicator(scrollState = scrollViewModel.scrollState)
+                                        }
+
+                                        else -> {}
                                     }
-                                    DestinationScrollType.COLUMN_SCROLLING -> {
-                                        // Get or create the ViewModel associated with the current back stack entry
-                                        val scrollViewModel: ScrollStateViewModel =
-                                            viewModel(currentBackStackEntry!!)
-                                        PositionIndicator(scrollState = scrollViewModel.scrollState)
-                                    }
-                                    else -> {}
                                 }
                             }
                         ) {

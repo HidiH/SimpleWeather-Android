@@ -156,7 +156,7 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
 
         if (!radarLayers.containsKey(mapFrame.timestamp)) {
             val overlay = googleMap!!.addTileOverlay(
-                TileOverlayOptions().tileProvider(RainViewTileProvider(context, mapFrame))
+                TileOverlayOptions().tileProvider(TomorrowIoTileProvider(context, mapFrame))
                     .transparency(1f)
             )
             if (overlay != null) {
@@ -259,14 +259,16 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         }
     }
 
-    private class RainViewTileProvider(context: Context, private val mapFrame: RadarFrame?) :
+    private class TomorrowIoTileProvider(context: Context, private val mapFrame: RadarFrame?) :
         CachingUrlTileProvider(context, 256, 256) {
         override fun getTileUrl(x: Int, y: Int, zoom: Int): String? {
             if (!checkTileExists(x, y, zoom)) {
                 return null
             }
 
-            if (mapFrame != null) {
+            val key = getKey()
+
+            if (mapFrame != null && !key.isNullOrBlank()) {
                 /* Define the URL pattern for the tile images */
                 return String.format(
                     Locale.ROOT,
@@ -275,7 +277,7 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
                     x,
                     y,
                     mapFrame.timestamp,
-                    getKey()
+                    key
                 )
             }
 

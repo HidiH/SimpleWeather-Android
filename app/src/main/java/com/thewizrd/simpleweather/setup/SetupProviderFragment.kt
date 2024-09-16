@@ -268,8 +268,12 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
                 }
             }
 
-            fragment.setTargetFragment(this, 0)
-            fragment.show(parentFragmentManager, TAG)
+            runWithView {
+                runCatching {
+                    fragment.setTargetFragment(this@SetupProviderFragment, 0)
+                    fragment.show(parentFragmentManager, TAG)
+                }
+            }
         } else {
             super.onDisplayPreferenceDialog(preference)
         }

@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -38,12 +39,15 @@ import com.thewizrd.simpleweather.adapters.WeatherDetailsAdapter
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
 import com.thewizrd.simpleweather.databinding.LayoutLocationHeaderBinding
 import com.thewizrd.simpleweather.fragments.ToolbarFragment
+import com.thewizrd.simpleweather.review.InAppReviewManager
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.navControllerViewModels
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class WeatherListFragment : ToolbarFragment() {
@@ -64,6 +68,8 @@ class WeatherListFragment : ToolbarFragment() {
     private val args: WeatherListFragmentArgs by navArgs()
 
     private var dataJob: Job? = null
+
+    private lateinit var inAppReviewManager: InAppReviewManager
 
     companion object {
         fun newInstance(type: WeatherListType): WeatherListFragment {
@@ -125,6 +131,8 @@ class WeatherListFragment : ToolbarFragment() {
                 locationData = JSONParser.deserializer(args.data, LocationData::class.java)
             }
         }
+
+        inAppReviewManager = InAppReviewManager.create(requireContext())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -149,6 +157,9 @@ class WeatherListFragment : ToolbarFragment() {
         // use a linear layout manager
         binding.recyclerView.layoutManager =
             LinearLayoutManager(requireContext()).also { layoutManager = it }
+        binding.recyclerView.itemAnimator = DefaultItemAnimator().apply {
+            supportsChangeAnimations = true
+        }
 
         return root
     }
@@ -180,6 +191,24 @@ class WeatherListFragment : ToolbarFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 initialize()
+            }
+        }
+
+        //
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            runCatching {
+                delay(5000)
+
+                if (isActive && inAppReviewManager.shouldShowReviewFlow()) {
+                    // Wait for no movement
+                    while (isActive && binding.recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+                        delay(1500)
+                    }
+
+                    activity?.run {
+                        inAppReviewManager.showReviewFlow(this)
+                    }
+                }
             }
         }
     }
@@ -247,6 +276,7 @@ class WeatherListFragment : ToolbarFragment() {
                     override fun onChanged() {
                         alertAdapter.unregisterAdapterDataObserver(this)
                         binding.progressBar.hide()
+                        inAppReviewManager.incrementCounter()
                     }
                 })
 
@@ -287,6 +317,7 @@ class WeatherListFragment : ToolbarFragment() {
                         }
                     })
                     binding.progressBar.hide()
+                    inAppReviewManager.incrementCounter()
                 }
             }
         })

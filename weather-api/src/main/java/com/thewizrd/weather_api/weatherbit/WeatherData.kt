@@ -141,7 +141,7 @@ fun createForecast(forecast: ForecastDataItem): Forecast {
         }
         forecast.dewpt?.let {
             extras.dewpointC = it
-            extras.dewpointF = ConversionMethods.CtoF(it).roundToInt().toFloat()
+            extras.dewpointF = ConversionMethods.CtoF(it)
         }
         forecast.appMaxTemp?.let {
             extras.feelslikeC = it

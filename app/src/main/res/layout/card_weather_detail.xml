@@ -12,38 +12,17 @@
     <merge
         tools:context=".controls.DetailCard"
         tools:parentTag="android.widget.LinearLayout"
-        android:orientation="vertical"
-        tools:layout_height="@dimen/detail_card_size"
-        tools:layout_width="@dimen/detail_card_size">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/detail_label"
-            style="@style/WeatherDetails"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@{viewModel.label}"
-            android:textColor="?colorOnSurface"
-            android:textSize="@dimen/forecast_condition_size"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toTopOf="@id/detail_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:layout_constraintVertical_weight="1"
-            tools:text="Label"
-            tools:textColor="?android:textColorPrimary" />
+        android:orientation="horizontal"
+        tools:layout_height="wrap_content"
+        tools:layout_width="wrap_content">
 
         <com.thewizrd.common.controls.IconControl
             android:id="@+id/detail_icon"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
             android:gravity="center"
             android:scrollbars="none"
-            android:paddingVertical="4dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:rotation="@{viewModel.iconRotation}"
@@ -54,19 +33,54 @@
             tools:srcCompat="@drawable/wi_barometer"
             tools:tint="?android:textColorPrimary" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/detail_value"
-            style="@style/WeatherDetails"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:scrollbars="none"
-            android:text="@{viewModel.value}"
-            android:textColor="?colorOnSurface"
-            android:textSize="@dimen/forecast_condition_size"
-            tools:text="50.00 in"
-            tools:textColor="?android:textColorPrimary" />
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingTop="4dp"
+                android:paddingHorizontal="6dp"
+                android:paddingBottom="2dp"
+                android:text="@{viewModel.label}"
+                android:textStyle="bold"
+                android:textColor="?colorOnSurface"
+                android:textSize="@dimen/weather_detail_item_textSize"
+                app:autoSizeMaxTextSize="@dimen/weather_detail_item_textSize"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeTextType="uniform"
+                tools:text="Label"
+                tools:textColor="?android:textColorPrimary" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.75"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingTop="2dp"
+                android:paddingHorizontal="6dp"
+                android:paddingBottom="4dp"
+                android:scrollbars="none"
+                android:text="@{viewModel.value}"
+                android:textColor="?colorOnSurface"
+                android:textSize="@dimen/weather_detail_item_textSize"
+                app:autoSizeMaxTextSize="@dimen/weather_detail_item_textSize"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeTextType="uniform"
+                tools:text="50.00 in"
+                tools:textColor="?android:textColorPrimary" />
+
+        </LinearLayout>
 
     </merge>
 </layout>

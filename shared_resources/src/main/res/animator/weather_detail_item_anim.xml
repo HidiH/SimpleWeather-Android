@@ -21,7 +21,7 @@
         <set>
             <objectAnimator
                 android:propertyName="cardElevation"
-                android:duration="100"
+                android:duration="250"
                 android:valueTo="2dp"
                 android:valueType="floatType" />
         </set>
@@ -31,8 +31,8 @@
         <set>
             <objectAnimator
                 android:propertyName="cardElevation"
-                android:duration="100"
-                android:valueTo="0dp"
+                android:duration="250"
+                android:valueTo="1dp"
                 android:startDelay="100"
                 android:valueType="floatType" />
         </set>

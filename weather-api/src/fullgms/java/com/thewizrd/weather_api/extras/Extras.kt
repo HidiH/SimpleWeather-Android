@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 fun Request.Builder.cacheRequestIfNeeded(keyRequired: Boolean, maxAge: Int, timeUnit: TimeUnit) =
     apply {
-        if (extrasModule.isEnabled() || (keyRequired && appLib.settingsManager.usePersonalKey())) {
+        if (extrasModule.isPremiumEnabled() || (keyRequired && appLib.settingsManager.usePersonalKey())) {
             // relax cache rules for the following users
         } else {
             cacheControl(
@@ -19,4 +19,4 @@ fun Request.Builder.cacheRequestIfNeeded(keyRequired: Boolean, maxAge: Int, time
         }
     }
 
-fun isExtrasEnabled(): Boolean = extrasModule.isEnabled()
+fun isPremiumEnabled(): Boolean = extrasModule.isPremiumEnabled()

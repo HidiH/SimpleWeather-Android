@@ -37,4 +37,8 @@
         <attr name="android:entries" />
         <attr name="android:entryValues" />
     </declare-styleable>
+    <declare-styleable name="AQIProgressBar">
+        <attr name="android:progress" />
+    </declare-styleable>
+    <attr name="graphHeight" format="dimension" />
 </resources>

@@ -19,7 +19,12 @@ import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
-import com.thewizrd.simpleweather.controls.graphs.*
+import com.thewizrd.simpleweather.controls.graphs.BarGraphData
+import com.thewizrd.simpleweather.controls.graphs.BarGraphView
+import com.thewizrd.simpleweather.controls.graphs.LineView
+import com.thewizrd.simpleweather.controls.graphs.LineViewData
+import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphView
+import com.thewizrd.simpleweather.controls.graphs.isNullOrEmpty
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
 import com.thewizrd.simpleweather.controls.viewmodels.RangeBarGraphMapper
 import com.thewizrd.simpleweather.controls.viewmodels.createAQIGraphData
@@ -28,7 +33,15 @@ import com.thewizrd.simpleweather.widgets.WidgetGraphType
 import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
 import com.thewizrd.simpleweather.widgets.WidgetUtils
 import com.thewizrd.simpleweather.widgets.WidgetUtils.getMaxBitmapSize
-import com.thewizrd.simpleweather.widgets.preferences.*
+import com.thewizrd.simpleweather.widgets.preferences.KEY_BGCOLOR
+import com.thewizrd.simpleweather.widgets.preferences.KEY_BGCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_GRAPHTYPEOPTION
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDELOCNAME
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDEREFRESHBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDESETTINGSBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_ICONSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -360,7 +373,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                 return null
             }
 
-            val graphData = ForecastGraphViewModel().apply {
+            val graphData = ForecastGraphViewModel(viewCtx).apply {
                 setMinutelyForecastData(minutelyData)
             }.graphData
 
@@ -422,7 +435,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                 else -> ForecastGraphViewModel.ForecastGraphType.TEMPERATURE
             }
 
-            val graphData = ForecastGraphViewModel().apply {
+            val graphData = ForecastGraphViewModel(viewCtx).apply {
                 setForecastData(hrfcastData, forecastGraphType)
             }.graphData
 

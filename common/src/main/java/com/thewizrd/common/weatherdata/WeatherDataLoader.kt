@@ -40,6 +40,10 @@ class WeatherDataLoader {
         updateLocation(location)
     }
 
+    fun isLocationValid(): Boolean {
+        return location.isValid
+    }
+
     fun updateLocation(locationData: LocationData) {
         if (!locationData.isValid) {
             Logger.writeLine(

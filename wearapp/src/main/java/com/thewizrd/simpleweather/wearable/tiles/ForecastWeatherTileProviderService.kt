@@ -13,10 +13,6 @@ import com.thewizrd.simpleweather.wearable.tiles.layouts.ID_WEATHER_CHANCE_ICON
 import com.thewizrd.simpleweather.wearable.tiles.layouts.ID_WEATHER_CLOUDINESS_ICON
 import com.thewizrd.simpleweather.wearable.tiles.layouts.ID_WEATHER_WINDSPEED_ICON
 import com.thewizrd.simpleweather.wearable.tiles.layouts.forecastWeatherTileLayout
-import com.thewizrd.simpleweather.wearable.tiles.layouts.hourlyForecastWeatherTileLayout
-import com.thewizrd.weather_api.weatherModule
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 class ForecastWeatherTileProviderService : WeatherCoroutinesTileService() {
     companion object {
@@ -39,16 +35,7 @@ class ForecastWeatherTileProviderService : WeatherCoroutinesTileService() {
             resources.add("${ID_WEATHER_ICON_PREFIX}${forecast.icon ?: WeatherIcons.NA}")
         }
 
-        // Add forecast icons to resources
-        weather?.hrForecast?.take(FORECAST_LENGTH)?.forEach { forecast ->
-            resources.add("${ID_WEATHER_ICON_PREFIX}${forecast.icon ?: WeatherIcons.NA}")
-        }
-
-        return if (requestParams.currentState.lastClickableId == ID_HR_FORECAST_ICON_PREFIX && !weather?.hrForecast.isNullOrEmpty()) {
-            hourlyForecastWeatherTileLayout(weather, this, requestParams.deviceConfiguration)
-        } else {
-            forecastWeatherTileLayout(weather, this, requestParams.deviceConfiguration)
-        }
+        return forecastWeatherTileLayout(weather, this, requestParams.deviceConfiguration)
     }
 
     override fun ResourceBuilders.Resources.Builder.produceRequestedResource(
@@ -82,28 +69,13 @@ class ForecastWeatherTileProviderService : WeatherCoroutinesTileService() {
     override suspend fun getWeather(): Weather? {
         val weather = super.getWeather()
 
-        if (weather != null && (weather.forecast.isNullOrEmpty() || weather.hrForecast.isNullOrEmpty())) {
+        if (weather != null && weather.forecast.isNullOrEmpty()) {
             val locationData = settingsManager.getHomeData()
 
             if (locationData?.isValid == true) {
                 if (weather.forecast.isNullOrEmpty()) {
                     val forecasts = settingsManager.getWeatherForecastData(locationData.query)
                     weather.forecast = forecasts?.forecast?.take(FORECAST_LENGTH)
-                }
-
-                if (weather.hrForecast.isNullOrEmpty()) {
-                    val now = ZonedDateTime.now().withZoneSameInstant(locationData.tzOffset)
-                    val hrInterval = weatherModule.weatherManager.getHourlyForecastInterval()
-
-                    val hrforecasts =
-                        settingsManager.getHourlyForecastsByQueryOrderByDateByLimitFilterByDate(
-                            locationData.query,
-                            FORECAST_LENGTH,
-                            now.minusHours((hrInterval * 0.5).toLong())
-                                .truncatedTo(ChronoUnit.HOURS)
-                        )
-
-                    weather.hrForecast = hrforecasts.take(FORECAST_LENGTH)
                 }
             }
         }

@@ -24,10 +24,13 @@
     <!-- WeatherNow -->
     <dimen name="label_location_size">18sp</dimen>
     <dimen name="label_updatetime_size">12sp</dimen>
+    <dimen name="section_label_horizontal_padding">16dp</dimen>
+    <dimen name="section_label_vertical_padding">16dp</dimen>
+    <dimen name="section_label_padding">16dp</dimen>
     <dimen name="forecast_panel_height">225dp</dimen>
     <dimen name="bargraph_panel_height">150dp</dimen>
     <dimen name="detail_card_size">100dp</dimen>
-    <dimen name="detail_grid_column_width">110dp</dimen>
+    <dimen name="detail_grid_column_width">150dp</dimen>
     <dimen name="moonriseset_text_size">16sp</dimen>
     <dimen name="moonriseset_image_size">24dp</dimen>
     <dimen name="sun_phase_view_height">200dp</dimen>
@@ -45,6 +48,7 @@
     <dimen name="forecast_date_size">14sp</dimen>
     <dimen name="forecast_condition_size">12sp</dimen>
     <dimen name="weather_detail_item_textSize">14sp</dimen>
+    <dimen name="graph_text_size">13sp</dimen>
     <!-- Locations -->
     <dimen name="location_panel_height">130dp</dimen>
     <dimen name="location_panel_minwidth">480dp</dimen>

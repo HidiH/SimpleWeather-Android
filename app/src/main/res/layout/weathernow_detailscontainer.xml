@@ -15,43 +15,56 @@
 
     </data>
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="4dp"
+        app:contentPaddingBottom="12dp"
+        style="@style/Widget.Material3.CardView.Elevated">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/details_label"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="20dp"
-            android:text="@string/label_details"
-            android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
-            app:showIfNotEmpty="@{viewModel.weather.weatherDetailsMap}"
-            app:showIfTrue="@{FeatureSettings.detailsEnabled}" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <com.thewizrd.simpleweather.controls.ExpandingGridView
-            android:id="@+id/details_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:background="@android:color/transparent"
-            android:columnWidth="@dimen/detail_grid_column_width"
-            android:gravity="center"
-            android:numColumns="auto_fit"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="8dp"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="16dp"
-            app:showIfTrue="@{FeatureSettings.detailsEnabled}"
-            app:showIfNotEmpty="@{viewModel.weather.weatherDetailsMap}"
-            app:details_data="@{viewModel.weather.weatherDetailsMap}"
-            tools:layout_height="300dp"
-            tools:visibility="visible" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/details_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+                android:paddingVertical="@dimen/section_label_vertical_padding"
+                android:text="@string/label_details"
+                android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
+                app:showIfNotEmpty="@{viewModel.weather.weatherDetailsMap}"
+                app:showIfTrue="@{FeatureSettings.detailsEnabled}" />
 
-    </LinearLayout>
+            <com.thewizrd.simpleweather.controls.ExpandingGridView
+                android:id="@+id/details_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:columnWidth="@dimen/detail_grid_column_width"
+                android:gravity="center"
+                android:numColumns="auto_fit"
+                android:paddingStart="16dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:stretchMode="columnWidth"
+                android:horizontalSpacing="4dp"
+                android:verticalSpacing="4dp"
+                android:scrollbars="none"
+                android:scrollIndicators="none"
+                app:showIfTrue="@{FeatureSettings.detailsEnabled}"
+                app:showIfNotEmpty="@{viewModel.weather.weatherDetailsMap}"
+                app:details_data="@{viewModel.weather.weatherDetailsMap}"
+                tools:layout_height="300dp"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

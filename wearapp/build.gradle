@@ -13,9 +13,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         minSdkVersion 26
         targetSdkVersion rootProject.targetSdkVersion
-        // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 00, WearOS: 01)
-        versionCode 335900501
-        versionName "5.9.0"
+        // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 0, WearOS: 1)
+        versionCode 345100041
+        versionName "5.10.0"
 
         vectorDrawables {
             useSupportLibrary true
@@ -154,7 +154,7 @@ dependencies {
     implementation "androidx.wear.tiles:tiles:$wear_tiles_version"
     debugImplementation "androidx.wear.tiles:tiles-renderer:$wear_tiles_version"
     testImplementation "androidx.wear.tiles:tiles-testing:$wear_tiles_version"
-    implementation "androidx.wear.protolayout:protolayout-material:1.1.0"
+    implementation 'androidx.wear.protolayout:protolayout-material:1.2.0'
     implementation "com.google.android.horologist:horologist-tiles:$horologist_version"
     implementation "com.google.android.horologist:horologist-compose-tools:$horologist_version"
 
@@ -167,10 +167,11 @@ dependencies {
     implementation "androidx.compose.animation:animation-graphics"
     implementation "androidx.compose.runtime:runtime-livedata"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
-    implementation 'androidx.paging:paging-compose:3.2.1'
+    implementation 'androidx.paging:paging-compose:3.3.2'
     implementation "androidx.wear.compose:compose-foundation:$wear_compose_version"
     implementation "androidx.wear.compose:compose-material:$wear_compose_version"
     implementation "androidx.wear.compose:compose-navigation:$wear_compose_version"
+    implementation "androidx.wear:wear-tooling-preview:1.0.0"
 
     implementation "com.google.accompanist:accompanist-drawablepainter:$accompanist_version"
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"

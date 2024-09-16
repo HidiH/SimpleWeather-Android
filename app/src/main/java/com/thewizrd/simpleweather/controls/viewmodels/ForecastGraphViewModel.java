@@ -6,7 +6,6 @@ import android.text.format.DateFormat;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.thewizrd.shared_resources.ApplicationLibKt;
 import com.thewizrd.shared_resources.DateTimeConstants;
 import com.thewizrd.shared_resources.preferences.SettingsManager;
 import com.thewizrd.shared_resources.utils.Colors;
@@ -46,7 +45,9 @@ public class ForecastGraphViewModel {
         SNOW
     }
 
-    private final SettingsManager settingsMgr = ApplicationLibKt.getAppLib().getSettingsManager();
+    private final Context context;
+
+    private final SettingsManager settingsMgr;
 
     private GraphData<?> graphData;
 
@@ -58,6 +59,11 @@ public class ForecastGraphViewModel {
 
     public ForecastGraphType getGraphType() {
         return graphType;
+    }
+
+    public ForecastGraphViewModel(@NonNull Context context) {
+        this.context = context;
+        this.settingsMgr = new SettingsManager(context);
     }
 
     public void addForecastData(BaseForecast forecast, ForecastGraphType graphType) {
@@ -142,7 +148,6 @@ public class ForecastGraphViewModel {
     }
 
     private void addEntryData(BaseForecast forecast, LineDataSeries series, @NonNull ForecastGraphType graphType) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
         final boolean isFahrenheit = Units.FAHRENHEIT.equals(settingsMgr.getTemperatureUnit());
 
         final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
@@ -171,29 +176,24 @@ public class ForecastGraphViewModel {
                         forecast.getExtras().getWindMph() != null && forecast.getExtras().getWindKph() != null && forecast.getExtras().getWindMph() >= 0) {
                     final String unit = settingsMgr.getSpeedUnit();
                     int speedVal;
-                    String speedUnit;
 
                     switch (unit) {
                         case Units.MILES_PER_HOUR:
                         default:
                             speedVal = Math.round(forecast.getExtras().getWindMph());
-                            speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_mph);
                             break;
                         case Units.KILOMETERS_PER_HOUR:
                             speedVal = Math.round(forecast.getExtras().getWindKph());
-                            speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_kph);
                             break;
                         case Units.METERS_PER_SECOND:
                             speedVal = Math.round(ConversionMethods.kphToMsec(forecast.getExtras().getWindKph()));
-                            speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_msec);
                             break;
                         case Units.KNOTS:
                             speedVal = Math.round(ConversionMethods.mphToKts(forecast.getExtras().getWindMph()));
-                            speedUnit = context.getString(com.thewizrd.shared_resources.R.string.unit_knots);
                             break;
                     }
 
-                    String windSpeed = String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit);
+                    String windSpeed = String.format(LocaleUtils.getLocale(), "%d", speedVal);
 
                     series.addEntry(new LineGraphEntry(date, new YEntryData(speedVal, windSpeed)));
                 }
@@ -202,42 +202,36 @@ public class ForecastGraphViewModel {
                 if (forecast.getExtras() != null && forecast.getExtras().getQpfRainIn() != null && forecast.getExtras().getQpfRainMm() != null) {
                     final String unit = settingsMgr.getPrecipitationUnit();
                     float precipValue;
-                    String precipUnit;
 
                     switch (unit) {
                         case Units.INCHES:
                         default:
                             precipValue = forecast.getExtras().getQpfRainIn();
-                            precipUnit = context.getString(R.string.unit_in);
                             break;
                         case Units.MILLIMETERS:
                             precipValue = forecast.getExtras().getQpfRainMm();
-                            precipUnit = context.getString(R.string.unit_mm);
                             break;
                     }
 
-                    series.addEntry(new LineGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s %s", df.format(precipValue), precipUnit))));
+                    series.addEntry(new LineGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue)))));
                 }
                 break;
             case SNOW:
                 if (forecast.getExtras() != null && forecast.getExtras().getQpfSnowIn() != null && forecast.getExtras().getQpfSnowCm() != null) {
                     final String unit = settingsMgr.getPrecipitationUnit();
                     float precipValue;
-                    String precipUnit;
 
                     switch (unit) {
                         case Units.INCHES:
                         default:
                             precipValue = forecast.getExtras().getQpfSnowIn();
-                            precipUnit = context.getString(R.string.unit_in);
                             break;
                         case Units.MILLIMETERS:
                             precipValue = forecast.getExtras().getQpfSnowCm() * 10;
-                            precipUnit = context.getString(R.string.unit_mm);
                             break;
                     }
 
-                    series.addEntry(new LineGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s %s", df.format(precipValue), precipUnit))));
+                    series.addEntry(new LineGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue)))));
                 }
                 break;
             case UVINDEX:
@@ -255,7 +249,6 @@ public class ForecastGraphViewModel {
 
     private void addMinutelyEntryData(@NonNull MinutelyForecast forecast, LineDataSeries series) {
         if (forecast.getRainMm() != null && forecast.getRainMm() >= 0) {
-            final Context context = ApplicationLibKt.getAppLib().getContext();
 
             final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
             df.applyPattern("0.##");
@@ -269,28 +262,23 @@ public class ForecastGraphViewModel {
 
             final String unit = settingsMgr.getPrecipitationUnit();
             float precipValue;
-            String precipUnit;
 
             switch (unit) {
                 case Units.INCHES:
                 default:
                     precipValue = ConversionMethods.mmToIn(forecast.getRainMm());
-                    precipUnit = context.getString(R.string.unit_in);
                     break;
                 case Units.MILLIMETERS:
                     precipValue = forecast.getRainMm();
-                    precipUnit = context.getString(R.string.unit_mm);
                     break;
             }
 
-            series.addEntry(new LineGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s %s", df.format(precipValue), precipUnit))));
+            series.addEntry(new LineGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue)))));
         }
     }
 
     @NonNull
     private LineDataSeries createSeriesData(List<LineGraphEntry> entryData, @NonNull ForecastGraphType graphType) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
-
         LineDataSeries series;
 
         switch (graphType) {
@@ -329,12 +317,24 @@ public class ForecastGraphViewModel {
                 break;
         }
 
+        switch (graphType) {
+            case TEMPERATURE, PRECIPITATION, HUMIDITY, UVINDEX -> {/* ignore */}
+            case WIND -> {
+                final String unit = settingsMgr.getSpeedUnit();
+                series.setSeriesLabel(Units.getUnitString(context, unit));
+            }
+            case RAIN, SNOW, MINUTELY -> {
+                final String unit = settingsMgr.getPrecipitationUnit();
+                series.setSeriesLabel(Units.getUnitString(context, unit));
+            }
+        }
+
         return series;
     }
 
     @NonNull
     private LineViewData createGraphData(List<LineDataSeries> seriesData, @NonNull ForecastGraphType graphType) {
-        final String graphLabel = getLabelForGraphType(graphType);
+        final String graphLabel = getLabelForGraphType(context, graphType);
         this.graphType = graphType;
 
         return new LineViewData(graphLabel, seriesData);
@@ -355,7 +355,7 @@ public class ForecastGraphViewModel {
 
     @NonNull
     private BarGraphData createGraphData(BarGraphDataSet dataSet, @NonNull ForecastGraphType graphType) {
-        final String graphLabel = getLabelForGraphType(graphType);
+        final String graphLabel = getLabelForGraphType(context, graphType);
         this.graphType = graphType;
 
         return new BarGraphData(graphLabel, dataSet);
@@ -377,9 +377,8 @@ public class ForecastGraphViewModel {
     }
 
     private String getDateFromForecast(BaseForecast forecast) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
-
         String date;
+
         if (forecast instanceof Forecast) {
             Forecast fcast = (Forecast) forecast;
             date = fcast.getDate().format(DateTimeUtils.ofPatternForUserLocale(context.getString(R.string.forecast_date_format)));
@@ -400,9 +399,7 @@ public class ForecastGraphViewModel {
         return date;
     }
 
-    private String getLabelForGraphType(@NonNull ForecastGraphType graphType) {
-        final Context context = ApplicationLibKt.getAppLib().getContext();
-
+    public static String getLabelForGraphType(@NonNull Context context, @NonNull ForecastGraphType graphType) {
         String graphLabel;
 
         switch (graphType) {

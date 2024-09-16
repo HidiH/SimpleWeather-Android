@@ -1,11 +1,13 @@
-@file:OptIn(ExperimentalLayoutApi::class)
+@file:OptIn(ExperimentalLayoutApi::class, ExperimentalHorologistApi::class)
 
 package com.thewizrd.simpleweather.ui.weather
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +30,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,19 +67,25 @@ import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.LocalContentColor
+import androidx.wear.compose.material.LocalTextStyle
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Dialog
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.fillMaxRectangle
-import com.google.android.horologist.compose.navscaffold.scrollableColumn
+import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.common.controls.WeatherUiModel
+import com.thewizrd.common.controls.toUiModel
 import com.thewizrd.shared_resources.Constants
+import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.di.localBroadcastManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
@@ -83,6 +93,9 @@ import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.StringUtils.removeNonDigitChars
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.utils.getColorFromTempF
+import com.thewizrd.shared_resources.weatherdata.model.Condition
+import com.thewizrd.shared_resources.weatherdata.model.Location
+import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.SettingsActivity
@@ -96,7 +109,9 @@ import com.thewizrd.simpleweather.ui.components.WeatherIcon
 import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
+import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
+import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.viewmodels.WeatherNowStateModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
@@ -147,7 +162,7 @@ fun WeatherNowScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .scrollableColumn(focusRequester, scrollState)
+                .rotaryWithScroll(scrollState, focusRequester)
                 .verticalScroll(scrollState)
         ) {
             Column(
@@ -394,17 +409,16 @@ private fun IconTempRow(
             modifier = Modifier
                 .height(60.dp)
                 .weight(1f)
-                .padding(end = 8.dp)
                 .align(Alignment.CenterVertically),
             alignment = IconAlignment.End,
             weatherIcon = weatherIcon,
             iconProvider = iconProvider,
             shouldAnimate = true
         )
+        Spacer(modifier = Modifier.size(8.dp))
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 8.dp)
                 .align(Alignment.CenterVertically),
             text = curTemp ?: WeatherIcons.PLACEHOLDER,
             textAlign = TextAlign.Start,
@@ -452,7 +466,7 @@ private fun HiLoLayout(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .offset(x = 4.dp),
+                .offset(x = 12.dp, y = (-4).dp),
             horizontalAlignment = Alignment.End
         ) {
             Row(
@@ -474,10 +488,11 @@ private fun HiLoLayout(
                 )
             }
         }
+        Spacer(modifier = Modifier.size(8.dp))
         Column(
             modifier = Modifier
                 .weight(1f)
-                .offset(x = (4).dp),
+                .offset(x = (0).dp, y = (-4).dp),
             horizontalAlignment = Alignment.Start
         ) {
             Row(
@@ -587,14 +602,15 @@ private fun WeatherSummary(
         initialCenterItemIndex = 0,
         initialCenterItemScrollOffset = 0
     )
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = rememberFocusRequester()
 
     Dialog(
         showDialog = showDialog,
         onDismissRequest = { showDialog = false },
     ) {
         Alert(
-            modifier = Modifier.scrollableColumn(focusRequester, dialogScrollState),
+            modifier = Modifier
+                .rotaryWithScroll(dialogScrollState, focusRequester),
             title = {
                 Text(
                     text = "",
@@ -621,7 +637,6 @@ private fun WeatherSummary(
         PositionIndicator(scalingLazyListState = dialogScrollState)
 
         LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
             dialogScrollState.scrollToItem(0, 0)
         }
     }
@@ -868,5 +883,90 @@ private fun tempTextColor(temp: CharSequence?, @Units.TemperatureUnits tempUnit:
         Color(getColorFromTempF(tempF, Colors.WHITE))
     } else {
         colorResource(id = R.color.colorTextPrimary)
+    }
+}
+
+@WearPreviewDevices
+@Composable
+private fun PreviewWeatherNowScreen() {
+    val context = LocalContext.current.run {
+        initializeDependencies()
+
+        val oldConfig = resources.configuration
+        val newConfig = Configuration(oldConfig)
+        newConfig.uiMode =
+            Configuration.UI_MODE_NIGHT_YES or (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK.inv())
+        resources.updateConfiguration(newConfig, resources.displayMetrics)
+
+        this
+    }
+    val weather = remember {
+        Weather().apply {
+            condition = Condition().apply {
+                icon = WeatherIcons.DAY_SUNNY
+                tempF = 70f
+                weather = "Sunny"
+                highF = 75f
+                lowF = 60f
+            }
+            location = Location().apply {
+                name = "New York"
+            }
+        }.toUiModel()
+    }
+
+    CompositionLocalProvider(
+        LocalContentColor provides Color.White,
+        LocalTextStyle provides MaterialTheme.typography.button,
+        LocalContext provides context
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+                    .background(Color.White.copy(alpha = 0.25f))
+                    .align(Alignment.Center)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color.White.copy(alpha = 0.25f))
+                    .align(Alignment.Center)
+            )
+            Column {
+                WeatherLocation(
+                    locationName = "New York",
+                    isGPSLocation = true
+                )
+                // Icon + Temp
+                Box(
+                    modifier = Modifier.background(Color.White.copy(alpha = 0.1f))
+                ) {
+                    IconTempRow(
+                        weatherIcon = WeatherIcons.DAY_SUNNY,
+                        curTemp = "70°F",
+                        tempUnit = "F"
+                    )
+                }
+                // Condition
+                ConditionText("Sunny")
+
+                // HiLo Layout
+                HiLoLayout(
+                    hiTemp = "70°",
+                    loTemp = "60°"
+                )
+
+                // Condition Details
+                ConditionDetails(
+                    weather = weather,
+                    navController = rememberSwipeDismissableNavController()
+                )
+            }
+        }
     }
 }

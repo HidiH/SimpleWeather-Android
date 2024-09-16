@@ -10,7 +10,6 @@ import android.graphics.Shader;
 import android.graphics.drawable.Animatable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -263,7 +262,6 @@ public class RangeBarGraphView extends BaseGraphHorizontalScrollView<RangeBarGra
                         getScrollViewer().getScrollX() + getScrollViewer().getWidth(),
                         getScrollViewer().getScrollY() + getScrollViewer().getHeight()
                 );
-                Log.d("BarGraphView", "onDraw: rect = " + visibleRect);
             }
 
             if (mData != null) {

@@ -16,6 +16,8 @@
     <string name="api_tomorrowio" translatable="false">Tomorrow.io</string>
     <string name="api_apple_weather" translatable="false">Apple Weather</string>
     <string name="api_google" translatable="false">Google</string>
+    <string name="api_brightsky" translatable="false">Bright Sky (DWD)</string>
+    <string name="api_eccc" translatable="false">Environment and Climate Change Canada (ECCC)</string>
     <string name="radar_rainviewer" translatable="false">RainViewer</string>
     <string name="label_gpsfollow">Current Location</string>
     <string name="label_getstarted">Get Started</string>
@@ -233,5 +235,7 @@
     <string name="hint_password">Password</string>
     <string name="pref_title_privacypolicy">Privacy Policy</string>
     <string name="pref_title_termsofservice">Terms of Service</string>
+
+    <string name="text_label_value" translatable="false">%1$s %2$s</string>
 
 </resources>

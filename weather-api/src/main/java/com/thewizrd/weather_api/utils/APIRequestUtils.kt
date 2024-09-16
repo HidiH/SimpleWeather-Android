@@ -12,6 +12,7 @@ import com.thewizrd.weather_api.weatherdata.WeatherProviderImpl
 import okhttp3.Request
 import okhttp3.Response
 import java.net.HttpURLConnection
+import kotlin.math.pow
 import kotlin.random.Random
 
 object APIRequestUtils {
@@ -49,6 +50,9 @@ object APIRequestUtils {
                         .initCause(createThrowable(response))
                 }
             }
+        } else {
+            // Reset retry time
+            resetRetries(apiID)
         }
     }
 
@@ -78,7 +82,21 @@ object APIRequestUtils {
 
     fun throwIfRateLimited(apiID: String, response: Response, retryTimeInMs: Long = 60000) {
         if (response.code == 429 /* Too Many Requests */) {
-            setNextRetryTime(apiID, retryTimeInMs)
+            val retryCount = getRetryCount(apiID)
+
+            if (retryCount > 0) {
+                setRetryCount(apiID, retryCount + 1)
+
+                if (retryTimeInMs <= 60000 && retryCount <= 10) {
+                    // try exponential backoff if under 60s
+                    setNextRetryTime(apiID, (retryTimeInMs * 1.1f.pow(retryCount)).toLong())
+                } else {
+                    setNextRetryTime(apiID, retryTimeInMs)
+                }
+            } else {
+                setRetryCount(apiID, 1)
+                setNextRetryTime(apiID, retryTimeInMs)
+            }
             throw WeatherException(ErrorStatus.NETWORKERROR)
                 .initCause(createThrowable(response))
         }
@@ -146,9 +164,14 @@ object APIRequestUtils {
     }
 
     private val KEY_NEXTRETRYTIME = "key_nextretrytime"
+    private val KEY_RETRYCOUNT = "key_retrycount"
 
     private fun getRetryTimePrefKey(apiID: String): String {
         return "${apiID}:${KEY_NEXTRETRYTIME}"
+    }
+
+    private fun getRetryCountPrefKey(apiID: String): String {
+        return "${apiID}:${KEY_RETRYCOUNT}"
     }
 
     private fun getNextRetryTime(apiID: String): Long {
@@ -158,12 +181,29 @@ object APIRequestUtils {
 
     private fun setNextRetryTime(apiID: String, retryTimeInMs: Long) {
         val preferences = appLib.preferences
-        preferences.edit(true) {
+        preferences.edit {
             putLong(
                 getRetryTimePrefKey(apiID),
                 System.currentTimeMillis() + (retryTimeInMs + getRandomOffset(retryTimeInMs))
             )
         }
+    }
+
+    private fun getRetryCount(apiID: String): Int {
+        val preferences = appLib.preferences
+        return preferences.getInt(getRetryCountPrefKey(apiID), 0)
+    }
+
+    private fun setRetryCount(apiID: String, count: Int) {
+        val preferences = appLib.preferences
+        preferences.edit {
+            putInt(getRetryCountPrefKey(apiID), count)
+        }
+    }
+
+    private fun resetRetries(apiID: String) {
+        setRetryCount(apiID, 0)
+        setNextRetryTime(apiID, -System.currentTimeMillis())
     }
 
     /**

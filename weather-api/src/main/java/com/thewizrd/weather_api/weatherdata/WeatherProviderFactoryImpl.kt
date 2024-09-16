@@ -1,11 +1,11 @@
 package com.thewizrd.weather_api.weatherdata
 
 import com.thewizrd.shared_resources.BuildConfig
-import com.thewizrd.shared_resources.appLib
-import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.weather_api.accuweather.weather.AccuWeatherProvider
+import com.thewizrd.weather_api.brightsky.BrightSkyProvider
+import com.thewizrd.weather_api.eccc.ECCCWeatherProvider
 import com.thewizrd.weather_api.here.weather.HEREWeatherProvider
 import com.thewizrd.weather_api.meteofrance.weather.MeteoFranceProvider
 import com.thewizrd.weather_api.meteomatics.weather.MeteomaticsWeatherProvider
@@ -13,7 +13,6 @@ import com.thewizrd.weather_api.metno.MetnoWeatherProvider
 import com.thewizrd.weather_api.nws.NWSWeatherProvider
 import com.thewizrd.weather_api.openweather.location.OpenWeatherMapLocationProvider
 import com.thewizrd.weather_api.openweather.weather.OpenWeatherMapProvider
-import com.thewizrd.weather_api.openweather.weather.onecall.OWMOneCallWeatherProvider
 import com.thewizrd.weather_api.tomorrow.TomorrowIOWeatherProvider
 import com.thewizrd.weather_api.weatherapi.weather.WeatherApiProvider
 import com.thewizrd.weather_api.weatherbit.WeatherBitIOProvider
@@ -25,27 +24,9 @@ class WeatherProviderFactoryImpl : WeatherProviderFactory {
         return when (provider) {
             WeatherAPI.HERE -> HEREWeatherProvider()
             WeatherAPI.OPENWEATHERMAP -> {
-                val settingsMgr = appLib.settingsManager
-
                 when {
-                    BuildConfig.IS_NONGMS -> {
-                        // TODO: Remove after OneCall 3.0 is implemented - June 2024
-                        if (remoteConfigService.isProviderEnabled(WeatherAPI.OPENWEATHERMAP_ONECALL)) {
-                            OWMOneCallWeatherProvider(OpenWeatherMapLocationProvider())
-                        } else {
-                            OpenWeatherMapProvider(OpenWeatherMapLocationProvider())
-                        }
-                    }
-                    settingsMgr.usePersonalKey() -> {
-                        if (remoteConfigService.isProviderEnabled(WeatherAPI.OPENWEATHERMAP_ONECALL)) {
-                            OWMOneCallWeatherProvider()
-                        } else {
-                            OpenWeatherMapProvider()
-                        }
-                    }
-                    else -> {
-                        OpenWeatherMapProvider()
-                    }
+                    BuildConfig.IS_NONGMS -> OpenWeatherMapProvider(OpenWeatherMapLocationProvider())
+                    else -> OpenWeatherMapProvider()
                 }
             }
             WeatherAPI.METNO -> MetnoWeatherProvider()
@@ -58,6 +39,8 @@ class WeatherProviderFactoryImpl : WeatherProviderFactory {
             WeatherAPI.WEATHERBITIO -> WeatherBitIOProvider()
             WeatherAPI.METEOMATICS -> MeteomaticsWeatherProvider()
             WeatherAPI.APPLE -> WeatherKitProvider()
+            WeatherAPI.DWD -> BrightSkyProvider()
+            WeatherAPI.ECCC -> ECCCWeatherProvider()
             else -> {
                 if (!BuildConfig.DEBUG) {
                     if (!BuildConfig.IS_NONGMS)

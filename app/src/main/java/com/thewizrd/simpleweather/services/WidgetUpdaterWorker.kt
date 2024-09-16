@@ -22,7 +22,6 @@ import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.simpleweather.notifications.PoPChanceNotificationHelper
 import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
 import com.thewizrd.simpleweather.shortcuts.ShortcutCreatorWorker
-import com.thewizrd.simpleweather.utils.PowerUtils
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,9 +72,7 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
             Logger.writeLine(Log.INFO, "%s: One-time work enqueued", TAG)
 
             // Enqueue periodic task as well
-            if (!PowerUtils.useForegroundService) {
-                enqueueWork(context)
-            }
+            enqueueWork(context)
         }
 
         private fun enqueueWork(context: Context) {
@@ -93,7 +90,7 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
                 .build()
 
             RemoteWorkManager.getInstance(context)
-                    .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.REPLACE, updateRequest)
+                .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.UPDATE, updateRequest)
 
             Logger.writeLine(Log.INFO, "%s: Work enqueued", TAG)
         }
@@ -128,12 +125,6 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
     }
 
     override suspend fun doWork(): Result {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            runCatching {
-                setForeground(getForegroundInfo())
-            }
-        }
-
         WidgetUpdaterWork.executeWork(applicationContext)
         return Result.success()
     }

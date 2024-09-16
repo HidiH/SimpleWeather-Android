@@ -1,18 +1,26 @@
 package com.thewizrd.common.controls;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.FrameLayout;
 
 import androidx.core.text.method.LinkMovementMethodCompat;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.transition.ChangeBounds;
+import androidx.transition.Fade;
+import androidx.transition.TransitionManager;
+import androidx.transition.TransitionSet;
 
 import com.thewizrd.common.R;
 import com.thewizrd.common.databinding.WeatherAlertPanelBinding;
 
-public class WeatherAlertPanel extends RelativeLayout {
+public class WeatherAlertPanel extends FrameLayout {
     /**
      * State indicating the group is expanded.
      */
@@ -22,6 +30,10 @@ public class WeatherAlertPanel extends RelativeLayout {
 
     private boolean expandable = true;
     private boolean expanded = false;
+
+    private View.OnClickListener onToggleListener = null;
+
+    private TransitionSet transitionSet;
 
     public WeatherAlertPanel(Context context) {
         super(context);
@@ -38,14 +50,29 @@ public class WeatherAlertPanel extends RelativeLayout {
         initialize(context);
     }
 
+    public void setOnToggleListener(View.OnClickListener listener) {
+        this.onToggleListener = listener;
+    }
+
     private void initialize(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = WeatherAlertPanelBinding.inflate(inflater, this, true);
 
-        this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        this.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 
         binding.headerCard.setOnClickListener(v -> toggle());
         binding.bodyTextview.setMovementMethod(LinkMovementMethodCompat.getInstance());
+
+        transitionSet = new TransitionSet()
+                .setDuration(250)
+                .addTransition(
+                        new ChangeBounds()
+                                .setInterpolator(new AccelerateDecelerateInterpolator())
+                )
+                .addTransition(
+                        new Fade()
+                                .setInterpolator(new FastOutSlowInInterpolator())
+                );
     }
 
     public boolean isExpandable() {
@@ -68,9 +95,15 @@ public class WeatherAlertPanel extends RelativeLayout {
 
     public void toggle() {
         if (isExpandable() && isEnabled()) {
+            TransitionManager.beginDelayedTransition(this, transitionSet);
+
             expanded = !expanded;
-            binding.bodyCard.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            binding.bodyTextview.setVisibility(expanded ? View.VISIBLE : View.GONE);
             refreshDrawableState();
+
+            if (onToggleListener != null) {
+                onToggleListener.onClick(this);
+            }
         }
     }
 

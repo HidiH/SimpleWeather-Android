@@ -9,18 +9,18 @@ import java.security.MessageDigest
 fun Request.Builder.addGoogleAuth(context: Context): Request.Builder {
     return this
         .addHeader("X-Android-Package", context.packageName)
-        .addHeader("X-Android-Cert", context.getPackageSignature())
+        .addHeader("X-Android-Cert", context.getPackageSignature() ?: "")
 }
 
-private fun Context.getPackageSignature(): String {
+private fun Context.getPackageSignature(): String? {
     val signature = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         val info =
             packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-        info.signingInfo.apkContentsSigners.first()
+        info.signingInfo?.apkContentsSigners?.first()
     } else {
         val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-        info.signatures.first()
-    }
+        info.signatures?.first()
+    } ?: return null
 
     val md = MessageDigest.getInstance("SHA1")
     return md.digest(signature.toByteArray()).let {

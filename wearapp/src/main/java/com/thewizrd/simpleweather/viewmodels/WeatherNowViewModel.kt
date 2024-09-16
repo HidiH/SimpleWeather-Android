@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.core.location.LocationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.perf.metrics.Trace
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.controls.toUiModel
 import com.thewizrd.common.helpers.locationPermissionEnabled
@@ -206,6 +207,11 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
     }
 
     fun refreshWeather(forceRefresh: Boolean = false) {
+        val trace = Trace.create("wnow_refreshWeather").apply {
+            putAttribute("forceRefresh", forceRefresh.toString())
+            start()
+        }
+
         viewModelState.update {
             it.copy(isLoading = true)
         }
@@ -214,22 +220,37 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
             if (settingsManager.getDataSync() == WearableDataSync.OFF) {
                 if (settingsManager.useFollowGPS()) {
                     val result = updateLocation()
+
                     if (result is LocationResult.Changed) {
                         settingsManager.updateLocation(result.data)
                         weatherDataLoader.updateLocation(result.data)
+                    } else if (result is LocationResult.NotChanged) {
+                        result.data?.takeIf { it.isValid }?.let { data ->
+                            if (!weatherDataLoader.isLocationValid()) {
+                                weatherDataLoader.updateLocation(data)
+                                viewModelState.update { it.copy(locationData = data) }
+                            }
+                        }
                     }
                 }
 
-                val result = weatherDataLoader.loadWeatherResult(
-                    WeatherRequest.Builder()
-                        .forceRefresh(forceRefresh)
-                        .build()
-                )
+                val result = if (weatherDataLoader.isLocationValid()) {
+                    weatherDataLoader.loadWeatherResult(
+                        WeatherRequest.Builder()
+                            .forceRefresh(forceRefresh)
+                            .loadAlerts()
+                            .build()
+                    )
+                } else {
+                    WeatherResult.NoWeather()
+                }
 
                 updateWeatherState(result)
             } else {
                 syncWeather(forceRefresh)
             }
+
+            trace.stop()
         }
     }
 

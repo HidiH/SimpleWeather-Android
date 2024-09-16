@@ -12,12 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.thewizrd.common.controls.WeatherAlertPanel;
 import com.thewizrd.common.controls.WeatherAlertViewModel;
 
+import java.util.List;
+
 public class WeatherAlertPanelAdapter extends ListAdapter<WeatherAlertViewModel, WeatherAlertPanelAdapter.ViewHolder> {
     public WeatherAlertPanelAdapter() {
         super(diffCallback);
     }
 
-    private static final DiffUtil.ItemCallback<WeatherAlertViewModel> diffCallback = new DiffUtil.ItemCallback<WeatherAlertViewModel>() {
+    private static final DiffUtil.ItemCallback<WeatherAlertViewModel> diffCallback = new DiffUtil.ItemCallback<>() {
         @Override
         public boolean areItemsTheSame(@NonNull WeatherAlertViewModel oldItem, @NonNull WeatherAlertViewModel newItem) {
             return oldItem.getAlertType() == newItem.getAlertType() && oldItem.getAlertSeverity() == newItem.getAlertSeverity();
@@ -32,7 +34,7 @@ public class WeatherAlertPanelAdapter extends ListAdapter<WeatherAlertViewModel,
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private final WeatherAlertPanel mAlertPanel;
 
         public ViewHolder(WeatherAlertPanel v) {
@@ -42,6 +44,11 @@ public class WeatherAlertPanelAdapter extends ListAdapter<WeatherAlertViewModel,
 
         public void bind(WeatherAlertViewModel model) {
             mAlertPanel.bindModel(model);
+            mAlertPanel.setOnToggleListener(v -> {
+                mAlertPanel.postOnAnimation(() -> {
+                    notifyItemChanged(getBindingAdapterPosition(), "animation");
+                });
+            });
         }
     }
 
@@ -63,5 +70,12 @@ public class WeatherAlertPanelAdapter extends ListAdapter<WeatherAlertViewModel,
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.bind(getItem(position));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!payloads.contains("animation")) {
+            super.onBindViewHolder(holder, position, payloads);
+        }
     }
 }

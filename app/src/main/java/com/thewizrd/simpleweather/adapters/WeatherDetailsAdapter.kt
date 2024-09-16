@@ -37,6 +37,11 @@ class WeatherDetailsAdapter<T : BaseForecastItemViewModel> :
         RecyclerView.ViewHolder(mDetailPanel) {
         fun bind(model: BaseForecastItemViewModel?) {
             mDetailPanel.bind(model)
+            mDetailPanel.setOnToggleListener {
+                mDetailPanel.postOnAnimation {
+                    notifyItemChanged(bindingAdapterPosition, "animation")
+                }
+            }
         }
     }
 
@@ -50,5 +55,11 @@ class WeatherDetailsAdapter<T : BaseForecastItemViewModel> :
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.bind(getItem(position))
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (!payloads.contains("animation")) {
+            super.onBindViewHolder(holder, position, payloads)
+        }
     }
 }

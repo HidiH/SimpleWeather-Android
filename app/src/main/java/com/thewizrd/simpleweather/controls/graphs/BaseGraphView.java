@@ -42,7 +42,7 @@ public abstract class BaseGraphView<T extends GraphData<? extends GraphDataSet<?
     protected int bottomTextDescent;
 
     protected final float iconBottomMargin = ContextUtils.dpToPx(getContext(), 2);
-    protected final float bottomTextTopMargin = ContextUtils.dpToPx(getContext(), 6);
+    protected final float bottomTextTopMargin = ContextUtils.dpToPx(getContext(), 12);
 
     protected float sideLineLength = 0;
     protected float backgroundGridWidth = ContextUtils.dpToPx(getContext(), 45);
@@ -67,7 +67,7 @@ public abstract class BaseGraphView<T extends GraphData<? extends GraphDataSet<?
 
         bottomTextPaint = new Paint();
         bottomTextPaint.setAntiAlias(true);
-        bottomTextPaint.setTextSize(context.getResources().getDimensionPixelSize(R.dimen.forecast_condition_size));
+        bottomTextPaint.setTextSize(context.getResources().getDimensionPixelSize(R.dimen.graph_text_size));
         bottomTextPaint.setTextAlign(Paint.Align.CENTER);
         bottomTextPaint.setStyle(Paint.Style.FILL);
         bottomTextPaint.setColor(Colors.WHITE);

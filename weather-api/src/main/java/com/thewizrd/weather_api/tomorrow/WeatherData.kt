@@ -142,7 +142,7 @@ fun createForecast(item: IntervalsItem): Forecast {
 
         item.values.dewPoint?.let {
             extras.dewpointC = it
-            extras.dewpointF = ConversionMethods.CtoF(it).roundToInt().toFloat()
+            extras.dewpointF = ConversionMethods.CtoF(it)
         }
 
         extras.pop = item.values.precipitationProbability?.roundToInt()
@@ -161,7 +161,7 @@ fun createForecast(item: IntervalsItem): Forecast {
         // 1hPA = 1mbar
         item.values.pressureSeaLevel?.let {
             extras.pressureMb = it
-            extras.pressureIn = ConversionMethods.mbToInHg(it).roundToInt().toFloat()
+            extras.pressureIn = ConversionMethods.mbToInHg(it)
         }
 
         extras.windDegrees = item.values.windDirection?.roundToInt()
@@ -237,7 +237,7 @@ fun createHourlyForecast(item: IntervalsItem): HourlyForecast {
 
         item.values.dewPoint?.let {
             extras.dewpointC = it
-            extras.dewpointF = ConversionMethods.CtoF(it).roundToInt().toFloat()
+            extras.dewpointF = ConversionMethods.CtoF(it)
         }
 
         extras.pop = item.values.precipitationProbability?.roundToInt()
@@ -256,7 +256,7 @@ fun createHourlyForecast(item: IntervalsItem): HourlyForecast {
         // 1hPA = 1mbar
         item.values.pressureSeaLevel?.let {
             extras.pressureMb = it
-            extras.pressureIn = ConversionMethods.mbToInHg(it).roundToInt().toFloat()
+            extras.pressureIn = ConversionMethods.mbToInHg(it)
         }
 
         extras.windDegrees = item.values.windDirection?.roundToInt()?.also { windDegrees = it }
@@ -381,7 +381,7 @@ fun createAtmosphere(item: IntervalsItem): Atmosphere {
 
         item.values.dewPoint?.let {
             dewpointC = it
-            dewpointF = ConversionMethods.CtoF(it).roundToInt().toFloat()
+            dewpointF = ConversionMethods.CtoF(it)
         }
     }
 }

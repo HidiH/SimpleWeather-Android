@@ -290,13 +290,15 @@ class LocationsFragment : ToolbarFragment() {
                 .build()
         }
         binding.fab.setOnClickListener {
-            locationSearchLauncher.launch(
-                ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    requireActivity(),
-                    it,
-                    Constants.SHARED_ELEMENT
+            runWithView {
+                locationSearchLauncher.launch(
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        requireActivity(),
+                        it,
+                        Constants.SHARED_ELEMENT
+                    )
                 )
-            )
+            }
         }
         ViewCompat.setTransitionName(binding.fab, Constants.SHARED_ELEMENT)
 

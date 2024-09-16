@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ArrayRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.use
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
@@ -39,8 +40,8 @@ class ChipPreference @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0
 ) : Preference(context, attrs, defStyleAttr, defStyleRes) {
-    private var mEntries: Array<CharSequence>
-    private var mEntryValues: Array<CharSequence>
+    private lateinit var mEntries: Array<CharSequence>
+    private lateinit var mEntryValues: Array<CharSequence>
     private var mValue: String? = null
     private var mValueSet = false
 

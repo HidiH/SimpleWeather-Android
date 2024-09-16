@@ -10,6 +10,7 @@ import android.widget.GridView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.util.ObjectsCompat
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thewizrd.common.controls.DetailItemViewModel
@@ -20,10 +21,12 @@ import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.StringUtils.removeNonDigitChars
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.utils.getColorFromTempF
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase.MoonPhaseType
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.adapters.DetailsItemAdapter
 import com.thewizrd.simpleweather.adapters.DetailsItemGridAdapter
 import com.thewizrd.simpleweather.adapters.HourlyForecastItemAdapter
+import com.thewizrd.simpleweather.adapters.MoonPhaseAdapter
 import com.thewizrd.simpleweather.controls.ImageDataViewModel
 import com.thewizrd.simpleweather.controls.SunPhaseView
 import com.thewizrd.simpleweather.controls.viewmodels.HourlyForecastNowViewModel
@@ -120,5 +123,37 @@ object WeatherNowBindingAdapter {
         } else {
             view.setTextColor(ContextCompat.getColor(view.context, R.color.colorTextPrimary))
         }
+    }
+
+    @JvmStatic
+    @BindingAdapter("moonPhase")
+    fun setMoonPhase(view: RecyclerView, moonPhaseType: MoonPhaseType?) {
+        (view.adapter as? MoonPhaseAdapter)?.run {
+            if (moonPhaseType != null) {
+                selectMoonPhase(moonPhaseType)
+            }
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("feelsLike")
+    fun setFeelsLikeText(
+        view: TextView,
+        map: Map<WeatherDetailsType, DetailItemViewModel>?
+    ) {
+        if (map != null && map.containsKey(WeatherDetailsType.FEELSLIKE)) {
+            val detail = map[WeatherDetailsType.FEELSLIKE]
+            if (detail != null) {
+                view.text = view.context.getString(
+                    R.string.text_label_value,
+                    detail.label.toString(),
+                    detail.value
+                )
+                view.isVisible = true
+                return
+            }
+        }
+
+        view.isVisible = false
     }
 }

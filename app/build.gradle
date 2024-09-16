@@ -9,13 +9,14 @@ android {
 
     defaultConfig {
         applicationId "com.thewizrd.simpleweather"
+        testApplicationId "com.thewizrd.simpleweather.test"
         // Specifies the fully-qualified class name of the test instrumentation runner.
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 00, WearOS: 01)
-        versionCode 335900500
-        versionName "5.9.0"
+        // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 0, WearOS: 1)
+        versionCode 345100040
+        versionName "5.10.0"
 
         vectorDrawables {
             useSupportLibrary true
@@ -168,13 +169,14 @@ dependencies {
 
     fullgmsImplementation "com.google.android.gms:play-services-base:$gms_base_version"
     fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation 'com.google.android.gms:play-services-maps:18.2.0'
+    fullgmsImplementation 'com.google.android.gms:play-services-maps:19.0.0'
     fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
     fullgmsImplementation 'com.google.android.play:app-update-ktx:2.1.0'
     fullgmsImplementation 'com.google.android.play:feature-delivery-ktx:2.1.0'
+    fullgmsImplementation 'com.google.android.play:review-ktx:2.0.1'
     fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
 
-    nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.18'
+    nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.20'
 }
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Fullgms")) {

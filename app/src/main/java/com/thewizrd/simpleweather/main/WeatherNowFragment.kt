@@ -42,7 +42,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -60,6 +62,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.transition.MaterialFadeThrough
 import com.thewizrd.common.controls.IconControl
 import com.thewizrd.common.controls.WeatherAlertsViewModel
+import com.thewizrd.common.helpers.ColorsUtils
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.location.LocationResult
@@ -83,11 +86,13 @@ import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase.MoonPhaseType
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.TwoPaneNavGraphDirections
 import com.thewizrd.simpleweather.adapters.DetailsItemGridAdapter
 import com.thewizrd.simpleweather.adapters.HourlyForecastItemAdapter
+import com.thewizrd.simpleweather.adapters.MoonPhaseAdapter
 import com.thewizrd.simpleweather.banner.Banner
 import com.thewizrd.simpleweather.banner.BannerManager
 import com.thewizrd.simpleweather.banner.BannerManagerInterface
@@ -124,7 +129,9 @@ import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import com.thewizrd.simpleweather.weatheralerts.WeatherAlertHandler
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.Duration
@@ -163,6 +170,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
     private var mBannerMgr: BannerManager? = null
 
     private lateinit var mGlide: RequestManager
+    private var paletteJob: Job? = null
 
     // View Models
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
@@ -512,7 +520,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             forecastPanelBinding!!.forecastsView = forecastsView
             forecastPanelBinding!!.lifecycleOwner = viewLifecycleOwner
 
-            forecastPanelBinding!!.headerLayout.setOnClickListener {
+            forecastPanelBinding!!.root.setOnClickListener {
                 openDetails(
                     TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
                         .setWeatherListType(WeatherListType.FORECAST)
@@ -562,7 +570,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             })
 
-            hrForecastPanelBinding!!.headerLayout.setOnClickListener {
+            hrForecastPanelBinding!!.root.setOnClickListener {
                 openDetails(
                     TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
                         .setWeatherListType(WeatherListType.HOURLYFORECAST)
@@ -606,7 +614,10 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             }
 
-            precipPanelBinding!!.headerLayout.setOnClickListener {
+            precipPanelBinding!!.minutelyCard.setOnClickListener {
+                onClickListener.onClick(it, 0)
+            }
+            precipPanelBinding!!.precipCard.setOnClickListener {
                 onClickListener.onClick(it, 0)
             }
 
@@ -744,6 +755,28 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             moonphaseControlBinding!!.viewModel = wNowViewModel
             moonphaseControlBinding!!.lifecycleOwner = viewLifecycleOwner
 
+            moonphaseControlBinding!!.moonFlow.also { recyclerView ->
+                val adapter = MoonPhaseAdapter()
+                val layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                val phaseIconRadi = recyclerView.context.dpToPx(30f).toInt()
+
+                // Disable all touch events
+                recyclerView.setOnTouchListener { _, _ -> true }
+
+                recyclerView.viewTreeObserver.addOnPreDrawListener {
+                    layoutManager.scrollToPositionWithOffset(
+                        adapter.selectedMoonPhaseType.ordinal + MoonPhaseType.entries.size,
+                        recyclerView.measuredWidth / 2 - phaseIconRadi
+                    )
+
+                    true
+                }
+
+                recyclerView.adapter = adapter
+                recyclerView.layoutManager = layoutManager
+            }
+
             binding.listLayout.addView(moonphaseControlBinding!!.root)
             moonphaseControlBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
@@ -790,9 +823,8 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 }
             }
 
+            radarControlBinding!!.root.setOnClickListener(onClickListener)
             radarControlBinding!!.radarWebviewCover.setOnClickListener(onClickListener)
-            radarControlBinding!!.radarLabel.setOnClickListener(onClickListener)
-            radarControlBinding!!.chevronRight.setOnClickListener(onClickListener)
 
             /*
              * NOTE
@@ -886,7 +918,9 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                initializeState()
+                if (wNowViewModel.isInitialized.value) {
+                    initializeState()
+                }
             }
         }
 
@@ -1188,6 +1222,32 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                             ): Boolean {
                                 // update image loading state
                                 wNowViewModel.onImageLoaded()
+                                paletteJob?.cancel()
+                                paletteJob = runWithView {
+                                    withContext(Dispatchers.IO) {
+                                        runCatching {
+                                            val palette = Palette.from(resource).generate()
+
+                                            if (isActive) {
+                                                if (ColorsUtils.isSuperLight(palette)) {
+                                                    conditionPanelBinding.bgAttribution.setTextColor(
+                                                        Colors.BLACK
+                                                    )
+                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
+                                                        Colors.BLACK
+                                                    )
+                                                } else {
+                                                    conditionPanelBinding.bgAttribution.setTextColor(
+                                                        Colors.WHITESMOKE
+                                                    )
+                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
+                                                        Colors.WHITESMOKE
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                                 return false
                             }
                         })

@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.transition.MaterialFadeThrough
@@ -88,6 +89,9 @@ class WeatherAlertFragment : ToolbarFragment() {
         binding.recyclerView.layoutManager =
             LinearLayoutManager(requireContext()).also { layoutManager = it }
         binding.recyclerView.adapter = WeatherAlertPanelAdapter().also { alertAdapter = it }
+        binding.recyclerView.itemAnimator = DefaultItemAnimator().apply {
+            supportsChangeAnimations = true
+        }
 
         return root
     }

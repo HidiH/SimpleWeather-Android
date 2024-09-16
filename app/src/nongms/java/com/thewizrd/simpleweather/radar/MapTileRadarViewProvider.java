@@ -1,8 +1,6 @@
 package com.thewizrd.simpleweather.radar;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +16,6 @@ import com.thewizrd.simpleweather.extras.ExtrasKt;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
@@ -41,14 +38,7 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
     public MapTileRadarViewProvider(@NonNull Context context, @NonNull ViewGroup rootView) {
         super(context, rootView);
 
-        String version;
-        try {
-            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            version = String.format("v%s", packageInfo.versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            version = "";
-        }
-        Configuration.getInstance().setUserAgentValue(String.format("SimpleWeather (thewizrd.dev+SimpleWeatherAndroid@gmail.com) %s", version));
+        OSMUtilsKt.initializeMap(context);
     }
 
     @Override
@@ -155,7 +145,7 @@ public abstract class MapTileRadarViewProvider extends RadarViewProvider impleme
             mapController.setCenter(new GeoPoint(locationCoords.getLatitude(), locationCoords.getLongitude()));
         }
 
-        mv.setTileSource(TileSourceFactory.USGS_SAT);
+        mv.setTileSource(TileSourceFactory.USGS_TOPO);
 
         return mv;
     }

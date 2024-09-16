@@ -11,6 +11,9 @@ object LocationUtils {
     private val USCA_BOUNDING_BOX =
         BoundingBox(24.4825578966, 71.7611572494, -168.9184947286, -52.2436900411)
 
+    // Canada
+    private val CA_BOUNDING_BOX = BoundingBox(41.6765556, 83.3362128, -141.00275, -52.3231981)
+
     // France
     private val FR_BOUNDING_BOX = BoundingBox(41.2632185, 51.268318, -5.4534286, 9.8678344)
 
@@ -29,6 +32,10 @@ object LocationUtils {
     // American Somoa
     private val AS_BOUNDING_BOX =
         BoundingBox(-14.6018129466, -10.9972026743, -171.141907163, -168.1016121805)
+
+    // Germany
+    private val DE_BOUNDING_BOX =
+        BoundingBox(47.2701114, 55.099161, 5.8663153, 15.0419319)
 
     private val NWS_SUPPORTED_COUNTRIES = setOf("US", "AS", "UM", "GU", "MP", "PR", "VI")
     private val NWS_SUPPORTED_LOCATIONS = listOf(
@@ -93,6 +100,38 @@ object LocationUtils {
         }
     }
 
+    fun isCanada(countryCode: String?): Boolean {
+        return if (countryCode.isNullOrBlank()) {
+            false
+        } else {
+            countryCode.equals("CA", ignoreCase = true) || countryCode.equals(
+                "canada",
+                ignoreCase = true
+            )
+        }
+    }
+
+    private fun inCanadaBounds(lat: Double, lon: Double) = CA_BOUNDING_BOX.intersects(lat, lon)
+
+    fun isCanada(location: LocationData): Boolean {
+        return if (!location.countryCode.isNullOrBlank()) {
+            isCanada(location.countryCode) || inCanadaBounds(location.latitude, location.longitude)
+        } else {
+            inCanadaBounds(location.latitude, location.longitude)
+        }
+    }
+
+    fun isCanada(location: LocationQuery): Boolean {
+        return if (!location.locationCountry.isNullOrBlank()) {
+            isCanada(location.locationCountry) || inCanadaBounds(
+                location.locationLat,
+                location.locationLong
+            )
+        } else {
+            inCanadaBounds(location.locationLat, location.locationLong)
+        }
+    }
+
     fun isFrance(countryCode: String?): Boolean {
         return if (countryCode.isNullOrBlank()) {
             false
@@ -104,19 +143,24 @@ object LocationUtils {
         }
     }
 
+    private fun inFranceBounds(lat: Double, lon: Double) = FR_BOUNDING_BOX.intersects(lat, lon)
+
     fun isFrance(location: LocationData): Boolean {
         return if (!location.countryCode.isNullOrBlank()) {
-            isFrance(location.countryCode)
+            isFrance(location.countryCode) || inFranceBounds(location.latitude, location.longitude)
         } else {
-            FR_BOUNDING_BOX.intersects(location.latitude, location.longitude)
+            inFranceBounds(location.latitude, location.longitude)
         }
     }
 
     fun isFrance(location: LocationQuery): Boolean {
         return if (!location.locationCountry.isNullOrBlank()) {
-            isFrance(location.locationCountry)
+            isFrance(location.locationCountry) || inFranceBounds(
+                location.locationLat,
+                location.locationLong
+            )
         } else {
-            FR_BOUNDING_BOX.intersects(location.locationLat, location.locationLong)
+            inFranceBounds(location.locationLat, location.locationLong)
         }
     }
 
@@ -142,6 +186,41 @@ object LocationUtils {
                     location.locationLong
                 )
             }
+        }
+    }
+
+    fun isGermany(countryCode: String?): Boolean {
+        return if (countryCode.isNullOrBlank()) {
+            false
+        } else {
+            countryCode.equals("de", ignoreCase = true) || countryCode.equals(
+                "germany",
+                ignoreCase = true
+            )
+        }
+    }
+
+    private fun inGermanyBounds(lat: Double, lon: Double) = DE_BOUNDING_BOX.intersects(lat, lon)
+
+    fun isGermany(location: LocationData): Boolean {
+        return if (!location.countryCode.isNullOrBlank()) {
+            isGermany(location.countryCode) || inGermanyBounds(
+                location.latitude,
+                location.longitude
+            )
+        } else {
+            inGermanyBounds(location.latitude, location.longitude)
+        }
+    }
+
+    fun isGermany(location: LocationQuery): Boolean {
+        return if (!location.locationCountry.isNullOrBlank()) {
+            isGermany(location.locationCountry) || inGermanyBounds(
+                location.locationLat,
+                location.locationLong
+            )
+        } else {
+            inGermanyBounds(location.locationLat, location.locationLong)
         }
     }
 

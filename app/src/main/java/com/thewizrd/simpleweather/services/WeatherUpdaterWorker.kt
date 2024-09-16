@@ -3,7 +3,6 @@ package com.thewizrd.simpleweather.services
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ServiceInfo
 import android.location.LocationManager
 import android.os.Build
 import android.util.Log
@@ -33,7 +32,6 @@ import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.NOT_CHANNEL_ID
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.initChannel
 import com.thewizrd.simpleweather.shortcuts.ShortcutCreatorWorker
-import com.thewizrd.simpleweather.utils.PowerUtils
 import com.thewizrd.simpleweather.weatheralerts.WeatherAlertHandler
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper
 import com.thewizrd.simpleweather.widgets.WidgetUtils
@@ -87,10 +85,8 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
 
             Logger.writeLine(Log.INFO, "%s: One-time work enqueued", TAG)
 
-            if (!PowerUtils.useForegroundService) {
-                // Enqueue periodic task as well
-                enqueueWork(context.applicationContext)
-            }
+            // Enqueue periodic task as well
+            enqueueWork(context.applicationContext)
         }
 
         private fun enqueueWork(context: Context) {
@@ -114,7 +110,7 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                 .build()
 
             RemoteWorkManager.getInstance(context)
-                    .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.REPLACE, updateRequest)
+                .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.UPDATE, updateRequest)
 
             Logger.writeLine(Log.INFO, "%s: Work enqueued", TAG)
         }
@@ -146,31 +142,18 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                 .setContentTitle(context.getString(R.string.not_title_weather_update))
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setOnlyAlertOnce(true)
-                .setNotificationSilent()
+                .setSilent(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .build()
         }
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ForegroundInfo(
-                JOB_ID, getForegroundNotification(applicationContext),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC or ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
-            )
-        } else {
-            ForegroundInfo(JOB_ID, getForegroundNotification(applicationContext))
-        }
+        return ForegroundInfo(JOB_ID, getForegroundNotification(applicationContext))
     }
 
     override suspend fun doWork(): Result {
         Logger.writeLine(Log.INFO, "%s: Work started", TAG)
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            runCatching {
-                setForeground(getForegroundInfo())
-            }
-        }
 
         if (!WeatherUpdaterHelper.executeWork(applicationContext))
             return Result.failure()

@@ -51,7 +51,7 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
         private const val KEYCHECK_QUERY_URL =
             BASE_URL + "current?key=%s"
         private const val CURRENT_QUERY_URL =
-            BASE_URL + "current?%s&lang=%s&units=M&include=minutely,alerts&key=%s"
+            BASE_URL + "current?%s&lang=%s&units=M&include=alerts&key=%s"
         private const val FORECAST_QUERY_URL =
             BASE_URL + "forecast/daily?%s&lang=%s&units=M&key=%s"
         private const val HRFORECAST_QUERY_URL =
@@ -276,6 +276,10 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
             try {
                 // If were under rate limit, deny request
                 checkRateLimit()
+
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                }
 
                 val request = Request.Builder()
                     .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)

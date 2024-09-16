@@ -67,6 +67,18 @@
                 android:action="android.intent.action.VIEW"
                 android:data="https://tomorrow.io/" />
         </Preference>
+        <Preference android:title="@string/api_brightsky" />
+        <Preference android:layout="@layout/credit_dwd">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://brightsky.dev/" />
+        </Preference>
+        <Preference android:title="@string/api_eccc" />
+        <Preference android:layout="@layout/credit_eccc">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.weather.gc.ca/" />
+        </Preference>
 
     </PreferenceCategory>
 

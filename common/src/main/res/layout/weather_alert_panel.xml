@@ -13,12 +13,37 @@
     </data>
 
     <merge
-        tools:parentTag="android.widget.RelativeLayout"
+        tools:parentTag="android.widget.FrameLayout"
         tools:theme="@style/Theme.Material3.DayNight.NoActionBar">
+
+        <FrameLayout
+            android:id="@+id/body_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurfaceContainerLow"
+            android:duplicateParentState="true"
+            android:elevation="2dp"
+            android:layout_marginTop="48dp"
+            android:stateListAnimator="@animator/weather_detail_item_anim">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/body_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="24dp"
+                android:text="@{viewModel.alertBodyMessage}"
+                android:linksClickable="true"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textSize="14sp"
+                android:visibility="gone"
+                tools:text="TextView"
+                tools:visibility="visible" />
+
+        </FrameLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/header_card"
-            style="@style/Widget.Material3.CardView.Filled"
+            style="@style/Widget.Material3.CardView.Elevated"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -27,6 +52,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:duplicateParentState="true"
+            android:stateListAnimator="@animator/weather_detail_item_anim"
             app:cardBackgroundColor="@{viewModel.alertSeverityColor}"
             app:cardCornerRadius="0dp"
             tools:cardBackgroundColor="@color/colorError">
@@ -107,29 +133,6 @@
                     app:buttonTint="@android:color/white" />
 
             </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/body_card"
-            style="@style/Widget.Material3.CardView.Filled"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/header_card"
-            android:visibility="gone"
-            app:cardCornerRadius="0dp"
-            tools:visibility="visible">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/body_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="24dp"
-                android:text="@{viewModel.alertBodyMessage}"
-                android:linksClickable="true"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textSize="14sp"
-                tools:text="TextView" />
 
         </com.google.android.material.card.MaterialCardView>
     </merge>

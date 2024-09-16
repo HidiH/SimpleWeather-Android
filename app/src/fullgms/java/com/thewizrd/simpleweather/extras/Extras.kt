@@ -91,7 +91,7 @@ fun SettingsFragment.IconsFragment.navigateUnsupportedIconPack() {
     // Navigate to premium page
     if (isPremiumSupported()) {
         rootView.findNavController()
-            .navigate(`SettingsFragment$IconsFragmentDirections`.actionIconsFragmentToPremiumFragment())
+            .safeNavigate(`SettingsFragment$IconsFragmentDirections`.actionIconsFragmentToPremiumFragment())
     } else {
         showSnackbar(
             Snackbar.make(
@@ -106,7 +106,7 @@ fun SettingsFragment.IconsFragment.navigateUnsupportedIconPack() {
 }
 
 fun enableAdditionalRefreshIntervals(): Boolean {
-    return extrasModule.isEnabled()
+    return extrasModule.isPremiumEnabled()
 }
 
 fun checkPremiumStatus() {
@@ -118,17 +118,17 @@ fun isPremiumSupported(): Boolean {
 }
 
 fun isRadarInteractionEnabled(): Boolean {
-    return extrasModule.isEnabled()
+    return extrasModule.isAtLeastProEnabled()
 }
 
 fun areNotificationExtrasEnabled(): Boolean {
-    return extrasModule.isEnabled()
+    return extrasModule.isAtLeastProEnabled()
 }
 
 fun SettingsFragment.createPremiumPreference(): Preference {
     val premiumPref = Preference(requireContext()).apply {
         title = context.getString(R.string.pref_title_premium)
-        summary = context.getString(R.string.message_premium_prompt)
+        summary = context.getString(R.string.pref_summary_premium)
         setIcon(R.drawable.ic_star_24dp)
         order = 0
     }

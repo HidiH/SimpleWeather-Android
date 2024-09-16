@@ -249,26 +249,28 @@ class LocationSearchViewModel(app: Application) : AndroidViewModel(app) {
                 return@launch
             }
 
-            var queryResult: LocationQuery? = locQuery
-
-            // Need to get FULL location data for HERE API
-            // Data provided is incomplete
-            if (wm.getLocationProvider().needsLocationFromID()) {
-                queryResult = withContext(Dispatchers.IO) {
-                    wm.getLocationProvider().getLocationFromID(locQuery)
+            val queryResult: LocationQuery? = runCatching {
+                // Need to get FULL location data for HERE API
+                // Data provided is incomplete
+                if (wm.getLocationProvider().needsLocationFromID()) {
+                    withContext(Dispatchers.IO) {
+                        wm.getLocationProvider().getLocationFromID(locQuery)
+                    }
+                } else if (wm.getLocationProvider().needsLocationFromName()) {
+                    withContext(Dispatchers.IO) {
+                        wm.getLocationProvider().getLocationFromName(locQuery)
+                    }
+                } else if (wm.getLocationProvider().needsLocationFromGeocoder()) {
+                    withContext(Dispatchers.IO) {
+                        wm.getLocationProvider().getLocation(
+                            Coordinate(locQuery.locationLat, locQuery.locationLong),
+                            locQuery.weatherSource
+                        )
+                    }
+                } else {
+                    locQuery
                 }
-            } else if (wm.getLocationProvider().needsLocationFromName()) {
-                queryResult = withContext(Dispatchers.IO) {
-                    wm.getLocationProvider().getLocationFromName(locQuery)
-                }
-            } else if (wm.getLocationProvider().needsLocationFromGeocoder()) {
-                queryResult = withContext(Dispatchers.IO) {
-                    wm.getLocationProvider().getLocation(
-                        Coordinate(locQuery.locationLat, locQuery.locationLong),
-                        locQuery.weatherSource
-                    )
-                }
-            }
+            }.getOrNull()
 
             if (queryResult == null || queryResult.locationQuery.isNullOrBlank()) {
                 // Stop since there is no valid query

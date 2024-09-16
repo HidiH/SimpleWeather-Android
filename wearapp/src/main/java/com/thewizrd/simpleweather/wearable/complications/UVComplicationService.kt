@@ -15,6 +15,7 @@ import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.UV
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
+import kotlin.math.max
 
 class UVComplicationService : WeatherHourlyForecastComplicationService() {
     companion object {
@@ -95,7 +96,9 @@ class UVComplicationService : WeatherHourlyForecastComplicationService() {
         return when (dataType) {
             ComplicationType.RANGED_VALUE -> {
                 RangedValueComplicationData.Builder(
-                    uvModel.progress.toFloat(), 0f, uvModel.progressMax.toFloat(),
+                    uvModel.progress.toFloat(),
+                    0f,
+                    max(uvModel.progressMax, uvModel.progress).toFloat(),
                     PlainComplicationText.Builder(
                         "${getString(R.string.label_uv)}: ${uvModel.index}, ${uvModel.description}"
                     ).build()

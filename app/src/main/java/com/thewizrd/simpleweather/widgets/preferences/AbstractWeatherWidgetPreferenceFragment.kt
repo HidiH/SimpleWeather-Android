@@ -152,16 +152,17 @@ abstract class AbstractWeatherWidgetPreferenceFragment : ToolbarPreferenceFragme
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            requireActivity().finishAffinity()
+            activity?.finishAffinity()
             return
         }
 
-        mWidgetType = WidgetUtils.getWidgetTypeFromID(mAppWidgetId)
-        mWidgetInfo = WidgetUtils.getWidgetProviderInfoFromType(mWidgetType)!!
-        mWidgetOptions = WidgetUtils.getPreviewAppWidgetOptions(requireContext(), mAppWidgetId)
-
         // Set the result value for WidgetConfigActivity
         resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId)
+
+        mWidgetType = WidgetUtils.getWidgetTypeFromID(mAppWidgetId)
+        mWidgetInfo = WidgetUtils.getWidgetProviderInfoFromType(mWidgetType)
+            ?: run { cancelActivityResult(); return }
+        mWidgetOptions = WidgetUtils.getPreviewAppWidgetOptions(requireContext(), mAppWidgetId)
 
         super.onCreate(savedInstanceState)
 

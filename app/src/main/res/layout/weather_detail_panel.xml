@@ -3,187 +3,114 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <import type="com.thewizrd.shared_resources.icons.WeatherIcons" />
-    </data>
-
     <merge
         tools:context=".controls.WeatherDetailItem"
-        tools:parentTag="android.widget.LinearLayout"
-        tools:theme="@style/Theme.Material3.DayNight"
-        android:orientation="vertical">
+        tools:parentTag="android.widget.FrameLayout"
+        tools:layout_width="match_parent"
+        tools:layout_height="match_parent">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/header_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="4dp"
             android:duplicateParentState="true"
             android:stateListAnimator="@animator/weather_detail_item_anim"
-            app:cardUseCompatPadding="false"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="0dp">
+            app:contentPadding="4dp"
+            style="@style/Widget.Material3.CardView.Elevated">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="78dp"
-                android:duplicateParentState="true"
-                android:layout_marginVertical="4dp">
+                android:layout_height="match_parent"
+                android:duplicateParentState="true">
 
                 <com.thewizrd.common.controls.IconControl
                     android:id="@+id/forecast_icon"
-                    android:layout_width="72dp"
-                    android:layout_height="0dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:adjustViewBounds="true"
                     android:gravity="center"
-                    android:paddingVertical="4dp"
+                    android:paddingVertical="8dp"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@id/body_textview"
                     app:layout_constraintEnd_toStartOf="@id/forecast_date"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_weight="1"
                     app:animate="true"
-                    tools:srcCompat="@drawable/wi_day_rain" />
+                    tools:srcCompat="@drawable/wi_day_rain"
+                    tools:weatherIcon="&#xf008;" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/forecast_date"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:gravity="bottom"
                     android:maxLines="1"
-                    android:padding="4dp"
+                    android:paddingHorizontal="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="4dp"
                     android:scrollbars="none"
-                    android:textSize="@dimen/weather_detail_item_textSize"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/forecast_condition"
+                    android:textAppearance="?textAppearanceTitleMedium"
+                    app:layout_constraintBottom_toTopOf="@id/forecast_hilo"
                     app:layout_constraintEnd_toStartOf="@id/expand_spacer"
-                    app:layout_constraintHorizontal_weight="3"
                     app:layout_constraintStart_toEndOf="@id/forecast_icon"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_weight="1"
                     tools:text="Someday XX" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/forecast_condition"
+                    android:id="@+id/forecast_hilo"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:maxLines="1"
-                    android:padding="4dp"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="2dp"
                     android:scrollbars="none"
-                    android:textSize="@dimen/weather_detail_item_textSize"
-                    app:layout_constraintBottom_toTopOf="@id/forecast_extra_barrier"
+                    android:textAppearance="?textAppearanceTitleSmall"
+                    app:layout_constraintBottom_toTopOf="@id/forecast_condition"
                     app:layout_constraintEnd_toStartOf="@id/expand_spacer"
                     app:layout_constraintStart_toEndOf="@id/forecast_icon"
                     app:layout_constraintTop_toBottomOf="@id/forecast_date"
                     app:layout_constraintVertical_chainStyle="spread"
-                    app:layout_constraintVertical_weight="1"
-                    tools:text="50° / 44° - Sprinkles early. Mostly cloudy. Mild" />
+                    tools:text="50° / 44°" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/forecast_condition"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:paddingHorizontal="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="4dp"
+                    android:scrollbars="none"
+                    android:textAppearance="?textAppearanceBodyMedium"
+                    app:layout_constraintBottom_toTopOf="@id/body_textview"
+                    app:layout_constraintEnd_toStartOf="@id/expand_spacer"
+                    app:layout_constraintStart_toEndOf="@id/forecast_icon"
+                    app:layout_constraintTop_toBottomOf="@id/forecast_hilo"
+                    app:layout_constraintVertical_chainStyle="spread"
+                    tools:text="Sprinkles early. Mostly cloudy. Mild" />
 
                 <androidx.constraintlayout.widget.Barrier
-                    android:id="@+id/forecast_extra_barrier"
+                    android:id="@+id/forecast_expander_barrier"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    app:barrierDirection="top"
-                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="end"
                     app:barrierAllowsGoneWidgets="true"
-                    app:layout_constraintVertical_weight="1"
-                    app:constraint_referenced_ids="forecast_extra_pop,forecast_extra_clouds,forecast_extra_windspeed" />
+                    app:constraint_referenced_ids="forecast_date,forecast_condition" />
 
-                <com.thewizrd.common.controls.TextViewWeatherIconDrawableCompat
-                    android:id="@+id/forecast_extra_pop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:drawablePadding="0dp"
-                    android:includeFontPadding="false"
-                    android:paddingStart="0dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="4dp"
-                    android:maxLines="1"
-                    android:scrollbars="none"
-                    android:textColor="?attr/colorSecondary"
-                    android:textSize="@dimen/weather_detail_item_textSize"
-                    android:visibility="gone"
-                    app:drawableHeight="20dp"
-                    app:drawableWidth="20dp"
-                    app:weatherIconStart="@{WeatherIcons.RAINDROP}"
-                    app:drawableTint="?attr/colorSecondary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/forecast_extra_clouds"
-                    app:layout_constraintStart_toEndOf="@id/forecast_icon"
-                    app:layout_constraintTop_toBottomOf="@id/forecast_condition"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintHeight_percent="0.3333"
-                    tools:drawableStart="@drawable/wi_raindrop"
-                    tools:text="100%"
-                    tools:visibility="visible" />
-
-                <com.thewizrd.common.controls.TextViewWeatherIconDrawableCompat
-                    android:id="@+id/forecast_extra_clouds"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:drawablePadding="4dp"
-                    android:includeFontPadding="false"
-                    android:paddingStart="0dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="4dp"
-                    android:maxLines="1"
-                    android:scrollbars="none"
-                    android:textColor="?attr/colorSecondary"
-                    android:textSize="@dimen/weather_detail_item_textSize"
-                    android:visibility="gone"
-                    app:drawableHeight="20dp"
-                    app:drawableWidth="20dp"
-                    app:weatherIconStart="@{WeatherIcons.CLOUDY}"
-                    app:drawableTint="?attr/colorSecondary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/forecast_extra_windspeed"
-                    app:layout_constraintStart_toEndOf="@id/forecast_extra_pop"
-                    app:layout_constraintTop_toBottomOf="@id/forecast_condition"
-                    app:layout_constraintHeight_percent="0.3333"
-                    tools:drawableStart="@drawable/wi_cloudy"
-                    tools:text="75%"
-                    tools:visibility="visible" />
-
-                <com.thewizrd.common.controls.TextViewWeatherIconDrawableCompat
-                    android:id="@+id/forecast_extra_windspeed"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:drawablePadding="4dp"
-                    android:includeFontPadding="false"
-                    android:paddingStart="0dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:scrollbars="none"
-                    android:textColor="?attr/colorSecondary"
-                    android:textSize="@dimen/weather_detail_item_textSize"
-                    android:visibility="gone"
-                    app:drawableHeight="20dp"
-                    app:drawableWidth="20dp"
-                    app:weatherIconStart="@{WeatherIcons.STRONG_WIND}"
-                    app:drawableTint="?attr/colorSecondary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/expand_spacer"
-                    app:layout_constraintStart_toEndOf="@id/forecast_extra_clouds"
-                    app:layout_constraintTop_toBottomOf="@id/forecast_condition"
-                    app:layout_constraintHeight_percent="0.3333"
-                    tools:drawableStart="@drawable/wi_strong_wind"
-                    tools:text="5 mph, WNW"
-                    tools:visibility="visible" />
-
-                <Space
+                <androidx.legacy.widget.Space
                     android:id="@+id/expand_spacer"
                     android:layout_width="12dp"
                     android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@id/forecast_expander_barrier"
                     app:layout_constraintEnd_toStartOf="@id/expand_icon" />
 
                 <CheckBox
@@ -198,34 +125,58 @@
                     android:background="@null"
                     android:focusable="false"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/body_textview"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:buttonTint="?colorOnSurface" />
 
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/forecast_body_barrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="top"
+                    app:barrierAllowsGoneWidgets="true"
+                    app:constraint_referenced_ids="body_textview" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/body_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/forecast_body_barrier"
+                    app:layout_constraintBottom_toTopOf="@id/details_container"
+                    tools:text="Today - Sprinkles early in the morning. Mostly cloudy with a high around 50."
+                    tools:visibility="visible" />
+
+                <com.thewizrd.simpleweather.controls.ExpandingGridView
+                    android:id="@+id/details_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:columnWidth="@dimen/detail_grid_column_width"
+                    android:gravity="center"
+                    android:numColumns="auto_fit"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:stretchMode="columnWidth"
+                    android:horizontalSpacing="4dp"
+                    android:verticalSpacing="4dp"
+                    android:scrollbars="none"
+                    android:scrollIndicators="none"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/body_textview"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:layout_height="300dp"
+                    tools:visibility="visible" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/body_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.Material3.CardView.Filled"
-            android:visibility="gone"
-            android:duplicateParentState="true"
-            app:cardUseCompatPadding="false"
-            app:cardCornerRadius="0dp"
-            tools:visibility="visible">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/body_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.25"
-                android:padding="16dp"
-                android:letterSpacing="0"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textSize="@dimen/weather_detail_item_textSize"
-                tools:text="Hello \t\t\t\t\t 50%\nHello" />
 
         </com.google.android.material.card.MaterialCardView>
 

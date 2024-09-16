@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.thewizrd.shared_resources.icons.WeatherIcons" />
+
+        <import type="com.thewizrd.shared_resources.utils.Colors" />
+
+        <import type="com.thewizrd.simpleweather.controls.graphs.ForecastRangeBarEntry" />
+
+        <variable
+            name="data"
+            type="ForecastRangeBarEntry" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        tools:layout_width="70dp"
+        tools:layout_height="250dp">
+
+        <LinearLayout
+            android:id="@+id/inner_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/bar_hi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:maxLines="1"
+                android:padding="4dp"
+                android:text="@{data.hiTempData.label}"
+                tools:text="89°" />
+
+            <com.thewizrd.simpleweather.controls.GradientBar
+                android:id="@+id/rangebar"
+                android:layout_width="6dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/bar_lo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:maxLines="1"
+                android:padding="4dp"
+                android:text="@{data.loTempData.label}"
+                tools:text="66°" />
+
+        </LinearLayout>
+
+        <com.thewizrd.common.controls.TextViewWeatherIconDrawableCompat
+            android:id="@+id/bar_pop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="1dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minHeight="8dp"
+            android:text="@{data.pop != null ? data.pop + `%` : null}"
+            android:textColor="@{Colors.SIMPLEBLUELIGHT}"
+            android:textSize="12sp"
+            app:drawableHeight="16dp"
+            app:drawableWidth="16dp"
+            android:drawablePadding="1dp"
+            app:drawableTint="@{Colors.SIMPLEBLUELIGHT}"
+            app:invisibleIfTrue="@{data.pop == null}"
+            app:weatherIconStart="@{WeatherIcons.UMBRELLA}"
+            tools:drawableTint="@color/colorPrimaryLight"
+            tools:textColor="@color/colorPrimaryLight"
+            tools:weatherIconStart="&#xf084;"
+            tools:text="100%" />
+
+        <com.thewizrd.common.controls.IconControl
+            android:id="@+id/bar_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:scaleType="fitEnd"
+            android:rotation="@{data.iconRotation}"
+            app:animate="true"
+            app:weatherIcon="@{data.weatherIcon}"
+            tools:srcCompat="@drawable/wi_day_sunny"
+            tools:weatherIcon="&#xf00d;" />
+
+        <TextView
+            android:id="@+id/bar_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="4dp"
+            android:text="@{data.date}"
+            tools:text="Sat 10" />
+
+    </LinearLayout>
+</layout>

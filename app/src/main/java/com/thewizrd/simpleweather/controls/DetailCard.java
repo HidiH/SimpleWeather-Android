@@ -1,5 +1,8 @@
 package com.thewizrd.simpleweather.controls;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -12,7 +15,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
-import androidx.core.graphics.ColorUtils;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.google.android.material.shape.MaterialShapeDrawable;
@@ -69,7 +72,7 @@ public class DetailCard extends LinearLayout {
 
     private void initialize(@NonNull Context context) {
         this.currentConfig = new Configuration(context.getResources().getConfiguration());
-        setOrientation(VERTICAL);
+        setOrientation(HORIZONTAL);
 
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = CardWeatherDetailBinding.inflate(inflater, this, true);
@@ -78,10 +81,11 @@ public class DetailCard extends LinearLayout {
                 ShapeAppearanceModel.builder(context, R.style.ShapeAppearance_Material3_MediumComponent, 0)
                         .build());
         bgDrawable.initializeElevationOverlay(context);
-        bgDrawable.setElevation(ContextUtils.dpToPx(context, 2f));
+        bgDrawable.setElevation(ContextUtils.dpToPx(context, 1f));
+        bgDrawable.setStrokeWidth(ContextUtils.dpToPx(context, 1f));
 
         final int size = context.getResources().getDimensionPixelSize(R.dimen.detail_card_size);
-        this.setLayoutParams(new ViewGroup.LayoutParams(size, size));
+        this.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
 
         this.setBackground(bgDrawable);
 
@@ -108,8 +112,9 @@ public class DetailCard extends LinearLayout {
     }
 
     private void updateColors() {
-        setBackgroundColor(ContextUtils.getAttrColor(getContext(), R.attr.colorSurface));
-        ImageViewCompat.setImageTintList(binding.detailIcon, ColorStateList.valueOf(ContextUtils.getAttrColor(getContext(), R.attr.colorAccent)));
+        setBackgroundColor(ContextUtils.getAttrColor(getContext(), R.attr.colorSurfaceContainer));
+        ImageViewCompat.setImageTintList(binding.detailIcon, ColorStateList.valueOf(ContextUtils.getAttrColor(getContext(), R.attr.colorPrimary)));
+        bgDrawable.setStrokeColor(ContextCompat.getColorStateList(getContext(), R.color.m3_card_stroke_color));
     }
 
     @Override
@@ -133,7 +138,17 @@ public class DetailCard extends LinearLayout {
 
     @Override
     public void setBackgroundColor(@ColorInt int color) {
-        bgDrawable.setFillColor(ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 0xB3)));
+        bgDrawable.setFillColor(ColorStateList.valueOf(color));
+    }
+
+    @Override
+    public float getElevation() {
+        return bgDrawable.getElevation();
+    }
+
+    @Override
+    public void setElevation(float elevation) {
+        bgDrawable.setElevation(elevation);
     }
 
     public void setStrokeColor(@ColorInt int color) {

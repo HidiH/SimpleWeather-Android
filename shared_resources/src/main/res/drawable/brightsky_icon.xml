@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:pathData="M2,0L98,0A2,2 0,0 1,100 2L100,98A2,2 0,0 1,98 100L2,100A2,2 0,0 1,0 98L0,2A2,2 0,0 1,2 0z"
+        android:strokeWidth="4.99999"
+        android:fillColor="#ffffff"
+        android:strokeColor="#00000000" />
+    <path
+        android:pathData="M12,10L88,10A2,2 0,0 1,90 12L90,88A2,2 0,0 1,88 90L12,90A2,2 0,0 1,10 88L10,12A2,2 0,0 1,12 10z"
+        android:strokeWidth="3.99999"
+        android:strokeColor="#00000000">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="15.78"
+                android:startY="15.78"
+                android:endX="85.31"
+                android:endY="85.31"
+                android:type="linear">
+                <item
+                    android:offset="0"
+                    android:color="#FFF0CA79" />
+                <item
+                    android:offset="1"
+                    android:color="#FFF1989C" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M-180.12,34.15L-180.12,34.15A0.53,0.18 0,0 1,-179.59 34.33L-179.59,34.33A0.53,0.18 0,0 1,-180.12 34.51L-180.12,34.51A0.53,0.18 0,0 1,-180.65 34.33L-180.65,34.33A0.53,0.18 0,0 1,-180.12 34.15z"
+        android:strokeWidth="4.99999"
+        android:fillColor="#f0ca79"
+        android:strokeColor="#00000000" />
+    <path
+        android:pathData="M-187.52,-67.7L-187.52,-67.7A0.63,0.47 0,0 1,-186.89 -67.23L-186.89,-67.23A0.63,0.47 0,0 1,-187.52 -66.75L-187.52,-66.75A0.63,0.47 0,0 1,-188.14 -67.23L-188.14,-67.23A0.63,0.47 0,0 1,-187.52 -67.7z"
+        android:strokeAlpha="0.281278"
+        android:strokeWidth="4.99999"
+        android:fillColor="#ffffff"
+        android:strokeColor="#00000000"
+        android:fillAlpha="0.281278" />
+</vector>

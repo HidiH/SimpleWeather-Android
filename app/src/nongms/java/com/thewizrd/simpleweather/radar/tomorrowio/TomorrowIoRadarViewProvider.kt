@@ -1,8 +1,6 @@
 package com.thewizrd.simpleweather.radar.tomorrowio
 
 import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Resources.NotFoundException
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,22 +13,20 @@ import androidx.annotation.RequiresApi
 import com.google.android.material.slider.Slider
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.databinding.RadarAnimateContainerBinding
-import com.thewizrd.simpleweather.extras.isRadarInteractionEnabled
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider
-import com.thewizrd.simpleweather.radar.rainviewer.RainViewerViewProvider
 import com.thewizrd.weather_api.keys.Keys
 import org.osmdroid.tileprovider.MapTileProviderBasic
+import org.osmdroid.tileprovider.modules.TileWriter
 import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.TilesOverlay
-import timber.log.Timber
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -166,11 +162,13 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
 
         if (!radarLayers.containsKey(mapFrame.timestamp)) {
             val overlay = TilesOverlay(
-                MapTileProviderBasic(context, TomorrowIoTileProvider(mapFrame)),
+                MapTileProviderBasic(context, TomorrowIoTileProvider(mapFrame), TileWriter()),
                 context,
                 false,
                 false
             )
+            overlay.loadingBackgroundColor = Colors.TRANSPARENT
+            overlay.loadingLineColor = Colors.TRANSPARENT
             overlay.isEnabled = false
             mapView.overlays.add(overlay)
             radarLayers[mapFrame.timestamp] = overlay
@@ -278,7 +276,7 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         MIN_ZOOM_LEVEL,
         MAX_ZOOM_LEVEL,
         256,
-        ".png",
+        "${mapFrame?.timestamp ?: ""}.png",
         arrayOf("https://api.tomorrow.io")
     ) {
         override fun getTileURLString(pMapTileIndex: Long): String? {
@@ -286,7 +284,9 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
             val x = MapTileIndex.getX(pMapTileIndex)
             val y = MapTileIndex.getY(pMapTileIndex)
 
-            if (mapFrame != null) {
+            val key = getKey()
+
+            if (mapFrame != null && !key.isNullOrBlank()) {
                 /* Define the URL pattern for the tile images */
                 return String.format(
                     Locale.ROOT,
@@ -295,7 +295,7 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
                     x,
                     y,
                     mapFrame.timestamp,
-                    getKey()
+                    key
                 )
             }
 

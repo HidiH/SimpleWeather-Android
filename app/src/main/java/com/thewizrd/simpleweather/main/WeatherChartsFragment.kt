@@ -215,11 +215,13 @@ class WeatherChartsFragment : ToolbarFragment() {
         minfcasts: List<MinutelyForecast>?,
         hrfcasts: List<HourlyForecast>?
     ): List<ForecastGraphViewModel> {
+        val ctx = requireContext()
+
         val graphTypes = ForecastGraphViewModel.ForecastGraphType.values()
         val data = ArrayList<ForecastGraphViewModel>(graphTypes.size)
 
         if (!minfcasts.isNullOrEmpty()) {
-            data.add(ForecastGraphViewModel().apply {
+            data.add(ForecastGraphViewModel(ctx).apply {
                 setMinutelyForecastData(minfcasts)
             })
         }
@@ -241,28 +243,28 @@ class WeatherChartsFragment : ToolbarFragment() {
                     //tempData = ForecastGraphViewModel()
 
                     if (hrfcasts.firstOrNull()?.extras?.pop != null || hrfcasts.lastOrNull()?.extras?.pop != null) {
-                        popData = ForecastGraphViewModel()
+                        popData = ForecastGraphViewModel(ctx)
                     }
                     if (hrfcasts.firstOrNull()?.windMph != null && hrfcasts.firstOrNull()?.windKph != null ||
                         hrfcasts.lastOrNull()?.windMph != null && hrfcasts.lastOrNull()?.windKph != null
                     ) {
-                        windData = ForecastGraphViewModel()
+                        windData = ForecastGraphViewModel(ctx)
                     }
                     if (hrfcasts.firstOrNull()?.extras?.qpfRainIn != null && hrfcasts.firstOrNull()?.extras?.qpfRainMm != null ||
                         hrfcasts.lastOrNull()?.extras?.qpfRainIn != null && hrfcasts.lastOrNull()?.extras?.qpfRainMm != null
                     ) {
-                        rainData = ForecastGraphViewModel()
+                        rainData = ForecastGraphViewModel(ctx)
                     }
                     if (hrfcasts.firstOrNull()?.extras?.qpfSnowIn != null && hrfcasts.firstOrNull()?.extras?.qpfSnowCm != null ||
                         hrfcasts.lastOrNull()?.extras?.qpfSnowIn != null && hrfcasts.lastOrNull()?.extras?.qpfSnowCm != null
                     ) {
-                        snowData = ForecastGraphViewModel()
+                        snowData = ForecastGraphViewModel(ctx)
                     }
                     if (hrfcasts.firstOrNull()?.extras?.uvIndex != null || hrfcasts.lastOrNull()?.extras?.uvIndex != null) {
-                        uviData = ForecastGraphViewModel()
+                        uviData = ForecastGraphViewModel(ctx)
                     }
                     if (hrfcasts.firstOrNull()?.extras?.humidity != null || hrfcasts.lastOrNull()?.extras?.humidity != null) {
-                        humidityData = ForecastGraphViewModel()
+                        humidityData = ForecastGraphViewModel(ctx)
                     }
                 }
 

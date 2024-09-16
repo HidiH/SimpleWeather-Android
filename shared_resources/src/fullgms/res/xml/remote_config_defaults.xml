@@ -141,6 +141,36 @@
         </value>
     </entry>
     <entry>
+        <key>rainviewer</key>
+        <value>
+            {
+            "enabled": true,
+            "locSource": "",
+            "newWeatherSource": ""
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>dwd</key>
+        <value>
+            {
+            "enabled": true,
+            "locSource": "LocIQ",
+            "newWeatherSource": ""
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>eccc</key>
+        <value>
+            {
+            "enabled": true,
+            "locSource": "LocIQ",
+            "newWeatherSource": ""
+            }
+        </value>
+    </entry>
+    <entry>
         <key>default_weather_provider</key>
         <value>weatherapi</value>
     </entry>

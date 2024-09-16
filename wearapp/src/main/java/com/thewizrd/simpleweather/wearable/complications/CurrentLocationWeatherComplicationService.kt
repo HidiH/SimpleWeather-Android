@@ -175,7 +175,9 @@ class CurrentLocationWeatherComplicationService : WeatherForecastComplicationSer
 
             ComplicationType.LONG_TEXT -> {
                 val builder = LongTextComplicationData.Builder(
-                    PlainComplicationText.Builder(weather.location!!.name).build(),
+                    PlainComplicationText.Builder(
+                        weather.location!!.name.split(',').firstOrNull() ?: weather.location!!.name
+                    ).build(),
                     contentDescription
                 ).setTitle(
                     PlainComplicationText.Builder(temp).build()
