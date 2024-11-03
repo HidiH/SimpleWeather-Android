@@ -250,6 +250,10 @@ class BrightSkyProvider : WeatherProviderImpl() {
         weather.condition!!.icon =
             getWeatherIcon(now.isBefore(sunrise) || now.isAfter(sunset), weather.condition!!.icon)
 
+        if (weather.condition!!.weather.isNullOrBlank()) {
+            weather.condition!!.weather = getWeatherCondition(weather.condition!!.icon)
+        }
+
         for (forecast in weather.forecast!!) {
             forecast.icon.let {
                 forecast.icon = getWeatherIcon(it)
