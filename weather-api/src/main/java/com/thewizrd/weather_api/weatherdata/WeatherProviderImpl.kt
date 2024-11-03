@@ -26,7 +26,6 @@ import com.thewizrd.weather_api.aqicn.AQICNProvider
 import com.thewizrd.weather_api.extras.isPremiumEnabled
 import com.thewizrd.weather_api.google.pollen.GooglePollenProvider
 import com.thewizrd.weather_api.nws.alerts.NWSAlertProvider
-import com.thewizrd.weather_api.tomorrow.TomorrowIOWeatherProvider
 import com.thewizrd.weather_api.utils.RateLimitedRequest
 import com.thewizrd.weather_api.utils.logMissingIcon
 import com.thewizrd.weather_api.weatherModule
@@ -190,11 +189,6 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
                 weather.condition!!.pollen = GooglePollenProvider().getPollenData(location)?.apply {
                     attribution = context.getString(R.string.api_google)
                 }
-            } else if (settingsManager.isDevSettingsEnabled()) {
-                weather.condition!!.pollen =
-                    TomorrowIOWeatherProvider().getPollenData(location)?.apply {
-                        attribution = context.getString(R.string.api_tomorrowio)
-                    }
             }
         }
 
