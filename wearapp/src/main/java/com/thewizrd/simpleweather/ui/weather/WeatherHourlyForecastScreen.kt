@@ -6,16 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
-import com.google.android.horologist.compose.navscaffold.scrollableColumn
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import com.thewizrd.common.controls.ForecastsListViewModel
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
@@ -42,7 +43,10 @@ fun WeatherHourlyForecastScreen(
         ScalingLazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .scrollableColumn(focusRequester, scrollStateViewModel.scrollState),
+                .rotaryScrollable(
+                    RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
+                    focusRequester
+                ),
             state = scrollStateViewModel.scrollState,
             anchorType = ScalingLazyListAnchorType.ItemCenter,
             contentPadding = PaddingValues(top = 48.dp)

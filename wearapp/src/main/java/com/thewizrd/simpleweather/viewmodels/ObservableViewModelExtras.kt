@@ -1,8 +1,12 @@
 package com.thewizrd.simpleweather.viewmodels
 
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.databinding.Observable
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Composable
 fun <T> Observable.observeAsState(propertyId: Int, block: () -> T): State<T> {
