@@ -8,8 +8,6 @@ import com.thewizrd.shared_resources.locationdata.LocationQuery
 object LocationUtils {
     // Source: https://gist.github.com/graydon/11198540
     private val US_BOUNDING_BOX = BoundingBox(24.9493, 49.5904, -125.0011, -66.9326)
-    private val USCA_BOUNDING_BOX =
-        BoundingBox(24.4825578966, 71.7611572494, -168.9184947286, -52.2436900411)
 
     // Canada
     private val CA_BOUNDING_BOX = BoundingBox(41.6765556, 83.3362128, -141.00275, -52.3231981)
@@ -57,19 +55,24 @@ object LocationUtils {
         }
     }
 
+    private fun inUSBounds(lat: Double, lon: Double) = US_BOUNDING_BOX.intersects(lat, lon)
+
     fun isUS(location: LocationData): Boolean {
         return if (!location.countryCode.isNullOrBlank()) {
-            isUS(location.countryCode)
+            isUS(location.countryCode) || inUSBounds(location.latitude, location.longitude)
         } else {
-            US_BOUNDING_BOX.intersects(location.latitude, location.longitude)
+            inUSBounds(location.latitude, location.longitude)
         }
     }
 
     fun isUS(location: LocationQuery): Boolean {
         return if (!location.locationCountry.isNullOrBlank()) {
-            isUS(location.locationCountry)
+            isUS(location.locationCountry) || inUSBounds(
+                location.locationLat,
+                location.locationLong
+            )
         } else {
-            US_BOUNDING_BOX.intersects(location.locationLat, location.locationLong)
+            inUSBounds(location.locationLat, location.locationLong)
         }
     }
 
@@ -77,26 +80,32 @@ object LocationUtils {
         return if (countryCode.isNullOrBlank()) {
             false
         } else {
-            isUS(countryCode) || countryCode.equals(
-                "CA",
-                ignoreCase = true
-            ) || countryCode.lowercase().contains("canada")
+            isUS(countryCode) || isCanada(countryCode)
         }
     }
 
+    private fun inUSorCanadaBounds(lat: Double, lon: Double) =
+        inUSBounds(lat, lon) || inCanadaBounds(lat, lon)
+
     fun isUSorCanada(location: LocationData): Boolean {
         return if (!location.countryCode.isNullOrBlank()) {
-            isUSorCanada(location.countryCode)
+            isUSorCanada(location.countryCode) || inUSorCanadaBounds(
+                location.latitude,
+                location.longitude
+            )
         } else {
-            USCA_BOUNDING_BOX.intersects(location.latitude, location.longitude)
+            inUSorCanadaBounds(location.latitude, location.longitude)
         }
     }
 
     fun isUSorCanada(location: LocationQuery): Boolean {
         return if (!location.locationCountry.isNullOrBlank()) {
-            isUSorCanada(location.locationCountry)
+            isUSorCanada(location.locationCountry) || inUSorCanadaBounds(
+                location.locationLat,
+                location.locationLong
+            )
         } else {
-            USCA_BOUNDING_BOX.intersects(location.locationLat, location.locationLong)
+            inUSorCanadaBounds(location.locationLat, location.locationLong)
         }
     }
 
