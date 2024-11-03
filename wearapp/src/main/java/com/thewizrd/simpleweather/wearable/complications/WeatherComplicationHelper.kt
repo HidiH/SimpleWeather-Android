@@ -48,7 +48,8 @@ object WeatherComplicationHelper {
             FeelsLikeComplicationService::class.java,
             DewPointComplicationService::class.java,
             SunriseSunsetComplicationService::class.java,
-            CurrentLocationFeelsLikeWeatherComplicationService::class.java
+            CurrentLocationFeelsLikeWeatherComplicationService::class.java,
+            PressureComplicationService::class.java
         )
 
         complicationServices.forEach {
