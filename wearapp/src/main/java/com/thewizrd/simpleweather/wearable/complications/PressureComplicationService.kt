@@ -7,6 +7,7 @@ import androidx.wear.watchface.complications.data.LongTextComplicationData
 import androidx.wear.watchface.complications.data.MonochromaticImage
 import androidx.wear.watchface.complications.data.NoDataComplicationData
 import androidx.wear.watchface.complications.data.PlainComplicationText
+import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.utils.Colors
@@ -24,7 +25,11 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
     }
 
     override val supportedComplicationTypes =
-        setOf(ComplicationType.SHORT_TEXT, ComplicationType.LONG_TEXT)
+        setOf(
+            ComplicationType.RANGED_VALUE,
+            ComplicationType.SHORT_TEXT,
+            ComplicationType.LONG_TEXT
+        )
     private val complicationIconResId = R.drawable.wi_barometer
 
     override fun getPreviewData(type: ComplicationType): ComplicationData? {
@@ -33,6 +38,20 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
         }
 
         return when (type) {
+            ComplicationType.RANGED_VALUE -> {
+                RangedValueComplicationData.Builder(
+                    30.3f, 26f, 32f,
+                    PlainComplicationText.Builder("Pressure: 30.3 inHg").build()
+                ).setMonochromaticImage(
+                    MonochromaticImage.Builder(
+                        Icon.createWithResource(this, complicationIconResId)
+                            .setTint(Colors.WHITESMOKE)
+                    ).build()
+                ).setText(
+                    PlainComplicationText.Builder("30.3 in").build()
+                ).build()
+            }
+
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
                     PlainComplicationText.Builder("30.3 in").build(),
@@ -119,6 +138,24 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
             String.format(LocaleUtils.getLocale(), "%s %s", pressureVal, pressureUnitShort)
 
         return when (dataType) {
+            ComplicationType.RANGED_VALUE -> {
+                RangedValueComplicationData.Builder(
+                    pressureIn, 26f, 32f,
+                    PlainComplicationText.Builder(
+                        String.format("%s: %s", getString(R.string.label_pressure), pressureStr)
+                    ).build()
+                ).setMonochromaticImage(
+                    MonochromaticImage.Builder(
+                        Icon.createWithResource(this, complicationIconResId)
+                            .setTint(Colors.WHITESMOKE)
+                    ).build()
+                ).setText(
+                    PlainComplicationText.Builder(pressureStrShort).build()
+                ).setTapAction(
+                    getTapIntent(this)
+                ).build()
+            }
+
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
                     PlainComplicationText.Builder(pressureStrShort).build(),
