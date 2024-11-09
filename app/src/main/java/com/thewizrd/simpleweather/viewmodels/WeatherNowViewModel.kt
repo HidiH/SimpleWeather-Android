@@ -237,6 +237,11 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
                     WeatherRequest.Builder()
                         .forceRefresh(forceRefresh)
                         .loadAlerts()
+                        .apply {
+                            if (forceRefresh) {
+                                loadForecasts()
+                            }
+                        }
                         .build()
                 )
             } else {
