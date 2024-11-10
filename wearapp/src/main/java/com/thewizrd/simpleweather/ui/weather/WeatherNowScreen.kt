@@ -106,10 +106,10 @@ import com.thewizrd.simpleweather.ui.components.IconAlignment
 import com.thewizrd.simpleweather.ui.components.LoadingContent
 import com.thewizrd.simpleweather.ui.components.WearDivider
 import com.thewizrd.simpleweather.ui.components.WeatherIcon
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState

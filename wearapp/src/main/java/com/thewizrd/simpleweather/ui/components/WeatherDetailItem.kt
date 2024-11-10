@@ -19,8 +19,8 @@ import androidx.wear.compose.ui.tooling.preview.WearPreviewFontScales
 import com.thewizrd.common.controls.DetailItemViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
 import org.jetbrains.annotations.TestOnly
 
 @Composable

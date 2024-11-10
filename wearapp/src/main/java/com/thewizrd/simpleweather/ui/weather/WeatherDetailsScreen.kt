@@ -29,7 +29,7 @@ import com.thewizrd.shared_resources.weatherdata.model.Beaufort
 import com.thewizrd.shared_resources.weatherdata.model.MoonPhase
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
 import com.thewizrd.simpleweather.ui.components.WeatherDetailItem
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 
 @Composable

@@ -158,9 +158,10 @@ abstract class WeatherCoroutinesTileService : SuspendingTileService() {
         resourceIds: List<String>
     ) {
         Timber.tag(this::class.java.name).d("produceRequestedResources: key = $wipKey")
-        Timber.tag(this::class.java.name).d("res - resIds = $resourceIds")
 
         val resources = resourceIds.takeIf { it.isNotEmpty() } ?: resources
+
+        Timber.tag(this::class.java.name).d("res - resIds = $resources")
 
         if (resources.isNotEmpty()) {
             resources.forEach { id ->

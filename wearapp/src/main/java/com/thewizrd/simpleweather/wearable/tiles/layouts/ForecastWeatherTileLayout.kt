@@ -19,21 +19,31 @@ import androidx.wear.protolayout.LayoutElementBuilders.TEXT_ALIGN_CENTER
 import androidx.wear.protolayout.LayoutElementBuilders.VERTICAL_ALIGN_CENTER
 import androidx.wear.protolayout.ModifiersBuilders.Modifiers
 import androidx.wear.protolayout.ModifiersBuilders.Padding
+import androidx.wear.protolayout.ResourceBuilders.Resources
 import androidx.wear.protolayout.material.Text
 import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.MultiSlotLayout
 import androidx.wear.protolayout.material.layouts.PrimaryLayout
+import androidx.wear.tiles.tooling.preview.TilePreviewData
+import androidx.wear.tiles.tooling.preview.TilePreviewHelper
+import com.google.android.horologist.tiles.images.drawableResToImageResource
+import com.google.android.horologist.tiles.images.toImageResource
 import com.thewizrd.common.controls.toUiModel
+import com.thewizrd.common.utils.ImageUtils
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeWatch
+import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.weatherdata.model.Forecast
 import com.thewizrd.shared_resources.weatherdata.model.Weather
+import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -242,4 +252,79 @@ internal class ForecastTileModel(context: Context, locale: Locale, forecast: For
     }.getOrElse {
         WeatherIcons.PLACEHOLDER
     }
+}
+
+@WearPreviewDevices
+private fun forecastWeatherTilePreview(context: Context): TilePreviewData {
+    val forecasts = MutableList(4) {
+        ForecastTileModel(context, Locale.getDefault(), Forecast().apply {
+            date = LocalDateTime.now().plusDays(it.toLong())
+            highF = 70f
+            highC = ConversionMethods.FtoC(70f)
+            lowF = 65f
+            lowC = ConversionMethods.FtoC(65f)
+            icon = WeatherIcons.CLOUDY
+        })
+    }
+
+    return TilePreviewData(
+        onTileResourceRequest = {
+            Resources.Builder()
+                .addIdToImageMapping(
+                    "$ID_WEATHER_ICON_PREFIX${WeatherIcons.DAY_SUNNY}",
+                    ImageUtils.tintedBitmapFromDrawable(
+                        context,
+                        R.drawable.wi_day_sunny,
+                        Colors.WHITE
+                    ).toImageResource()
+                )
+                .addIdToImageMapping(
+                    "$ID_WEATHER_ICON_PREFIX${WeatherIcons.NA}",
+                    ImageUtils.tintedBitmapFromDrawable(
+                        context,
+                        R.drawable.wi_na,
+                        Colors.WHITE
+                    ).toImageResource()
+                )
+                .addIdToImageMapping(
+                    ID_WEATHER_CHANCE_ICON,
+                    drawableResToImageResource(R.drawable.wi_umbrella_white)
+                )
+                .addIdToImageMapping(
+                    ID_WEATHER_CLOUDINESS_ICON,
+                    drawableResToImageResource(R.drawable.wi_cloudy)
+                )
+                .addIdToImageMapping(
+                    ID_WEATHER_WINDSPEED_ICON,
+                    drawableResToImageResource(R.drawable.wi_strong_wind)
+                )
+                .apply {
+                    forecasts.forEach { item ->
+                        addIdToImageMapping(
+                            "${ID_WEATHER_ICON_PREFIX}${item.icon}",
+                            ImageUtils.tintedBitmapFromDrawable(
+                                context,
+                                R.drawable.wi_cloudy,
+                                Colors.WHITE
+                            ).toImageResource()
+                        )
+                    }
+                }
+                .build()
+        },
+        onTileRequest = { request ->
+            TilePreviewHelper.singleTimelineEntryTileBuilder(
+                forecastWeatherTileLayout(
+                    context,
+                    request.deviceConfiguration,
+                    location = "New York",
+                    weatherIconId = "$ID_WEATHER_ICON_PREFIX${WeatherIcons.DAY_SUNNY}",
+                    currentTemperature = "70°",
+                    tempHi = "75°",
+                    tempLo = "60°",
+                    forecasts = forecasts
+                )
+            ).build()
+        }
+    )
 }

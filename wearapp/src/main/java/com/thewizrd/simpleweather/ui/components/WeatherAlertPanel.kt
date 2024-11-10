@@ -44,9 +44,9 @@ import com.thewizrd.shared_resources.utils.getDrawableFromAlertType
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlertSeverity
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlertType
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.dialog.Alert
 import com.thewizrd.simpleweather.ui.text.toAnnotatedString
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
 
 @Composable
 fun WeatherAlertPanel(

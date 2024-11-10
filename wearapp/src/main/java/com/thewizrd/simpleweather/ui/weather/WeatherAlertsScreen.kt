@@ -26,7 +26,7 @@ import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
 import com.thewizrd.simpleweather.ui.components.WeatherAlertPanel
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import java.time.ZonedDateTime
 

@@ -43,8 +43,8 @@ import androidx.wear.compose.material.dialog.Dialog
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.helpers.SimpleActionModeCallback
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.text.toAnnotatedString
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.utils.hideInputMethod
 
 @Composable
