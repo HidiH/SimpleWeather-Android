@@ -63,7 +63,7 @@ fun WeatherAlertsScreen(
 @Composable
 private fun PreviewWeatherAlertsScreen() {
     val context = LocalContext.current.also {
-        it.initializeDependencies()
+        it.initializeDependencies(isPhone = false)
     }
     val scrollState = rememberScalingLazyListState()
     val focusRequester = rememberFocusRequester()

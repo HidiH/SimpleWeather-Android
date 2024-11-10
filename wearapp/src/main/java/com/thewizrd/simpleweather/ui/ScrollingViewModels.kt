@@ -1,6 +1,7 @@
 package com.thewizrd.simpleweather.ui
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
@@ -27,5 +28,15 @@ class ScrollStateViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         saver = ScrollState.Saver
     ) {
         ScrollState(0)
+    }
+}
+
+class LazyGridStateViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+    @OptIn(SavedStateHandleSaveableApi::class)
+    val scrollState = savedStateHandle.saveable(
+        key = SCROLL_STATE_KEY,
+        saver = LazyGridState.Saver
+    ) {
+        LazyGridState()
     }
 }

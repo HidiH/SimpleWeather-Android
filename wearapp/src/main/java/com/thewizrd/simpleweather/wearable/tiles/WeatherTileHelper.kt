@@ -31,5 +31,15 @@ object WeatherTileHelper {
             context.applicationContext
         )
             .requestUpdate(CurrentWeatherGoogleTileProviderService::class.java)
+
+        TileService.getUpdater(
+            context.applicationContext
+        )
+            .requestUpdate(DetailsWeatherTileProviderService::class.java)
+    }
+
+    @JvmStatic
+    fun requestTileUpdate(context: Context, tileService: Class<out TileService>) {
+        TileService.getUpdater(context.applicationContext).requestUpdate(tileService)
     }
 }

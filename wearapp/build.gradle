@@ -161,7 +161,6 @@ dependencies {
     implementation "androidx.wear.tiles:tiles-tooling-preview:$wear_tiles_version"
     implementation 'androidx.wear.protolayout:protolayout-material:1.2.1'
     implementation "com.google.android.horologist:horologist-tiles:$horologist_version"
-    implementation "com.google.android.horologist:horologist-compose-tools:$horologist_version"
 
     // WearOS Compose
     implementation "androidx.activity:activity-compose:$activity_version"
@@ -182,6 +181,10 @@ dependencies {
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     implementation "com.google.android.horologist:horologist-compose-layout:$horologist_version"
+    implementation "com.google.android.horologist:horologist-compose-material:$horologist_version"
+    implementation "com.google.android.horologist:horologist-compose-tools:$horologist_version"
+
+    implementation 'sh.calvin.reorderable:reorderable:2.4.0'
 
     androidTestImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"

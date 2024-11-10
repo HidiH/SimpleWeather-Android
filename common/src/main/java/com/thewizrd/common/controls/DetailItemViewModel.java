@@ -14,19 +14,30 @@ import com.thewizrd.shared_resources.weatherdata.model.Beaufort;
 import com.thewizrd.shared_resources.weatherdata.model.MoonPhase;
 import com.thewizrd.shared_resources.weatherdata.model.UV;
 
+import java.util.Objects;
+
 public class DetailItemViewModel {
     @NonNull
     private WeatherDetailsType detailsType;
     private CharSequence label;
     private String icon;
     private CharSequence value;
+    private CharSequence shortValue;
     private int iconRotation;
 
     public DetailItemViewModel(@NonNull WeatherDetailsType detailsType, CharSequence value) {
         this(detailsType, value, 0);
     }
 
+    public DetailItemViewModel(@NonNull WeatherDetailsType detailsType, CharSequence value, CharSequence shortValue) {
+        this(detailsType, value, shortValue, 0);
+    }
+
     public DetailItemViewModel(@NonNull WeatherDetailsType detailsType, CharSequence value, int iconRotation) {
+        this(detailsType, value, value, iconRotation);
+    }
+
+    public DetailItemViewModel(@NonNull WeatherDetailsType detailsType, CharSequence value, CharSequence shortValue, int iconRotation) {
         final Context context = SharedModuleKt.getSharedDeps().getContext();
         this.detailsType = detailsType;
 
@@ -122,6 +133,7 @@ public class DetailItemViewModel {
         }
 
         this.value = value;
+        this.shortValue = shortValue;
         this.iconRotation = iconRotation;
     }
 
@@ -166,6 +178,8 @@ public class DetailItemViewModel {
                 this.value = context.getString(R.string.moonphase_wancrescent);
                 break;
         }
+
+        this.shortValue = value;
     }
 
     public DetailItemViewModel(@NonNull Beaufort.BeaufortScale beaufortScale) {
@@ -229,6 +243,8 @@ public class DetailItemViewModel {
                 this.value = context.getString(R.string.beaufort_12);
                 break;
         }
+
+        this.shortValue = String.format(LocaleUtils.getLocale(), "%d", beaufortScale.ordinal());
     }
 
     public DetailItemViewModel(@NonNull AirQuality aqi) {
@@ -251,6 +267,8 @@ public class DetailItemViewModel {
         } else if (aqi.getIndex() >= 301) {
             this.value = String.format(LocaleUtils.getLocale(), "%d, %s", aqi.getIndex(), context.getString(R.string.aqi_level_300));
         }
+
+        this.shortValue = String.format(LocaleUtils.getLocale(), "%d", aqi.getIndex());
     }
 
     public DetailItemViewModel(@NonNull UV uv) {
@@ -271,6 +289,8 @@ public class DetailItemViewModel {
         } else if (uv.getIndex() >= 11) {
             this.value = context.getString(R.string.uv_11);
         }
+
+        this.shortValue = String.format(LocaleUtils.getLocale(), "%d", Math.round(uv.getIndex()));
     }
 
     @RestrictTo(RestrictTo.Scope.TESTS)
@@ -311,6 +331,14 @@ public class DetailItemViewModel {
         this.value = value;
     }
 
+    public CharSequence getShortValue() {
+        return shortValue;
+    }
+
+    public void setShortValue(CharSequence value) {
+        this.shortValue = value;
+    }
+
     public int getIconRotation() {
         return iconRotation;
     }
@@ -322,26 +350,12 @@ public class DetailItemViewModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DetailItemViewModel that = (DetailItemViewModel) o;
-
-        if (getIconRotation() != that.getIconRotation()) return false;
-        if (getDetailsType() != that.getDetailsType()) return false;
-        if (getLabel() != null ? !getLabel().equals(that.getLabel()) : that.getLabel() != null)
-            return false;
-        if (getIcon() != null ? !getIcon().equals(that.getIcon()) : that.getIcon() != null)
-            return false;
-        return getValue() != null ? getValue().equals(that.getValue()) : that.getValue() == null;
+        if (!(o instanceof DetailItemViewModel that)) return false;
+        return iconRotation == that.iconRotation && detailsType == that.detailsType && Objects.equals(label, that.label) && Objects.equals(icon, that.icon) && Objects.equals(value, that.value) && Objects.equals(shortValue, that.shortValue);
     }
 
     @Override
     public int hashCode() {
-        int result = getDetailsType() != null ? getDetailsType().hashCode() : 0;
-        result = 31 * result + (getLabel() != null ? getLabel().hashCode() : 0);
-        result = 31 * result + (getIcon() != null ? getIcon().hashCode() : 0);
-        result = 31 * result + (getValue() != null ? getValue().hashCode() : 0);
-        result = 31 * result + getIconRotation();
-        return result;
+        return Objects.hash(detailsType, label, icon, value, shortValue, iconRotation);
     }
 }

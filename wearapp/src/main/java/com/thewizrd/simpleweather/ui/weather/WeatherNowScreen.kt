@@ -254,6 +254,8 @@ fun WeatherNowScreen(
 
                 // Navigation divider
                 WearDivider()
+                DetailsTileEditorButton(navController = navController)
+                WearDivider()
 
                 ChangeLocationButton(activity = activity)
                 SettingsButton(activity = activity)
@@ -797,6 +799,18 @@ private fun DetailsButton(
 }
 
 @Composable
+private fun DetailsTileEditorButton(
+    navController: NavHostController
+) {
+    NavigationButton(
+        label = stringResource(id = R.string.pref_title_detailstileeditor),
+        iconDrawableId = R.drawable.ic_mode_edit_white_24dp
+    ) {
+        navController.navigate(Screen.DetailsTileEditor.route)
+    }
+}
+
+@Composable
 private fun ChangeLocationButton(
     activity: Activity
 ) {
@@ -890,7 +904,7 @@ private fun tempTextColor(temp: CharSequence?, @Units.TemperatureUnits tempUnit:
 @Composable
 private fun PreviewWeatherNowScreen() {
     val context = LocalContext.current.run {
-        initializeDependencies()
+        initializeDependencies(isPhone = false)
 
         val oldConfig = resources.configuration
         val newConfig = Configuration(oldConfig)

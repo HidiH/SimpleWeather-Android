@@ -20,17 +20,20 @@ import androidx.wear.tiles.TileBuilders.Tile
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.tiles.SuspendingTileService
 import com.thewizrd.common.utils.ImageUtils
+import com.thewizrd.common.utils.ImageUtils.rotate
 import com.thewizrd.common.weatherdata.WeatherDataLoader
 import com.thewizrd.common.weatherdata.WeatherRequest
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.icons.WeatherIconProvider
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
+import com.thewizrd.shared_resources.utils.NumberUtils.tryParseInt
 import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.LaunchActivity
 import com.thewizrd.simpleweather.services.WeatherUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
+import com.thewizrd.simpleweather.wearable.tiles.layouts.ID_ROTATION_PREFIX
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -165,12 +168,21 @@ abstract class WeatherCoroutinesTileService : SuspendingTileService() {
 
         if (resources.isNotEmpty()) {
             resources.forEach { id ->
-                if (id.startsWith(ID_WEATHER_ICON_PREFIX)) {
-                    val icon = id.removePrefix(ID_WEATHER_ICON_PREFIX)
+                var resId = id
+                var rotation = 0
+
+                if (resId.startsWith(ID_ROTATION_PREFIX)) {
+                    resId = resId.removePrefix(ID_ROTATION_PREFIX)
+                    rotation = resId.split(':').firstOrNull().tryParseInt(0)
+                    resId = resId.substring(resId.indexOfFirst { it == ':' } + 1)
+                }
+
+                if (resId.startsWith(ID_WEATHER_ICON_PREFIX)) {
+                    val icon = resId.removePrefix(ID_WEATHER_ICON_PREFIX)
 
                     this.addIdToImageMapping(
                         id,
-                        createImageResourceFromWeatherIcon(wipKey, icon)
+                        createImageResourceFromWeatherIcon(wipKey, icon, rotation)
                     )
                 } else {
                     produceRequestedResource(deviceParameters, id)
@@ -196,26 +208,44 @@ abstract class WeatherCoroutinesTileService : SuspendingTileService() {
             .build()
     }
 
-    private fun createImageResourceFromWeatherIcon(wipKey: String, icon: String): ImageResource {
+    protected fun createImageResourceFromWeatherIcon(
+        wipKey: String,
+        icon: String,
+        rotation: Int = 0
+    ): ImageResource {
         val wim = sharedDeps.weatherIconsManager
-        return createImageResourceFromWeatherIcon(wim.getIconProvider(wipKey), icon)
+        return createImageResourceFromWeatherIcon(wim.getIconProvider(wipKey), icon, rotation)
     }
 
-    private fun createImageResourceFromWeatherIcon(icon: String): ImageResource {
+    protected fun createImageResourceFromWeatherIcon(
+        icon: String,
+        rotation: Int = 0
+    ): ImageResource {
         val wim = sharedDeps.weatherIconsManager
-        return createImageResourceFromWeatherIcon(wim.iconProvider as WeatherIconProvider, icon)
+        return createImageResourceFromWeatherIcon(
+            wim.iconProvider as WeatherIconProvider,
+            icon,
+            rotation
+        )
     }
 
     private fun createImageResourceFromWeatherIcon(
         iconProvider: WeatherIconProvider,
-        icon: String
+        icon: String,
+        rotation: Int = 0
     ): ImageResource {
         val darkIconCtx = applicationContext.getThemeContextOverride(false)
 
         return ImageUtils.bitmapFromDrawable(
             darkIconCtx,
             iconProvider.getWeatherIconResource(icon)
-        ).run {
+        ).let {
+            if (rotation != 0) {
+                it.rotate(rotation.toFloat())
+            } else {
+                it
+            }
+        }.run {
             val buffer = ByteArrayOutputStream().apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, this)
