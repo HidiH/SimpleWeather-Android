@@ -28,6 +28,7 @@ abstract class BaseWeatherWidgetPreferenceFragment : AbstractWeatherWidgetPrefer
     protected lateinit var bgChoicePref: ListPreference
     protected lateinit var bgColorPref: ColorPreference
     protected lateinit var txtColorPref: ColorPreference
+    protected lateinit var txtShadowPref: SwitchPreference
     protected lateinit var bgStylePref: ListPreference
 
     protected lateinit var textSizePref: SliderPreference
@@ -154,6 +155,7 @@ abstract class BaseWeatherWidgetPreferenceFragment : AbstractWeatherWidgetPrefer
         bgStylePref = findPreference(KEY_BGSTYLE)!!
         bgColorPref = findPreference(KEY_BGCOLORCODE)!!
         txtColorPref = findPreference(KEY_TXTCOLORCODE)!!
+        txtShadowPref = findPreference(KEY_TXTSHADOW)!!
 
         bgChoicePref.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
@@ -204,7 +206,14 @@ abstract class BaseWeatherWidgetPreferenceFragment : AbstractWeatherWidgetPrefer
                 true
             }
 
-        val styles = WidgetUtils.WidgetBackgroundStyle.values()
+        txtShadowPref.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                mWidgetOptions.putBoolean(KEY_TXTSHADOW, newValue as Boolean)
+                updateWidgetView()
+                true
+            }
+
+        val styles = WidgetUtils.WidgetBackgroundStyle.entries
         val styleEntries = arrayOfNulls<CharSequence>(styles.size)
         val styleEntryValues = arrayOfNulls<CharSequence>(styles.size)
 
@@ -232,15 +241,14 @@ abstract class BaseWeatherWidgetPreferenceFragment : AbstractWeatherWidgetPrefer
         val mWidgetBGStyle = WidgetUtils.getBackgroundStyle(mAppWidgetId)
         @ColorInt val mWidgetBackgroundColor = WidgetUtils.getBackgroundColor(mAppWidgetId)
         @ColorInt val mWidgetTextColor = WidgetUtils.getTextColor(mAppWidgetId)
+        val mWidgetTextShadow = WidgetUtils.useTextShadow(mAppWidgetId)
 
         if (WidgetUtils.isBackgroundOptionalWidget(mWidgetType)) {
             bgChoicePref.setValueIndex(mWidgetBackground.value)
             bgChoicePref.callChangeListener(bgChoicePref.value)
 
             bgStylePref.setValueIndex(
-                listOf(*WidgetUtils.WidgetBackgroundStyle.values()).indexOf(
-                    mWidgetBGStyle
-                )
+                WidgetUtils.WidgetBackgroundStyle.entries.indexOf(mWidgetBGStyle)
             )
             bgStylePref.callChangeListener(bgStylePref.value)
 
@@ -248,6 +256,9 @@ abstract class BaseWeatherWidgetPreferenceFragment : AbstractWeatherWidgetPrefer
             bgColorPref.callChangeListener(bgColorPref.color)
             txtColorPref.color = mWidgetTextColor
             txtColorPref.callChangeListener(txtColorPref.color)
+
+            txtShadowPref.isChecked = mWidgetTextShadow
+            txtShadowPref.callChangeListener(mWidgetTextShadow)
 
             findPreference<Preference>(KEY_BACKGROUND)!!.isVisible = true
             if (WidgetUtils.isBackgroundCustomOnlyWidget(mWidgetType)) {
@@ -328,6 +339,7 @@ abstract class BaseWeatherWidgetPreferenceFragment : AbstractWeatherWidgetPrefer
         WidgetUtils.setWidgetBackground(mAppWidgetId, bgChoicePref.value.toInt())
         WidgetUtils.setBackgroundColor(mAppWidgetId, bgColorPref.color)
         WidgetUtils.setTextColor(mAppWidgetId, txtColorPref.color)
+        WidgetUtils.setUseTextShadow(mAppWidgetId, txtShadowPref.isChecked)
         WidgetUtils.setBackgroundStyle(mAppWidgetId, bgStylePref.value.toInt())
         WidgetUtils.setSettingsButtonHidden(mAppWidgetId, hideSettingsBtnPref.isChecked)
         WidgetUtils.setRefreshButtonHidden(mAppWidgetId, hideRefreshBtnPref.isChecked)

@@ -69,7 +69,6 @@
 
             <TextClock
                 android:id="@+id/clock_panel"
-                style="@style/ShadowTextHeavy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
@@ -85,7 +84,6 @@
 
             <TextClock
                 android:id="@+id/date_panel"
-                style="@style/ShadowText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
@@ -99,7 +97,6 @@
 
             <TextView
                 android:id="@+id/location_name"
-                style="@style/ShadowText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
@@ -158,7 +155,6 @@
 
                 <TextView
                     android:id="@+id/condition_temp"
-                    style="@style/ShadowText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
@@ -172,7 +168,6 @@
 
                 <TextView
                     android:id="@+id/condition_hilo"
-                    style="@style/ShadowText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"

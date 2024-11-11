@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
@@ -17,6 +18,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getOrientation
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
+import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.graphs.BarGraphData
@@ -42,6 +44,7 @@ import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDESETTINGSBTN
 import com.thewizrd.simpleweather.widgets.preferences.KEY_ICONSIZE
 import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
 import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTSHADOW
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -84,6 +87,13 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
 
         val textColor =
             newOptions.get(KEY_TXTCOLORCODE) as? Int ?: WidgetUtils.getTextColor(appWidgetId)
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowText)
+        } else {
+            null
+        }
 
         updateViews.setTextColor(
             R.id.location_name,
@@ -113,7 +123,10 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
         updateViews.setImageViewResource(R.id.settings_button, R.drawable.ic_outline_settings_24)
 
         // Location Name
-        updateViews.setTextViewText(R.id.location_name, weather.location)
+        updateViews.setTextViewText(
+            R.id.location_name,
+            weather.location?.applySpan(textAppearanceSpan)
+        )
         updateViews.setTextViewTextSize(
             R.id.location_name,
             TypedValue.COMPLEX_UNIT_SP,
@@ -182,6 +195,13 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
         } else {
             Colors.WHITE
         }
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowText)
+        } else {
+            null
+        }
 
         val graphType = newOptions.getSerializable(KEY_GRAPHTYPEOPTION) as? WidgetGraphType
             ?: WidgetUtils.getWidgetGraphType(appWidgetId)
@@ -216,42 +236,46 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                     updateViews.setTextViewText(
                         R.id.graph_label,
                         context.getString(R.string.label_hourlyforecast)
+                            .applySpan(textAppearanceSpan)
                     )
                 }
                 WidgetGraphType.Precipitation -> {
                     updateViews.setTextViewText(
                         R.id.graph_label,
                         context.getString(R.string.label_precipitation)
+                            .applySpan(textAppearanceSpan)
                     )
                 }
                 WidgetGraphType.Wind -> {
                     updateViews.setTextViewText(
                         R.id.graph_label,
-                        context.getString(R.string.label_wind)
+                        context.getString(R.string.label_wind).applySpan(textAppearanceSpan)
                     )
                 }
                 WidgetGraphType.Humidity -> {
                     updateViews.setTextViewText(
                         R.id.graph_label,
-                        context.getString(R.string.label_humidity)
+                        context.getString(R.string.label_humidity).applySpan(textAppearanceSpan)
                     )
                 }
                 WidgetGraphType.UVIndex -> {
                     updateViews.setTextViewText(
                         R.id.graph_label,
-                        context.getString(R.string.label_uv)
+                        context.getString(R.string.label_uv).applySpan(textAppearanceSpan)
                     )
                 }
                 WidgetGraphType.AirQuality -> {
                     updateViews.setTextViewText(
                         R.id.graph_label,
                         context.getString(R.string.label_airquality_short)
+                            .applySpan(textAppearanceSpan)
                     )
                 }
                 WidgetGraphType.Minutely -> {
                     updateViews.setTextViewText(
                         R.id.graph_label,
                         context.getString(R.string.label_precipitation)
+                            .applySpan(textAppearanceSpan)
                     )
                 }
             }
@@ -305,6 +329,8 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
         val viewCtx = context.getThemeContextOverride(
             ColorsUtils.isSuperLight(backgroundColor)
         )
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
 
         val txtSizeMultiplier =
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
@@ -328,6 +354,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                     setDrawDataLabels(true)
                     setDrawIconLabels(true)
                     setBottomTextColor(textColor)
+                    setBottomTextShadow(useTextShadow)
                     setFillParentWidth(true)
 
                     setBottomTextSize(graphTextSize)
@@ -350,6 +377,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                     setDrawDataLabels(true)
                     setDrawIconLabels(false)
                     setBottomTextColor(textColor)
+                    setBottomTextShadow(useTextShadow)
                     setFillParentWidth(true)
 
                     setBottomTextSize(graphTextSize)
@@ -388,6 +416,8 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                         setDrawDotPoints(false)
                         setFillParentWidth(false)
                         setBottomTextColor(textColor)
+                        setBottomTextShadow(useTextShadow)
+                        setDrawSeriesLabels(graphData.dataSets.any { !it.seriesLabel.isNullOrEmpty() })
 
                         setBottomTextSize(graphTextSize)
                         setIconSize(graphIconSize)
@@ -399,6 +429,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                         setDrawDataLabels(true)
                         setDrawIconLabels(false)
                         setBottomTextColor(textColor)
+                        setBottomTextShadow(useTextShadow)
 
                         setBottomTextSize(graphTextSize)
                         setIconSize(graphIconSize)
@@ -450,6 +481,8 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                         setDrawDotPoints(false)
                         setFillParentWidth(true)
                         setBottomTextColor(textColor)
+                        setBottomTextShadow(useTextShadow)
+                        setDrawSeriesLabels(graphData.dataSets.any { !it.seriesLabel.isNullOrEmpty() })
 
                         setBottomTextSize(graphTextSize)
                         setIconSize(graphIconSize)
@@ -461,6 +494,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                         setDrawDataLabels(true)
                         setDrawIconLabels(false)
                         setBottomTextColor(textColor)
+                        setBottomTextShadow(useTextShadow)
 
                         setBottomTextSize(graphTextSize)
                         setIconSize(graphIconSize)

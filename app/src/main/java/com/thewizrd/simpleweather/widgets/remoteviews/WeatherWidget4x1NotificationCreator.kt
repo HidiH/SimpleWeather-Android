@@ -3,6 +3,7 @@ package com.thewizrd.simpleweather.widgets.remoteviews
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
+import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
@@ -16,12 +17,20 @@ import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
+import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider4x1Notification
 import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
 import com.thewizrd.simpleweather.widgets.WidgetUtils
-import com.thewizrd.simpleweather.widgets.preferences.*
-import java.util.*
+import com.thewizrd.simpleweather.widgets.preferences.KEY_BGCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDELOCNAME
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDEREFRESHBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDESETTINGSBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_ICONSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTSHADOW
+import java.util.Locale
 
 class WeatherWidget4x1NotificationCreator(context: Context) : WidgetRemoteViewCreator(context) {
     private fun generateRemoteViews(): RemoteViews {
@@ -53,9 +62,16 @@ class WeatherWidget4x1NotificationCreator(context: Context) : WidgetRemoteViewCr
             newOptions.get(KEY_BGCOLORCODE) as? Int ?: WidgetUtils.getBackgroundColor(appWidgetId)
         val textColor =
             newOptions.get(KEY_TXTCOLORCODE) as? Int ?: WidgetUtils.getTextColor(appWidgetId)
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
         val viewCtx = context.getThemeContextOverride(
             ColorsUtils.isSuperLight(backgroundColor)
         )
+        val textAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(viewCtx, R.style.ShadowText)
+        } else {
+            null
+        }
 
         val txtSizeMultiplier =
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
@@ -173,15 +189,20 @@ class WeatherWidget4x1NotificationCreator(context: Context) : WidgetRemoteViewCr
                 Locale.ROOT, "%s - %s",
                 if (weather.curTemp.isNullOrBlank()) WeatherIcons.PLACEHOLDER else weather.curTemp,
                 weather.curCondition
-            )
+            ).applySpan(textAppearanceSpan)
         )
         updateViews.setTextViewText(
             R.id.condition_hi,
-            if (weather.hiTemp.isNullOrBlank()) WeatherIcons.PLACEHOLDER else weather.hiTemp
+            (if (weather.hiTemp.isNullOrBlank()) WeatherIcons.PLACEHOLDER else weather.hiTemp)?.applySpan(
+                textAppearanceSpan
+            )
         )
+        updateViews.setTextViewText(R.id.divider, "|".applySpan(textAppearanceSpan))
         updateViews.setTextViewText(
             R.id.condition_lo,
-            if (weather.loTemp.isNullOrBlank()) WeatherIcons.PLACEHOLDER else weather.loTemp
+            (if (weather.loTemp.isNullOrBlank()) WeatherIcons.PLACEHOLDER else weather.loTemp)?.applySpan(
+                textAppearanceSpan
+            )
         )
         updateViews.setViewVisibility(
             R.id.condition_hilo_layout,
@@ -189,7 +210,10 @@ class WeatherWidget4x1NotificationCreator(context: Context) : WidgetRemoteViewCr
         )
 
         if (chanceModel != null) {
-            updateViews.setTextViewText(R.id.weather_pop, chanceModel.value)
+            updateViews.setTextViewText(
+                R.id.weather_pop,
+                chanceModel.value?.applySpan(textAppearanceSpan)
+            )
             updateViews.setViewVisibility(R.id.weather_pop_layout, View.VISIBLE)
         } else {
             updateViews.setViewVisibility(R.id.weather_pop_layout, View.GONE)
@@ -198,7 +222,7 @@ class WeatherWidget4x1NotificationCreator(context: Context) : WidgetRemoteViewCr
         if (windModel != null) {
             var speed = if (windModel.value.isNullOrEmpty()) "" else windModel.value.toString()
             speed = speed.split(",").toTypedArray()[0]
-            updateViews.setTextViewText(R.id.weather_windspeed, speed)
+            updateViews.setTextViewText(R.id.weather_windspeed, speed.applySpan(textAppearanceSpan))
             updateViews.setViewVisibility(R.id.weather_wind_layout, View.VISIBLE)
         } else {
             updateViews.setViewVisibility(R.id.weather_wind_layout, View.GONE)
@@ -232,7 +256,10 @@ class WeatherWidget4x1NotificationCreator(context: Context) : WidgetRemoteViewCr
         updateViews.setImageViewResource(R.id.settings_button, R.drawable.ic_outline_settings_24)
 
         // Location Name
-        updateViews.setTextViewText(R.id.location_name, weather.location)
+        updateViews.setTextViewText(
+            R.id.location_name,
+            weather.location?.applySpan(textAppearanceSpan)
+        )
 
         updateViews.setViewVisibility(
             R.id.location_name,

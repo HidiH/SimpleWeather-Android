@@ -11,6 +11,7 @@ import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.sharedDeps
 
+@JvmOverloads
 fun Context.initializeDependencies(isPhone: Boolean = true) {
     val appContext = this.applicationContext
 

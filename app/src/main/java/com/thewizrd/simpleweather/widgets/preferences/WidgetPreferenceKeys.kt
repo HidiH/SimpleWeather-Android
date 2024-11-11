@@ -16,6 +16,7 @@ internal const val KEY_BGCOLOR = "key_bgcolor"
 internal const val KEY_BGCOLORCODE = "key_bgcolorcode"
 internal const val KEY_TXTCOLORCODE = "key_txtcolorcode"
 internal const val KEY_BGSTYLE = "key_bgstyle"
+internal const val KEY_TXTSHADOW = "key_txtshadow"
 
 internal const val KEY_FORECAST = "key_forecast"
 internal const val KEY_FORECASTOPTION = "key_fcastoption"

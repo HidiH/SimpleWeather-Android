@@ -6,6 +6,9 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Build
 import android.text.Layout
+import android.text.ParcelableSpan
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.TypedValue
@@ -56,5 +59,15 @@ object TextUtils {
         }
 
         return Rect(0, 0, textLayout.width, textLayout.height)
+    }
+
+    fun CharSequence.applySpan(span: ParcelableSpan?): CharSequence {
+        return if (span != null) {
+            SpannableStringBuilder.valueOf(this).apply {
+                setSpan(span, 0, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        } else {
+            this
+        }
     }
 }

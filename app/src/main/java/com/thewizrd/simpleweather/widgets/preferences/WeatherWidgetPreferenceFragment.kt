@@ -6,6 +6,7 @@ import android.content.Intent
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.text.style.TextAppearanceSpan
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -37,6 +38,7 @@ import com.thewizrd.shared_resources.locationdata.toLocationData
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.ArrayListPreference
@@ -383,9 +385,15 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
     private fun updateLocationView() {
         val locationView = binding.widgetContainer.findViewById<TextView>(R.id.location_name)
         if (locationView != null) {
-            locationView.text = lastSelectedValue?.let {
+            locationView.text = (lastSelectedValue?.let {
                 locationPref.findEntryFromValue(it)?.toString()
-            } ?: locationView.context.getString(R.string.pref_location)
+            } ?: locationView.context.getString(R.string.pref_location)).run {
+                if (WidgetUtils.isBackgroundOptionalWidget(mWidgetType) && txtShadowPref.isChecked) {
+                    applySpan(TextAppearanceSpan(locationView.context, R.style.ShadowText))
+                } else {
+                    this
+                }
+            }
 
             locationView.isVisible = !hideLocNamePref.isChecked
         }

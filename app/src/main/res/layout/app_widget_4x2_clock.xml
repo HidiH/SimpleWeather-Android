@@ -60,7 +60,6 @@
 
         <TextClock
             android:id="@+id/clock_panel"
-            style="@style/ShadowTextHeavy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:format12Hour="@string/clock_12_hours_format"
@@ -76,7 +75,6 @@
 
         <TextClock
             android:id="@+id/date_panel"
-            style="@style/ShadowText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:format12Hour="@string/widget_4x1_date_format"
@@ -91,7 +89,6 @@
 
         <TextView
             android:id="@+id/location_name"
-            style="@style/ShadowText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -135,7 +132,6 @@
 
                 <TextView
                     android:id="@+id/condition_temp"
-                    style="@style/ShadowText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -149,7 +145,6 @@
 
                 <TextView
                     android:id="@+id/condition_weather"
-                    style="@style/ShadowText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
