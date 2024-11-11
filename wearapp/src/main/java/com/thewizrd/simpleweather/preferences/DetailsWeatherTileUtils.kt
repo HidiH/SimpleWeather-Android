@@ -4,9 +4,9 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.wear.protolayout.material.layouts.LayoutDefaults.MultiButtonLayoutDefaults
-import com.google.common.reflect.TypeToken
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.shared_resources.appLib
+import com.thewizrd.shared_resources.json.listType
 import com.thewizrd.shared_resources.utils.JSONParser
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -40,8 +40,7 @@ object DetailsWeatherTileUtils {
         val preferences = PreferenceManager.getDefaultSharedPreferences(appLib.context)
         val configJSON = preferences.getString(KEY_DETAILSWEATHERTILECONFIG, null)
         return configJSON?.let {
-            val arrListType = object : TypeToken<List<WeatherDetailsType>>() {}.type
-            JSONParser.deserializer<List<WeatherDetailsType>>(it, arrListType)
+            JSONParser.deserializer<List<WeatherDetailsType>>(it, listType<WeatherDetailsType>())
         }
     }
 
@@ -68,8 +67,7 @@ object DetailsWeatherTileUtils {
         val preferences = PreferenceManager.getDefaultSharedPreferences(appLib.context)
         preferences.edit {
             putString(KEY_DETAILSWEATHERTILECONFIG, types?.let {
-                val arrListType = object : TypeToken<List<WeatherDetailsType>>() {}.type
-                JSONParser.serializer(it, arrListType)
+                JSONParser.serializer(it, listType<WeatherDetailsType>())
             })
         }
     }

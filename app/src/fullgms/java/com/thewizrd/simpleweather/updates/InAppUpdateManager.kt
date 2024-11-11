@@ -83,8 +83,7 @@ class InAppUpdateManager private constructor(context: Context) {
 
             val json = mConfig.getString("android_updates")
 
-            val updateTypeToken = listType<UpdateInfo>()
-            return@withContext JSONParser.deserializer(json, updateTypeToken)
+            return@withContext JSONParser.deserializer(json, listType<UpdateInfo>())
         }
     }
 
