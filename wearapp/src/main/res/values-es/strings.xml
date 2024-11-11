@@ -46,4 +46,7 @@ Weather (High/Low) -->
     <string name="complication_label_weather_currentlocation">"Tiempo (ubicación actual)"</string>
     <string name="tile_label_weather_hrforecast">"Tiempo + Previsión horaria"</string>
     <string name="complication_label_weather_currentlocation_feelslike">"Tiempo (ubicación actual + sensación de)"</string>
+    <string name="title_tile_config">"Configurar tarjeta"</string>
+    <string name="message_reset_to_default">"¿Restablecer valores predeterminados?"</string>
+    <string name="pref_title_detailstileeditor">"Editor de tarjetas"</string>
 </resources>

@@ -161,4 +161,6 @@
     <string name="alertsev_moderate">"Mäßig"</string>
     <string name="alertsev_severe">"Schwere"</string>
     <string name="alertsev_extreme">"Extrem"</string>
+    <string name="pref_title_txtshadow">"Textschatten"</string>
+    <string name="pref_summary_txtshadow">"Schattenebene zum Text hinzufügen"</string>
 </resources>

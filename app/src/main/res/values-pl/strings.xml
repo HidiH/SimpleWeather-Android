@@ -143,4 +143,6 @@
     <string name="alertsev_moderate">"Umiarkowany"</string>
     <string name="alertsev_severe">"Ciężki"</string>
     <string name="alertsev_extreme">"Ekstremalny"</string>
+    <string name="pref_title_txtshadow">"Cień tekstu"</string>
+    <string name="pref_summary_txtshadow">"Dodaj warstwę cienia do tekstu"</string>
 </resources>

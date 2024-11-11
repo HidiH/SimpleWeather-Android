@@ -46,4 +46,7 @@ Weather (High/Low) -->
     <string name="complication_label_weather_currentlocation">"Météo (emplacement actuel)"</string>
     <string name="tile_label_weather_hrforecast">"Météo + prévisions horaires"</string>
     <string name="complication_label_weather_currentlocation_feelslike">"Météo (emplacement actuel + ressentie)"</string>
+    <string name="title_tile_config">"Configurer la carte"</string>
+    <string name="message_reset_to_default">"Réinitialiser les paramètres par défaut ?"</string>
+    <string name="pref_title_detailstileeditor">"Éditeur de cartes"</string>
 </resources>

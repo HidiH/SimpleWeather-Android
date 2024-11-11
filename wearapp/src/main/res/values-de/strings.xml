@@ -49,4 +49,7 @@ Weather (High/Low) -->
     <string name="complication_label_weather_currentlocation">"Wetter (Standort)"</string>
     <string name="tile_label_weather_hrforecast">"Wetter + Stündliche Vorhersage"</string>
     <string name="complication_label_weather_currentlocation_feelslike">"Wetter (Standort + Gefühlt)"</string>
+    <string name="title_tile_config">"Ansicht konfigurieren"</string>
+    <string name="message_reset_to_default">"Auf Standard zurücksetzen?"</string>
+    <string name="pref_title_detailstileeditor">"Ansichtseditor"</string>
 </resources>
