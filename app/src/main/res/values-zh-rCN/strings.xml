@@ -218,4 +218,6 @@
 
     <!-- Fuzzy -->
     <string name="alertsev_extreme">"极端"</string>
+    <string name="pref_title_txtshadow">"文字阴影"</string>
+    <string name="pref_summary_txtshadow">"为文本添加阴影图层"</string>
 </resources>

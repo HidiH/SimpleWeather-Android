@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
+import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
@@ -17,12 +18,21 @@ import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.utils.DateTimeUtils
+import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider4x2Huawei
 import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
 import com.thewizrd.simpleweather.widgets.WidgetUtils
-import com.thewizrd.simpleweather.widgets.preferences.*
-import java.util.*
+import com.thewizrd.simpleweather.widgets.preferences.KEY_BGCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDELOCNAME
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDEREFRESHBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDESETTINGSBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_ICONSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTSHADOW
+import com.thewizrd.simpleweather.widgets.preferences.KEY_USETIMEZONE
+import java.util.Locale
 
 class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(context) {
     private fun generateRemoteViews(): RemoteViews {
@@ -57,9 +67,16 @@ class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(
             newOptions.get(KEY_BGCOLORCODE) as? Int ?: WidgetUtils.getBackgroundColor(appWidgetId)
         val textColor =
             newOptions.get(KEY_TXTCOLORCODE) as? Int ?: WidgetUtils.getTextColor(appWidgetId)
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
         val viewCtx = context.getThemeContextOverride(
             ColorsUtils.isSuperLight(backgroundColor)
         )
+        val textAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(viewCtx, R.style.ShadowText)
+        } else {
+            null
+        }
 
         val txtSizeMultiplier =
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
@@ -100,7 +117,7 @@ class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(
                 Locale.ROOT, "%s | %s",
                 if (weather.hiTemp?.isNotBlank() == true) weather.hiTemp else WeatherIcons.PLACEHOLDER,
                 if (weather.loTemp?.isNotBlank() == true) weather.loTemp else WeatherIcons.PLACEHOLDER
-            )
+            ).applySpan(textAppearanceSpan)
         )
         updateViews.setViewVisibility(
             R.id.condition_hilo,
@@ -112,7 +129,10 @@ class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(
             15f * txtSizeMultiplier
         )
 
-        updateViews.setTextViewText(R.id.condition_temp, weather.curTemp)
+        updateViews.setTextViewText(
+            R.id.condition_temp,
+            weather.curTemp?.applySpan(textAppearanceSpan)
+        )
         updateViews.setTextViewTextSize(
             R.id.condition_temp,
             TypedValue.COMPLEX_UNIT_SP,
@@ -156,7 +176,10 @@ class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(
         updateViews.setImageViewResource(R.id.settings_button, R.drawable.ic_outline_settings_24)
 
         // Location Name
-        updateViews.setTextViewText(R.id.location_name, weather.location)
+        updateViews.setTextViewText(
+            R.id.location_name,
+            weather.location?.applySpan(textAppearanceSpan)
+        )
         updateViews.setTextViewTextSize(
             R.id.location_name,
             TypedValue.COMPLEX_UNIT_SP,
@@ -249,17 +272,24 @@ class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
                 appWidgetId
             )
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textClockAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowTextHeavy)
+        } else {
+            null
+        }
 
         // Update clock widgets
         val timeStr12hr = SpannableString(context.getText(R.string.clock_12_hours_format))
 
         views.setCharSequence(
             R.id.clock_panel, "setFormat12Hour",
-            timeStr12hr
+            timeStr12hr.applySpan(textClockAppearanceSpan)
         )
         views.setCharSequence(
             R.id.clock_panel, "setFormat24Hour",
-            context.getText(R.string.clock_24_hours_format)
+            context.getText(R.string.clock_24_hours_format).applySpan(textClockAppearanceSpan)
         )
 
         views.setTextViewTextSize(
@@ -282,6 +312,13 @@ class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
                 appWidgetId
             )
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textClockAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowText)
+        } else {
+            null
+        }
 
         var dateTextSize =
             context.resources.getDimensionPixelSize(R.dimen.date_text_size).toFloat() // 16sp
@@ -298,7 +335,15 @@ class WeatherWidget4x2HuaweiCreator(context: Context) : WidgetRemoteViewCreator(
         } else {
             DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_SHORT_DATE_FORMAT)
         }
-        views.setCharSequence(R.id.date_panel, "setFormat12Hour", datePattern)
-        views.setCharSequence(R.id.date_panel, "setFormat24Hour", datePattern)
+        views.setCharSequence(
+            R.id.date_panel,
+            "setFormat12Hour",
+            datePattern.applySpan(textClockAppearanceSpan)
+        )
+        views.setCharSequence(
+            R.id.date_panel,
+            "setFormat24Hour",
+            datePattern.applySpan(textClockAppearanceSpan)
+        )
     }
 }

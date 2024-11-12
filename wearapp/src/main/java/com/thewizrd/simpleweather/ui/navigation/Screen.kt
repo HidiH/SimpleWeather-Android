@@ -19,4 +19,7 @@ sealed class Screen(
     object Forecast : Screen("forecast")
     object HourlyForecast : Screen("hourlyforecast")
     object Precipitation : Screen("precipitation")
+
+    // Preferences
+    object DetailsTileEditor : Screen("detailstileeditor")
 }

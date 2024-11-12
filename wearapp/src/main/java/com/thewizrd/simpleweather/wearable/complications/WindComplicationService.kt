@@ -260,6 +260,8 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
                     ).build(),
                     PlainComplicationText.Builder("${getString(R.string.label_wind)}: $windSpeedLong")
                         .build()
+                ).setTapAction(
+                    getTapIntent(this)
                 ).build()
             }
 

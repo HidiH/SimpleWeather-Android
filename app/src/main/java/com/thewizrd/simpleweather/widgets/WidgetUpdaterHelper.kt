@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.text.style.TextAppearanceSpan
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
@@ -27,6 +28,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.shared_resources.weatherdata.model.Forecast
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.Weather
@@ -39,6 +41,7 @@ import com.thewizrd.simpleweather.widgets.preferences.KEY_FORECASTOPTION
 import com.thewizrd.simpleweather.widgets.preferences.KEY_ICONSIZE
 import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
 import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTSHADOW
 import com.thewizrd.simpleweather.widgets.remoteviews.CustomBackgroundWidgetRemoteViewCreator
 import com.thewizrd.simpleweather.widgets.remoteviews.WidgetRemoteViewCreator
 import com.thewizrd.weather_api.weatherModule
@@ -403,17 +406,50 @@ object WidgetUpdaterHelper {
         val dividerId = getResIdentifier(R.id::class.java, "${prefix}${forecastIdx + 1}_divider")
             ?: return
 
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowText)
+        } else {
+            null
+        }
+
         forecastPanel.setTextViewText(
             dateId,
             if (info.widgetType == WidgetType.Widget4x4MaterialYou && forecast is ForecastItemViewModel) {
                 forecast.longDate
             } else {
                 forecast.shortDate
+            }?.run {
+                if (WidgetUtils.isBackgroundOptionalWidget(info.widgetType)) {
+                    this.applySpan(textAppearanceSpan)
+                } else {
+                    this
+                }
             }
         )
-        forecastPanel.setTextViewText(hiId, forecast.hiTemp)
+        forecastPanel.setTextViewText(hiId, forecast.hiTemp?.run {
+            if (WidgetUtils.isBackgroundOptionalWidget(info.widgetType)) {
+                this.applySpan(textAppearanceSpan)
+            } else {
+                this
+            }
+        })
         if (forecast is ForecastItemViewModel) {
-            forecastPanel.setTextViewText(loId, forecast.loTemp)
+            forecastPanel.setTextViewText(dividerId, "|".run {
+                if (WidgetUtils.isBackgroundOptionalWidget(info.widgetType)) {
+                    this.applySpan(textAppearanceSpan)
+                } else {
+                    this
+                }
+            })
+            forecastPanel.setTextViewText(loId, forecast.loTemp?.run {
+                if (WidgetUtils.isBackgroundOptionalWidget(info.widgetType)) {
+                    this.applySpan(textAppearanceSpan)
+                } else {
+                    this
+                }
+            })
         }
 
         if (info.widgetType != WidgetType.Widget4x2MaterialYou && info.widgetType != WidgetType.Widget4x4MaterialYou && (background != WidgetUtils.WidgetBackground.CURRENT_CONDITIONS || style != WidgetUtils.WidgetBackgroundStyle.PANDA)) {

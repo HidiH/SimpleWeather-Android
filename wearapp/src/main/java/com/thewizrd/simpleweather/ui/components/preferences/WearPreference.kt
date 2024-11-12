@@ -12,8 +12,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Text
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.text.toAnnotatedString
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
 
 @Composable
 fun WearPreference(

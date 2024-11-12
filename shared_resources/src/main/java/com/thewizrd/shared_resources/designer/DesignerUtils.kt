@@ -4,10 +4,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.PreferenceManager
-import com.thewizrd.shared_resources.*
+import com.thewizrd.shared_resources.AppState
+import com.thewizrd.shared_resources.ApplicationLib
+import com.thewizrd.shared_resources.SharedModule
+import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.preferences.SettingsManager
+import com.thewizrd.shared_resources.sharedDeps
 
-fun Context.initializeDependencies() {
+@JvmOverloads
+fun Context.initializeDependencies(isPhone: Boolean = true) {
     val appContext = this.applicationContext
 
     sharedDeps = object : SharedModule() {
@@ -36,9 +41,11 @@ fun Context.initializeDependencies() {
         override val appState: AppState
             get() = AppState.FOREGROUND
         override val isPhone: Boolean
-            get() = true
+            get() = isPhone
         override val properties: Bundle
-            get() = Bundle.EMPTY
+            get() = Bundle(1).apply {
+                putBoolean("isInEditMode", true)
+            }
         override val settingsManager: SettingsManager
             get() = SettingsManager(appContext)
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.format.DateFormat
 import androidx.annotation.RestrictTo
 import androidx.core.util.ObjectsCompat
+import com.thewizrd.common.weatherdata.NoopWeatherProvider
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.appLib
@@ -19,6 +20,7 @@ import com.thewizrd.shared_resources.utils.Units.TemperatureUnits
 import com.thewizrd.shared_resources.utils.getLastBuildDate
 import com.thewizrd.shared_resources.utils.getWindDirection
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
+import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.weather_api.weatherModule
 import java.text.DecimalFormat
@@ -73,7 +75,7 @@ class WeatherUiModel() {
         private set
 
     // Radar
-    val locationCoord: Coordinate
+    val locationCoord = Coordinate(0.0, 0.0)
 
     var weatherCredit: String? = null
         private set
@@ -84,7 +86,8 @@ class WeatherUiModel() {
     var weatherLocale: String? = null
         private set
 
-    val weatherDetailsMap: MutableMap<WeatherDetailsType, DetailItemViewModel>
+    val weatherDetailsMap: MutableMap<WeatherDetailsType, DetailItemViewModel> =
+        LinkedHashMap(WeatherDetailsType.entries.size)
 
     val query: String?
         get() = weatherData?.query
@@ -106,11 +109,6 @@ class WeatherUiModel() {
         get() = sharedDeps.context
     private val isPhone
         get() = appLib.isPhone
-
-    init {
-        weatherDetailsMap = LinkedHashMap(WeatherDetailsType.values().size)
-        locationCoord = Coordinate(0.0, 0.0)
-    }
 
     constructor(weather: Weather?) : this() {
         updateView(weather)
@@ -156,12 +154,19 @@ class WeatherUiModel() {
     }
 
     private fun refreshView() {
-        val provider = weatherModule.weatherManager.getWeatherProvider(weatherData!!.source)
+        val provider: WeatherProvider = if (appLib.properties.getBoolean("isInEditMode", false)) {
+            NoopWeatherProvider()
+        } else {
+            weatherModule.weatherManager.getWeatherProvider(weatherData!!.source)
+        }
 
         val isFahrenheit = Units.FAHRENHEIT == settingsManager.getTemperatureUnit()
 
         val df = DecimalFormat.getInstance(LocaleUtils.getLocale()) as DecimalFormat
         df.applyPattern("0.##")
+
+        val dfShort = DecimalFormat.getInstance(LocaleUtils.getLocale()) as DecimalFormat
+        dfShort.applyPattern("0.#")
 
         tempUnit = settingsManager.getTemperatureUnit()
         unitCode = settingsManager.getUnitString()
@@ -266,6 +271,12 @@ class WeatherUiModel() {
                         "%s %s",
                         df.format(precipValue.toDouble()),
                         precipUnit
+                    ),
+                    String.format(
+                        LocaleUtils.getLocale(),
+                        "%s %s",
+                        dfShort.format(precipValue.toDouble()),
+                        precipUnit
                     )
                 )
             }
@@ -295,6 +306,12 @@ class WeatherUiModel() {
                         "%s %s",
                         df.format(precipValue.toDouble()),
                         precipUnit
+                    ),
+                    String.format(
+                        LocaleUtils.getLocale(),
+                        "%s %s",
+                        dfShort.format(precipValue.toDouble()),
+                        precipUnit
                     )
                 )
             }
@@ -311,27 +328,33 @@ class WeatherUiModel() {
             val unit = settingsManager.getPressureUnit()
             val pressureVal: Float
             val pressureUnit: String
+            val pressureUnitShort: String
 
             when (unit) {
                 Units.INHG -> {
                     pressureVal = weatherData!!.atmosphere!!.pressureIn
                     pressureUnit = context.getString(R.string.unit_inHg)
+                    pressureUnitShort = context.getString(R.string.unit_in)
                 }
 
                 Units.MILLIBAR -> {
                     pressureVal = weatherData!!.atmosphere!!.pressureMb
-                    pressureUnit = context.getString(R.string.unit_mBar)
+                    pressureUnit = context.getString(R.string.unit_mBar).also {
+                        pressureUnitShort = it
+                    }
                 }
 
                 Units.MMHG -> {
                     pressureVal =
                         ConversionMethods.inHgToMmHg(weatherData!!.atmosphere!!.pressureIn)
                     pressureUnit = context.getString(R.string.unit_mmHg)
+                    pressureUnitShort = context.getString(R.string.unit_mm)
                 }
 
                 else -> {
                     pressureVal = weatherData!!.atmosphere!!.pressureIn
                     pressureUnit = context.getString(R.string.unit_inHg)
+                    pressureUnitShort = context.getString(R.string.unit_in)
                 }
             }
 
@@ -342,6 +365,12 @@ class WeatherUiModel() {
                     "%s %s",
                     df.format(pressureVal.toDouble()),
                     pressureUnit
+                ),
+                String.format(
+                    LocaleUtils.getLocale(),
+                    "%s %s",
+                    dfShort.format(pressureVal.toDouble()),
+                    pressureUnitShort
                 )
             )
         }
@@ -445,29 +474,39 @@ class WeatherUiModel() {
             val unit = settingsManager.getSpeedUnit()
             val speedVal: Int
             val speedUnit: String
+            val speedUnitShort: String
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
                     speedVal = weatherData!!.condition!!.windMph.roundToInt()
-                    speedUnit = context.getString(R.string.unit_mph)
+                    speedUnit = context.getString(R.string.unit_mph).also {
+                        speedUnitShort = it
+                    }
                 }
                 Units.KILOMETERS_PER_HOUR -> {
                     speedVal = weatherData!!.condition!!.windKph.roundToInt()
-                    speedUnit = context.getString(R.string.unit_kph)
+                    speedUnit = context.getString(R.string.unit_kph).also {
+                        speedUnitShort = it
+                    }
                 }
                 Units.METERS_PER_SECOND -> {
                     speedVal =
                         ConversionMethods.kphToMsec(weatherData!!.condition!!.windKph).roundToInt()
-                    speedUnit = context.getString(R.string.unit_msec)
+                    speedUnit = context.getString(R.string.unit_msec).also {
+                        speedUnitShort = it
+                    }
                 }
                 Units.KNOTS -> {
                     speedVal =
                         ConversionMethods.mphToKts(weatherData!!.condition!!.windMph).roundToInt()
                     speedUnit = context.getString(R.string.unit_knots)
+                    speedUnitShort = "kn"
                 }
                 else -> {
                     speedVal = weatherData!!.condition!!.windMph.roundToInt()
-                    speedUnit = context.getString(R.string.unit_mph)
+                    speedUnit = context.getString(R.string.unit_mph).also {
+                        speedUnitShort = it
+                    }
                 }
             }
 
@@ -481,12 +520,20 @@ class WeatherUiModel() {
                         speedUnit,
                         getWindDirection(weatherData!!.condition!!.windDegrees.toFloat())
                     ),
+                    String.format(
+                        LocaleUtils.getLocale(),
+                        "%d %s",
+                        speedVal,
+                        speedUnitShort
+                    ),
                     weatherData!!.condition!!.windDegrees + 180
                 )
             } else {
                 weatherDetailsMap[WeatherDetailsType.WINDSPEED] = DetailItemViewModel(
                     WeatherDetailsType.WINDSPEED,
-                    String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit), 180
+                    String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit),
+                    String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnitShort),
+                    180
                 )
             }
         }
@@ -497,37 +544,48 @@ class WeatherUiModel() {
             val unit = settingsManager.getSpeedUnit()
             val speedVal: Int
             val speedUnit: String
+            val speedUnitShort: String
 
             when (unit) {
                 Units.MILES_PER_HOUR -> {
                     speedVal = weatherData!!.condition!!.windGustMph.roundToInt()
-                    speedUnit = context.getString(R.string.unit_mph)
+                    speedUnit = context.getString(R.string.unit_mph).also {
+                        speedUnitShort = it
+                    }
                 }
                 Units.KILOMETERS_PER_HOUR -> {
                     speedVal = weatherData!!.condition!!.windGustKph.roundToInt()
-                    speedUnit = context.getString(R.string.unit_kph)
+                    speedUnit = context.getString(R.string.unit_kph).also {
+                        speedUnitShort = it
+                    }
                 }
                 Units.METERS_PER_SECOND -> {
                     speedVal =
                         ConversionMethods.kphToMsec(weatherData!!.condition!!.windGustKph)
                             .roundToInt()
-                    speedUnit = context.getString(R.string.unit_msec)
+                    speedUnit = context.getString(R.string.unit_msec).also {
+                        speedUnitShort = it
+                    }
                 }
 
                 Units.KNOTS -> {
                     speedVal =
                         ConversionMethods.mphToKts(weatherData!!.condition!!.windMph).roundToInt()
                     speedUnit = context.getString(R.string.unit_knots)
+                    speedUnitShort = "kn"
                 }
                 else -> {
-                    speedVal = Math.round(weatherData!!.condition!!.windGustMph)
-                    speedUnit = context.getString(R.string.unit_mph)
+                    speedVal = weatherData!!.condition!!.windGustMph.roundToInt()
+                    speedUnit = context.getString(R.string.unit_mph).also {
+                        speedUnitShort = it
+                    }
                 }
             }
 
             weatherDetailsMap[WeatherDetailsType.WINDGUST] = DetailItemViewModel(
                 WeatherDetailsType.WINDGUST,
-                String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit)
+                String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnit),
+                String.format(LocaleUtils.getLocale(), "%d %s", speedVal, speedUnitShort)
             )
         }
 
@@ -570,9 +628,15 @@ class WeatherUiModel() {
         // Astronomy
         if (weatherData?.astronomy != null) {
             val astroTimeFormatter = if (DateFormat.is24HourFormat(sharedDeps.context)) {
-                DateTimeUtils.ofPatternForInvariantLocale(DateTimeConstants.CLOCK_FORMAT_24HR);
+                DateTimeUtils.ofPatternForInvariantLocale(DateTimeConstants.CLOCK_FORMAT_24HR)
             } else {
-                DateTimeUtils.ofPatternForInvariantLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM);
+                DateTimeUtils.ofPatternForInvariantLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM)
+            }
+
+            val astroTimeShortFormatter = if (DateFormat.is24HourFormat(sharedDeps.context)) {
+                DateTimeUtils.ofPatternForInvariantLocale(DateTimeConstants.CLOCK_FORMAT_24HR)
+            } else {
+                DateTimeUtils.ofPatternForInvariantLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM_SHORT)
             }
 
             if (weatherData?.astronomy?.sunrise != null && weatherData?.astronomy?.sunset != null) {
@@ -582,24 +646,34 @@ class WeatherUiModel() {
 
             weatherData?.astronomy?.sunrise?.let {
                 weatherDetailsMap[WeatherDetailsType.SUNRISE] =
-                    DetailItemViewModel(WeatherDetailsType.SUNRISE, astroTimeFormatter.format(it))
+                    DetailItemViewModel(
+                        WeatherDetailsType.SUNRISE,
+                        astroTimeFormatter.format(it),
+                        astroTimeShortFormatter.format(it)
+                    )
             }
             weatherData?.astronomy?.sunset?.let {
                 weatherDetailsMap[WeatherDetailsType.SUNSET] =
-                    DetailItemViewModel(WeatherDetailsType.SUNSET, astroTimeFormatter.format(it))
+                    DetailItemViewModel(
+                        WeatherDetailsType.SUNSET,
+                        astroTimeFormatter.format(it),
+                        astroTimeShortFormatter.format(it)
+                    )
             }
 
             if (weatherData?.astronomy?.moonrise != null && weatherData?.astronomy?.moonset != null) {
                 if (weatherData!!.astronomy!!.moonrise.isAfter(DateTimeUtils.LOCALDATETIME_MIN)) {
                     weatherDetailsMap[WeatherDetailsType.MOONRISE] = DetailItemViewModel(
                         WeatherDetailsType.MOONRISE,
-                        weatherData!!.astronomy!!.moonrise.format(astroTimeFormatter)
+                        weatherData!!.astronomy!!.moonrise.format(astroTimeFormatter),
+                        weatherData!!.astronomy!!.moonrise.format(astroTimeShortFormatter)
                     )
                 }
                 if (weatherData!!.astronomy!!.moonset.isAfter(DateTimeUtils.LOCALDATETIME_MIN)) {
                     weatherDetailsMap[WeatherDetailsType.MOONSET] = DetailItemViewModel(
                         WeatherDetailsType.MOONSET,
-                        weatherData!!.astronomy!!.moonset.format(astroTimeFormatter)
+                        weatherData!!.astronomy!!.moonset.format(astroTimeFormatter),
+                        weatherData!!.astronomy!!.moonset.format(astroTimeShortFormatter)
                     )
                 }
             }

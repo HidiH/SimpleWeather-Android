@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.google.android.horologist.compose.layout.fillMaxRectangle
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 
 @Composable
 fun PreferenceCategory(

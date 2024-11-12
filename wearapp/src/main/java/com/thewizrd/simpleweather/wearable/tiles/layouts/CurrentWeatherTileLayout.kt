@@ -17,15 +17,22 @@ import androidx.wear.protolayout.LayoutElementBuilders.Spacer
 import androidx.wear.protolayout.LayoutElementBuilders.VERTICAL_ALIGN_CENTER
 import androidx.wear.protolayout.ModifiersBuilders.Modifiers
 import androidx.wear.protolayout.ModifiersBuilders.Padding
+import androidx.wear.protolayout.ResourceBuilders.Resources
 import androidx.wear.protolayout.material.Text
 import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.LayoutDefaults.MULTI_SLOT_LAYOUT_HORIZONTAL_SPACER_WIDTH
 import androidx.wear.protolayout.material.layouts.PrimaryLayout
+import androidx.wear.tiles.tooling.preview.TilePreviewData
+import androidx.wear.tiles.tooling.preview.TilePreviewHelper
+import com.google.android.horologist.tiles.images.toImageResource
 import com.thewizrd.common.controls.toUiModel
+import com.thewizrd.common.utils.ImageUtils
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.getColorFromTempF
 import com.thewizrd.shared_resources.weatherdata.model.Weather
+import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 
 internal fun currentWeatherTileLayout(
@@ -155,3 +162,42 @@ internal fun currentWeatherTileLayout(
             .build()
     )
     .build()
+
+@WearPreviewDevices
+private fun currentWeatherTilePreview(context: Context) = TilePreviewData(
+    onTileResourceRequest = {
+        Resources.Builder()
+            .addIdToImageMapping(
+                "$ID_WEATHER_ICON_PREFIX${WeatherIcons.DAY_SUNNY}",
+                ImageUtils.tintedBitmapFromDrawable(
+                    context,
+                    R.drawable.wi_day_sunny,
+                    Colors.WHITE
+                ).toImageResource()
+            )
+            .addIdToImageMapping(
+                "$ID_WEATHER_ICON_PREFIX${WeatherIcons.NA}",
+                ImageUtils.tintedBitmapFromDrawable(
+                    context,
+                    R.drawable.wi_na,
+                    Colors.WHITE
+                ).toImageResource()
+            )
+            .build()
+    },
+    onTileRequest = { request ->
+        TilePreviewHelper.singleTimelineEntryTileBuilder(
+            currentWeatherTileLayout(
+                context,
+                request.deviceConfiguration,
+                location = "New York, New York",
+                weatherIconId = "$ID_WEATHER_ICON_PREFIX${WeatherIcons.DAY_SUNNY}",
+                currentTemperature = "70°",
+                currentTemperatureColor = getColorFromTempF(70f),
+                lowTemperature = "60°",
+                highTemperature = "75°",
+                weatherCondition = "Sunny"
+            )
+        ).build()
+    }
+)

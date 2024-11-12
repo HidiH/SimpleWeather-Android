@@ -172,6 +172,10 @@ public abstract class BaseGraphHorizontalScrollView<T extends GraphData<? extend
         getGraph().setBottomTextSize(textSize);
     }
 
+    public void setBottomTextShadow(boolean enable) {
+        getGraph().setBottomTextShadow(enable);
+    }
+
     public void setIconSize(@Px float iconSize) {
         getGraph().setIconSize(iconSize);
     }

@@ -165,4 +165,6 @@
     <string name="alertsev_moderate">"Moderado"</string>
     <string name="alertsev_severe">"Severo"</string>
     <string name="alertsev_extreme">"Extremo"</string>
+    <string name="pref_title_txtshadow">"Sombra de texto"</string>
+    <string name="pref_summary_txtshadow">"Añadir capa de sombra al texto"</string>
 </resources>

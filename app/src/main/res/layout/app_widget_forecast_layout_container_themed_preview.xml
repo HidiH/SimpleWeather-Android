@@ -25,7 +25,6 @@
 
         <TextView
             android:id="@+id/forecast1_date"
-            style="@style/ShadowText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -57,7 +56,6 @@
 
             <TextView
                 android:id="@+id/forecast1_hi"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -68,7 +66,6 @@
 
             <TextView
                 android:id="@+id/forecast1_divider"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -82,7 +79,6 @@
 
             <TextView
                 android:id="@+id/forecast1_lo"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -108,7 +104,6 @@
 
         <TextView
             android:id="@+id/forecast2_date"
-            style="@style/ShadowText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -140,7 +135,6 @@
 
             <TextView
                 android:id="@+id/forecast2_hi"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -151,7 +145,6 @@
 
             <TextView
                 android:id="@+id/forecast2_divider"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -165,7 +158,6 @@
 
             <TextView
                 android:id="@+id/forecast2_lo"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -191,7 +183,6 @@
 
         <TextView
             android:id="@+id/forecast3_date"
-            style="@style/ShadowText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -223,7 +214,6 @@
 
             <TextView
                 android:id="@+id/forecast3_hi"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -234,7 +224,6 @@
 
             <TextView
                 android:id="@+id/forecast3_divider"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -248,7 +237,6 @@
 
             <TextView
                 android:id="@+id/forecast3_lo"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -274,7 +262,6 @@
 
         <TextView
             android:id="@+id/forecast4_date"
-            style="@style/ShadowText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -306,7 +293,6 @@
 
             <TextView
                 android:id="@+id/forecast4_hi"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -317,7 +303,6 @@
 
             <TextView
                 android:id="@+id/forecast4_divider"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -331,7 +316,6 @@
 
             <TextView
                 android:id="@+id/forecast4_lo"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -357,7 +341,6 @@
 
         <TextView
             android:id="@+id/forecast5_date"
-            style="@style/ShadowText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -389,7 +372,6 @@
 
             <TextView
                 android:id="@+id/forecast5_hi"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -400,7 +382,6 @@
 
             <TextView
                 android:id="@+id/forecast5_divider"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -414,7 +395,6 @@
 
             <TextView
                 android:id="@+id/forecast5_lo"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -440,7 +420,6 @@
 
         <TextView
             android:id="@+id/forecast6_date"
-            style="@style/ShadowText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -472,7 +451,6 @@
 
             <TextView
                 android:id="@+id/forecast6_hi"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -483,7 +461,6 @@
 
             <TextView
                 android:id="@+id/forecast6_divider"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -497,7 +474,6 @@
 
             <TextView
                 android:id="@+id/forecast6_lo"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"

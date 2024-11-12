@@ -35,7 +35,6 @@
 
         <TextView
             android:id="@+id/location_name"
-            style="@style/ShadowText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -50,7 +49,6 @@
 
         <TextView
             android:id="@+id/condition_weather"
-            style="@style/ShadowText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -70,7 +68,6 @@
 
             <TextView
                 android:id="@+id/condition_hi"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -97,7 +94,6 @@
 
             <TextView
                 android:id="@+id/divider"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -111,7 +107,6 @@
 
             <TextView
                 android:id="@+id/condition_lo"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -173,7 +168,6 @@
 
             <TextView
                 android:id="@+id/weather_pop"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="24dp"
@@ -209,7 +203,6 @@
 
             <TextView
                 android:id="@+id/weather_windspeed"
-                style="@style/ShadowText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"

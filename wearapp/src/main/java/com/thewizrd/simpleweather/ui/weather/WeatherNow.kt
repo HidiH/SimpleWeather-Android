@@ -2,6 +2,8 @@ package com.thewizrd.simpleweather.ui.weather
 
 import android.text.format.DateFormat
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -15,7 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -37,13 +41,16 @@ import com.google.android.horologist.compose.layout.scrollAway
 import com.thewizrd.common.controls.WeatherAlertsViewModel
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.simpleweather.ui.LazyGridStateViewModel
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
 import com.thewizrd.simpleweather.ui.ScrollStateViewModel
 import com.thewizrd.simpleweather.ui.components.CustomPositionIndicator
 import com.thewizrd.simpleweather.ui.components.CustomTimeText
+import com.thewizrd.simpleweather.ui.compose.LazyGridPositionIndicator
 import com.thewizrd.simpleweather.ui.navigation.DestinationScrollType
 import com.thewizrd.simpleweather.ui.navigation.SCROLL_TYPE_NAV_ARGUMENT
 import com.thewizrd.simpleweather.ui.navigation.Screen
+import com.thewizrd.simpleweather.ui.preferences.DetailsWeatherTileConfigScreen
 import com.thewizrd.simpleweather.ui.theme.WearAppTheme
 import com.thewizrd.simpleweather.ui.theme.activityViewModel
 import com.thewizrd.simpleweather.ui.time.ZonedTimeSource
@@ -52,6 +59,7 @@ import com.thewizrd.simpleweather.viewmodels.ForecastPanelsViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import kotlinx.coroutines.flow.map
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 @Composable
 fun WeatherNow(
@@ -215,6 +223,22 @@ fun WeatherNow(
                     ) { backStackEntry ->
                         WeatherMinutelyForecastScreen(backStackEntry, swipeFocusRequester)
                     }
+
+                    composable(
+                        route = Screen.DetailsTileEditor.route,
+                        arguments = listOf(
+                            navArgument(SCROLL_TYPE_NAV_ARGUMENT) {
+                                type = NavType.EnumType(DestinationScrollType::class.java)
+                                defaultValue = DestinationScrollType.LAZY_GRID_SCROLLING
+                            }
+                        )
+                    ) { backStackEntry ->
+                        DetailsWeatherTileConfigScreen(
+                            navController,
+                            backStackEntry,
+                            swipeFocusRequester
+                        )
+                    }
                 }
             }
 
@@ -253,6 +277,30 @@ fun WeatherNow(
                                                 Modifier.scrollAway(scrollViewModel.scrollState)
                                             }
 
+                                            DestinationScrollType.LAZY_GRID_SCROLLING -> {
+                                                val scrollViewModel: LazyGridStateViewModel =
+                                                    viewModel(currentBackStackEntry!!)
+                                                Modifier.offset {
+                                                    if (0 < scrollViewModel.scrollState.layoutInfo.totalItemsCount) {
+                                                        scrollViewModel.scrollState.layoutInfo.visibleItemsInfo.find {
+                                                            it.index == 0
+                                                        }?.offset
+                                                            ?: if (scrollViewModel.scrollState.layoutInfo.orientation == Orientation.Vertical) {
+                                                                IntOffset(
+                                                                    0,
+                                                                    -36.dp.toPx().roundToInt()
+                                                                )
+                                                            } else {
+                                                                IntOffset(
+                                                                    -36.dp.toPx().roundToInt(), 0
+                                                                )
+                                                            }
+                                                    } else {
+                                                        IntOffset.Zero
+                                                    }
+                                                }
+                                            }
+
                                             DestinationScrollType.TIME_TEXT_ONLY -> {
                                                 Modifier
                                             }
@@ -280,7 +328,8 @@ fun WeatherNow(
                                 key(currentBackStackEntry?.destination?.route) {
                                     // Only show vignette for screens with scrollable content.
                                     if (scrollType == DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING ||
-                                        scrollType == DestinationScrollType.COLUMN_SCROLLING
+                                        scrollType == DestinationScrollType.COLUMN_SCROLLING ||
+                                        scrollType == DestinationScrollType.LAZY_GRID_SCROLLING
                                     ) {
                                         Vignette(vignettePosition = VignettePosition.TopAndBottom)
                                     }
@@ -302,6 +351,13 @@ fun WeatherNow(
                                             val scrollViewModel: ScrollStateViewModel =
                                                 viewModel(currentBackStackEntry!!)
                                             PositionIndicator(scrollState = scrollViewModel.scrollState)
+                                        }
+
+                                        DestinationScrollType.LAZY_GRID_SCROLLING -> {
+                                            // Get or create the ViewModel associated with the current back stack entry
+                                            val scrollViewModel: LazyGridStateViewModel =
+                                                viewModel(currentBackStackEntry!!)
+                                            LazyGridPositionIndicator(lazyGridState = scrollViewModel.scrollState)
                                         }
 
                                         else -> {}

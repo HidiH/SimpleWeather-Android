@@ -45,7 +45,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -57,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -106,10 +106,10 @@ import com.thewizrd.simpleweather.ui.components.IconAlignment
 import com.thewizrd.simpleweather.ui.components.LoadingContent
 import com.thewizrd.simpleweather.ui.components.WearDivider
 import com.thewizrd.simpleweather.ui.components.WeatherIcon
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
@@ -253,6 +253,8 @@ fun WeatherNowScreen(
                 }
 
                 // Navigation divider
+                WearDivider()
+                DetailsTileEditorButton(navController = navController)
                 WearDivider()
 
                 ChangeLocationButton(activity = activity)
@@ -797,6 +799,18 @@ private fun DetailsButton(
 }
 
 @Composable
+private fun DetailsTileEditorButton(
+    navController: NavHostController
+) {
+    NavigationButton(
+        label = stringResource(id = R.string.pref_title_detailstileeditor),
+        iconDrawableId = R.drawable.ic_mode_edit_white_24dp
+    ) {
+        navController.navigate(Screen.DetailsTileEditor.route)
+    }
+}
+
+@Composable
 private fun ChangeLocationButton(
     activity: Activity
 ) {
@@ -890,7 +904,7 @@ private fun tempTextColor(temp: CharSequence?, @Units.TemperatureUnits tempUnit:
 @Composable
 private fun PreviewWeatherNowScreen() {
     val context = LocalContext.current.run {
-        initializeDependencies()
+        initializeDependencies(isPhone = false)
 
         val oldConfig = resources.configuration
         val newConfig = Configuration(oldConfig)

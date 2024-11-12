@@ -3,19 +3,26 @@ package com.thewizrd.simpleweather.widgets.remoteviews
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
+import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
+import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider4x1
 import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper.buildForecast
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper.updateForecastSizes
 import com.thewizrd.simpleweather.widgets.WidgetUtils
-import com.thewizrd.simpleweather.widgets.preferences.*
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDELOCNAME
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDEREFRESHBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDESETTINGSBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTSHADOW
 
 class WeatherWidget4x1Creator(context: Context) : WidgetRemoteViewCreator(context) {
     override val info: WidgetProviderInfo
@@ -59,9 +66,19 @@ class WeatherWidget4x1Creator(context: Context) : WidgetRemoteViewCreator(contex
 
         val textColor =
             newOptions.get(KEY_TXTCOLORCODE) as? Int ?: WidgetUtils.getTextColor(appWidgetId)
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowText)
+        } else {
+            null
+        }
 
         if (!hideLocationName) {
-            updateViews.setTextViewText(R.id.location_name, weather.location)
+            updateViews.setTextViewText(
+                R.id.location_name,
+                weather.location?.applySpan(textAppearanceSpan)
+            )
             updateViews.setTextColor(R.id.location_name, textColor)
         }
 

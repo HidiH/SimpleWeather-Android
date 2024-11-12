@@ -49,7 +49,7 @@ object WidgetUtils {
     }
 
     // Widget Prefs
-    private const val CurrentPrefsVersion = 6
+    private const val CurrentPrefsVersion = 7
 
     // Keys
     // TODO: Move preference keys to another class
@@ -70,6 +70,7 @@ object WidgetUtils {
     private const val KEY_USETIMEZONE = "key_usetimezone"
     private const val KEY_BGCOLORCODE = "key_bgcolorcode"
     private const val KEY_TXTCOLORCODE = "key_txtcolorcode"
+    private const val KEY_TXTSHADOW = "key_txtshadow"
     private const val KEY_MAXFORECAST_LENGTH = "key_forecastlengthset"
     private const val KEY_MAXHRFORECAST_LENGTH = "key_hrforecastlengthset"
     private const val KEY_CUSTOMTXTMULTIPLIER = "key_customtxtmultiplier"
@@ -94,7 +95,7 @@ object WidgetUtils {
             private val map = SparseArray<WidgetBackground>()
 
             init {
-                for (background in values()) {
+                for (background in entries) {
                     map.put(background.value, background)
                 }
             }
@@ -114,7 +115,7 @@ object WidgetUtils {
             private val map = SparseArray<WidgetBackgroundStyle>()
 
             init {
-                for (style in values()) {
+                for (style in entries) {
                     map.put(style.value, style)
                 }
             }
@@ -135,7 +136,7 @@ object WidgetUtils {
             private val map = SparseArray<ForecastOption>()
 
             init {
-                for (opt in values()) {
+                for (opt in entries) {
                     map.put(opt.value, opt)
                 }
             }
@@ -205,6 +206,17 @@ object WidgetUtils {
                         }
                     }
                 }
+                6 -> {
+                    // Keep text shadow enabled for current users
+                    val widgetIds = getAllWidgetIds()
+                    for (appWidgetId in widgetIds) {
+                        val widgetType = getWidgetTypeFromID(appWidgetId)
+
+                        if (isBackgroundCustomOnlyWidget(widgetType)) {
+                            setUseTextShadow(appWidgetId, true)
+                        }
+                    }
+                }
             }
         }
 
@@ -225,7 +237,7 @@ object WidgetUtils {
     private fun getAllWidgetIds(): IntArray {
         var widgetIds = IntArray(0)
 
-        for (widgetType in WidgetType.values()) {
+        for (widgetType in WidgetType.entries) {
             val ids = getWidgetIds(widgetType)
             if (ids.isNotEmpty()) {
                 widgetIds = widgetIds.plus(ids)
@@ -503,16 +515,15 @@ object WidgetUtils {
             val parentPath = context.filesDir.parent
             val sharedPrefsPath = String.format(Locale.ROOT, "%s/shared_prefs", parentPath)
             val sharedPrefsFolder = File(sharedPrefsPath)
-            val appWidgetFiles = sharedPrefsFolder.listFiles { dir, name ->
-                val lowerCaseName = name.toLowerCase(Locale.ROOT)
+            val appWidgetFiles = sharedPrefsFolder.listFiles { _, name ->
+                val lowerCaseName = name.lowercase(Locale.ROOT)
                 lowerCaseName.startsWith("appwidget_") && lowerCaseName.endsWith(".xml")
             } ?: emptyArray()
 
             for (file in appWidgetFiles) {
                 val fileName = file.name
-                var idString = ""
                 if (!fileName.isNullOrBlank()) {
-                    idString = fileName.replace("appwidget_", "")
+                    val idString = fileName.replace("appwidget_", "")
                         .replace(".xml", "")
 
                     try {
@@ -1140,6 +1151,17 @@ object WidgetUtils {
     fun setBackgroundUri(widgetId: Int, uri: String?) {
         getPreferences(widgetId).edit {
             putString(KEY_BACKGROUNDURI, uri)
+        }
+    }
+
+    fun useTextShadow(widgetId: Int): Boolean {
+        val prefs = getPreferences(widgetId)
+        return prefs.getBoolean(KEY_TXTSHADOW, false)
+    }
+
+    fun setUseTextShadow(widgetId: Int, value: Boolean) {
+        getPreferences(widgetId).edit(true) {
+            putBoolean(KEY_TXTSHADOW, value)
         }
     }
 }

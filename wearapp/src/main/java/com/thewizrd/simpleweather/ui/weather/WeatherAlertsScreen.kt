@@ -9,8 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -26,7 +26,7 @@ import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
 import com.thewizrd.simpleweather.ui.components.WeatherAlertPanel
-import com.thewizrd.simpleweather.ui.tools.WearPreviewDevices
+import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import java.time.ZonedDateTime
 
@@ -63,7 +63,7 @@ fun WeatherAlertsScreen(
 @Composable
 private fun PreviewWeatherAlertsScreen() {
     val context = LocalContext.current.also {
-        it.initializeDependencies()
+        it.initializeDependencies(isPhone = false)
     }
     val scrollState = rememberScalingLazyListState()
     val focusRequester = rememberFocusRequester()

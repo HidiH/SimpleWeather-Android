@@ -14,4 +14,10 @@
         <item name="android:shadowRadius">10</item>
     </style>
 
+    <style name="ShadowTextClock" parent="ShadowText">
+        <item name="android:shadowColor">#DD000000</item>
+        <item name="android:shadowDy">2.0</item>
+        <item name="android:shadowRadius">2.75</item>
+    </style>
+
 </resources>

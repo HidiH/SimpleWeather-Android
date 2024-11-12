@@ -97,6 +97,14 @@ public abstract class BaseGraphView<T extends GraphData<? extends GraphDataSet<?
         bottomTextPaint.setTextSize(textSize);
     }
 
+    public void setBottomTextShadow(boolean enable) {
+        if (enable) {
+            bottomTextPaint.setShadowLayer(1, 1, 1, Colors.BLACK);
+        } else {
+            bottomTextPaint.clearShadowLayer();
+        }
+    }
+
     public void setIconSize(@Px float iconSize) {
         this.iconHeight = iconSize;
     }

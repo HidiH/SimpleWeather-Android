@@ -94,6 +94,8 @@ class DewPointComplicationService : WeatherHourlyForecastComplicationService() {
                         Icon.createWithResource(this, complicationIconResId)
                             .setTint(Colors.WHITESMOKE)
                     ).build()
+                ).setTapAction(
+                    getTapIntent(this)
                 ).build()
             }
             ComplicationType.LONG_TEXT -> {

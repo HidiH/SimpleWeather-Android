@@ -141,4 +141,6 @@
     <string name="alertsev_moderate">"Mierne"</string>
     <string name="alertsev_severe">"Závažné"</string>
     <string name="alertsev_extreme">"Extrémne"</string>
+    <string name="pref_title_txtshadow">"Textový tieň"</string>
+    <string name="pref_summary_txtshadow">"Pridajte do textu tieňovú vrstvu"</string>
 </resources>

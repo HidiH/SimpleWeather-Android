@@ -15,8 +15,8 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 0, WearOS: 1)
-        versionCode 345100040
-        versionName "5.10.0"
+        versionCode 345100070
+        versionName "5.10.1"
 
         vectorDrawables {
             useSupportLibrary true
@@ -173,7 +173,7 @@ dependencies {
     fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
     fullgmsImplementation 'com.google.android.play:app-update-ktx:2.1.0'
     fullgmsImplementation 'com.google.android.play:feature-delivery-ktx:2.1.0'
-    fullgmsImplementation 'com.google.android.play:review-ktx:2.0.1'
+    fullgmsImplementation 'com.google.android.play:review-ktx:2.0.2'
     fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
 
     nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.20'

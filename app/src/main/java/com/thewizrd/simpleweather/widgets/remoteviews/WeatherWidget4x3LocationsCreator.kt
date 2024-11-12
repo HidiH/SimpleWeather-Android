@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
+import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
@@ -21,13 +22,20 @@ import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.utils.DateTimeUtils
+import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.shared_resources.utils.TextUtils.getTextBounds
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider4x3Locations
 import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper.getResIdentifier
 import com.thewizrd.simpleweather.widgets.WidgetUtils
-import com.thewizrd.simpleweather.widgets.preferences.*
+import com.thewizrd.simpleweather.widgets.preferences.KEY_BGCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDEREFRESHBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_HIDESETTINGSBTN
+import com.thewizrd.simpleweather.widgets.preferences.KEY_ICONSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
+import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTSHADOW
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -87,9 +95,16 @@ class WeatherWidget4x3LocationsCreator(context: Context) :
             newOptions.get(KEY_BGCOLORCODE) as? Int ?: WidgetUtils.getBackgroundColor(appWidgetId)
         val textColor =
             newOptions.get(KEY_TXTCOLORCODE) as? Int ?: WidgetUtils.getTextColor(appWidgetId)
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
         val viewCtx = context.getThemeContextOverride(
             ColorsUtils.isSuperLight(backgroundColor)
         )
+        val textAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(viewCtx, R.style.ShadowText)
+        } else {
+            null
+        }
 
         val txtSizeMultiplier =
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
@@ -162,9 +177,12 @@ class WeatherWidget4x3LocationsCreator(context: Context) :
                 continue
             }
 
-            updateViews.setTextViewText(locationNameViewId, location.name)
-            updateViews.setTextViewText(forecastHiId, weather.hiTemp)
-            updateViews.setTextViewText(forecastLoId, weather.loTemp)
+            updateViews.setTextViewText(
+                locationNameViewId,
+                location.name?.applySpan(textAppearanceSpan)
+            )
+            updateViews.setTextViewText(forecastHiId, weather.hiTemp?.applySpan(textAppearanceSpan))
+            updateViews.setTextViewText(forecastLoId, weather.loTemp?.applySpan(textAppearanceSpan))
 
             updateViews.setTextColor(locationNameViewId, textColor)
             updateViews.setTextColor(forecastHiId, textColor)
@@ -366,16 +384,23 @@ class WeatherWidget4x3LocationsCreator(context: Context) :
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
                 appWidgetId
             )
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textClockAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowTextHeavy)
+        } else {
+            null
+        }
 
         // Update clock widgets
         val timeStr12hr = SpannableString(context.getText(R.string.clock_12_hours_format))
         views.setCharSequence(
             R.id.clock_panel, "setFormat12Hour",
-            timeStr12hr
+            timeStr12hr.applySpan(textClockAppearanceSpan)
         )
         views.setCharSequence(
             R.id.clock_panel, "setFormat24Hour",
-            context.getText(R.string.clock_24_hours_format)
+            context.getText(R.string.clock_24_hours_format).applySpan(textClockAppearanceSpan)
         )
 
         views.setTextViewTextSize(
@@ -393,6 +418,13 @@ class WeatherWidget4x3LocationsCreator(context: Context) :
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
                 appWidgetId
             )
+        val useTextShadow =
+            newOptions.get(KEY_TXTSHADOW) as? Boolean ?: WidgetUtils.useTextShadow(appWidgetId)
+        val textClockAppearanceSpan = if (useTextShadow) {
+            TextAppearanceSpan(context, R.style.ShadowText)
+        } else {
+            null
+        }
 
         views.setTextViewTextSize(
             R.id.date_panel,
@@ -405,7 +437,15 @@ class WeatherWidget4x3LocationsCreator(context: Context) :
         } else {
             DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_SHORT_DATE_FORMAT)
         }
-        views.setCharSequence(R.id.date_panel, "setFormat12Hour", datePattern)
-        views.setCharSequence(R.id.date_panel, "setFormat24Hour", datePattern)
+        views.setCharSequence(
+            R.id.date_panel,
+            "setFormat12Hour",
+            datePattern.applySpan(textClockAppearanceSpan)
+        )
+        views.setCharSequence(
+            R.id.date_panel,
+            "setFormat24Hour",
+            datePattern.applySpan(textClockAppearanceSpan)
+        )
     }
 }

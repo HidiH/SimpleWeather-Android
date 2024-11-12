@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.thewizrd.simpleweather.ui.tools
+package com.thewizrd.simpleweather.ui.compose.tools
 
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.tooling.preview.devices.WearDevices
