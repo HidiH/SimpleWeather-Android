@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.google.android.material.slider.Slider
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
 import com.thewizrd.shared_resources.sharedDeps
+import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.Logger
@@ -37,10 +39,11 @@ import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.TilesOverlay
 import org.w3c.dom.Node
+import java.io.IOException
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -49,7 +52,7 @@ import kotlin.math.pow
 import kotlin.math.sinh
 
 @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
-class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
+class ECCCRadarViewProvider(context: Context, rootView: ViewGroup) :
     MapTileRadarViewProvider(context, rootView) {
     private val availableRadarFrames: MutableList<RadarFrame>
     private val radarLayers: MutableMap<String, TilesOverlay>
@@ -59,6 +62,7 @@ class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
     private var animationPosition = 0
     private val mMainHandler: Handler
     private var mProcessingFrames: Boolean = false
+    private var mFrameCall: Call? = null
 
     init {
         availableRadarFrames = ArrayList()
@@ -198,7 +202,10 @@ class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
                 val overlaysToDelete = radarLayers.values.toList()
                 radarLayers.clear()
                 for (overlay in overlaysToDelete) {
-                    mMainHandler.post { overlay.remove() }
+                    mMainHandler.post {
+                        overlay.onDetach(mapView)
+                        mapView.overlays.remove(overlay)
+                    }
                 }
 
                 availableRadarFrames.clear()
