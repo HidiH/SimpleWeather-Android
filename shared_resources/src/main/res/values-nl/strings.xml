@@ -204,4 +204,8 @@
     <string name="pref_title_termsofservice">"Servicevoorwaarden"</string>
     <string name="label_moreinfo">"Meer informatie"</string>
     <string name="action_reset">"Resetten"</string>
+    <string name="label_count_low_short">"Laag"</string>
+    <string name="label_count_moderate_short">"Matig"</string>
+    <string name="label_count_high_short">"Hoog"</string>
+    <string name="label_count_veryhigh_short">"Hoog"</string>
 </resources>

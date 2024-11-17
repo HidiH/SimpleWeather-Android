@@ -200,4 +200,8 @@
     <string name="pref_title_termsofservice">"Conditions d'utilisation"</string>
     <string name="label_moreinfo">"Plus d'informations"</string>
     <string name="action_reset">"Réinitialiser"</string>
+    <string name="label_count_low_short">"Bas"</string>
+    <string name="label_count_moderate_short">"Modéré"</string>
+    <string name="label_count_high_short">"Élevé"</string>
+    <string name="label_count_veryhigh_short">"Élevé"</string>
 </resources>

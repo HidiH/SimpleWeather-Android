@@ -233,4 +233,8 @@
     <string name="pref_title_termsofservice">"Zmluvné podmienky"</string>
     <string name="label_moreinfo">"Más información"</string>
     <string name="action_reset">"Restablecer"</string>
+    <string name="label_count_low_short">"Bajo"</string>
+    <string name="label_count_moderate_short">"Medio"</string>
+    <string name="label_count_high_short">"Alto"</string>
+    <string name="label_count_veryhigh_short">"Alto"</string>
 </resources>

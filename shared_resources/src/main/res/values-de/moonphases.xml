@@ -2,10 +2,18 @@
 <resources>
     <string name="moonphase_new">"Neumond"</string>
     <string name="moonphase_waxcrescent">"Zunehmender Sichelmond"</string>
-    <string name="moonphase_firstqtr">"Zunehmender Halbmond"</string>
+    <string name="moonphase_firstqtr">"Erstes Viertel"</string>
     <string name="moonphase_waxgibbous">"Zunehmender Mond"</string>
     <string name="moonphase_full">"Vollmond"</string>
     <string name="moonphase_wangibbous">"Abnehmender Mond"</string>
-    <string name="moonphase_lastqtr">"Abnehmender Halbmond"</string>
+    <string name="moonphase_lastqtr">"Letztes Viertel"</string>
     <string name="moonphase_wancrescent">"Abnehmender Sichelmond"</string>
+    <string name="moonphase_new_short">"Neu"</string>
+    <string name="moonphase_waxcrescent_short">"Zunehm."</string>
+    <string name="moonphase_firstqtr_short">"Erstes V."</string>
+    <string name="moonphase_waxgibbous_short">"Zunehm."</string>
+    <string name="moonphase_full_short">"Voll"</string>
+    <string name="moonphase_wangibbous_short">"Abnehm."</string>
+    <string name="moonphase_lastqtr_short">"Letztes V."</string>
+    <string name="moonphase_wancrescent_short">"Abnehm."</string>
 </resources>

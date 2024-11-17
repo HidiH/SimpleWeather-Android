@@ -207,4 +207,8 @@
     <string name="pref_title_termsofservice">"Warunki korzystania z usługi"</string>
     <string name="label_moreinfo">"Więcej informacji"</string>
     <string name="action_reset">"Resetuj"</string>
+    <string name="label_count_low_short">"Niski"</string>
+    <string name="label_count_moderate_short">"Średni"</string>
+    <string name="label_count_high_short">"Wysoki"</string>
+    <string name="label_count_veryhigh_short">"Wysoki"</string>
 </resources>

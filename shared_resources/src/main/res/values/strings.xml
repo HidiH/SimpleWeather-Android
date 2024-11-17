@@ -220,9 +220,13 @@
     <string name="label_pollen_ragweed">Ragweed</string>
     <string name="label_ragweed_pollen">Ragweed Pollen</string>
     <string name="label_count_low">Low</string>
+    <string name="label_count_low_short">Low</string>
     <string name="label_count_moderate">Moderate</string>
+    <string name="label_count_moderate_short">Medium</string>
     <string name="label_count_high">High</string>
+    <string name="label_count_high_short">High</string>
     <string name="label_count_veryhigh">Very High</string>
+    <string name="label_count_veryhigh_short">V. High</string>
     <string name="time_current">Current</string>
 
     <string name="action_refresh">Refresh</string>

@@ -246,4 +246,8 @@ Minute-by-Minute Forecast -->
     <string name="pref_title_termsofservice">"Nutzungsbedingungen"</string>
     <string name="label_moreinfo">"Mehr Infos"</string>
     <string name="action_reset">"Zurücksetzen"</string>
+    <string name="label_count_low_short">"Niedrig"</string>
+    <string name="label_count_moderate_short">"Moderat"</string>
+    <string name="label_count_high_short">"Hoch"</string>
+    <string name="label_count_veryhigh_short">"Hoch"</string>
 </resources>

@@ -8,4 +8,12 @@
     <string name="moonphase_wangibbous">"亏凸"</string>
     <string name="moonphase_lastqtr">"下弦月"</string>
     <string name="moonphase_wancrescent">"残月"</string>
+    <string name="moonphase_new_short">"新月"</string>
+    <string name="moonphase_waxcrescent_short">"眉月"</string>
+    <string name="moonphase_firstqtr_short">"上弦月"</string>
+    <string name="moonphase_waxgibbous_short">"盈凸"</string>
+    <string name="moonphase_full_short">"满月"</string>
+    <string name="moonphase_wangibbous_short">"亏凸"</string>
+    <string name="moonphase_lastqtr_short">"下弦月"</string>
+    <string name="moonphase_wancrescent_short">"残月"</string>
 </resources>

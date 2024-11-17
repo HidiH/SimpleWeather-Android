@@ -17,9 +17,11 @@ import androidx.wear.protolayout.LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER
 import androidx.wear.protolayout.LayoutElementBuilders.Image
 import androidx.wear.protolayout.LayoutElementBuilders.LayoutElement
 import androidx.wear.protolayout.LayoutElementBuilders.Spacer
+import androidx.wear.protolayout.ModifiersBuilders
 import androidx.wear.protolayout.ModifiersBuilders.Background
 import androidx.wear.protolayout.ModifiersBuilders.Corner
 import androidx.wear.protolayout.ModifiersBuilders.Modifiers
+import androidx.wear.protolayout.ModifiersBuilders.Semantics
 import androidx.wear.protolayout.ModifiersBuilders.Transformation
 import androidx.wear.protolayout.ResourceBuilders.Resources
 import androidx.wear.protolayout.material.CircularProgressIndicator
@@ -33,6 +35,7 @@ import com.google.android.horologist.tiles.images.toImageResource
 import com.thewizrd.common.controls.AirQualityViewModel
 import com.thewizrd.common.controls.BeaufortViewModel
 import com.thewizrd.common.controls.DetailItemViewModel
+import com.thewizrd.common.controls.PollenViewModel
 import com.thewizrd.common.controls.UVIndexViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.common.controls.toUiModel
@@ -53,6 +56,7 @@ import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.Location
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
+import com.thewizrd.shared_resources.weatherdata.model.MoonPhase
 import com.thewizrd.shared_resources.weatherdata.model.Pollen
 import com.thewizrd.shared_resources.weatherdata.model.Precipitation
 import com.thewizrd.shared_resources.weatherdata.model.UV
@@ -93,18 +97,31 @@ internal fun detailsWeatherTileLayout(
 ): LayoutElement {
     val tileConfig =
         DetailsWeatherTileUtils.getTileConfig() ?: DetailsWeatherTileUtils.DEFAULT_ITEMS
-    val maxButtons = DetailsWeatherTileUtils.MAX_BUTTONS
     val filteredDetails = weatherDetails.toList()
         .filter { tileConfig.contains(it.first) }
         .sortedBy { tileConfig.indexOf(it.first) }
 
+    return detailsWeatherTileLayout(
+        context,
+        deviceParameters,
+        weather,
+        filteredDetails
+    )
+}
+
+internal fun detailsWeatherTileLayout(
+    context: Context,
+    deviceParameters: DeviceParameters,
+    weather: Weather?,
+    filteredTileConfig: List<Pair<WeatherDetailsType, DetailItemViewModel>>
+): LayoutElement {
     return Box.Builder()
         .setHeight(expand())
         .setWidth(expand())
         .addContent(
             MultiButtonLayout.Builder()
                 .apply {
-                    filteredDetails.take(maxButtons)
+                    filteredTileConfig.take(DetailsWeatherTileUtils.MAX_BUTTONS)
                         .forEach { (type, model) ->
                             addButtonContent(
                                 detailButtonItem(context, deviceParameters, weather, type, model)
@@ -141,8 +158,8 @@ internal fun detailButtonItem(
         .addContent(
             Column.Builder()
                 .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
-                .setHeight(expand())
-                .setWidth(expand())
+                .setHeight(dp(52f))
+                .setWidth(dp(52f))
                 .setModifiers(
                     Modifiers.Builder()
                         .setBackground(
@@ -161,12 +178,12 @@ internal fun detailButtonItem(
                         .build()
                 )
                 .addContent(
-                    Spacer.Builder().setHeight(dp(10f)).build()
+                    Spacer.Builder().setHeight(dp(8f)).build()
                 )
                 .addContent(
                     Image.Builder()
-                        .setWidth(dp(14f))
-                        .setHeight(dp(14f))
+                        .setWidth(dp(18f))
+                        .setHeight(dp(18f))
                         .setModifiers(
                             Modifiers.Builder()
                                 .apply {
@@ -191,15 +208,37 @@ internal fun detailButtonItem(
                         .build()
                 )
                 .addContent(
-                    Spacer.Builder().setHeight(dp(4f)).build()
+                    Spacer.Builder().setHeight(dp(3f)).build()
                 )
                 .addContent(
                     Text.Builder(context, model.shortValue.toString())
-                        .setTypography(Typography.TYPOGRAPHY_CAPTION3)
+                        .setTypography(
+                            when (detailsType) {
+                                WeatherDetailsType.FEELSLIKE,
+                                WeatherDetailsType.HUMIDITY,
+                                WeatherDetailsType.POPCLOUDINESS,
+                                WeatherDetailsType.POPCHANCE,
+                                WeatherDetailsType.DEWPOINT,
+                                WeatherDetailsType.BEAUFORT,
+                                WeatherDetailsType.UV,
+                                WeatherDetailsType.AIRQUALITY -> Typography.TYPOGRAPHY_CAPTION2
+
+                                else -> Typography.TYPOGRAPHY_CAPTION3
+                            }
+                        )
                         .setWeight(FONT_WEIGHT_NORMAL)
                         .setColor(ColorProp.Builder(Colors.WHITE).build())
                         .setMaxLines(1)
                         .setScalable(false)
+                        .setModifiers(
+                            Modifiers.Builder()
+                                .setSemantics(
+                                    Semantics.Builder()
+                                        .setRole(ModifiersBuilders.SEMANTICS_ROLE_BUTTON)
+                                        .build()
+                                )
+                                .build()
+                        )
                         .build()
                 )
                 .build()
@@ -217,10 +256,7 @@ internal fun detailButtonItem(
                 WeatherDetailsType.DEWPOINT,
                 WeatherDetailsType.MOONRISE,
                 WeatherDetailsType.MOONSET,
-                WeatherDetailsType.MOONPHASE,
-                WeatherDetailsType.TREEPOLLEN,
-                WeatherDetailsType.GRASSPOLLEN,
-                WeatherDetailsType.RAGWEEDPOLLEN -> {
+                WeatherDetailsType.MOONPHASE -> {
                 }
 
                 WeatherDetailsType.UV -> {
@@ -351,6 +387,87 @@ internal fun detailButtonItem(
                         )
                     }
                 }
+
+                WeatherDetailsType.TREEPOLLEN -> {
+                    weather?.condition?.pollen?.let {
+                        val pollenModel = PollenViewModel(it)
+
+                        addContent(
+                            CircularProgressIndicator.Builder()
+                                .setProgress(
+                                    pollenModel.treePollenProgress.div(pollenModel.progressMax.toFloat())
+                                        .fastCoerceIn(0f, 1f)
+                                )
+                                .setStrokeWidth(dp(2f))
+                                .setOuterMarginApplied(false)
+                                .setCircularProgressIndicatorColors(
+                                    ProgressIndicatorColors(
+                                        pollenModel.treePollenProgressColor,
+                                        ColorUtils.blendARGB(
+                                            pollenModel.treePollenProgressColor,
+                                            0xFF1B1B1B.toInt(),
+                                            0.95f
+                                        )
+                                    )
+                                )
+                                .build()
+                        )
+                    }
+                }
+
+                WeatherDetailsType.GRASSPOLLEN -> {
+                    weather?.condition?.pollen?.let {
+                        val pollenModel = PollenViewModel(it)
+
+                        addContent(
+                            CircularProgressIndicator.Builder()
+                                .setProgress(
+                                    pollenModel.grassPollenProgress.div(pollenModel.progressMax.toFloat())
+                                        .fastCoerceIn(0f, 1f)
+                                )
+                                .setStrokeWidth(dp(2f))
+                                .setOuterMarginApplied(false)
+                                .setCircularProgressIndicatorColors(
+                                    ProgressIndicatorColors(
+                                        pollenModel.grassPollenProgressColor,
+                                        ColorUtils.blendARGB(
+                                            pollenModel.grassPollenProgressColor,
+                                            0xFF1B1B1B.toInt(),
+                                            0.95f
+                                        )
+                                    )
+                                )
+                                .build()
+                        )
+                    }
+                }
+
+                WeatherDetailsType.RAGWEEDPOLLEN -> {
+                    weather?.condition?.pollen?.let {
+                        val pollenModel = PollenViewModel(it)
+
+                        addContent(
+                            CircularProgressIndicator.Builder()
+                                .setProgress(
+                                    pollenModel.ragweedPollenProgress.div(pollenModel.progressMax.toFloat())
+                                        .fastCoerceIn(0f, 1f)
+                                )
+                                .setStrokeWidth(dp(2f))
+                                .setOuterMarginApplied(false)
+                                .setCircularProgressIndicatorColors(
+                                    ProgressIndicatorColors(
+                                        pollenModel.ragweedPollenProgressColor,
+                                        ColorUtils.blendARGB(
+                                            pollenModel.ragweedPollenProgressColor,
+                                            0xFF1B1B1B.toInt(),
+                                            0.95f
+                                        )
+                                    )
+                                )
+                                .build()
+                        )
+                    }
+                }
             }
         }
         .build()
@@ -370,11 +487,18 @@ private fun getLaunchAction(context: Context): ActionBuilders.Action {
 @WearPreviewDevices
 private fun detailsWeatherTilePreview(context: Context): TilePreviewData {
     context.initializeDependencies(isPhone = false)
+
     val wim = sharedDeps.weatherIconsManager.iconProvider
 
     val weather = buildMockWeatherData()
     val viewModel = weather.toUiModel()
     val weatherDetails = viewModel.weatherDetailsMap
+    val sampleTileConfig = weatherDetails
+        .filterKeys { DetailsWeatherTileUtils.isTypeAllowed(it) }
+        .toList()
+        .shuffled()
+        .take(DetailsWeatherTileUtils.MAX_BUTTONS)
+        .shuffled()
 
     return TilePreviewData(
         onTileResourceRequest = { request ->
@@ -408,8 +532,8 @@ private fun detailsWeatherTilePreview(context: Context): TilePreviewData {
                 detailsWeatherTileLayout(
                     context,
                     request.deviceConfiguration,
-                    weather = weather,
-                    weatherDetails = weatherDetails
+                    weather,
+                    sampleTileConfig
                 )
             ).build()
         }
@@ -524,12 +648,12 @@ private fun buildMockWeatherData(): Weather {
             lowC = 15f
             icon = WeatherIcons.DAY_SUNNY
             airQuality = AirQuality().apply {
-                index = 46
+                index = Random.nextInt(0, 301)
             }
-            beaufort = Beaufort(Beaufort.BeaufortScale.B1)
-            uv = UV(3f)
+            beaufort = Beaufort(Beaufort.BeaufortScale.valueOf(Random.nextInt(0, 12)))
+            uv = UV(Random.nextInt(0, 11).toFloat())
             pollen = Pollen().apply {
-                treePollenCount = Pollen.PollenCount.HIGH
+                treePollenCount = Pollen.PollenCount.VERY_HIGH
                 grassPollenCount = Pollen.PollenCount.LOW
                 ragweedPollenCount = Pollen.PollenCount.MODERATE
             }
@@ -544,16 +668,19 @@ private fun buildMockWeatherData(): Weather {
             dewpointC = 10f
         }
         precipitation = Precipitation().apply {
-            pop = 15
-            cloudiness = 25
+            pop = 100
+            cloudiness = 100
             qpfRainIn = 0.05f
             qpfRainMm = 1.27f
-            qpfSnowIn = 0f
-            qpfSnowCm = 0f
+            qpfSnowIn = 10.1f
+            qpfSnowCm = 25.4f
         }
         astronomy = Astronomy().apply {
-            sunrise = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0))
-            sunset = LocalDateTime.of(LocalDate.now(), LocalTime.of(18, 0))
+            sunrise = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0))
+            sunset = LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 0))
+            moonrise = LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 43))
+            moonset = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 46))
+            moonPhase = MoonPhase(MoonPhase.MoonPhaseType.entries[Random.nextInt(0, 7)])
         }
         source = WeatherAPI.ANDROID
         query = ""

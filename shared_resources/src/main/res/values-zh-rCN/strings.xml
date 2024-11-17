@@ -224,4 +224,8 @@
     <!-- Fuzzy -->
     <string name="label_moreinfo">"更多信息"</string>
     <string name="action_reset">"重置"</string>
+    <string name="label_count_low_short">"低"</string>
+    <string name="label_count_moderate_short">"中"</string>
+    <string name="label_count_high_short">"高"</string>
+    <string name="label_count_veryhigh_short">"很高"</string>
 </resources>

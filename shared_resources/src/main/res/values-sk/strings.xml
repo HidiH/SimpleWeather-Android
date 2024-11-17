@@ -204,4 +204,8 @@
     <string name="pref_title_termsofservice">"Podmienky služby"</string>
     <string name="label_moreinfo">"Viac informácií"</string>
     <string name="action_reset">"Resetovať"</string>
+    <string name="label_count_low_short">"Nízka"</string>
+    <string name="label_count_moderate_short">"Stredná"</string>
+    <string name="label_count_high_short">"Vysoká"</string>
+    <string name="label_count_veryhigh_short">"Vysoká"</string>
 </resources>
