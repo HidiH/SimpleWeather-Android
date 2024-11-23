@@ -1,14 +1,17 @@
 package com.thewizrd.simpleweather.wearable.tiles.layouts
 
 import android.content.Context
+import androidx.annotation.OptIn
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.core.graphics.ColorUtils
 import androidx.wear.protolayout.ActionBuilders
 import androidx.wear.protolayout.ColorBuilders.ColorProp
 import androidx.wear.protolayout.DeviceParametersBuilders.DeviceParameters
+import androidx.wear.protolayout.DimensionBuilders.DpProp
 import androidx.wear.protolayout.DimensionBuilders.degrees
 import androidx.wear.protolayout.DimensionBuilders.dp
 import androidx.wear.protolayout.DimensionBuilders.expand
+import androidx.wear.protolayout.DimensionBuilders.wrap
 import androidx.wear.protolayout.LayoutElementBuilders.Box
 import androidx.wear.protolayout.LayoutElementBuilders.CONTENT_SCALE_MODE_FIT
 import androidx.wear.protolayout.LayoutElementBuilders.Column
@@ -16,19 +19,29 @@ import androidx.wear.protolayout.LayoutElementBuilders.FONT_WEIGHT_NORMAL
 import androidx.wear.protolayout.LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER
 import androidx.wear.protolayout.LayoutElementBuilders.Image
 import androidx.wear.protolayout.LayoutElementBuilders.LayoutElement
+import androidx.wear.protolayout.LayoutElementBuilders.Row
 import androidx.wear.protolayout.LayoutElementBuilders.Spacer
+import androidx.wear.protolayout.LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE
+import androidx.wear.protolayout.LayoutElementBuilders.VERTICAL_ALIGN_CENTER
 import androidx.wear.protolayout.ModifiersBuilders
 import androidx.wear.protolayout.ModifiersBuilders.Background
+import androidx.wear.protolayout.ModifiersBuilders.Clickable
 import androidx.wear.protolayout.ModifiersBuilders.Corner
 import androidx.wear.protolayout.ModifiersBuilders.Modifiers
+import androidx.wear.protolayout.ModifiersBuilders.Padding
 import androidx.wear.protolayout.ModifiersBuilders.Semantics
 import androidx.wear.protolayout.ModifiersBuilders.Transformation
 import androidx.wear.protolayout.ResourceBuilders.Resources
+import androidx.wear.protolayout.expression.ProtoLayoutExperimental
+import androidx.wear.protolayout.material.Chip
+import androidx.wear.protolayout.material.ChipColors
 import androidx.wear.protolayout.material.CircularProgressIndicator
+import androidx.wear.protolayout.material.CompactChip
 import androidx.wear.protolayout.material.ProgressIndicatorColors
 import androidx.wear.protolayout.material.Text
 import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.MultiButtonLayout
+import androidx.wear.protolayout.material.layouts.PrimaryLayout
 import androidx.wear.tiles.tooling.preview.TilePreviewData
 import androidx.wear.tiles.tooling.preview.TilePreviewHelper
 import com.google.android.horologist.tiles.images.toImageResource
@@ -41,7 +54,9 @@ import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.common.controls.toUiModel
 import com.thewizrd.common.utils.ImageUtils
 import com.thewizrd.common.utils.ImageUtils.rotate
+import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.designer.initializeDependencies
+import com.thewizrd.shared_resources.designer.isInEditMode
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.Colors
@@ -62,6 +77,7 @@ import com.thewizrd.shared_resources.weatherdata.model.Precipitation
 import com.thewizrd.shared_resources.weatherdata.model.UV
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.LaunchActivity
+import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.DetailsWeatherTileUtils
 import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
@@ -115,24 +131,153 @@ internal fun detailsWeatherTileLayout(
     weather: Weather?,
     filteredTileConfig: List<Pair<WeatherDetailsType, DetailItemViewModel>>
 ): LayoutElement {
+    val detailItems = filteredTileConfig.take(DetailsWeatherTileUtils.MAX_BUTTONS)
+
     return Box.Builder()
         .setHeight(expand())
         .setWidth(expand())
+        .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
+        .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
         .addContent(
-            MultiButtonLayout.Builder()
-                .apply {
-                    filteredTileConfig.take(DetailsWeatherTileUtils.MAX_BUTTONS)
-                        .forEach { (type, model) ->
-                            addButtonContent(
-                                detailButtonItem(context, deviceParameters, weather, type, model)
-                            )
-                        }
+            when (detailItems.size) {
+                0 -> {
+                    Text.Builder(context, context.getString(R.string.error_noresults))
+                        .setTypography(Typography.TYPOGRAPHY_BODY1)
+                        .setColor(ColorProp.Builder(Colors.WHITE).build())
+                        .setMaxLines(1)
+                        .build()
                 }
-                .build()
+
+                1, 2 -> {
+                    PrimaryLayout.Builder(deviceParameters)
+                        .setResponsiveContentInsetEnabled(true)
+                        .setPrimaryChipContent(
+                            CompactChip.Builder(
+                                context,
+                                Clickable.Builder()
+                                    .setOnClick(getLaunchAction(context))
+                                    .build(),
+                                deviceParameters
+                            )
+                                .setTextContent(context.getString(R.string.label_nav_weathernow))
+                                .build()
+                        )
+                        .setContent(
+                            Column.Builder()
+                                .setWidth(expand())
+                                .apply {
+                                    detailItems.forEachIndexed { index, (type, model) ->
+                                        addContent(
+                                            detailChipItem(
+                                                context, deviceParameters, weather, type, model
+                                            )
+                                        )
+                                        if (index != detailItems.size - 1) {
+                                            addContent(Spacer.Builder().setHeight(dp(4f)).build())
+                                        }
+                                    }
+                                }
+                                .build()
+                        )
+                        .apply {
+                            if (deviceParameters.screenWidthDp >= 225) {
+                                weather?.location?.name?.let {
+                                    setPrimaryLabelTextContent(detailLocation(context, it))
+                                }
+                            }
+                        }
+                        .build()
+                }
+
+                3, 4 -> {
+                    Column.Builder()
+                        .setHeight(wrap())
+                        .setWidth(wrap())
+                        .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
+                        .setModifiers(
+                            Modifiers.Builder()
+                                .setPadding(
+                                    Padding.Builder()
+                                        .setStart(dp(4f))
+                                        .setEnd(dp(4f))
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .apply {
+                            detailItems.chunked(2)
+                                .forEachIndexed { index, list ->
+                                    addContent(
+                                        Row.Builder()
+                                            .setWidth(wrap())
+                                            .setHeight(wrap())
+                                            .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
+                                            .apply {
+                                                list.forEachIndexed { index, (type, model) ->
+                                                    addContent(
+                                                        Column.Builder()
+                                                            .setWidth(dp(66f))
+                                                            .setHeight(dp(66f))
+                                                            .setHorizontalAlignment(
+                                                                HORIZONTAL_ALIGN_CENTER
+                                                            )
+                                                            .addContent(
+                                                                detailButtonItem(
+                                                                    context,
+                                                                    deviceParameters,
+                                                                    weather,
+                                                                    type,
+                                                                    model,
+                                                                    buttonSize = dp(66f),
+                                                                    imageSize = dp(24f),
+                                                                    spacerSize = dp(10f),
+                                                                    typography = Typography.TYPOGRAPHY_CAPTION2
+                                                                )
+                                                            )
+                                                            .build()
+                                                    )
+                                                    if (index != list.size - 1) {
+                                                        addContent(
+                                                            Spacer.Builder().setWidth(dp(4f))
+                                                                .build()
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                            .build()
+                                    )
+
+                                    if (index != detailItems.size - 1) {
+                                        addContent(Spacer.Builder().setHeight(dp(4f)).build())
+                                    }
+                                }
+                        }
+                        .build()
+                }
+
+                else -> {
+                    MultiButtonLayout.Builder()
+                        .apply {
+                            detailItems.forEach { (type, model) ->
+                                addButtonContent(
+                                    detailButtonItem(
+                                        context,
+                                        deviceParameters,
+                                        weather,
+                                        type,
+                                        model
+                                    )
+                                )
+                            }
+                        }
+                        .build()
+                }
+            }
         )
         .build()
 }
 
+@OptIn(ProtoLayoutExperimental::class)
 internal fun detailLocation(
     context: Context,
     location: String
@@ -140,6 +285,7 @@ internal fun detailLocation(
     return Text.Builder(context, location.split(',').firstOrNull() ?: location)
         .setTypography(Typography.TYPOGRAPHY_BODY1)
         .setColor(ColorProp.Builder(Colors.WHITE).build())
+        .setOverflow(TEXT_OVERFLOW_MARQUEE)
         .setMaxLines(1)
         .build()
 }
@@ -149,7 +295,11 @@ internal fun detailButtonItem(
     deviceParameters: DeviceParameters,
     weather: Weather?,
     detailsType: WeatherDetailsType,
-    model: DetailItemViewModel
+    model: DetailItemViewModel,
+    buttonSize: DpProp = dp(52f),
+    imageSize: DpProp = dp(18f),
+    spacerSize: DpProp = dp(8f),
+    typography: Int? = null
 ): LayoutElement {
     return Box.Builder()
         .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
@@ -158,15 +308,15 @@ internal fun detailButtonItem(
         .addContent(
             Column.Builder()
                 .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
-                .setHeight(dp(52f))
-                .setWidth(dp(52f))
+                .setHeight(buttonSize)
+                .setWidth(buttonSize)
                 .setModifiers(
                     Modifiers.Builder()
                         .setBackground(
                             Background.Builder()
                                 .setCorner(
                                     Corner.Builder()
-                                        .setRadius(dp(32f))
+                                        .setRadius(dp(buttonSize.value * 13f / 8))
                                         .build()
                                 )
                                 .setColor(
@@ -178,12 +328,12 @@ internal fun detailButtonItem(
                         .build()
                 )
                 .addContent(
-                    Spacer.Builder().setHeight(dp(8f)).build()
+                    Spacer.Builder().setHeight(spacerSize).build()
                 )
                 .addContent(
                     Image.Builder()
-                        .setWidth(dp(18f))
-                        .setHeight(dp(18f))
+                        .setWidth(imageSize)
+                        .setHeight(imageSize)
                         .setModifiers(
                             Modifiers.Builder()
                                 .apply {
@@ -213,7 +363,7 @@ internal fun detailButtonItem(
                 .addContent(
                     Text.Builder(context, model.shortValue.toString())
                         .setTypography(
-                            when (detailsType) {
+                            typography ?: when (detailsType) {
                                 WeatherDetailsType.FEELSLIKE,
                                 WeatherDetailsType.HUMIDITY,
                                 WeatherDetailsType.POPCLOUDINESS,
@@ -473,6 +623,30 @@ internal fun detailButtonItem(
         .build()
 }
 
+internal fun detailChipItem(
+    context: Context,
+    deviceParameters: DeviceParameters,
+    weather: Weather?,
+    detailsType: WeatherDetailsType,
+    model: DetailItemViewModel
+): LayoutElement {
+    return Chip.Builder(context, Clickable.Builder().build(), deviceParameters)
+        .setWidth(expand())
+        .setIconContent(
+            if (appLib.isInEditMode() || deviceParameters.supportsTransformation() || model.iconRotation == 0) {
+                "${ID_WEATHER_ICON_PREFIX}${model.icon}"
+            } else {
+                "${ID_ROTATION_PREFIX}${model.iconRotation}:${ID_WEATHER_ICON_PREFIX}${model.icon}"
+            }
+        )
+        .setPrimaryLabelContent(model.label.toString())
+        .setSecondaryLabelContent(model.value.toString())
+        .setChipColors(
+            ChipColors.secondaryChipColors(androidx.wear.protolayout.material.Colors.DEFAULT)
+        )
+        .build()
+}
+
 private fun getLaunchAction(context: Context): ActionBuilders.Action {
     return ActionBuilders.LaunchAction.Builder()
         .setAndroidActivity(
@@ -497,7 +671,7 @@ private fun detailsWeatherTilePreview(context: Context): TilePreviewData {
         .filterKeys { DetailsWeatherTileUtils.isTypeAllowed(it) }
         .toList()
         .shuffled()
-        .take(DetailsWeatherTileUtils.MAX_BUTTONS)
+        .take(Random.nextInt(1, DetailsWeatherTileUtils.MAX_BUTTONS + 1 /* exclusive */))
         .shuffled()
 
     return TilePreviewData(

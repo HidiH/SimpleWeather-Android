@@ -8,6 +8,7 @@ import com.thewizrd.common.weatherdata.NoopWeatherProvider
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.appLib
+import com.thewizrd.shared_resources.designer.isInEditMode
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.sharedDeps
@@ -154,7 +155,7 @@ class WeatherUiModel() {
     }
 
     private fun refreshView() {
-        val provider: WeatherProvider = if (appLib.properties.getBoolean("isInEditMode", false)) {
+        val provider: WeatherProvider = if (appLib.isInEditMode()) {
             NoopWeatherProvider()
         } else {
             weatherModule.weatherManager.getWeatherProvider(weatherData!!.source)
