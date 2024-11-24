@@ -35,7 +35,7 @@ class LocationIQProvider : WeatherLocationProviderImpl() {
         private const val AUTOCOMPLETE_QUERY_URL =
             "https://api.locationiq.com/v1/autocomplete.php?key=%s&q=%s&limit=10&normalizecity=1&addressdetails=1&accept-language=%s"
         private const val GEOLOCATION_QUERY_URL =
-            "https://api.locationiq.com/v1/reverse.php?key=%s&lat=%s&lon=%s&format=json&zoom=14&namedetails=0&addressdetails=1&accept-language=%s&normalizecity=1"
+            "https://api.locationiq.com/v1/reverse.php?key=%s&lat=%s&lon=%s&format=json&zoom=14&namedetails=0&addressdetails=1&accept-language=%s&normalizecity=1&normalizeaddress=1"
         private const val KEY_QUERY_URL = "https://us1.unwiredlabs.com/v2/timezone.php?token=%s"
     }
 
