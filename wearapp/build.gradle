@@ -171,7 +171,7 @@ dependencies {
     implementation "androidx.compose.animation:animation-graphics"
     implementation "androidx.compose.runtime:runtime-livedata"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
-    implementation 'androidx.paging:paging-compose:3.3.2'
+    implementation "androidx.paging:paging-compose:$paging_version"
     implementation "androidx.wear.compose:compose-foundation:$wear_compose_version"
     implementation "androidx.wear.compose:compose-material:$wear_compose_version"
     implementation "androidx.wear.compose:compose-navigation:$wear_compose_version"
