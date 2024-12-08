@@ -151,6 +151,7 @@
     <string name="werror_invalidkey">Invalid Provider Key</string>
     <string name="werror_querynotfound">No cities match your search query</string>
     <string name="werror_unknown">Unknown error occurred</string>
+    <string name="werror_ratelimited">Too many requests. Please try again after a few minutes</string>
 
     <!-- Refresh Intervals -->
     <string name="pref_title_refreshinterval">Update Interval</string>

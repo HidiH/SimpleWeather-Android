@@ -97,7 +97,7 @@ object APIRequestUtils {
                 setRetryCount(apiID, 1)
                 setNextRetryTime(apiID, retryTimeInMs)
             }
-            throw WeatherException(ErrorStatus.NETWORKERROR)
+            throw WeatherException(ErrorStatus.RATELIMITED)
                 .initCause(createThrowable(response))
         }
     }
@@ -138,7 +138,7 @@ object APIRequestUtils {
         val nextRetryTime = getNextRetryTime(apiID)
 
         if (currentTime < nextRetryTime) {
-            throw WeatherException(ErrorStatus.NETWORKERROR)
+            throw WeatherException(ErrorStatus.RATELIMITED)
         }
     }
 

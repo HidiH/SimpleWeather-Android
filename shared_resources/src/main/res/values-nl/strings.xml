@@ -208,4 +208,5 @@
     <string name="label_count_moderate_short">"Matig"</string>
     <string name="label_count_high_short">"Hoog"</string>
     <string name="label_count_veryhigh_short">"Hoog"</string>
+    <string name="werror_ratelimited">"Te veel aanvragen. Probeer het opnieuw na een paar minuten"</string>
 </resources>

@@ -208,4 +208,5 @@
     <string name="label_count_moderate_short">"Stredná"</string>
     <string name="label_count_high_short">"Vysoká"</string>
     <string name="label_count_veryhigh_short">"Vysoká"</string>
+    <string name="werror_ratelimited">"Príliš veľa požiadaviek. Prosím, skúste to znova po niekoľkých minútach"</string>
 </resources>

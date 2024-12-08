@@ -100,7 +100,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
                 val authorization = hereOAuthService.getBearerToken(false)
 
                 if (authorization.isNullOrBlank()) {
-                    throw WeatherException(ErrorStatus.NETWORKERROR).apply {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY).apply {
                         initCause(Exception("Invalid bearer token: $authorization"))
                     }
                 }
