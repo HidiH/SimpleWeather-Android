@@ -63,18 +63,28 @@ jobs:
         run: chmod +x gradlew
       # APK Release
       - name: Build release APK
-        run: ./gradlew :${{ env.module }}:assemble${{ env.variant }}
+        run: ./gradlew :${{ env.module }}:assemble${{ env.variant }}Release
+      # Sign apk
+      - name: Sign release APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: ${{ env.module }}/build/outputs/apk/${{ env.variant }}/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
       # Upload apk
       - name: Upload release APK
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.module }}-${{ env.variant }}-${{ env.date_today }}-release.apk
-          path: ${{ env.module }}/build/outputs/apk/${{ env.variant }}/release/${{ env.module }}-${{ env.variant }}-release.apk
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
       # Prepare Github release
       - name: Upload files to a GitHub release
         uses: svenstaro/upload-release-action@2.9.0
         with:
-          file: ${{ env.module }}/build/outputs/apk/${{ env.variant }}/release/${{ env.module }}-${{ env.variant }}-release.apk
+          file: ${{steps.sign_app.outputs.signedReleaseFile}}
           asset_name: ${{ env.module }}-${{ env.variant }}-release.apk
           tag: ${{ github.ref }}
           overwrite: true
