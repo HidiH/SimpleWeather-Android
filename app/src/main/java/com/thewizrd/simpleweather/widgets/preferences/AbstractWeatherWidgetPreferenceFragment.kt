@@ -56,6 +56,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.model.AirQuality
 import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
+import com.thewizrd.shared_resources.weatherdata.model.Beaufort
 import com.thewizrd.shared_resources.weatherdata.model.Condition
 import com.thewizrd.shared_resources.weatherdata.model.Forecast
 import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
@@ -63,7 +64,9 @@ import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.Location
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
+import com.thewizrd.shared_resources.weatherdata.model.Pollen
 import com.thewizrd.shared_resources.weatherdata.model.Precipitation
+import com.thewizrd.shared_resources.weatherdata.model.UV
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.activities.LocationSearch
@@ -596,15 +599,27 @@ abstract class AbstractWeatherWidgetPreferenceFragment : ToolbarPreferenceFragme
                 weather = getString(R.string.weather_sunny)
                 tempF = 70f
                 tempC = 21f
+                windDegrees = 292
                 windMph = 5f
                 windKph = 8f
+                windGustMph = 15f
+                windGustKph = 25f
+                feelslikeF = 75f
+                feelslikeC = 23f
                 highF = 75f
                 highC = 23f
                 lowF = 60f
                 lowC = 15f
                 icon = WeatherIcons.DAY_SUNNY
                 airQuality = AirQuality().apply {
-                    index = 46
+                    index = Random.nextInt(0, 301)
+                }
+                beaufort = Beaufort(Beaufort.BeaufortScale.valueOf(Random.nextInt(0, 12)))
+                uv = UV(Random.nextInt(0, 11).toFloat())
+                pollen = Pollen().apply {
+                    treePollenCount = Pollen.PollenCount.VERY_HIGH
+                    grassPollenCount = Pollen.PollenCount.LOW
+                    ragweedPollenCount = Pollen.PollenCount.MODERATE
                 }
             }
             atmosphere = Atmosphere()

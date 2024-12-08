@@ -172,6 +172,10 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
             R.id.condition_weather,
             textColor
         )
+        updateViews.setTextColor(
+            R.id.condition_feelslike,
+            textColor
+        )
 
         updateViews.setTextColor(R.id.date_panel, textColor)
         updateViews.setTextColor(R.id.clock_panel, textColor)
@@ -188,6 +192,15 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
             R.id.condition_temp,
             weather.curTemp?.applySpan(textAppearanceSpan)
         )
+
+        weather.weatherDetailsMap[WeatherDetailsType.FEELSLIKE]?.let {
+            updateViews.setTextViewText(
+                R.id.condition_feelslike,
+                "${it.label}: ${it.value}".applySpan(textAppearanceSpan)
+            )
+        } ?: run {
+            updateViews.setViewVisibility(R.id.condition_feelslike, View.GONE)
+        }
 
         buildDate(location, updateViews, appWidgetId, newOptions)
         // Open default clock/calendar app
@@ -656,6 +669,11 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
         )
         updateViews.setTextViewTextSize(
             R.id.condition_weather,
+            TypedValue.COMPLEX_UNIT_SP,
+            12f * txtSizeMultiplier
+        )
+        updateViews.setTextViewTextSize(
+            R.id.condition_feelslike,
             TypedValue.COMPLEX_UNIT_SP,
             12f * txtSizeMultiplier
         )
