@@ -4,7 +4,7 @@ import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.sharedDeps
 
 enum class ErrorStatus {
-    UNKNOWN, SUCCESS, NOWEATHER, NETWORKERROR, INVALIDAPIKEY, QUERYNOTFOUND
+    UNKNOWN, SUCCESS, NOWEATHER, NETWORKERROR, INVALIDAPIKEY, QUERYNOTFOUND, RATELIMITED
 }
 
 class WeatherException : Exception {
@@ -32,6 +32,9 @@ class WeatherException : Exception {
                 }
                 ErrorStatus.QUERYNOTFOUND -> {
                     sharedDeps.context.getString(R.string.werror_querynotfound)
+                }
+                ErrorStatus.RATELIMITED -> {
+                    sharedDeps.context.getString(R.string.werror_ratelimited)
                 }
                 else -> {
                     // ErrorStatus.UNKNOWN

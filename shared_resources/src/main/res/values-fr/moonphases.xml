@@ -8,4 +8,12 @@
     <string name="moonphase_wangibbous">"Gibbeuse décroissante"</string>
     <string name="moonphase_lastqtr">"Dernier quartier"</string>
     <string name="moonphase_wancrescent">"Dernier croissant"</string>
+    <string name="moonphase_new_short">"Nouvelle"</string>
+    <string name="moonphase_waxcrescent_short">"Ascend."</string>
+    <string name="moonphase_firstqtr_short">"1er qu."</string>
+    <string name="moonphase_waxgibbous_short">"Ascend."</string>
+    <string name="moonphase_full_short">"Pleine"</string>
+    <string name="moonphase_wangibbous_short">"Descend."</string>
+    <string name="moonphase_lastqtr_short">"Dern. qr."</string>
+    <string name="moonphase_wancrescent_short">"Descend."</string>
 </resources>

@@ -10,6 +10,7 @@ import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
+import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.helpers.ColorsUtils
 import com.thewizrd.common.utils.ImageUtils
@@ -153,6 +154,10 @@ class WeatherWidget4x2Creator(context: Context, loadBackground: Boolean = true) 
             R.id.condition_weather,
             textColor
         )
+        updateViews.setTextColor(
+            R.id.condition_feelslike,
+            textColor
+        )
 
         updateViews.setTextColor(R.id.date_panel, textColor)
         updateViews.setTextColor(R.id.clock_panel, textColor)
@@ -169,6 +174,15 @@ class WeatherWidget4x2Creator(context: Context, loadBackground: Boolean = true) 
             R.id.condition_temp,
             weather.curTemp?.applySpan(textAppearanceSpan)
         )
+
+        weather.weatherDetailsMap[WeatherDetailsType.FEELSLIKE]?.let {
+            updateViews.setTextViewText(
+                R.id.condition_feelslike,
+                "${it.label}: ${it.value}".applySpan(textAppearanceSpan)
+            )
+        } ?: run {
+            updateViews.setViewVisibility(R.id.condition_feelslike, View.GONE)
+        }
 
         buildDate(location, updateViews, appWidgetId, newOptions)
         // Open default clock/calendar app
@@ -358,6 +372,11 @@ class WeatherWidget4x2Creator(context: Context, loadBackground: Boolean = true) 
         )
         updateViews.setTextViewTextSize(
             R.id.condition_weather,
+            TypedValue.COMPLEX_UNIT_SP,
+            12f * txtSizeMultiplier
+        )
+        updateViews.setTextViewTextSize(
+            R.id.condition_feelslike,
             TypedValue.COMPLEX_UNIT_SP,
             12f * txtSizeMultiplier
         )

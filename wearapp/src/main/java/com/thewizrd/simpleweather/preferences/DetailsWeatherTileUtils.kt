@@ -26,14 +26,7 @@ object DetailsWeatherTileUtils {
     }
 
     fun isTypeAllowed(detailsType: WeatherDetailsType): Boolean {
-        return when (detailsType) {
-            WeatherDetailsType.MOONPHASE,
-            WeatherDetailsType.TREEPOLLEN,
-            WeatherDetailsType.GRASSPOLLEN,
-            WeatherDetailsType.RAGWEEDPOLLEN -> false
-
-            else -> true
-        }
+        return true
     }
 
     fun getTileConfig(): List<WeatherDetailsType>? {

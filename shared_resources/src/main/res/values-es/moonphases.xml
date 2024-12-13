@@ -8,4 +8,12 @@
     <string name="moonphase_wangibbous">"Luna gibosa menguante"</string>
     <string name="moonphase_lastqtr">"Cuarto menguante"</string>
     <string name="moonphase_wancrescent">"Luna menguante"</string>
+    <string name="moonphase_new_short">"Nueva"</string>
+    <string name="moonphase_waxcrescent_short">"Crec."</string>
+    <string name="moonphase_firstqtr_short">"1/4 cr."</string>
+    <string name="moonphase_waxgibbous_short">"Crec."</string>
+    <string name="moonphase_full_short">"Llena"</string>
+    <string name="moonphase_wangibbous_short">"Meng."</string>
+    <string name="moonphase_lastqtr_short">"1/4 m."</string>
+    <string name="moonphase_wancrescent_short">"Meng."</string>
 </resources>

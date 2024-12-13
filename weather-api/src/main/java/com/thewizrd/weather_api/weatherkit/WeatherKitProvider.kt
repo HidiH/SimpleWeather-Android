@@ -121,7 +121,7 @@ class WeatherKitProvider : WeatherProviderImpl() {
                 val authorization = weatherKitJwtService.getBearerToken(false)
 
                 if (authorization.isNullOrBlank()) {
-                    throw WeatherException(ErrorStatus.NETWORKERROR).apply {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY).apply {
                         initCause(Exception("Invalid bearer token: $authorization"))
                     }
                 }

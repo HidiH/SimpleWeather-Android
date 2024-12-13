@@ -14,8 +14,8 @@ android {
         minSdkVersion 26
         targetSdkVersion rootProject.targetSdkVersion
         // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 0, WearOS: 1)
-        versionCode 345100081
-        versionName "5.10.1"
+        versionCode 345100101
+        versionName "5.10.3"
 
         vectorDrawables {
             useSupportLibrary true
@@ -168,7 +168,7 @@ dependencies {
     implementation "androidx.compose.animation:animation-graphics"
     implementation "androidx.compose.runtime:runtime-livedata"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
-    implementation 'androidx.paging:paging-compose:3.3.2'
+    implementation "androidx.paging:paging-compose:$paging_version"
     implementation "androidx.wear.compose:compose-foundation:$wear_compose_version"
     implementation "androidx.wear.compose:compose-material:$wear_compose_version"
     implementation "androidx.wear.compose:compose-navigation:$wear_compose_version"

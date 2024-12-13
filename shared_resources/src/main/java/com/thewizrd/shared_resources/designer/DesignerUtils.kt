@@ -51,3 +51,5 @@ fun Context.initializeDependencies(isPhone: Boolean = true) {
 
     }
 }
+
+fun ApplicationLib.isInEditMode(): Boolean = properties.getBoolean("isInEditMode", false)

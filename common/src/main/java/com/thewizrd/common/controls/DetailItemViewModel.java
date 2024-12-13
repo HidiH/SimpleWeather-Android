@@ -148,38 +148,44 @@ public class DetailItemViewModel {
             case NEWMOON:
                 this.icon = WeatherIcons.MOON_NEW;
                 this.value = context.getString(R.string.moonphase_new);
+                this.shortValue = context.getString(R.string.moonphase_new_short);
                 break;
             case WAXING_CRESCENT:
                 this.icon = WeatherIcons.MOON_ALT_WAXING_CRESCENT_3;
                 this.value = context.getString(R.string.moonphase_waxcrescent);
+                this.shortValue = context.getString(R.string.moonphase_waxcrescent_short);
                 break;
             case FIRST_QTR:
                 this.icon = WeatherIcons.MOON_ALT_FIRST_QUARTER;
                 this.value = context.getString(R.string.moonphase_firstqtr);
+                this.shortValue = context.getString(R.string.moonphase_firstqtr_short);
                 break;
             case WAXING_GIBBOUS:
                 this.icon = WeatherIcons.MOON_ALT_WAXING_GIBBOUS_3;
                 this.value = context.getString(R.string.moonphase_waxgibbous);
+                this.shortValue = context.getString(R.string.moonphase_waxgibbous_short);
                 break;
             case FULL_MOON:
                 this.icon = WeatherIcons.MOON_ALT_FULL;
                 this.value = context.getString(R.string.moonphase_full);
+                this.shortValue = context.getString(R.string.moonphase_full_short);
                 break;
             case WANING_GIBBOUS:
                 this.icon = WeatherIcons.MOON_ALT_WANING_GIBBOUS_3;
                 this.value = context.getString(R.string.moonphase_wangibbous);
+                this.shortValue = context.getString(R.string.moonphase_wangibbous_short);
                 break;
             case LAST_QTR:
                 this.icon = WeatherIcons.MOON_ALT_THIRD_QUARTER;
                 this.value = context.getString(R.string.moonphase_lastqtr);
+                this.shortValue = context.getString(R.string.moonphase_lastqtr_short);
                 break;
             case WANING_CRESCENT:
                 this.icon = WeatherIcons.MOON_ALT_WANING_CRESCENT_3;
                 this.value = context.getString(R.string.moonphase_wancrescent);
+                this.shortValue = context.getString(R.string.moonphase_wancrescent_short);
                 break;
         }
-
-        this.shortValue = value;
     }
 
     public DetailItemViewModel(@NonNull Beaufort.BeaufortScale beaufortScale) {

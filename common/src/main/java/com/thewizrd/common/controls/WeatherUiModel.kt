@@ -8,6 +8,7 @@ import com.thewizrd.common.weatherdata.NoopWeatherProvider
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.appLib
+import com.thewizrd.shared_resources.designer.isInEditMode
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.sharedDeps
@@ -154,7 +155,7 @@ class WeatherUiModel() {
     }
 
     private fun refreshView() {
-        val provider: WeatherProvider = if (appLib.properties.getBoolean("isInEditMode", false)) {
+        val provider: WeatherProvider = if (appLib.isInEditMode()) {
             NoopWeatherProvider()
         } else {
             weatherModule.weatherManager.getWeatherProvider(weatherData!!.source)
@@ -608,16 +609,19 @@ class WeatherUiModel() {
                 weatherDetailsMap[WeatherDetailsType.TREEPOLLEN] = DetailItemViewModel(
                     WeatherDetailsType.TREEPOLLEN,
                     pollenVM.treePollenDesc.toString(),
+                    pollenVM.treePollenShortDesc.toString(),
                     0
                 )
                 weatherDetailsMap[WeatherDetailsType.GRASSPOLLEN] = DetailItemViewModel(
                     WeatherDetailsType.GRASSPOLLEN,
                     pollenVM.grassPollenDesc.toString(),
+                    pollenVM.grassPollenShortDesc.toString(),
                     0
                 )
                 weatherDetailsMap[WeatherDetailsType.RAGWEEDPOLLEN] = DetailItemViewModel(
                     WeatherDetailsType.RAGWEEDPOLLEN,
                     pollenVM.ragweedPollenDesc.toString(),
+                    pollenVM.ragweedPollenShortDesc.toString(),
                     0
                 )
             }

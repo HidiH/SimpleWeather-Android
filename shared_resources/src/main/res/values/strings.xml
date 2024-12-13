@@ -151,6 +151,7 @@
     <string name="werror_invalidkey">Invalid Provider Key</string>
     <string name="werror_querynotfound">No cities match your search query</string>
     <string name="werror_unknown">Unknown error occurred</string>
+    <string name="werror_ratelimited">Too many requests. Please try again after a few minutes</string>
 
     <!-- Refresh Intervals -->
     <string name="pref_title_refreshinterval">Update Interval</string>
@@ -220,9 +221,13 @@
     <string name="label_pollen_ragweed">Ragweed</string>
     <string name="label_ragweed_pollen">Ragweed Pollen</string>
     <string name="label_count_low">Low</string>
+    <string name="label_count_low_short">Low</string>
     <string name="label_count_moderate">Moderate</string>
+    <string name="label_count_moderate_short">Medium</string>
     <string name="label_count_high">High</string>
+    <string name="label_count_high_short">High</string>
     <string name="label_count_veryhigh">Very High</string>
+    <string name="label_count_veryhigh_short">V. High</string>
     <string name="time_current">Current</string>
 
     <string name="action_refresh">Refresh</string>

@@ -24,6 +24,7 @@ import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.LocaleUtils
+import com.thewizrd.shared_resources.utils.StringUtils.isNullOrWhitespace
 import com.thewizrd.shared_resources.utils.ZoneIdCompat
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
@@ -33,11 +34,12 @@ import com.thewizrd.simpleweather.images.ImageDatabase
 import com.thewizrd.simpleweather.images.model.ImageData
 import com.thewizrd.simpleweather.updates.UpdateInfo
 import com.thewizrd.weather_api.aqicn.AQICNProvider
+import com.thewizrd.weather_api.google.location.AndroidLocationProvider
 import com.thewizrd.weather_api.google.location.GoogleLocationProvider
-import com.thewizrd.weather_api.google.location.createLocationModel
 import com.thewizrd.weather_api.google.location.getFromLocationNameAsync
 import com.thewizrd.weather_api.google.location.isGeocoderAvailable
 import com.thewizrd.weather_api.here.auth.hereOAuthService
+import com.thewizrd.weather_api.locationiq.LocationIQProvider
 import com.thewizrd.weather_api.nws.SolCalcAstroProvider
 import com.thewizrd.weather_api.nws.alerts.NWSAlertProvider
 import com.thewizrd.weather_api.smc.SunMoonCalcProvider
@@ -348,16 +350,12 @@ class UnitTests {
     fun androidGeocoderTest() {
         runBlocking(Dispatchers.Default) {
             assertTrue(isGeocoderAvailable())
-            val geocoder = Geocoder(context, Locale.getDefault())
-            val addressList = withContext(Dispatchers.IO) {
-                //geocoder.getFromLocation(47.6721646, -122.1706614, 1); // Washington
-                geocoder.getFromLocation(51.5073884, -0.1334347, 1) // London
+            val locationProvider = AndroidLocationProvider()
+            val location = withContext(Dispatchers.IO) {
+                locationProvider.getLocation(Coordinate(51.5073884, -0.1334347), WeatherAPI.ANDROID)
             }
-            assertFalse(addressList.isNullOrEmpty())
-            val result = addressList!![0]
-            assertNotNull(result)
-            val locQVM = createLocationModel(result, WeatherAPI.ANDROID)
-            assertFalse(locQVM.locationName.toString().contains("null"))
+            assertNotNull(location)
+            assertFalse(location.locationName.toString().contains("null"))
         }
     }
 
@@ -381,7 +379,7 @@ class UnitTests {
                     Coordinate(
                         queryVM!!.locationLat,
                         queryVM.locationLong
-                    ), WeatherAPI.OPENWEATHERMAP
+                    ), WeatherAPI.GOOGLE
                 )
             } else if (locationProvider.needsLocationFromID()) {
                 locationProvider.getLocationFromID(queryVM!!)
@@ -390,18 +388,57 @@ class UnitTests {
             }
 
             assertNotNull(locModel)
+            assertFalse(locModel?.locationName.isNullOrWhitespace())
+            assertTrue(locModel?.toLocationData()?.isValid == true)
+        }
+    }
 
-            if (locModel!!.locationTZLong.isNullOrBlank() && locModel.locationLat != 0.0 && locModel.locationLong != 0.0) {
-                val tzId = weatherModule.tzdbService.getTimeZone(
-                    locModel.locationLat,
-                    locModel.locationLong
+    @Test
+    @Throws(WeatherException::class)
+    fun locIQLocationTest() {
+        runBlocking(Dispatchers.Default) {
+            val locationProvider: WeatherLocationProvider = LocationIQProvider()
+            val locations = withContext(Dispatchers.IO) {
+                locationProvider.getLocations("Redmond, WA", WeatherAPI.LOCATIONIQ)
+            }
+            assertFalse(locations.isEmpty())
+
+            val queryVM = locations.find { it.locationName?.startsWith("Redmond") == true }
+            assertNotNull(queryVM)
+
+            val locModel = if (locationProvider.needsLocationFromName()) {
+                locationProvider.getLocationFromName(queryVM!!)
+            } else if (locationProvider.needsLocationFromGeocoder()) {
+                locationProvider.getLocation(
+                    Coordinate(
+                        queryVM!!.locationLat,
+                        queryVM.locationLong
+                    ), WeatherAPI.LOCATIONIQ
                 )
-                if ("unknown" != tzId)
-                    locModel.locationTZLong = tzId
+            } else if (locationProvider.needsLocationFromID()) {
+                locationProvider.getLocationFromID(queryVM!!)
+            } else {
+                queryVM
             }
 
-            assertFalse(locModel.locationTZLong.isNullOrEmpty())
-            assertTrue(locModel.toLocationData().isValid)
+            assertNotNull(locModel)
+            assertFalse(locModel?.locationName.isNullOrWhitespace())
+            assertTrue(locModel?.toLocationData()?.isValid == true)
+        }
+    }
+
+    @Test
+    @Throws(WeatherException::class)
+    fun locIQLocationGeocoderTest() {
+        runBlocking(Dispatchers.Default) {
+            val locationProvider: WeatherLocationProvider = LocationIQProvider()
+            val locModel = withContext(Dispatchers.IO) {
+                locationProvider.getLocation(Coordinate(51.5073884, -0.1334347), WeatherAPI.ANDROID)
+            }
+
+            assertNotNull(locModel)
+            assertFalse(locModel?.locationName.isNullOrWhitespace())
+            assertTrue(locModel?.toLocationData()?.isValid == true)
         }
     }
 
@@ -425,7 +462,7 @@ class UnitTests {
                     Coordinate(
                         queryVM!!.locationLat,
                         queryVM.locationLong
-                    ), WeatherAPI.OPENWEATHERMAP
+                    ), WeatherAPI.WEATHERAPI
                 )
             } else if (locationProvider.needsLocationFromID()) {
                 locationProvider.getLocationFromID(queryVM!!)
@@ -434,18 +471,8 @@ class UnitTests {
             }
 
             assertNotNull(locModel)
-
-            if (locModel!!.locationTZLong.isNullOrBlank() && locModel.locationLat != 0.0 && locModel.locationLong != 0.0) {
-                val tzId = weatherModule.tzdbService.getTimeZone(
-                    locModel.locationLat,
-                    locModel.locationLong
-                )
-                if ("unknown" != tzId)
-                    locModel.locationTZLong = tzId
-            }
-
-            assertFalse(locModel.locationTZLong.isNullOrEmpty())
-            assertTrue(locModel.toLocationData().isValid)
+            assertFalse(locModel?.locationName.isNullOrWhitespace())
+            assertTrue(locModel?.toLocationData()?.isValid == true)
         }
     }
 
