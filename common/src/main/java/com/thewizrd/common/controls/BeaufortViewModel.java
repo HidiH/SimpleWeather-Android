@@ -3,6 +3,7 @@ package com.thewizrd.common.controls;
 import android.graphics.Color;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 
 import com.thewizrd.shared_resources.utils.Colors;
 import com.thewizrd.shared_resources.weatherdata.model.Beaufort;
@@ -14,7 +15,7 @@ public class BeaufortViewModel {
     private @ColorInt
     int progressColor;
 
-    public BeaufortViewModel(Beaufort beaufort) {
+    public BeaufortViewModel(@NonNull Beaufort beaufort) {
         this.beaufort = new DetailItemViewModel(beaufort.getScale());
         progressMax = 12;
 

@@ -10,6 +10,7 @@ import androidx.wear.watchface.complications.data.NoDataComplicationData
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
@@ -73,8 +74,8 @@ class SunriseSunsetComplicationService : WeatherHourlyForecastComplicationServic
             return null
         }
 
-        val sunrise = weather.astronomy?.sunrise ?: return null
-        val sunset = weather.astronomy?.sunset ?: return null
+        val sunrise = weather.astronomy?.sunrise
+        val sunset = weather.astronomy?.sunset
 
         val fmt = if (DateFormat.is24HourFormat(this)) {
             DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_24HR)
@@ -93,12 +94,22 @@ class SunriseSunsetComplicationService : WeatherHourlyForecastComplicationServic
         val complicationIconResId: Int
         val desc: String
 
-        if (now.toLocalTime() > sunrise.toLocalTime()) {
+        if (sunset != null && sunrise != null) {
+            if (now.toLocalTime() > sunrise.toLocalTime()) {
+                text = sunset.format(fmt)
+                complicationIconResId = R.drawable.wi_sunset
+                desc = getString(R.string.label_sunset)
+            } else {
+                text = sunrise.format(fmt)
+                complicationIconResId = R.drawable.wi_sunrise
+                desc = getString(R.string.label_sunrise)
+            }
+        } else if (sunset != null) {
             text = sunset.format(fmt)
             complicationIconResId = R.drawable.wi_sunset
             desc = getString(R.string.label_sunset)
         } else {
-            text = sunrise.format(fmt)
+            text = sunrise?.format(fmt) ?: WeatherIcons.PLACEHOLDER
             complicationIconResId = R.drawable.wi_sunrise
             desc = getString(R.string.label_sunrise)
         }

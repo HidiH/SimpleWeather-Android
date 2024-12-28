@@ -10,6 +10,7 @@ import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import com.thewizrd.common.controls.UVIndexViewModel
+import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.UV
@@ -49,6 +50,8 @@ class UVComplicationService : WeatherHourlyForecastComplicationService() {
                     PlainComplicationText.Builder("3").build()
                 ).setTitle(
                     PlainComplicationText.Builder("UV").build()
+                ).setValueType(
+                    RangedValueComplicationData.TYPE_RATING
                 ).build()
             }
             ComplicationType.SHORT_TEXT -> {
@@ -90,17 +93,21 @@ class UVComplicationService : WeatherHourlyForecastComplicationService() {
             return null
         }
 
-        val uvIndex = weather.condition?.uv?.index ?: hourlyForecast?.extras?.uvIndex ?: return null
-        val uvModel = UVIndexViewModel(UV(uvIndex))
+        val uvIndex = weather.condition?.uv?.index ?: hourlyForecast?.extras?.uvIndex
+        val uvModel = uvIndex?.let { UVIndexViewModel(UV(it)) }
+        val uvStr =
+            uvModel?.let { "${uvModel.index}, ${uvModel.description}" } ?: WeatherIcons.PLACEHOLDER
+        val uvIdxStr = uvModel?.index?.toString() ?: WeatherIcons.PLACEHOLDER
+        val uvProgress = uvModel?.progress?.toFloat() ?: 0f
+        val uvProgressMax = uvModel?.let { max(it.progressMax, it.progress).toFloat() } ?: 11f
+        val contentDescription = "${getString(R.string.label_uv)}: $uvStr"
 
         return when (dataType) {
             ComplicationType.RANGED_VALUE -> {
                 RangedValueComplicationData.Builder(
-                    uvModel.progress.toFloat(),
-                    0f,
-                    max(uvModel.progressMax, uvModel.progress).toFloat(),
+                    uvProgress, 0f, uvProgressMax,
                     PlainComplicationText.Builder(
-                        "${getString(R.string.label_uv)}: ${uvModel.index}, ${uvModel.description}"
+                        contentDescription
                     ).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
@@ -108,18 +115,20 @@ class UVComplicationService : WeatherHourlyForecastComplicationService() {
                             .setTint(Colors.WHITESMOKE)
                     ).build()
                 ).setText(
-                    PlainComplicationText.Builder(uvModel.index.toString()).build()
+                    PlainComplicationText.Builder(uvIdxStr).build()
                 ).setTitle(
                     PlainComplicationText.Builder("UV").build()
+                ).setValueType(
+                    RangedValueComplicationData.TYPE_RATING
                 ).setTapAction(
                     getTapIntent(this)
                 ).build()
             }
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
-                    PlainComplicationText.Builder(uvModel.index.toString()).build(),
+                    PlainComplicationText.Builder(uvIdxStr).build(),
                     PlainComplicationText.Builder(
-                        "${getString(R.string.label_uv)}: ${uvModel.index}, ${uvModel.description}"
+                        contentDescription
                     ).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
@@ -134,11 +143,10 @@ class UVComplicationService : WeatherHourlyForecastComplicationService() {
                 LongTextComplicationData.Builder(
                     PlainComplicationText.Builder(getString(R.string.label_uv)).build(),
                     PlainComplicationText.Builder(
-                        "${getString(R.string.label_uv)}: ${uvModel.index}, ${uvModel.description}"
+                        contentDescription
                     ).build()
                 ).setTitle(
-                    PlainComplicationText.Builder("${uvModel.index}, ${uvModel.description}")
-                        .build()
+                    PlainComplicationText.Builder(uvStr).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
                         Icon.createWithResource(this, complicationIconResId)

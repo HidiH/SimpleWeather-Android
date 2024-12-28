@@ -9,6 +9,7 @@ import androidx.wear.watchface.complications.data.NoDataComplicationData
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
@@ -70,17 +71,17 @@ class FeelsLikeComplicationService : WeatherHourlyForecastComplicationService() 
             return null
         }
 
-        val feelsLikeF =
-            weather.condition?.feelslikeF ?: hourlyForecast?.extras?.feelslikeF ?: return null
-        val feelsLikeC =
-            weather.condition?.feelslikeC ?: hourlyForecast?.extras?.feelslikeC ?: return null
-
-        if (feelsLikeF == feelsLikeC) return null
+        val feelsLikeF = weather.condition?.feelslikeF ?: hourlyForecast?.extras?.feelslikeF
+        val feelsLikeC = weather.condition?.feelslikeC ?: hourlyForecast?.extras?.feelslikeC
 
         val tempUnit = settingsManager.getTemperatureUnit()
-        val tempVal =
-            if (tempUnit == Units.FAHRENHEIT) feelsLikeF.roundToInt() else feelsLikeC.toInt()
-        val tempStr = String.format("$tempVal°$tempUnit")
+        val tempStr = if (feelsLikeF == null || feelsLikeC == null || feelsLikeF == feelsLikeC) {
+            WeatherIcons.PLACEHOLDER
+        } else {
+            val tempVal =
+                if (tempUnit == Units.FAHRENHEIT) feelsLikeF.roundToInt() else feelsLikeC.toInt()
+            String.format("$tempVal°$tempUnit")
+        }
 
         return when (dataType) {
             ComplicationType.SHORT_TEXT -> {

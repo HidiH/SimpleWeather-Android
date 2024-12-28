@@ -14,6 +14,7 @@ import androidx.wear.watchface.complications.data.SmallImageComplicationData
 import androidx.wear.watchface.complications.data.SmallImageType
 import com.thewizrd.common.utils.ImageUtils
 import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.utils.ConversionMethods
@@ -133,12 +134,13 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
             return null
         }
 
-        val windMph = weather.condition?.windMph ?: hourlyForecast?.windMph ?: return null
-        val windKph = weather.condition?.windKph ?: hourlyForecast?.windKph ?: return null
-        val windDirection =
-            weather.condition?.windDegrees ?: hourlyForecast?.windDegrees ?: return null
+        val windMph = weather.condition?.windMph ?: hourlyForecast?.windMph
+        val windKph = weather.condition?.windKph ?: hourlyForecast?.windKph
+        val windDirection = weather.condition?.windDegrees ?: hourlyForecast?.windDegrees
 
-        if (windMph < 0 || windKph < 0 || windDirection < 0) return null
+        if (windMph == null || windKph == null || windDirection == null || windMph < 0 || windKph < 0 || windDirection < 0) {
+            return buildUpdate(dataType)
+        }
 
         val unit = settingsManager.getSpeedUnit()
         val speedVal: Int
@@ -181,11 +183,22 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
             getWindDirection(windDirection.toFloat())
         )
 
+        return buildUpdate(dataType, windSpeedShort, windSpeedLong, windDirection)
+    }
+
+    private fun buildUpdate(
+        dataType: ComplicationType,
+        windSpeedShort: String? = null, windSpeedLong: String? = null, windDirection: Int = 0
+    ): ComplicationData? {
         return when (dataType) {
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
-                    PlainComplicationText.Builder(windSpeedShort).build(),
-                    PlainComplicationText.Builder(windSpeedLong).build()
+                    PlainComplicationText.Builder(windSpeedShort ?: WeatherIcons.PLACEHOLDER)
+                        .build(),
+                    PlainComplicationText.Builder(
+                        windSpeedLong
+                            ?: "${getString(R.string.label_wind)}: ${getString(R.string.weather_notavailable)}"
+                    ).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
                         Icon.createWithBitmap(
@@ -204,9 +217,12 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
             ComplicationType.LONG_TEXT -> {
                 LongTextComplicationData.Builder(
                     PlainComplicationText.Builder(getString(R.string.label_wind)).build(),
-                    PlainComplicationText.Builder(windSpeedLong).build()
+                    PlainComplicationText.Builder(
+                        windSpeedLong
+                            ?: "${getString(R.string.label_wind)}: ${getString(R.string.weather_notavailable)}"
+                    ).build()
                 ).setTitle(
-                    PlainComplicationText.Builder(windSpeedLong).build()
+                    PlainComplicationText.Builder(windSpeedLong ?: WeatherIcons.PLACEHOLDER).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
                         Icon.createWithResource(this, complicationIconResId)
@@ -258,7 +274,13 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
                         )
                             .setTint(Colors.WHITESMOKE)
                     ).build(),
-                    PlainComplicationText.Builder("${getString(R.string.label_wind)}: $windSpeedLong")
+                    PlainComplicationText.Builder(
+                        "${getString(R.string.label_wind)}: ${
+                            windSpeedLong ?: getString(
+                                R.string.weather_notavailable
+                            )
+                        }"
+                    )
                         .build()
                 ).setTapAction(
                     getTapIntent(this)
