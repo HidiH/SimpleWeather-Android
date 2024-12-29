@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.thewizrd.common.helpers.LocationPermissionLauncher
@@ -21,8 +22,10 @@ import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.wearable.WearableDataSync
+import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.databinding.FragmentSetupBinding
+import com.thewizrd.simpleweather.extras.startSetupSyncActivity
 import com.thewizrd.simpleweather.fragments.LocationSearchFragment
 import com.thewizrd.simpleweather.helpers.AcceptDenyDialog
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
@@ -33,7 +36,7 @@ import kotlinx.coroutines.launch
 class SetupActivity : UserLocaleActivity() {
     companion object {
         private const val TAG = "SetupActivity"
-        private const val REQUEST_CODE_SYNC_ACTIVITY = 10
+        internal const val REQUEST_CODE_SYNC_ACTIVITY = 10
     }
 
     // Views
@@ -69,14 +72,12 @@ class SetupActivity : UserLocaleActivity() {
         binding.setupPhoneButton.setOnClickListener {
             AcceptDenyDialog.Builder(this) { _, which ->
                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                    startActivityForResult(
-                        Intent(this, SetupSyncActivity::class.java),
-                        REQUEST_CODE_SYNC_ACTIVITY
-                    )
+                    startSetupSyncActivity()
                 }
             }.setMessage(R.string.prompt_confirmsetup)
                 .show()
         }
+        binding.setupPhoneButton.isGone = BuildConfig.IS_NONGMS
 
         binding.progressBarContainer.visibility = View.GONE
 

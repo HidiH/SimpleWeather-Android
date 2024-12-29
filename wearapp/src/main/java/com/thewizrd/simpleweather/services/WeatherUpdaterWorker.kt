@@ -24,6 +24,7 @@ import com.thewizrd.simpleweather.services.ServiceNotificationHelper.JOB_ID
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.getForegroundNotification
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.initChannel
 import com.thewizrd.simpleweather.wearable.WearableWorker
+import com.thewizrd.simpleweather.wearable.WearableWorkerActions
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -174,7 +175,7 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                         // Check if data has been updated
                         WearableWorker.enqueueAction(
                             context,
-                            WearableWorker.ACTION_REQUESTWEATHERUPDATE
+                            WearableWorkerActions.ACTION_REQUESTWEATHERUPDATE
                         )
                     }
                     Timber.tag(TAG).i("Work failed...")

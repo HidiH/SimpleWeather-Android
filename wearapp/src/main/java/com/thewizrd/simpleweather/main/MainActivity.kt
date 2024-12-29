@@ -22,26 +22,38 @@ import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
 import com.thewizrd.shared_resources.wearable.WearableDataSync
+import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.services.WeatherUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
 import com.thewizrd.simpleweather.ui.weather.WeatherNow
 import com.thewizrd.simpleweather.viewmodels.ForecastPanelsViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
-import com.thewizrd.simpleweather.wearable.WearableListenerActivity
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_OPENONPHONE
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_REQUESTSETUPSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_CONNECTIONSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_SHOWANIMATION
+import com.thewizrd.simpleweather.wearable.WearableListenerManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-class MainActivity : WearableListenerActivity() {
+class MainActivity : UserLocaleActivity() {
     companion object {
         private const val TAG = "MainActivity"
     }
 
-    override lateinit var broadcastReceiver: BroadcastReceiver
-    override lateinit var intentFilter: IntentFilter
+    private val wearListenerMgr =
+        WearableListenerManager(this, WearableSyncReceiver(), IntentFilter().apply {
+            addAction(ACTION_OPENONPHONE)
+            addAction(ACTION_REQUESTSETUPSTATUS)
+            addAction(ACTION_UPDATECONNECTIONSTATUS)
+        }
+        )
 
     // View Models
     private val wNowViewModel: WeatherNowViewModel by viewModels()
@@ -60,8 +72,6 @@ class MainActivity : WearableListenerActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AnalyticsLogger.logEvent("$TAG: onCreate")
-
-        initWearableSyncReceiver()
 
         locationPermissionLauncher = LocationPermissionLauncher(
             this,
@@ -84,7 +94,7 @@ class MainActivity : WearableListenerActivity() {
         }
 
         lifecycleScope.launchWhenCreated {
-            if (settingsManager.getDataSync() == WearableDataSync.OFF && settingsManager.useFollowGPS()) {
+            if ((BuildConfig.IS_NONGMS || settingsManager.getDataSync() == WearableDataSync.OFF) && settingsManager.useFollowGPS()) {
                 if (!locationPermissionEnabled()) {
                     locationPermissionLauncher.requestLocationPermission()
                 }
@@ -131,9 +141,9 @@ class MainActivity : WearableListenerActivity() {
             }
         }
 
-        if (settingsManager.getDataSync() != WearableDataSync.OFF) {
+        if (!BuildConfig.IS_NONGMS && settingsManager.getDataSync() != WearableDataSync.OFF) {
             lifecycleScope.launch {
-                wNowViewModel.updateConnectionStatus(getConnectionStatus())
+                wNowViewModel.updateConnectionStatus(wearListenerMgr.getConnectionStatus())
             }
         }
     }
@@ -165,36 +175,30 @@ class MainActivity : WearableListenerActivity() {
     }
 
     /* Data Sync */
-    private fun initWearableSyncReceiver() {
-        broadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                lifecycleScope.launch {
-                    when (intent.action) {
-                        ACTION_OPENONPHONE -> {
-                            val showAni = intent.getBooleanExtra(EXTRA_SHOWANIMATION, false)
-                            openAppOnPhone(showAni)
-                        }
-                        ACTION_REQUESTSETUPSTATUS -> {
-                            sendSetupStatusRequest()
-                        }
-                        ACTION_UPDATECONNECTIONSTATUS -> {
-                            val connStatus = WearConnectionStatus.valueOf(
-                                intent.getIntExtra(
-                                    EXTRA_CONNECTIONSTATUS,
-                                    0
-                                )
+    private inner class WearableSyncReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            lifecycleScope.launch {
+                when (intent.action) {
+                    ACTION_OPENONPHONE -> {
+                        val showAni = intent.getBooleanExtra(EXTRA_SHOWANIMATION, false)
+                        wearListenerMgr.openAppOnPhone(showAni)
+                    }
+
+                    ACTION_REQUESTSETUPSTATUS -> {
+                        wearListenerMgr.sendSetupStatusRequest()
+                    }
+
+                    ACTION_UPDATECONNECTIONSTATUS -> {
+                        val connStatus = WearConnectionStatus.valueOf(
+                            intent.getIntExtra(
+                                EXTRA_CONNECTIONSTATUS,
+                                0
                             )
-                            wNowViewModel.updateConnectionStatus(connStatus)
-                        }
+                        )
+                        wNowViewModel.updateConnectionStatus(connStatus)
                     }
                 }
             }
-        }
-
-        intentFilter = IntentFilter().apply {
-            addAction(ACTION_OPENONPHONE)
-            addAction(ACTION_REQUESTSETUPSTATUS)
-            addAction(ACTION_UPDATECONNECTIONSTATUS)
         }
     }
 }

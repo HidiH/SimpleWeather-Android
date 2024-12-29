@@ -4,9 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.wearable.*
+import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.DataItem
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.Node
+import com.google.android.gms.wearable.Wearable
+import com.google.android.gms.wearable.WearableStatusCodes
 import com.thewizrd.common.wearable.WearableHelper
 import com.thewizrd.shared_resources.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -22,19 +33,15 @@ class WearableWorker(context: Context, workerParams: WorkerParameters) : Corouti
         // Actions
         private const val KEY_ACTION = "action"
         private const val KEY_FORCEREFRESH = "refresh"
-        const val ACTION_REQUESTUPDATE = "SimpleWeather.Droid.Wear.action.REQUEST_UPDATE"
-        const val ACTION_REQUESTSETTINGSUPDATE = "SimpleWeather.Droid.Wear.action.REQUEST_SETTINGS_UPDATE"
-        const val ACTION_REQUESTLOCATIONUPDATE = "SimpleWeather.Droid.Wear.action.REQUEST_LOCATION_UPDATE"
-        const val ACTION_REQUESTWEATHERUPDATE = "SimpleWeather.Droid.Wear.action.REQUEST_WEATHER_UPDATE"
 
         @JvmStatic
         @JvmOverloads
         fun enqueueAction(context: Context, intentAction: String, forceRefresh: Boolean = false) {
             when (intentAction) {
-                ACTION_REQUESTUPDATE,
-                ACTION_REQUESTSETTINGSUPDATE,
-                ACTION_REQUESTLOCATIONUPDATE,
-                ACTION_REQUESTWEATHERUPDATE -> {
+                WearableWorkerActions.ACTION_REQUESTUPDATE,
+                WearableWorkerActions.ACTION_REQUESTSETTINGSUPDATE,
+                WearableWorkerActions.ACTION_REQUESTLOCATIONUPDATE,
+                WearableWorkerActions.ACTION_REQUESTWEATHERUPDATE -> {
                     startWork(context.applicationContext, intentAction, forceRefresh)
                 }
             }
@@ -94,18 +101,21 @@ class WearableWorker(context: Context, workerParams: WorkerParameters) : Corouti
 
         if (mPhoneNodeWithApp != null) {
             when (intentAction) {
-                ACTION_REQUESTUPDATE -> {
+                WearableWorkerActions.ACTION_REQUESTUPDATE -> {
                     verifySettingsData(forceRefresh)
                     verifyLocationData(forceRefresh)
                     verifyWeatherData(forceRefresh)
                 }
-                ACTION_REQUESTSETTINGSUPDATE -> {
+
+                WearableWorkerActions.ACTION_REQUESTSETTINGSUPDATE -> {
                     verifySettingsData(forceRefresh)
                 }
-                ACTION_REQUESTLOCATIONUPDATE -> {
+
+                WearableWorkerActions.ACTION_REQUESTLOCATIONUPDATE -> {
                     verifyLocationData(forceRefresh)
                 }
-                ACTION_REQUESTWEATHERUPDATE -> {
+
+                WearableWorkerActions.ACTION_REQUESTWEATHERUPDATE -> {
                     verifyWeatherData(forceRefresh)
                 }
             }

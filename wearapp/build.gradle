@@ -1,7 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.devtools.ksp'
@@ -75,10 +72,24 @@ android {
         jvmToolchain(17)
     }
 
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+        fullgms {
+            manifest.srcFile 'src/fullgms/AndroidManifest.xml'
+        }
+        nongms {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+    }
+
     flavorDimensions 'gms'
     productFlavors {
         nongms {
             dimension 'gms'
+            applicationIdSuffix ".foss"
+            versionNameSuffix "-nongms"
             buildConfigField "boolean", "IS_NONGMS", "true"
         }
         fullgms {
@@ -138,13 +149,6 @@ dependencies {
 
     implementation "com.google.android.material:material:$material_version"
 
-    implementation "com.google.android.gms:play-services-base:$gms_base_version"
-    implementation "com.google.android.gms:play-services-location:$gms_location_version"
-
-    // WearOS
-    implementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
-    compileOnly 'com.google.android.wearable:wearable:2.9.0'
-
     implementation 'androidx.wear:wear:1.3.0'
     implementation "androidx.wear:wear-input:1.2.0-alpha02"
     debugImplementation "androidx.wear:wear-input-testing:1.2.0-alpha02"
@@ -190,17 +194,28 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
     debugImplementation "androidx.compose.ui:ui-tooling"
 
-    // Firebase
-    implementation platform("com.google.firebase:firebase-bom:$firebase_version")
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-config'
-    implementation 'com.google.firebase:firebase-perf'
-
     implementation "com.jakewharton.timber:timber:$timber_version"
     implementation "com.ibm.icu:icu4j:$icu4j_version"
 
     implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
     ksp "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
     implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
+
+    // Firebase
+    fullgmsImplementation platform("com.google.firebase:firebase-bom:$firebase_version")
+    fullgmsImplementation 'com.google.firebase:firebase-analytics'
+    fullgmsImplementation 'com.google.firebase:firebase-crashlytics'
+    fullgmsImplementation 'com.google.firebase:firebase-config'
+    fullgmsImplementation 'com.google.firebase:firebase-perf'
+
+    fullgmsImplementation "com.google.android.gms:play-services-base:$gms_base_version"
+    fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
+    fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
+    fullgmsCompileOnly 'com.google.android.wearable:wearable:2.9.0'
+}
+
+if (getGradle().getStartParameter().getTaskRequests().toString().contains("Fullgms")) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+    apply plugin: 'com.google.firebase.firebase-perf'
 }

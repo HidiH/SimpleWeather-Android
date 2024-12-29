@@ -11,6 +11,7 @@ import com.thewizrd.shared_resources.wearable.WearableDataSync;
 import com.thewizrd.simpleweather.services.WeatherUpdaterWorker;
 import com.thewizrd.simpleweather.services.WidgetUpdaterWorker;
 import com.thewizrd.simpleweather.wearable.WearableWorker;
+import com.thewizrd.simpleweather.wearable.WearableWorkerActions;
 
 public class WeatherUpdateBroadcastReceiver extends BroadcastReceiver {
     @Override
@@ -24,9 +25,9 @@ public class WeatherUpdateBroadcastReceiver extends BroadcastReceiver {
             final SettingsManager settingsMgr = new SettingsManager(context.getApplicationContext());
             if (settingsMgr.getDataSync() != WearableDataSync.OFF) {
                 // Request a full update (force Settings refresh + weather + location)
-                WearableWorker.enqueueAction(context, WearableWorker.ACTION_REQUESTSETTINGSUPDATE, true);
-                WearableWorker.enqueueAction(context, WearableWorker.ACTION_REQUESTLOCATIONUPDATE, true);
-                WearableWorker.enqueueAction(context, WearableWorker.ACTION_REQUESTWEATHERUPDATE); // too big to force request for update
+                WearableWorker.enqueueAction(context, WearableWorkerActions.ACTION_REQUESTSETTINGSUPDATE, true);
+                WearableWorker.enqueueAction(context, WearableWorkerActions.ACTION_REQUESTLOCATIONUPDATE, true);
+                WearableWorker.enqueueAction(context, WearableWorkerActions.ACTION_REQUESTWEATHERUPDATE); // too big to force request for update
             }
         }
     }

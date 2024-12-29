@@ -12,6 +12,7 @@ import androidx.annotation.StringDef
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.squareup.moshi.JsonReader
+import com.thewizrd.shared_resources.BuildConfig
 import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.database.LocationsDAO
@@ -460,6 +461,10 @@ class SettingsManager(context: Context) {
     // Android Wear specific members
     @RequiresApi(Build.VERSION_CODES.M)
     fun getDataSync(): WearableDataSync {
+        if (BuildConfig.IS_NONGMS) {
+            return WearableDataSync.OFF
+        }
+
         return WearableDataSync.valueOf(preferences.getString(KEY_DATASYNC, "0")!!.toInt())
     }
 

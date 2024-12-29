@@ -16,6 +16,7 @@ import com.thewizrd.simpleweather.services.ServiceNotificationHelper.JOB_ID
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.getForegroundNotification
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.initChannel
 import com.thewizrd.simpleweather.wearable.WearableWorker
+import com.thewizrd.simpleweather.wearable.WearableWorkerActions
 import com.thewizrd.simpleweather.wearable.complications.WeatherComplicationHelper
 import com.thewizrd.simpleweather.wearable.tiles.WeatherTileHelper
 import kotlinx.coroutines.Dispatchers
@@ -134,7 +135,7 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
                         // Check if data has been updated
                         WearableWorker.enqueueAction(
                             context,
-                            WearableWorker.ACTION_REQUESTWEATHERUPDATE
+                            WearableWorkerActions.ACTION_REQUESTWEATHERUPDATE
                         )
                     } else {
                         getWeather(true)

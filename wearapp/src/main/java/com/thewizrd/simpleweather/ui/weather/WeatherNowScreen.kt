@@ -115,7 +115,7 @@ import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.viewmodels.WeatherNowStateModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
-import com.thewizrd.simpleweather.wearable.WearableListenerActivity
+import com.thewizrd.simpleweather.wearable.WearableListenerActions
 
 @Composable
 fun WeatherNowScreen(
@@ -259,7 +259,9 @@ fun WeatherNowScreen(
 
                 ChangeLocationButton(activity = activity)
                 SettingsButton(activity = activity)
-                OpenOnPhoneButton()
+                if (!BuildConfig.IS_NONGMS) {
+                    OpenOnPhoneButton()
+                }
             }
         }
 
@@ -841,8 +843,8 @@ private fun OpenOnPhoneButton() {
         iconDrawableId = R.drawable.common_full_open_on_phone
     ) {
         localBroadcastManager.sendBroadcast(
-            Intent(WearableListenerActivity.ACTION_OPENONPHONE)
-                .putExtra(WearableListenerActivity.EXTRA_SHOWANIMATION, true)
+            Intent(WearableListenerActions.ACTION_OPENONPHONE)
+                .putExtra(WearableListenerActions.EXTRA_SHOWANIMATION, true)
         )
     }
 }
