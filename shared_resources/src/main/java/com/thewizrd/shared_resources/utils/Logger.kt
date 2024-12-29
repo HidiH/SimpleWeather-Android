@@ -1,6 +1,7 @@
 package com.thewizrd.shared_resources.utils
 
 import android.content.Context
+import android.util.Log
 import com.thewizrd.shared_resources.BuildConfig
 import com.thewizrd.shared_resources.appLib
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +69,76 @@ object Logger {
     @JvmStatic
     fun writeLine(priority: Int, t: Throwable?) {
         Timber.log(priority, t)
+    }
+
+    @JvmStatic
+    fun verbose(tag: String, message: String, vararg args: Any?) {
+        log(Log.VERBOSE, tag, message = message, args = args)
+    }
+
+    @JvmStatic
+    fun verbose(tag: String, t: Throwable? = null, message: String? = null, vararg args: Any?) {
+        log(Log.VERBOSE, tag, t, message, args)
+    }
+
+    @JvmStatic
+    fun debug(tag: String, message: String, vararg args: Any?) {
+        log(Log.DEBUG, tag, message = message, args = args)
+    }
+
+    @JvmStatic
+    fun debug(tag: String, t: Throwable? = null, message: String? = null, vararg args: Any?) {
+        log(Log.DEBUG, tag, t, message, args)
+    }
+
+    @JvmStatic
+    fun info(tag: String, message: String, vararg args: Any?) {
+        log(Log.INFO, tag, message = message, args = args)
+    }
+
+    @JvmStatic
+    fun info(tag: String, t: Throwable? = null, message: String? = null, vararg args: Any?) {
+        log(Log.INFO, tag, t, message, args)
+    }
+
+    @JvmStatic
+    fun warn(tag: String, message: String, vararg args: Any?) {
+        log(Log.WARN, tag, message = message, args = args)
+    }
+
+    @JvmStatic
+    fun warn(tag: String, t: Throwable? = null, message: String? = null, vararg args: Any?) {
+        log(Log.WARN, tag, t, message, args)
+    }
+
+    @JvmStatic
+    fun error(tag: String, message: String, vararg args: Any?) {
+        log(Log.ERROR, tag, message = message, args = args)
+    }
+
+    @JvmStatic
+    fun error(tag: String, t: Throwable? = null, message: String? = null, vararg args: Any?) {
+        log(Log.ERROR, tag, t, message, args)
+    }
+
+    @JvmStatic
+    fun assert(tag: String, message: String, vararg args: Any?) {
+        log(Log.ASSERT, tag, message = message, args = args)
+    }
+
+    @JvmStatic
+    fun assert(tag: String, t: Throwable? = null, message: String? = null, vararg args: Any?) {
+        log(Log.ASSERT, tag, t, message, args)
+    }
+
+    private fun log(
+        priority: Int,
+        tag: String,
+        t: Throwable? = null,
+        message: String? = null,
+        vararg args: Any?
+    ) {
+        Timber.tag(tag).log(priority, t, message, *args)
     }
 
     private fun cleanupLogs(context: Context) {
