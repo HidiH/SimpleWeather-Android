@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -18,22 +16,19 @@ import com.thewizrd.simpleweather.preferences.timepickerpreference.TimePickerPre
 import com.thewizrd.simpleweather.services.UpdaterUtils
 import com.thewizrd.simpleweather.services.WeatherUpdaterWorker
 import com.thewizrd.simpleweather.snackbar.Snackbar
-import java.util.*
+import java.util.Locale
 
 abstract class BaseSettingsFragment : ToolbarPreferenceFragmentCompat() {
     // Intent queue
     private val intentQueue = mutableSetOf<Intent.FilterComparison>()
 
     protected lateinit var locationPermissionLauncher: LocationPermissionLauncher
-    protected lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         locationPermissionLauncher =
             LocationPermissionLauncher(this, locationCallback = ::onLocationPermissionCallback)
-        notificationPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
     }
 
     protected open fun onLocationPermissionCallback(granted: Boolean) {

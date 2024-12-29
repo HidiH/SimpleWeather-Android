@@ -8,15 +8,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.NonNull
 import androidx.core.text.util.LocalePreferences
 import androidx.preference.ListPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.transition.MaterialSharedAxis
 import com.thewizrd.common.helpers.LocationPermissionLauncher
+import com.thewizrd.common.helpers.PermissionLauncher
 import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
 import com.thewizrd.common.helpers.getBackgroundLocationRationale
 import com.thewizrd.common.helpers.notificationPermissionEnabled
@@ -34,7 +32,15 @@ import com.thewizrd.simpleweather.snackbar.SnackbarManager
 class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
     private lateinit var binding: FragmentSetupSettingsBinding
     private lateinit var locationPermissionLauncher: LocationPermissionLauncher
-    private lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var onGoingNotifPermissionLauncher: PermissionLauncher
+    private lateinit var alertNotifPermissionLauncher: PermissionLauncher
+
+    // Preferences
+    private lateinit var unitPref: SwitchPreferenceCompat
+    private lateinit var intervalPref: ListPreference
+    private lateinit var notIconPref: ListPreference
+    private lateinit var onGoingPref: SwitchPreferenceCompat
+    private lateinit var alertsPref: SwitchPreferenceCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,11 +49,20 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
 
         locationPermissionLauncher = LocationPermissionLauncher(this)
-        notificationPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+        onGoingNotifPermissionLauncher = PermissionLauncher(this) { results ->
+            val isChecked = results.all { it.value }
+            if (onGoingPref.callChangeListener(isChecked)) {
+                onGoingPref.isChecked = isChecked
+            }
+        }
+        alertNotifPermissionLauncher = PermissionLauncher(this) { results ->
+            val isChecked = results.all { it.value }
+            if (alertsPref.callChangeListener(isChecked)) {
+                alertsPref.isChecked = isChecked
+            }
+        }
     }
 
-    @NonNull
     override fun createSnackManager(activity: Activity): SnackbarManager {
         val mStepperNavBar = activity.findViewById<View>(R.id.bottom_nav_bar)
 
@@ -78,12 +93,11 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_setup, rootKey)
 
-        val unitPref = findPreference<SwitchPreferenceCompat>(SettingsManager.KEY_USECELSIUS)!!
-        val intervalPref = findPreference<ListPreference>(SettingsManager.KEY_REFRESHINTERVAL)!!
-        val notIconPref = findPreference<ListPreference>(SettingsManager.KEY_NOTIFICATIONICON)!!
-        val onGoingPref =
-            findPreference<SwitchPreferenceCompat>(SettingsManager.KEY_ONGOINGNOTIFICATION)!!
-        val alertsPref = findPreference<SwitchPreferenceCompat>(SettingsManager.KEY_USEALERTS)!!
+        unitPref = findPreference(SettingsManager.KEY_USECELSIUS)!!
+        intervalPref = findPreference(SettingsManager.KEY_REFRESHINTERVAL)!!
+        notIconPref = findPreference(SettingsManager.KEY_NOTIFICATIONICON)!!
+        onGoingPref = findPreference(SettingsManager.KEY_ONGOINGNOTIFICATION)!!
+        alertsPref = findPreference(SettingsManager.KEY_USEALERTS)!!
 
         if (LocalePreferences.getTemperatureUnit() == LocalePreferences.TemperatureUnit.CELSIUS) {
             unitPref.setDefaultValue(true)
@@ -102,7 +116,7 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
 
             if (value && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (!preference.context.notificationPermissionEnabled()) {
-                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    onGoingNotifPermissionLauncher.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
                     return@setOnPreferenceChangeListener false
                 }
             }
@@ -133,7 +147,7 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
 
             if (value && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (!preference.context.notificationPermissionEnabled()) {
-                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    alertNotifPermissionLauncher.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
                     return@setOnPreferenceChangeListener false
                 }
             }
