@@ -47,13 +47,7 @@ class MainActivity : UserLocaleActivity() {
         private const val TAG = "MainActivity"
     }
 
-    private val wearListenerMgr =
-        WearableListenerManager(this, WearableSyncReceiver(), IntentFilter().apply {
-            addAction(ACTION_OPENONPHONE)
-            addAction(ACTION_REQUESTSETUPSTATUS)
-            addAction(ACTION_UPDATECONNECTIONSTATUS)
-        }
-        )
+    private lateinit var wearListenerMgr: WearableListenerManager
 
     // View Models
     private val wNowViewModel: WeatherNowViewModel by viewModels()
@@ -72,6 +66,13 @@ class MainActivity : UserLocaleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AnalyticsLogger.logEvent("$TAG: onCreate")
+
+        wearListenerMgr =
+            WearableListenerManager(this, WearableSyncReceiver(), IntentFilter().apply {
+                addAction(ACTION_OPENONPHONE)
+                addAction(ACTION_REQUESTSETUPSTATUS)
+                addAction(ACTION_UPDATECONNECTIONSTATUS)
+            })
 
         locationPermissionLauncher = LocationPermissionLauncher(
             this,
@@ -103,6 +104,7 @@ class MainActivity : UserLocaleActivity() {
     }
 
     override fun onStart() {
+        wearListenerMgr.onStart()
         super.onStart()
 
         lifecycleScope.launch {
@@ -151,10 +153,12 @@ class MainActivity : UserLocaleActivity() {
     override fun onResume() {
         super.onResume()
         AnalyticsLogger.logEvent("$TAG: onResume")
+        wearListenerMgr.onResume()
     }
 
     override fun onPause() {
         AnalyticsLogger.logEvent("$TAG: onPause")
+        wearListenerMgr.onPause()
         super.onPause()
     }
 

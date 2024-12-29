@@ -37,16 +37,7 @@ class SetupSyncActivity : UserLocaleActivity() {
 
     private lateinit var binding: ActivitySetupSyncBinding
 
-    private val wearListenerMgr = WearableListenerManager(this,
-        WearBroadcastReceiver(),
-        IntentFilter().apply {
-            addAction(WearableHelper.IsSetupPath)
-            addAction(WearableHelper.LocationPath)
-            addAction(WearableHelper.SettingsPath)
-            addAction(WearableHelper.WeatherPath)
-            addAction(WearableHelper.ErrorPath)
-        }
-    )
+    private lateinit var wearListenerMgr: WearableListenerManager
 
     override fun enableLocaleChangeListener(): Boolean {
         return false
@@ -54,8 +45,17 @@ class SetupSyncActivity : UserLocaleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         AnalyticsLogger.logEvent("$TAG: onCreate")
+
+        wearListenerMgr = WearableListenerManager(this, WearBroadcastReceiver(),
+            IntentFilter().apply {
+                addAction(WearableHelper.IsSetupPath)
+                addAction(WearableHelper.LocationPath)
+                addAction(WearableHelper.SettingsPath)
+                addAction(WearableHelper.WeatherPath)
+                addAction(WearableHelper.ErrorPath)
+            }
+        )
 
         binding = ActivitySetupSyncBinding.inflate(layoutInflater)
         setContentView(binding.root)
