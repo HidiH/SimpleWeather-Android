@@ -193,7 +193,7 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
         return when (dataType) {
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
-                    PlainComplicationText.Builder(windSpeedShort ?: WeatherIcons.PLACEHOLDER)
+                    PlainComplicationText.Builder(windSpeedShort ?: WeatherIcons.EM_DASH)
                         .build(),
                     PlainComplicationText.Builder(
                         windSpeedLong
@@ -222,7 +222,7 @@ class WindComplicationService : WeatherHourlyForecastComplicationService() {
                             ?: "${getString(R.string.label_wind)}: ${getString(R.string.weather_notavailable)}"
                     ).build()
                 ).setTitle(
-                    PlainComplicationText.Builder(windSpeedLong ?: WeatherIcons.PLACEHOLDER).build()
+                    PlainComplicationText.Builder(windSpeedLong ?: WeatherIcons.EM_DASH).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
                         Icon.createWithResource(this, complicationIconResId)

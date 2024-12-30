@@ -140,9 +140,9 @@ class BeaufortComplicationService : WeatherHourlyForecastComplicationService() {
                 ?: "${getString(R.string.label_beaufort)}: ${getString(R.string.weather_notavailable)}"
         ).build()
 
-        val progressShortStr = beaufortModel?.progress?.toString() ?: WeatherIcons.PLACEHOLDER
+        val progressShortStr = beaufortModel?.progress?.toString() ?: WeatherIcons.EM_DASH
         val progressStr = beaufortModel?.let { "${it.progress}, ${it.beaufort.value}" }
-            ?: WeatherIcons.PLACEHOLDER
+            ?: WeatherIcons.EM_DASH
         val beaufortIcon = beaufortModel?.beaufort?.icon ?: WeatherIcons.WIND_BEAUFORT_0
 
         return when (dataType) {

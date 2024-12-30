@@ -92,7 +92,7 @@ class HumidityComplicationService : WeatherHourlyForecastComplicationService() {
         }
 
         val humidityPct = weather.atmosphere?.humidity ?: hourlyForecast?.extras?.humidity
-        val humidityStr = humidityPct?.let { "${it}%" } ?: WeatherIcons.PLACEHOLDER
+        val humidityStr = humidityPct?.let { "${it}%" } ?: WeatherIcons.EM_DASH
 
         return when (dataType) {
             ComplicationType.RANGED_VALUE -> {

@@ -144,8 +144,8 @@ class AQIComplicationService : BaseWeatherComplicationService() {
         }
 
         val aqiModel = aqi?.let { AirQualityViewModel(it) }
-        val aqiStr = aqiModel?.let { "${it.index}, ${it.level}" } ?: WeatherIcons.PLACEHOLDER
-        val aqiShortStr = aqiModel?.let { "${it.index}" } ?: WeatherIcons.PLACEHOLDER
+        val aqiStr = aqiModel?.let { "${it.index}, ${it.level}" } ?: WeatherIcons.EM_DASH
+        val aqiShortStr = aqiModel?.let { "${it.index}" } ?: WeatherIcons.EM_DASH
         val aqiProgress = aqiModel?.progress?.toFloat() ?: 0f
         val aqiProgressMax = aqiModel?.let { max(it.progressMax, it.progress).toFloat() } ?: 301f
 

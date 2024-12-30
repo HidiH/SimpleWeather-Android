@@ -76,7 +76,7 @@ class FeelsLikeComplicationService : WeatherHourlyForecastComplicationService() 
 
         val tempUnit = settingsManager.getTemperatureUnit()
         val tempStr = if (feelsLikeF == null || feelsLikeC == null || feelsLikeF == feelsLikeC) {
-            WeatherIcons.PLACEHOLDER
+            WeatherIcons.EM_DASH
         } else {
             val tempVal =
                 if (tempUnit == Units.FAHRENHEIT) feelsLikeF.roundToInt() else feelsLikeC.toInt()

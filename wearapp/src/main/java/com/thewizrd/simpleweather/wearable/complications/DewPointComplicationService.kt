@@ -76,7 +76,7 @@ class DewPointComplicationService : WeatherHourlyForecastComplicationService() {
 
         val tempUnit = settingsManager.getTemperatureUnit()
         val tempStr = if (dewPointF == null || dewPointC == null || dewPointF == dewPointC) {
-            WeatherIcons.PLACEHOLDER
+            WeatherIcons.EM_DASH
         } else {
             val tempVal =
                 if (tempUnit == Units.FAHRENHEIT) dewPointF.roundToInt() else dewPointC.toInt()

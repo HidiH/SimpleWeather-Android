@@ -89,7 +89,7 @@ class PrecipitationComplicationService : WeatherHourlyForecastComplicationServic
         }
 
         val popChance = weather.precipitation?.pop ?: hourlyForecast?.extras?.pop
-        val popChanceStr = popChance?.let { "${it}%" } ?: WeatherIcons.PLACEHOLDER
+        val popChanceStr = popChance?.let { "${it}%" } ?: WeatherIcons.EM_DASH
 
         return when (dataType) {
             ComplicationType.RANGED_VALUE -> {

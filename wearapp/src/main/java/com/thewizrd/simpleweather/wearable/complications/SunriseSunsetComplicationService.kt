@@ -109,7 +109,7 @@ class SunriseSunsetComplicationService : WeatherHourlyForecastComplicationServic
             complicationIconResId = R.drawable.wi_sunset
             desc = getString(R.string.label_sunset)
         } else {
-            text = sunrise?.format(fmt) ?: WeatherIcons.PLACEHOLDER
+            text = sunrise?.format(fmt) ?: WeatherIcons.EM_DASH
             complicationIconResId = R.drawable.wi_sunrise
             desc = getString(R.string.label_sunrise)
         }

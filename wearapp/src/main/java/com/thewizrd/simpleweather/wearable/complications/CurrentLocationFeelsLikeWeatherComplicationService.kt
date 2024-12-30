@@ -127,7 +127,7 @@ class CurrentLocationFeelsLikeWeatherComplicationService : WeatherForecastCompli
                     )
                 String.format(LocaleUtils.getLocale(), "%d°", temp)
             } else {
-                WeatherIcons.PLACEHOLDER
+                WeatherIcons.EM_DASH
             }
         val feelsLikeLabel = getString(R.string.label_feelslike)
 

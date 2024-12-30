@@ -164,7 +164,7 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
                             .setTint(Colors.WHITESMOKE)
                     ).build()
                 ).setText(
-                    PlainComplicationText.Builder(pressureStrShort ?: WeatherIcons.PLACEHOLDER)
+                    PlainComplicationText.Builder(pressureStrShort ?: WeatherIcons.EM_DASH)
                         .build()
                 ).setTapAction(
                     getTapIntent(this)
@@ -173,7 +173,7 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
 
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
-                    PlainComplicationText.Builder(pressureStrShort ?: WeatherIcons.PLACEHOLDER)
+                    PlainComplicationText.Builder(pressureStrShort ?: WeatherIcons.EM_DASH)
                         .build(),
                     PlainComplicationText.Builder(
                         String.format(
@@ -203,7 +203,7 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
                         )
                     ).build()
                 ).setTitle(
-                    PlainComplicationText.Builder(pressureStr ?: WeatherIcons.PLACEHOLDER).build()
+                    PlainComplicationText.Builder(pressureStr ?: WeatherIcons.EM_DASH).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
                         Icon.createWithResource(this, complicationIconResId)

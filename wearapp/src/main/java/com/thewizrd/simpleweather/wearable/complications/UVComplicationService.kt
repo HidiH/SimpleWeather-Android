@@ -96,8 +96,8 @@ class UVComplicationService : WeatherHourlyForecastComplicationService() {
         val uvIndex = weather.condition?.uv?.index ?: hourlyForecast?.extras?.uvIndex
         val uvModel = uvIndex?.let { UVIndexViewModel(UV(it)) }
         val uvStr =
-            uvModel?.let { "${uvModel.index}, ${uvModel.description}" } ?: WeatherIcons.PLACEHOLDER
-        val uvIdxStr = uvModel?.index?.toString() ?: WeatherIcons.PLACEHOLDER
+            uvModel?.let { "${uvModel.index}, ${uvModel.description}" } ?: WeatherIcons.EM_DASH
+        val uvIdxStr = uvModel?.index?.toString() ?: WeatherIcons.EM_DASH
         val uvProgress = uvModel?.progress?.toFloat() ?: 0f
         val uvProgressMax = uvModel?.let { max(it.progressMax, it.progress).toFloat() } ?: 11f
         val contentDescription = "${getString(R.string.label_uv)}: $uvStr"
