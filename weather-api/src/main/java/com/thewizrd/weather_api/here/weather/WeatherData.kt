@@ -76,7 +76,7 @@ fun createWeatherData(root: PlacesItem): Weather {
         atmosphere = createAtmosphere(observation)
         astronomy = createAstronomy(root.astronomyForecasts!![0].forecasts!!)
         precipitation = createPrecipitation(observation, todaysForecast)
-        ttl = 180
+        ttl = 120
 
         source = WeatherAPI.HERE
     }

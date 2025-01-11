@@ -100,7 +100,7 @@ fun createWeatherData(root: Rootobject, minutelyRoot: Rootobject?, alertRoot: Al
 
         weatherAlerts = createWeatherAlerts(alertRoot)
 
-        ttl = 180
+        ttl = 120
         source = WeatherAPI.TOMORROWIO
     }
 }

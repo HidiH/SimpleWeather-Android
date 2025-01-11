@@ -159,7 +159,7 @@ fun createWeatherData(
         atmosphere = createAtmosphere(forecastResponse)
         //astronomy = new Astronomy(obsCurrentResponse);
         precipitation = createPrecipitation(forecastResponse)
-        ttl = 180
+        ttl = 120
 
         if (condition!!.highF == null && forecast!!.size > 0) {
             condition!!.highF = forecast!![0].highF

@@ -136,7 +136,7 @@ fun createWeatherData(
         atmosphere = createAtmosphere(currRoot)
         precipitation = createPrecipitation(currRoot)
 
-        ttl = 180
+        ttl = 120
 
         // Set feelslike temp
         if (condition?.feelslikeF == null && condition?.tempF != null && condition?.windMph != null && atmosphere?.humidity != null) {

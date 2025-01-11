@@ -70,7 +70,7 @@ fun createWeatherData(root: LocationResponseItem): Weather {
         astronomy = createAstronomy(root.riseSet)
         weatherAlerts = createWeatherAlerts(root.alert)
 
-        ttl = 180
+        ttl = 120
 
         if ((condition?.highF == null || condition?.highC == null) && forecast!!.size > 0) {
             condition!!.highF = forecast!![0].highF
