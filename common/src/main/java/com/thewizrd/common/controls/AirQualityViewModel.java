@@ -36,7 +36,7 @@ public class AirQualityViewModel {
     private Integer pm10Index;
     private Integer coIndex;
 
-    public AirQualityViewModel(AirQuality aqi) {
+    public AirQualityViewModel(@NonNull AirQuality aqi) {
         final Context context = SharedModuleKt.getSharedDeps().getContext();
         this.airQuality = new DetailItemViewModel(aqi);
         this.index = this.progress = NumberUtils.getValueOrDefault(aqi.getIndex(), 0);

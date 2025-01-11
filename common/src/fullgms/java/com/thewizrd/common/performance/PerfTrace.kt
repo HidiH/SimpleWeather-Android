@@ -1,7 +1,7 @@
 @file:JvmMultifileClass
 @file:JvmName("PerfTrace")
 
-package com.thewizrd.simpleweather.performance
+package com.thewizrd.common.performance
 
 import com.google.firebase.perf.metrics.Trace
 

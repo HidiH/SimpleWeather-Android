@@ -1,7 +1,12 @@
 package com.thewizrd.simpleweather.wearable
 
 import android.util.Log
-import com.google.android.gms.wearable.*
+import com.google.android.gms.wearable.CapabilityInfo
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.MessageEvent
+import com.google.android.gms.wearable.WearableListenerService
 import com.thewizrd.common.wearable.WearableHelper
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.preferences.SettingsManager

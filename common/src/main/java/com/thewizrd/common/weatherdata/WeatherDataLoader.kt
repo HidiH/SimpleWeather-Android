@@ -414,7 +414,7 @@ class WeatherDataLoader {
             } else {
                 Duration.between(weather.condition!!.observationTime, now).toMinutes()
             }
-        if (duraMins > 90) {
+        if (duraMins > 120) {
             val interval =
                 weatherModule.weatherManager.getWeatherProvider(weather.source)
                     .getHourlyForecastInterval()

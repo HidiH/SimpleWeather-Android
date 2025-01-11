@@ -9,6 +9,7 @@ import androidx.wear.watchface.complications.data.NoDataComplicationData
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
@@ -70,17 +71,17 @@ class DewPointComplicationService : WeatherHourlyForecastComplicationService() {
             return null
         }
 
-        val dewPointF =
-            weather.atmosphere?.dewpointF ?: hourlyForecast?.extras?.dewpointF ?: return null
-        val dewPointC =
-            weather.atmosphere?.dewpointC ?: hourlyForecast?.extras?.dewpointC ?: return null
-
-        if (dewPointF == dewPointC) return null
+        val dewPointF = weather.atmosphere?.dewpointF ?: hourlyForecast?.extras?.dewpointF
+        val dewPointC = weather.atmosphere?.dewpointC ?: hourlyForecast?.extras?.dewpointC
 
         val tempUnit = settingsManager.getTemperatureUnit()
-        val tempVal =
-            if (tempUnit == Units.FAHRENHEIT) dewPointF.roundToInt() else dewPointC.toInt()
-        val tempStr = String.format("$tempVal°$tempUnit")
+        val tempStr = if (dewPointF == null || dewPointC == null || dewPointF == dewPointC) {
+            WeatherIcons.EM_DASH
+        } else {
+            val tempVal =
+                if (tempUnit == Units.FAHRENHEIT) dewPointF.roundToInt() else dewPointC.toInt()
+            String.format("$tempVal°$tempUnit")
+        }
 
         return when (dataType) {
             ComplicationType.SHORT_TEXT -> {

@@ -80,7 +80,7 @@ fun createWeatherData(root: com.thewizrd.weather_api.weatherkit.Weather): Weathe
             astronomy = createAstronomy(it)
         }
         precipitation = createPrecipitation(root.currentWeather!!)
-        ttl = 180
+        ttl = 120
 
         if ((condition!!.highF == null || condition!!.highC == null) && forecast!!.size > 0) {
             condition!!.highF = forecast!![0].highF

@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.thewizrd.simpleweather.ui.components
 
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun LoadingContent(
@@ -10,15 +13,15 @@ fun LoadingContent(
     emptyContent: @Composable () -> Unit,
     loading: Boolean,
     onRefresh: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable (BoxScope.() -> Unit)
 ) {
     if (empty) {
         emptyContent()
     } else {
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(loading),
+        PullToRefreshBox(
+            isRefreshing = loading,
             onRefresh = onRefresh,
-            content = content,
+            content = content
         )
     }
 }

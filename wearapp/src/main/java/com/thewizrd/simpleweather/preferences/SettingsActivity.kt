@@ -46,7 +46,6 @@ import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
-import com.thewizrd.shared_resources.store.PlayStoreUtils
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CommonActions
@@ -66,25 +65,26 @@ import com.thewizrd.simpleweather.fragments.WearDialogFragment
 import com.thewizrd.simpleweather.fragments.WearDialogParams
 import com.thewizrd.simpleweather.helpers.AcceptDenyDialog
 import com.thewizrd.simpleweather.helpers.showConfirmationOverlay
+import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.preferences.iconpreference.WearIconProviderPickerFragment
 import com.thewizrd.simpleweather.preferences.radiopreference.CandidateInfo
 import com.thewizrd.simpleweather.preferences.radiopreference.RadioButtonPreference
-import com.thewizrd.simpleweather.wearable.WearableListenerActivity
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_SENDCONNECTIONSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_CONNECTIONSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListenerManager
 import com.thewizrd.simpleweather.wearable.complications.WeatherComplicationHelper
 import com.thewizrd.simpleweather.wearable.tiles.WeatherTileHelper
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
-class SettingsActivity : WearableListenerActivity() {
+class SettingsActivity : UserLocaleActivity() {
     companion object {
         private const val TAG = "SettingsActivity"
     }
 
-    override lateinit var broadcastReceiver: BroadcastReceiver
-    override lateinit var intentFilter: IntentFilter
     private lateinit var fragmentOnBackPressedCallback: OnBackPressedCallback
 
     override fun attachBaseContext(newBase: Context) {
@@ -96,18 +96,6 @@ class SettingsActivity : WearableListenerActivity() {
         super.onCreate(savedInstanceState)
 
         AnalyticsLogger.logEvent("$TAG: onCreate")
-
-        broadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                if (ACTION_SENDCONNECTIONSTATUS == intent.action) {
-                    lifecycleScope.launch { updateConnectionStatus() }
-                }
-            }
-        }
-
-        intentFilter = IntentFilter(ACTION_SENDCONNECTIONSTATUS)
-
-        remoteActivityHelper = RemoteActivityHelper(this)
 
         fragmentOnBackPressedCallback =
             object : OnBackPressedCallback(supportFragmentManager.backStackEntryCount > 0) {
@@ -148,6 +136,7 @@ class SettingsActivity : WearableListenerActivity() {
             private const val KEY_ICONS = "key_icons"
             private const val CATEGORY_GENERAL = "category_general"
             private const val CATEGORY_API = "category_api"
+            private const val CATEGORY_SYNC = "category_sync"
         }
 
         // Preferences
@@ -164,6 +153,7 @@ class SettingsActivity : WearableListenerActivity() {
         private lateinit var registerPref: Preference
         private lateinit var generalCategory: PreferenceCategory
         private lateinit var apiCategory: PreferenceCategory
+        private lateinit var syncCategory: PreferenceCategory
 
         // Intent queue
         private val intentQueue = mutableSetOf<FilterComparison>()
@@ -171,8 +161,7 @@ class SettingsActivity : WearableListenerActivity() {
         // Wearable status
         private var mConnectionStatus = WearConnectionStatus.DISCONNECTED
         private var statusReceiver: BroadcastReceiver? = null
-
-        protected lateinit var remoteActivityHelper: RemoteActivityHelper
+        private lateinit var wearListenerMgr: WearableListenerManager
 
         private lateinit var locationPermissionLauncher: LocationPermissionLauncher
 
@@ -183,7 +172,19 @@ class SettingsActivity : WearableListenerActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            remoteActivityHelper = RemoteActivityHelper(requireContext())
+
+            wearListenerMgr = WearableListenerManager(
+                requireActivity(),
+                object : BroadcastReceiver() {
+                    override fun onReceive(context: Context, intent: Intent) {
+                        if (ACTION_SENDCONNECTIONSTATUS == intent.action) {
+                            lifecycleScope.launch { wearListenerMgr.updateConnectionStatus() }
+                        }
+                    }
+                },
+                IntentFilter(ACTION_SENDCONNECTIONSTATUS)
+            )
+
             locationPermissionLauncher = LocationPermissionLauncher(
                 this,
                 locationCallback = { granted ->
@@ -224,8 +225,14 @@ class SettingsActivity : WearableListenerActivity() {
                     weatherModule.weatherManager.isKeyRequired(providerPref.value)
         }
 
+        override fun onStart() {
+            wearListenerMgr.onStart()
+            super.onStart()
+        }
+
         override fun onResume() {
             super.onResume()
+            wearListenerMgr.onResume()
 
             AnalyticsLogger.logEvent("SettingsFragment: onResume")
 
@@ -233,27 +240,29 @@ class SettingsActivity : WearableListenerActivity() {
             appLib.unregisterAppSharedPreferenceListener()
             appLib.registerAppSharedPreferenceListener(this)
 
-            statusReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    if (ACTION_UPDATECONNECTIONSTATUS == intent.action) {
-                        mConnectionStatus = WearConnectionStatus.valueOf(
-                            intent.getIntExtra(
-                                EXTRA_CONNECTIONSTATUS,
-                                0
+            if (!BuildConfig.IS_NONGMS) {
+                statusReceiver = object : BroadcastReceiver() {
+                    override fun onReceive(context: Context, intent: Intent) {
+                        if (ACTION_UPDATECONNECTIONSTATUS == intent.action) {
+                            mConnectionStatus = WearConnectionStatus.valueOf(
+                                intent.getIntExtra(
+                                    EXTRA_CONNECTIONSTATUS,
+                                    0
+                                )
                             )
-                        )
-                        updateConnectionPref()
+                            updateConnectionPref()
+                        }
                     }
                 }
-            }
 
-            localBroadcastManager.registerReceiver(
-                statusReceiver!!,
-                IntentFilter(ACTION_UPDATECONNECTIONSTATUS)
-            )
-            localBroadcastManager.sendBroadcast(
-                Intent(ACTION_SENDCONNECTIONSTATUS)
-            )
+                localBroadcastManager.registerReceiver(
+                    statusReceiver!!,
+                    IntentFilter(ACTION_UPDATECONNECTIONSTATUS)
+                )
+                localBroadcastManager.sendBroadcast(
+                    Intent(ACTION_SENDCONNECTIONSTATUS)
+                )
+            }
 
             updateBGLocationPrefState()
         }
@@ -277,7 +286,9 @@ class SettingsActivity : WearableListenerActivity() {
             appLib.unregisterAppSharedPreferenceListener(this)
             appLib.registerAppSharedPreferenceListener()
 
-            localBroadcastManager.unregisterReceiver(statusReceiver!!)
+            if (!BuildConfig.IS_NONGMS) {
+                statusReceiver?.run { localBroadcastManager.unregisterReceiver(this) }
+            }
 
             intentQueue.forEach { filter ->
                 when (filter.intent.action) {
@@ -328,6 +339,7 @@ class SettingsActivity : WearableListenerActivity() {
 
             intentQueue.clear()
 
+            wearListenerMgr.onPause()
             super.onPause()
         }
 
@@ -336,6 +348,7 @@ class SettingsActivity : WearableListenerActivity() {
 
             generalCategory = findPreference(CATEGORY_GENERAL)!!
             apiCategory = findPreference(CATEGORY_API)!!
+            syncCategory = findPreference(CATEGORY_SYNC)!!
 
             findPreference<Preference>(KEY_ABOUTAPP)!!.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
@@ -343,6 +356,7 @@ class SettingsActivity : WearableListenerActivity() {
                         .add(android.R.id.content, AboutAppFragment())
                         .addToBackStack(null)
                         .commit()
+
                     true
                 }
 
@@ -579,7 +593,10 @@ class SettingsActivity : WearableListenerActivity() {
             }
 
             registerPref = findPreference(KEY_APIREGISTER)!!
-            registerPref.onPreferenceClickListener = registerPrefClickListener
+            // Ignore click for non-gms
+            if (!BuildConfig.IS_NONGMS) {
+                registerPref.onPreferenceClickListener = registerPrefClickListener
+            }
 
             // Set key as verified if API Key is req for API and its set
             if (weatherModule.weatherManager.isKeyRequired()) {
@@ -630,6 +647,8 @@ class SettingsActivity : WearableListenerActivity() {
             updateKeySummary()
             updateRegisterLink()
 
+            syncCategory.isVisible = !BuildConfig.IS_NONGMS
+
             syncPreference = findPreference(SettingsManager.KEY_DATASYNC)!!
             syncPreference.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { preference, newValue ->
@@ -650,6 +669,7 @@ class SettingsActivity : WearableListenerActivity() {
             enableSyncedSettings(settingsManager.getDataSync() == WearableDataSync.OFF)
 
             connStatusPref = findPreference(KEY_CONNSTATUS)!!
+            connStatusPref.isVisible = !BuildConfig.IS_NONGMS
         }
 
         private fun updateBGLocationPrefState() {
@@ -723,23 +743,7 @@ class SettingsActivity : WearableListenerActivity() {
         }
 
         private val connStatusPrefClickListener = Preference.OnPreferenceClickListener {
-            val intentAndroid = Intent(Intent.ACTION_VIEW)
-                .addCategory(Intent.CATEGORY_BROWSABLE)
-                .setData(PlayStoreUtils.getPlayStoreURI())
-
-            lifecycleScope.launch {
-                runCatching {
-                    remoteActivityHelper.startRemoteActivity(intentAndroid)
-                        .await()
-
-                    showConfirmationOverlay(true)
-                }.onFailure {
-                    if (it !is CancellationException) {
-                        showConfirmationOverlay(false)
-                    }
-                }
-            }
-
+            wearListenerMgr.openPlayStoreOnPhone(true)
             true
         }
 
@@ -749,9 +753,7 @@ class SettingsActivity : WearableListenerActivity() {
 
             lifecycleScope.launch {
                 runCatching {
-                    remoteActivityHelper.startRemoteActivity(intentAndroid)
-                        .await()
-
+                    wearListenerMgr.startRemoteActivity(intentAndroid)
                     showConfirmationOverlay(true)
                 }.onFailure {
                     if (it !is CancellationException) {
@@ -996,7 +998,7 @@ class SettingsActivity : WearableListenerActivity() {
         }
 
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
-            if (preference.intent != null) {
+            if (preference.intent != null && !BuildConfig.IS_NONGMS) {
                 runWithView {
                     runCatching {
                         remoteActivityHelper.startRemoteActivity(

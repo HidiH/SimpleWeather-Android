@@ -3,10 +3,16 @@
 
 package com.thewizrd.simpleweather.extras
 
+import android.content.Context
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.simpleweather.preferences.SettingsActivity
+import com.thewizrd.simpleweather.setup.SetupActivity
 
 fun initializeExtras() {
+    // no-op
+}
+
+fun initializeFirebase(context: Context) {
     // no-op
 }
 
@@ -24,10 +30,18 @@ fun isPremiumWeatherAPI(api: String?): Boolean {
     return false
 }
 
+fun SetupActivity.startSetupSyncActivity() {
+    // no-op
+}
+
 fun SettingsActivity.SettingsFragment.navigateToPremiumFragment() {
     // no-op
 }
 
 fun SettingsActivity.IconsFragment.navigateUnsupportedIconPack() {
+    // no-op
+}
+
+fun checkPremiumStatus() {
     // no-op
 }

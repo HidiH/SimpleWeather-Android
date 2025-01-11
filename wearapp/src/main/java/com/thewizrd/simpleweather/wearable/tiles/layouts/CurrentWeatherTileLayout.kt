@@ -45,10 +45,10 @@ internal fun currentWeatherTileLayout(
     return currentWeatherTileLayout(
         context,
         deviceParameters,
-        location = viewModel?.location ?: WeatherIcons.PLACEHOLDER,
+        location = viewModel?.location ?: WeatherIcons.EM_DASH,
         weatherIconId = "$ID_WEATHER_ICON_PREFIX${viewModel?.weatherIcon ?: WeatherIcons.NA}",
         currentTemperature = viewModel?.curTemp?.replace(viewModel.tempUnit ?: "", "")
-            ?: WeatherIcons.PLACEHOLDER,
+            ?: WeatherIcons.EM_DASH,
         currentTemperatureColor = weather?.condition?.tempF?.let {
             getColorFromTempF(
                 it,

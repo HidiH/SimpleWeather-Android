@@ -8,13 +8,13 @@ import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.thewizrd.extras.extrasModule
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.simpleweather.extras.checkPremiumStatus
 import com.thewizrd.simpleweather.main.MainActivity
 import com.thewizrd.simpleweather.setup.SetupActivity
 import kotlinx.coroutines.Dispatchers
@@ -69,7 +69,7 @@ class LaunchActivity : ComponentActivity() {
                 remoteConfigService.checkConfig()
 
                 // Check premium status
-                extrasModule.checkPremiumStatus()
+                checkPremiumStatus()
             } catch (e: Exception) {
                 Logger.writeLine(Log.ERROR, e, "%s: error loading", TAG)
             } finally {

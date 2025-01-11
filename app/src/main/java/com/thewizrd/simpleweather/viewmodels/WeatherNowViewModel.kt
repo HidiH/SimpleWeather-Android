@@ -13,6 +13,7 @@ import com.thewizrd.common.controls.toUiModel
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.location.LocationProvider
 import com.thewizrd.common.location.LocationResult
+import com.thewizrd.common.performance.PerfTrace
 import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.wearable.WearableSettings
 import com.thewizrd.common.weatherdata.WeatherDataLoader
@@ -32,7 +33,6 @@ import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.ImageDataViewModel
-import com.thewizrd.simpleweather.performance.PerfTrace
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

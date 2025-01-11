@@ -9,6 +9,7 @@ import androidx.wear.watchface.complications.data.NoDataComplicationData
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
+import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.Weather
@@ -45,6 +46,8 @@ class HumidityComplicationService : WeatherHourlyForecastComplicationService() {
                     ).build()
                 ).setText(
                     PlainComplicationText.Builder("75%").build()
+                ).setValueType(
+                    RangedValueComplicationData.TYPE_PERCENTAGE
                 ).build()
             }
             ComplicationType.SHORT_TEXT -> {
@@ -88,15 +91,15 @@ class HumidityComplicationService : WeatherHourlyForecastComplicationService() {
             return null
         }
 
-        val humidityPct =
-            weather.atmosphere?.humidity ?: hourlyForecast?.extras?.humidity ?: return null
+        val humidityPct = weather.atmosphere?.humidity ?: hourlyForecast?.extras?.humidity
+        val humidityStr = humidityPct?.let { "${it}%" } ?: WeatherIcons.EM_DASH
 
         return when (dataType) {
             ComplicationType.RANGED_VALUE -> {
                 RangedValueComplicationData.Builder(
-                    humidityPct.toFloat(), 0f, 100f,
+                    humidityPct?.toFloat() ?: 0f, 0f, 100f,
                     PlainComplicationText.Builder(
-                        "${getString(R.string.label_humidity)}: ${humidityPct}%"
+                        "${getString(R.string.label_humidity)}: $humidityStr"
                     ).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
@@ -104,16 +107,18 @@ class HumidityComplicationService : WeatherHourlyForecastComplicationService() {
                             .setTint(Colors.WHITESMOKE)
                     ).build()
                 ).setText(
-                    PlainComplicationText.Builder("$humidityPct%").build()
+                    PlainComplicationText.Builder(humidityStr).build()
+                ).setValueType(
+                    RangedValueComplicationData.TYPE_PERCENTAGE
                 ).setTapAction(
                     getTapIntent(this)
                 ).build()
             }
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
-                    PlainComplicationText.Builder("${humidityPct}%").build(),
+                    PlainComplicationText.Builder(humidityStr).build(),
                     PlainComplicationText.Builder(
-                        "${getString(R.string.label_humidity)}: ${humidityPct}%"
+                        "${getString(R.string.label_humidity)}: $humidityStr"
                     ).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
@@ -128,10 +133,10 @@ class HumidityComplicationService : WeatherHourlyForecastComplicationService() {
                 LongTextComplicationData.Builder(
                     PlainComplicationText.Builder(getString(R.string.label_humidity)).build(),
                     PlainComplicationText.Builder(
-                        "${getString(R.string.label_humidity)}: ${humidityPct}%"
+                        "${getString(R.string.label_humidity)}: $humidityStr"
                     ).build()
                 ).setTitle(
-                    PlainComplicationText.Builder("${humidityPct}%").build()
+                    PlainComplicationText.Builder(humidityStr).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
                         Icon.createWithResource(this, complicationIconResId)

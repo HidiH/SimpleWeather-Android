@@ -10,6 +10,7 @@ import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.LocaleUtils
@@ -94,11 +95,13 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
         }
 
         val pressureIn =
-            weather.atmosphere?.pressureIn ?: hourlyForecast?.extras?.pressureIn ?: return null
+            weather.atmosphere?.pressureIn ?: hourlyForecast?.extras?.pressureIn
         val pressureMb =
-            weather.atmosphere?.pressureMb ?: hourlyForecast?.extras?.pressureMb ?: return null
+            weather.atmosphere?.pressureMb ?: hourlyForecast?.extras?.pressureMb
 
-        if (pressureIn < 0 || pressureMb < 0) return null
+        if (pressureIn == null || pressureMb == null || pressureIn < 0 || pressureMb < 0) {
+            return buildUpdate(dataType)
+        }
 
         val df = DecimalFormat.getInstance(LocaleUtils.getLocale()) as DecimalFormat
         df.applyPattern("0.#")
@@ -137,12 +140,23 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
         val pressureStrShort =
             String.format(LocaleUtils.getLocale(), "%s %s", pressureVal, pressureUnitShort)
 
+        return buildUpdate(dataType, pressureStr, pressureStrShort, pressureIn)
+    }
+
+    private fun buildUpdate(
+        dataType: ComplicationType,
+        pressureStr: String? = null, pressureStrShort: String? = null, pressureVal: Float? = null
+    ): ComplicationData? {
         return when (dataType) {
             ComplicationType.RANGED_VALUE -> {
                 RangedValueComplicationData.Builder(
-                    pressureIn, 26f, 32f,
+                    pressureVal ?: 26f, 26f, 32f,
                     PlainComplicationText.Builder(
-                        String.format("%s: %s", getString(R.string.label_pressure), pressureStr)
+                        String.format(
+                            "%s: %s",
+                            getString(R.string.label_pressure),
+                            pressureStr ?: getString(R.string.weather_notavailable)
+                        )
                     ).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
@@ -150,7 +164,8 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
                             .setTint(Colors.WHITESMOKE)
                     ).build()
                 ).setText(
-                    PlainComplicationText.Builder(pressureStrShort).build()
+                    PlainComplicationText.Builder(pressureStrShort ?: WeatherIcons.EM_DASH)
+                        .build()
                 ).setTapAction(
                     getTapIntent(this)
                 ).build()
@@ -158,9 +173,14 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
 
             ComplicationType.SHORT_TEXT -> {
                 ShortTextComplicationData.Builder(
-                    PlainComplicationText.Builder(pressureStrShort).build(),
+                    PlainComplicationText.Builder(pressureStrShort ?: WeatherIcons.EM_DASH)
+                        .build(),
                     PlainComplicationText.Builder(
-                        String.format("%s: %s", getString(R.string.label_pressure), pressureStr)
+                        String.format(
+                            "%s: %s",
+                            getString(R.string.label_pressure),
+                            pressureStr ?: getString(R.string.weather_notavailable)
+                        )
                     ).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
@@ -176,10 +196,14 @@ class PressureComplicationService : WeatherHourlyForecastComplicationService() {
                 LongTextComplicationData.Builder(
                     PlainComplicationText.Builder(getString(R.string.label_pressure)).build(),
                     PlainComplicationText.Builder(
-                        String.format("%s: %s", getString(R.string.label_pressure), pressureStr)
+                        String.format(
+                            "%s: %s",
+                            getString(R.string.label_pressure),
+                            pressureStr ?: getString(R.string.weather_notavailable)
+                        )
                     ).build()
                 ).setTitle(
-                    PlainComplicationText.Builder(pressureStr).build()
+                    PlainComplicationText.Builder(pressureStr ?: WeatherIcons.EM_DASH).build()
                 ).setMonochromaticImage(
                     MonochromaticImage.Builder(
                         Icon.createWithResource(this, complicationIconResId)

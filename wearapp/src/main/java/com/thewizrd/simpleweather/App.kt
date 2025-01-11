@@ -23,6 +23,7 @@ import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.simpleweather.extras.initializeExtras
+import com.thewizrd.simpleweather.extras.initializeFirebase
 import com.thewizrd.simpleweather.receivers.CommonActionsBroadcastReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -76,7 +77,7 @@ class App : Application(), ActivityLifecycleCallbacks {
             override val context = applicationContext
         }
 
-        FirebaseConfigurator.initialize(applicationContext)
+        initializeFirebase(applicationContext)
 
         // Initialize CommonModule: Version migrations (depends on SharedModule, Firebase)
         commonModule = object : CommonModule() {

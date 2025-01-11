@@ -1,7 +1,7 @@
 @file:JvmMultifileClass
 @file:JvmName("PerfTrace")
 
-package com.thewizrd.simpleweather.performance
+package com.thewizrd.common.performance
 
 import androidx.tracing.Trace
 import kotlin.random.Random

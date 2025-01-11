@@ -41,6 +41,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thewizrd.common.helpers.ListChangedArgs
 import com.thewizrd.common.helpers.OnListChangedListener
+import com.thewizrd.common.helpers.PermissionLauncher
 import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
 import com.thewizrd.common.helpers.getBackgroundLocationRationale
 import com.thewizrd.common.helpers.locationPermissionEnabled
@@ -1257,8 +1258,20 @@ class SettingsFragment : BaseSettingsFragment(),
         private lateinit var dailyNotifPref: SwitchPreferenceCompat
         private lateinit var dailyNotifTimePref: TimePickerPreference
 
+        private lateinit var onGoingNotifPermissionLauncher: PermissionLauncher
+
         override val titleResId: Int
             get() = R.string.pref_title_onnotification
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            onGoingNotifPermissionLauncher = PermissionLauncher(this) { results ->
+                val isChecked = results.all { it.value }
+                if (onGoingNotification.callChangeListener(isChecked)) {
+                    onGoingNotification.isChecked = isChecked
+                }
+            }
+        }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_weathernotification, rootKey)
@@ -1272,7 +1285,7 @@ class SettingsFragment : BaseSettingsFragment(),
                     if (newValue as Boolean) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             if (!preference.context.notificationPermissionEnabled()) {
-                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                onGoingNotifPermissionLauncher.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
                                 return@OnPreferenceChangeListener false
                             }
                         }
@@ -1343,8 +1356,27 @@ class SettingsFragment : BaseSettingsFragment(),
         private lateinit var alertNotification: SwitchPreferenceCompat
         private lateinit var popChanceNotifPref: SwitchPreferenceCompat
 
+        private lateinit var alertNotifPermissionLauncher: PermissionLauncher
+        private lateinit var popChanceNotifPermissionLauncher: PermissionLauncher
+
         override val titleResId: Int
             get() = R.string.label_nav_alerts
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            alertNotifPermissionLauncher = PermissionLauncher(this) { results ->
+                val isChecked = results.all { it.value }
+                if (alertNotification.callChangeListener(isChecked)) {
+                    alertNotification.isChecked = isChecked
+                }
+            }
+            popChanceNotifPermissionLauncher = PermissionLauncher(this) { results ->
+                val isChecked = results.all { it.value }
+                if (popChanceNotifPref.callChangeListener(isChecked)) {
+                    popChanceNotifPref.isChecked = isChecked
+                }
+            }
+        }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_alerts, rootKey)
@@ -1358,7 +1390,7 @@ class SettingsFragment : BaseSettingsFragment(),
                     if (newValue as Boolean) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             if (!preference.context.notificationPermissionEnabled()) {
-                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                alertNotifPermissionLauncher.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
                                 return@OnPreferenceChangeListener false
                             }
                         }
@@ -1393,7 +1425,7 @@ class SettingsFragment : BaseSettingsFragment(),
                     if (newValue as Boolean) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             if (!preference.context.notificationPermissionEnabled()) {
-                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                popChanceNotifPermissionLauncher.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
                                 return@OnPreferenceChangeListener false
                             }
                         }
