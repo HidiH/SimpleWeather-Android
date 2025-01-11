@@ -15,7 +15,7 @@ Available for <a href='https://github.com/SimpleAppProjects/SimpleWeather-Window
 
 <div align="center">
 <a href='https://play.google.com/store/apps/details?id=com.thewizrd.simpleweather&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width=300/></a>
-<a href='https://github.com/SimpleAppProjects/SimpleWeather-Android/releases'><img alt='Get it on Github' src='https://camo.githubusercontent.com/70bffd8873ab81e1bb0bccc44e488c3a989e3bd5/68747470733a2f2f692e6962622e636f2f71306d6463345a2f6765742d69742d6f6e2d6769746875622e706e67' width=300/></a>
+<a href='https://github.com/SimpleAppProjects/SimpleWeather-Android/releases'><img alt='Get it on Github' src='docs/get-it-on-github.png' width=300/></a>
 </div>
 
 <h1 align="center">Build Instructions</h1>
