@@ -1,9 +1,9 @@
 name: Android CI
 
 env:
-  module: app
   app_name: SimpleWeather
   variant: nongms
+  buildToolsVersion: "35.0.0"
 
 on:
   push:
@@ -33,15 +33,32 @@ jobs:
           cache: gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # APK Debug
-      - name: Build debug APK
-        run: ./gradlew :${{ env.module }}:assemble${{ env.variant }}Debug
-      # Upload apk
-      - name: Upload debug APK
+      # Clean build
+      - name: Clean build
+        run: ./gradlew clean
+      # App APK Debug
+      - name: Build app debug APK
+        run: ./gradlew :app:assemble${{ env.variant }}Debug
+      # Move to staging
+      - name: Copy app debug APK
+        run: mv app/build/outputs/apk/${{ env.variant }}/debug/app-${{ env.variant }}-debug.apk app-${{ env.variant }}-debug.apk
+      # Wear APK Debug
+      - name: Build wearapp debug APK
+        run: ./gradlew :wearapp:assemble${{ env.variant }}Debug
+      # Move to staging
+      - name: Copy wearapp debug APK
+        run: mv wearapp/build/outputs/apk/${{ env.variant }}/debug/wearapp-${{ env.variant }}-debug.apk wearapp-${{ env.variant }}-debug.apk
+      # Upload apks
+      - name: Upload app debug APK
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.module }}-${{ env.variant }}-${{ env.date_today }}-debug.apk
-          path: ${{ env.module }}/build/outputs/apk/${{ env.variant }}/debug/${{ env.module }}-${{ env.variant }}-debug.apk
+          name: app-${{ env.variant }}-${{ env.date_today }}-debug.apk
+          path: app-${{ env.variant }}-debug.apk
+      - name: Upload wearapp debug APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: wearapp-${{ env.variant }}-${{ env.date_today }}-debug.apk
+          path: wearapp-${{ env.variant }}-debug.apk
   release:
     name: Release APK
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
@@ -61,35 +78,67 @@ jobs:
           cache: gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # APK Release
-      - name: Build release APK
-        run: ./gradlew :${{ env.module }}:assemble${{ env.variant }}Release
+      # Clean build
+      - name: Clean build
+        run: ./gradlew clean
+      # App APK Release
+      - name: Build app release APK
+        run: ./gradlew :app:assemble${{ env.variant }}Release
       # Sign apk
-      - name: Sign release APK
+      - name: Sign app release APK
         uses: r0adkll/sign-android-release@f30bdd30588842ac76044ecdbd4b6d0e3e813478
         id: sign_app
         with:
-          releaseDirectory: ${{ env.module }}/build/outputs/apk/${{ env.variant }}/release
+          releaseDirectory: app/build/outputs/apk/${{ env.variant }}/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "35.0.0"
-      # Upload apk
-      - name: Upload release APK
+          BUILD_TOOLS_VERSION: ${{ env.buildToolsVersion }}
+      # Move to staging
+      - name: Copy app release APK
+        run: mv app/build/outputs/apk/${{ env.variant }}/release/app-${{ env.variant }}-release-unsigned-signed.apk app-${{ env.variant }}-release.apk
+      # Wear APK Release
+      - name: Build wearapp release APK
+        run: ./gradlew :wearapp:assemble${{ env.variant }}Release
+      # Sign apk
+      - name: Sign wearapp release APK
+        uses: r0adkll/sign-android-release@f30bdd30588842ac76044ecdbd4b6d0e3e813478
+        id: sign_wearapp
+        with:
+          releaseDirectory: wearapp/build/outputs/apk/${{ env.variant }}/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.buildToolsVersion }}
+      # Move to staging
+      - name: Copy wearapp release APK
+        run: mv wearapp/build/outputs/apk/${{ env.variant }}/release/wearapp-${{ env.variant }}-release-unsigned-signed.apk wearapp-${{ env.variant }}-release.apk
+      # Upload apks
+      - name: Upload app release APK
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.module }}-${{ env.variant }}-${{ env.date_today }}-release.apk
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          name: app-${{ env.variant }}-${{ env.date_today }}-release.apk
+          path: app-${{ env.variant }}-release.apk
+      # Upload apks
+      - name: Upload wear release APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: wearapp-${{ env.variant }}-${{ env.date_today }}-release.apk
+          path: wearapp-${{ env.variant }}-release.apk
       # Prepare Github release
       - name: Upload files to a GitHub release
-        uses: svenstaro/upload-release-action@2.9.0
+        uses: softprops/action-gh-release@v2
         with:
-          file: ${{steps.sign_app.outputs.signedReleaseFile}}
-          asset_name: ${{ env.module }}-${{ env.variant }}-release.apk
-          tag: ${{ github.ref }}
-          overwrite: true
+          tag_name: ${{ github.ref }}
           draft: true
-          release_name: SimpleWeather ${{ github.ref }}
-          target_commit: public
+          name: ${{ format('{SimpleWeather{0} {1}', ':', github.ref) }}
+          target_commitish: public
+          generate_release_notes: true
+          preserve_order: true
+          files: |
+            app-${{ env.variant }}-release.apk
+            wearapp-${{ env.variant }}-release.apk
