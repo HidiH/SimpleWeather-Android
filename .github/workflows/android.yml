@@ -135,7 +135,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           draft: true
-          name: ${{ format('{SimpleWeather{0} {1}', ':', github.ref) }}
+          name: ${{ format('SimpleWeather{0} {1}', ':', github.ref) }}
           target_commitish: public
           generate_release_notes: true
           preserve_order: true
