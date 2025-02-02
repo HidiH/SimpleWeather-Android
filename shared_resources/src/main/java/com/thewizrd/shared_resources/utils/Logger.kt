@@ -4,30 +4,37 @@ import android.content.Context
 import android.util.Log
 import com.thewizrd.shared_resources.BuildConfig
 import com.thewizrd.shared_resources.appLib
+import com.thewizrd.shared_resources.di.settingsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import timber.log.Timber.DebugTree
 
 object Logger {
     @JvmStatic
-    internal var DEBUG_MODE_ENABLED = false
+    internal var DEBUG_MODE_ENABLED: Boolean
+        get() {
+            return if (BuildConfig.DEBUG) true else settingsManager.isDebugModeEnabled()
+        }
+        set(value) {
+            if (!BuildConfig.DEBUG) {
+                settingsManager.setDebugModeEnabled(value)
+            }
+        }
 
     @JvmStatic
     fun init(context: Context) {
         if (BuildConfig.DEBUG) {
-            Timber.plant(DebugTree())
+            Timber.plant(AndroidLoggingTree())
+            Timber.plant(FileLoggingTree(context.applicationContext))
         } else {
-            if (BuildConfig.IS_NONGMS) {
-                Timber.plant(FileLoggingTree(context.applicationContext))
-            }
-
             cleanupLogs(context.applicationContext)
+
+            enableDebugLogger(context, DEBUG_MODE_ENABLED)
         }
     }
 
     fun isDebugLoggerEnabled(): Boolean {
-        return Timber.forest().any { it is FileLoggingTree }
+        return Timber.forest().any { it is FileLoggingTree || it is AndroidLoggingTree }
     }
 
     fun enableDebugLogger(context: Context, enable: Boolean) {
@@ -37,9 +44,12 @@ object Logger {
             if (!Timber.forest().any { it is FileLoggingTree }) {
                 Timber.plant(FileLoggingTree(context.applicationContext))
             }
+            if (!Timber.forest().any { it is AndroidLoggingTree }) {
+                Timber.plant(AndroidLoggingTree())
+            }
         } else {
             Timber.forest().forEach {
-                if (it is FileLoggingTree) {
+                if (it is FileLoggingTree || it is AndroidLoggingTree) {
                     Timber.uproot(it)
                 }
             }

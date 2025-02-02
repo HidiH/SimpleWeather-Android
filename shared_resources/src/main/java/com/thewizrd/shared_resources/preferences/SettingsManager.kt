@@ -24,13 +24,40 @@ import com.thewizrd.shared_resources.icons.WeatherIconsEFProvider
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.buildEmptyGPSLocation
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.CommonActions
+import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.DateTimeUtils.LOCAL_DATE_TIME_FORMATTER
 import com.thewizrd.shared_resources.utils.DateTimeUtils.LOCAL_DATE_TIME_MIN
-import com.thewizrd.shared_resources.utils.Units.*
+import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.shared_resources.utils.Units.CELSIUS
+import com.thewizrd.shared_resources.utils.Units.DistanceUnits
+import com.thewizrd.shared_resources.utils.Units.FAHRENHEIT
+import com.thewizrd.shared_resources.utils.Units.INCHES
+import com.thewizrd.shared_resources.utils.Units.INHG
+import com.thewizrd.shared_resources.utils.Units.KILOMETERS
+import com.thewizrd.shared_resources.utils.Units.KILOMETERS_PER_HOUR
+import com.thewizrd.shared_resources.utils.Units.MILES
+import com.thewizrd.shared_resources.utils.Units.MILES_PER_HOUR
+import com.thewizrd.shared_resources.utils.Units.MILLIBAR
+import com.thewizrd.shared_resources.utils.Units.MILLIMETERS
+import com.thewizrd.shared_resources.utils.Units.PrecipitationUnits
+import com.thewizrd.shared_resources.utils.Units.PressureUnits
+import com.thewizrd.shared_resources.utils.Units.SpeedUnits
+import com.thewizrd.shared_resources.utils.Units.TemperatureUnits
+import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.Favorites
+import com.thewizrd.shared_resources.weatherdata.model.Forecasts
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecasts
+import com.thewizrd.shared_resources.weatherdata.model.LocationType
+import com.thewizrd.shared_resources.weatherdata.model.Weather
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlertSeverity
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlerts
+import com.thewizrd.shared_resources.weatherdata.model.isNullOrInvalid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -43,7 +70,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 class SettingsManager(context: Context) {
     private val appContext = context.applicationContext
@@ -99,6 +126,7 @@ class SettingsManager(context: Context) {
         private const val KEY_ONBOARDINGCOMPLETE = "key_onboardcomplete"
         const val KEY_USERTHEME = "key_usertheme"
         private const val KEY_DEVSETTINGSENABLED = "key_devsettingsenabled"
+        private const val KEY_DEBUGMODEENABLED = "key_debugmodeenabled"
         const val KEY_MINALERTSEVERITY = "key_minalertseverity"
 
         const val TEMPERATURE_ICON = "0"
@@ -860,6 +888,16 @@ class SettingsManager(context: Context) {
             putBoolean(KEY_DEVSETTINGSENABLED, enable)
         }
         localBroadcastManager.sendBroadcast(Intent(CommonActions.ACTION_SETTINGS_SENDUPDATE))
+    }
+
+    fun isDebugModeEnabled(): Boolean {
+        return devSettings.getBoolean(KEY_DEBUGMODEENABLED, false)
+    }
+
+    fun setDebugModeEnabled(enable: Boolean) {
+        devSettings.edit {
+            putBoolean(KEY_DEBUGMODEENABLED, enable)
+        }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)

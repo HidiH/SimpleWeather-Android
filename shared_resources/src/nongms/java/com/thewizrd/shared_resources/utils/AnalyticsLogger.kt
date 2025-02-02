@@ -10,7 +10,7 @@ object AnalyticsLogger {
     fun logEvent(@Size(min = 1L, max = 40L) eventName: String, properties: Bundle? = null) {
         val append =
             if (properties == null) "" else StringUtils.lineSeparator() + properties.toString()
-        Logger.writeLine(Log.INFO, "EVENT | $eventName$append")
+        Logger.writeLine(Log.INFO, "EVENT|$eventName$append")
     }
 
     @JvmStatic
