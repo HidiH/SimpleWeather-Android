@@ -327,51 +327,7 @@ fun createCondition(current: CurrentsResponseItem, daily: DailyForecastsItem? = 
             }
         }
 
-        if (!daily?.airAndPollen.isNullOrEmpty()) {
-            var treePollenValue: Int? = null
-            var grassPollenValue: Int? = null
-            var ragweedPollenValue: Int? = null
-
-            daily?.airAndPollen?.forEach {
-                if (it?.name == "Grass") {
-                    grassPollenValue = it.value
-                }
-                if (it?.name == "Tree") {
-                    treePollenValue = it.value
-                }
-                if (it?.name == "Ragweed") {
-                    ragweedPollenValue = it.value
-                }
-            }
-
-            if (grassPollenValue != null || treePollenValue != null || ragweedPollenValue != null) {
-                pollen = Pollen().apply {
-                    treePollenCount = when {
-                        treePollenValue != null && treePollenValue in 0..14 -> Pollen.PollenCount.LOW
-                        treePollenValue != null && treePollenValue in 15..89 -> Pollen.PollenCount.MODERATE
-                        treePollenValue != null && treePollenValue in 90..1499 -> Pollen.PollenCount.HIGH
-                        treePollenValue != null && treePollenValue!! >= 1500 -> Pollen.PollenCount.VERY_HIGH
-                        else -> Pollen.PollenCount.UNKNOWN
-                    }
-
-                    grassPollenCount = when {
-                        grassPollenValue != null && grassPollenValue in 0..4 -> Pollen.PollenCount.LOW
-                        grassPollenValue != null && grassPollenValue in 5..19 -> Pollen.PollenCount.MODERATE
-                        grassPollenValue != null && grassPollenValue in 20..199 -> Pollen.PollenCount.HIGH
-                        grassPollenValue != null && grassPollenValue!! >= 200 -> Pollen.PollenCount.VERY_HIGH
-                        else -> Pollen.PollenCount.UNKNOWN
-                    }
-
-                    ragweedPollenCount = when {
-                        ragweedPollenValue != null && ragweedPollenValue in 0..9 -> Pollen.PollenCount.LOW
-                        ragweedPollenValue != null && ragweedPollenValue in 10..49 -> Pollen.PollenCount.MODERATE
-                        ragweedPollenValue != null && ragweedPollenValue in 50..499 -> Pollen.PollenCount.HIGH
-                        ragweedPollenValue != null && ragweedPollenValue!! >= 500 -> Pollen.PollenCount.VERY_HIGH
-                        else -> Pollen.PollenCount.UNKNOWN
-                    }
-                }
-            }
-        }
+        pollen = daily?.let { createPollen(it) }
 
         observationTime = ZonedDateTime.parse(current.localObservationDateTime)
 
@@ -446,4 +402,54 @@ fun createPrecipitation(current: CurrentsResponseItem): Precipitation {
             }
         }
     }
+}
+
+fun createPollen(daily: DailyForecastsItem): Pollen? {
+    if (!daily.airAndPollen.isNullOrEmpty()) {
+        var treePollenValue: Int? = null
+        var grassPollenValue: Int? = null
+        var ragweedPollenValue: Int? = null
+
+        daily.airAndPollen?.forEach {
+            if (it?.name == "Grass") {
+                grassPollenValue = it.value
+            }
+            if (it?.name == "Tree") {
+                treePollenValue = it.value
+            }
+            if (it?.name == "Ragweed") {
+                ragweedPollenValue = it.value
+            }
+        }
+
+        if (grassPollenValue != null || treePollenValue != null || ragweedPollenValue != null) {
+            return Pollen().apply {
+                treePollenCount = when {
+                    treePollenValue != null && treePollenValue in 0..14 -> Pollen.PollenCount.LOW
+                    treePollenValue != null && treePollenValue in 15..89 -> Pollen.PollenCount.MODERATE
+                    treePollenValue != null && treePollenValue in 90..1499 -> Pollen.PollenCount.HIGH
+                    treePollenValue != null && treePollenValue!! >= 1500 -> Pollen.PollenCount.VERY_HIGH
+                    else -> Pollen.PollenCount.UNKNOWN
+                }
+
+                grassPollenCount = when {
+                    grassPollenValue != null && grassPollenValue in 0..4 -> Pollen.PollenCount.LOW
+                    grassPollenValue != null && grassPollenValue in 5..19 -> Pollen.PollenCount.MODERATE
+                    grassPollenValue != null && grassPollenValue in 20..199 -> Pollen.PollenCount.HIGH
+                    grassPollenValue != null && grassPollenValue!! >= 200 -> Pollen.PollenCount.VERY_HIGH
+                    else -> Pollen.PollenCount.UNKNOWN
+                }
+
+                ragweedPollenCount = when {
+                    ragweedPollenValue != null && ragweedPollenValue in 0..9 -> Pollen.PollenCount.LOW
+                    ragweedPollenValue != null && ragweedPollenValue in 10..49 -> Pollen.PollenCount.MODERATE
+                    ragweedPollenValue != null && ragweedPollenValue in 50..499 -> Pollen.PollenCount.HIGH
+                    ragweedPollenValue != null && ragweedPollenValue!! >= 500 -> Pollen.PollenCount.VERY_HIGH
+                    else -> Pollen.PollenCount.UNKNOWN
+                }
+            }
+        }
+    }
+
+    return null
 }

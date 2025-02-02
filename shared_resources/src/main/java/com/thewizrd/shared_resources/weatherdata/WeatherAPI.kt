@@ -35,6 +35,9 @@ object WeatherAPI {
     // Radar
     const val RAINVIEWER = "rainviewer"
 
+    // Misc
+    const val GOOGLE_POLLEN = "google_pollen"
+
     /**
      * Note to self: Common steps to adding a new weather provider
      * 1) Implement [WeatherProvider] class

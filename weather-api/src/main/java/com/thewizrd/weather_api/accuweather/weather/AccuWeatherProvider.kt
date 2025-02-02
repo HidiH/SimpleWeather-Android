@@ -15,8 +15,10 @@ import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.shared_resources.weatherdata.PollenProvider
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.auth.AuthType
+import com.thewizrd.shared_resources.weatherdata.model.Pollen
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.shared_resources.weatherdata.model.isNullOrInvalid
 import com.thewizrd.weather_api.accuweather.location.AccuWeatherLocationProvider
@@ -37,8 +39,10 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
-class AccuWeatherProvider : WeatherProviderImpl() {
+class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
     companion object {
+        private const val DAILY_1DAY_FORECAST_URL =
+            "https://dataservice.accuweather.com/forecasts/v1/daily/1day"
         private const val DAILY_5DAY_FORECAST_URL = "https://dataservice.accuweather.com/forecasts/v1/daily/5day"
         private const val HOURLY_12HR_FORECAST_URL = "https://dataservice.accuweather.com/forecasts/v1/hourly/12hour"
         private const val CURRENT_CONDITIONS_URL = "https://dataservice.accuweather.com/currentconditions/v1"
@@ -256,6 +260,72 @@ class AccuWeatherProvider : WeatherProviderImpl() {
             if (wEx != null) throw wEx
 
             return@withContext weather!!
+        }
+
+    override suspend fun getPollenData(location: LocationData): Pollen? =
+        withContext(Dispatchers.IO) {
+            var pollenData: Pollen? = null
+
+            val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
+            val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
+
+            val client = sharedDeps.httpClient
+
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
+
+                val key = getProviderKey()
+
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                }
+
+                val locationKey = if (location.locationSource == WeatherAPI.ACCUWEATHER) {
+                    location.query
+                } else {
+                    updateLocationQuery(location)
+                }
+
+                if (locationKey.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.QUERYNOTFOUND)
+                }
+
+                val request1dayUri = Uri.parse(DAILY_1DAY_FORECAST_URL).buildUpon()
+                    .appendPath(locationKey)
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("language", locale)
+                    .appendQueryParameter("details", "true")
+                    .appendQueryParameter("metric", "true")
+
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 3, TimeUnit.HOURS)
+                    .url(request1dayUri.toString())
+                    .build()
+
+                // Connect to webstream
+                val dailyResponse = client.newCall(request).await()
+                checkForErrors(dailyResponse)
+
+                val dailyRoot = dailyResponse.use { r ->
+                    r.getStream().use { s ->
+                        JSONParser.deserializer<DailyResponse>(s, DailyResponse::class.java)
+                    }
+                }
+
+                requireNotNull(dailyRoot)
+
+                val dailyForecast =
+                    dailyRoot.dailyForecasts?.firstOrNull { !it?.airAndPollen.isNullOrEmpty() }
+                dailyForecast?.let {
+                    pollenData = createPollen(it)
+                }
+            } catch (ex: Exception) {
+                pollenData = null
+                Logger.writeLine(Log.ERROR, ex, "AccuWeatherProvider: error getting pollen data")
+            }
+
+            return@withContext pollenData
         }
 
     @Throws(WeatherException::class)
