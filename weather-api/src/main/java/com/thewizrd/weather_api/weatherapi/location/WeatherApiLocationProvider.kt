@@ -82,7 +82,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
             val request = Request.Builder()
                 .cacheControl(
                     CacheControl.Builder()
-                        .maxAge(1, TimeUnit.DAYS)
+                        .maxAge(14, TimeUnit.DAYS)
                         .build()
                 )
                 .get()
@@ -178,7 +178,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
             val request = Request.Builder()
                 .cacheControl(
                     CacheControl.Builder()
-                        .maxAge(1, TimeUnit.DAYS)
+                        .maxAge(14, TimeUnit.DAYS)
                         .build()
                 )
                 .get()
