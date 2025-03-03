@@ -170,7 +170,7 @@ dependencies {
 
     fullgmsImplementation "com.google.android.gms:play-services-base:$gms_base_version"
     fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation 'com.google.android.gms:play-services-maps:19.0.0'
+    fullgmsImplementation 'com.google.android.gms:play-services-maps:19.1.0'
     fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
     fullgmsImplementation 'com.google.android.play:app-update-ktx:2.1.0'
     fullgmsImplementation 'com.google.android.play:feature-delivery-ktx:2.1.0'

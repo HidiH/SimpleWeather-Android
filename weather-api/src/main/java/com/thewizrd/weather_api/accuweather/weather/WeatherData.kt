@@ -238,7 +238,8 @@ fun createAstronomy(daily: DailyForecastsItem): Astronomy {
             moonset = ZonedDateTime.parse(it).toLocalDateTime()
         }
         daily.moon?.phase?.let {
-            moonPhase = MoonPhase(when (it.toLowerCase(Locale.ROOT)) {
+            moonPhase = MoonPhase(
+                when (it.lowercase(Locale.ROOT)) {
                 "new", "newmoon" -> MoonPhase.MoonPhaseType.NEWMOON
                 "waxingcrescent" -> MoonPhase.MoonPhaseType.WAXING_CRESCENT
                 "first", "firstquarter" -> MoonPhase.MoonPhaseType.FIRST_QTR
