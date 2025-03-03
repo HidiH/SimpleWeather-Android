@@ -16,18 +16,22 @@ import com.thewizrd.shared_resources.utils.Logger
 object FirebaseConfigurator {
     @SuppressLint("MissingPermission")
     fun initialize(context: Context) {
-        FirebaseAnalytics.getInstance(context).setUserProperty(
-            AnalyticsProps.DEVICE_TYPE, if (context.isTv()) {
-                "tv"
-            } else if (context.isLargeTablet() || context.isSmallestWidth(600)) {
-                "tablet"
-            } else {
-                "mobile"
-            }
-        )
+        FirebaseAnalytics.getInstance(context).run {
+            setUserProperty(
+                AnalyticsProps.DEVICE_TYPE, if (context.isTv()) {
+                    "tv"
+                } else if (context.isLargeTablet() || context.isSmallestWidth(600)) {
+                    "tablet"
+                } else {
+                    "mobile"
+                }
+            )
 
-        FirebaseCrashlytics.getInstance().apply {
-            setCrashlyticsCollectionEnabled(true)
+            setUserProperty(AnalyticsProps.PLATFORM, "Android")
+        }
+
+        FirebaseCrashlytics.getInstance().run {
+            isCrashlyticsCollectionEnabled = true
             sendUnsentReports()
         }
         FirebaseRemoteConfig.getInstance().setDefaultsAsync(R.xml.remote_config_defaults)
@@ -37,9 +41,11 @@ object FirebaseConfigurator {
         }
 
         // Receive Firebase messages
-        FirebaseMessaging.getInstance().subscribeToTopic("all")
-        if (BuildConfig.DEBUG) {
-            FirebaseMessaging.getInstance().subscribeToTopic("debug_all")
+        FirebaseMessaging.getInstance().run {
+            subscribeToTopic("all")
+            if (BuildConfig.DEBUG) {
+                FirebaseMessaging.getInstance().subscribeToTopic("debug_all")
+            }
         }
     }
 }
