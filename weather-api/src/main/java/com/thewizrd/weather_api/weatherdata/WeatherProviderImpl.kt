@@ -177,25 +177,31 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
 
         // Additional external data
         if (weather.condition?.airQuality == null && weather.aqiForecast == null) {
-            if (!BuildConfig.IS_NONGMS) {
-                updateAQIData(location, weather)
-            } else if (this is AirQualityProvider) {
-                val aqiData = this.getAirQualityData(location)
-                updateAQIData(location, weather, aqiData)
+            runCatching {
+                if (!BuildConfig.IS_NONGMS) {
+                    updateAQIData(location, weather)
+                } else if (this is AirQualityProvider) {
+                    val aqiData = this.getAirQualityData(location)
+                    updateAQIData(location, weather, aqiData)
+                }
             }
         }
 
         if (weather.condition?.pollen == null) {
-            if (settingsManager.isDevSettingsEnabled() && remoteConfigService.isProviderEnabled(
-                    WeatherAPI.ACCUWEATHER
-                ) && weather.source != WeatherAPI.ACCUWEATHER
-            ) {
-                weather.condition!!.pollen = AccuWeatherProvider().getPollenData(location)?.apply {
-                    attribution = context.getString(R.string.api_accuweather)
-                }
-            } else if (isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE_POLLEN)) {
-                weather.condition!!.pollen = GooglePollenProvider().getPollenData(location)?.apply {
-                    attribution = context.getString(R.string.api_google)
+            runCatching {
+                if (settingsManager.isDevSettingsEnabled() && remoteConfigService.isProviderEnabled(
+                        WeatherAPI.ACCUWEATHER
+                    ) && weather.source != WeatherAPI.ACCUWEATHER
+                ) {
+                    weather.condition!!.pollen =
+                        AccuWeatherProvider().getPollenData(location)?.apply {
+                            attribution = context.getString(R.string.api_accuweather)
+                        }
+                } else if (isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE_POLLEN)) {
+                    weather.condition!!.pollen =
+                        GooglePollenProvider().getPollenData(location)?.apply {
+                            attribution = context.getString(R.string.api_google)
+                        }
                 }
             }
         }
