@@ -119,11 +119,9 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
 
             val vmPolicy = VmPolicy.Builder()
                 .detectActivityLeaks()
-                .detectIncorrectContextUse()
                 .detectLeakedClosableObjects()
                 .detectLeakedRegistrationObjects()
                 .detectLeakedSqlLiteObjects()
-                .detectUnsafeIntentLaunch()
                 .penaltyLog()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -131,6 +129,10 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 vmPolicy.detectNonSdkApiUsage()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                vmPolicy.detectIncorrectContextUse()
+                    .detectUnsafeIntentLaunch()
             }
 
             StrictMode.setVmPolicy(vmPolicy.build())
