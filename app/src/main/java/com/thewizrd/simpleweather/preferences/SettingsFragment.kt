@@ -1160,6 +1160,24 @@ class SettingsFragment : BaseSettingsFragment(),
                     gravity = Gravity.CENTER
                 ) {
                     orderableFeaturesAdapter.updateList(FeaturesAdapter.ORDERABLE_ITEMS.toList())
+
+                    // Reset enabled status
+                    FeaturesAdapter.ORDERABLE_ITEMS.forEach { key ->
+                        FeatureSettings.setFeatureEnabled(key, true)
+                    }
+
+                    FeaturesAdapter.NON_ORDERABLE_ITEMS.forEach { key ->
+                        FeatureSettings.setFeatureEnabled(key, true)
+                    }
+
+                    orderableFeaturesAdapter.notifyItemRangeChanged(
+                        0,
+                        orderableFeaturesAdapter.itemCount
+                    )
+                    nonOrderableFeaturesAdapter.notifyItemRangeChanged(
+                        0,
+                        nonOrderableFeaturesAdapter.itemCount
+                    )
                 }
             )
 
