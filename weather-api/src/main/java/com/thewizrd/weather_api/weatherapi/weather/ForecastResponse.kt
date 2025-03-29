@@ -152,7 +152,7 @@ data class HourItem(
 		var visKm: Float? = null,
 
     @field:Json(name = "time_epoch")
-		var timeEpoch: Int? = null,
+    var timeEpoch: Long? = null,
 
     @field:Json(name = "time")
 		var time: String? = null,
@@ -164,7 +164,10 @@ data class HourItem(
 		var pressureMb: Float? = null,
 
     @field:Json(name = "vis_miles")
-		var visMiles: Float? = null
+    var visMiles: Float? = null,
+
+    @field:Json(name = "snow_cm")
+    var snowCm: Float? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -254,7 +257,10 @@ data class Day(
 		var totalprecipMm: Float? = null,
 
     @field:Json(name = "daily_will_it_snow")
-		var dailyWillItSnow: Int? = null
+    var dailyWillItSnow: Int? = null,
+
+    @field:Json(name = "totalsnow_cm")
+    var totalsnowCm: Float? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -283,7 +289,7 @@ data class Current(
 		var windDegree: Int? = null,
 
     @field:Json(name = "last_updated_epoch")
-		var lastUpdatedEpoch: Int? = null,
+    var lastUpdatedEpoch: Long? = null,
 
     @field:Json(name = "is_day")
     @get:JvmName("getIsDay")
@@ -365,7 +371,7 @@ data class ForecastdayItem(
 		var astro: Astro? = null,
 
     @field:Json(name = "date_epoch")
-		var dateEpoch: Int? = null,
+    var dateEpoch: Long? = null,
 
     @field:Json(name = "hour")
 		var hour: List<HourItem>? = null,
@@ -384,7 +390,7 @@ data class Location(
 		var country: String? = null,
 
     @field:Json(name = "localtime_epoch")
-		var localtimeEpoch: Int? = null,
+    var localtimeEpoch: Long? = null,
 
     @field:Json(name = "name")
 		var name: String? = null,
