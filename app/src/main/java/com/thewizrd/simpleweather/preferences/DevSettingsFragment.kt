@@ -103,6 +103,22 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                 }
         })
 
+        apiKeyCategory.addPreference(EditTextPreference(context).apply {
+            title = "Google Pollen Key"
+            dialogTitle = "API Key"
+
+            key = WeatherAPI.GOOGLE_POLLEN
+            summaryProvider = Preference.SummaryProvider<EditTextPreference> {
+                settingsManager.getAPIKey(WeatherAPI.GOOGLE_POLLEN) ?: "null"
+            }
+            isPersistent = false
+            onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    true
+                }
+        })
+
         miscCategory.addPreference(SwitchPreference(context).apply {
             title = "Enable Debug Mode"
             isPersistent = false

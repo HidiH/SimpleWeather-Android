@@ -275,7 +275,7 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
-                val key = getProviderKey()
+                val key = settingsManager.getAPIKey(getWeatherAPI()) ?: getAPIKey()
 
                 if (key.isNullOrBlank()) {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
