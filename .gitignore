@@ -35,3 +35,4 @@ API_KEY.txt
 google-services.json
 /.privado/
 /.detekt
+/.kotlin
