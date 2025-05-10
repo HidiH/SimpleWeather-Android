@@ -83,6 +83,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
             onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { preference, newValue ->
                     settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
         })
@@ -99,6 +100,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
             onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { preference, newValue ->
                     settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
         })
@@ -115,6 +117,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
             onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { preference, newValue ->
                     settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
         })
