@@ -1,6 +1,7 @@
 package com.thewizrd.shared_resources.store
 
 import android.net.Uri
+import androidx.core.net.toUri
 
 object PlayStoreUtils {
     // Link to Play Store listing
@@ -8,10 +9,10 @@ object PlayStoreUtils {
     const val PLAY_STORE_APP_WEBURI = "https://play.google.com/store/apps/details?id=com.thewizrd.simpleweather"
 
     fun getPlayStoreURI(): Uri {
-        return Uri.parse(PLAY_STORE_APP_URI)
+        return PLAY_STORE_APP_URI.toUri()
     }
 
     fun getPlayStoreWebURI(): Uri {
-        return Uri.parse(PLAY_STORE_APP_WEBURI)
+        return PLAY_STORE_APP_WEBURI.toUri()
     }
 }

@@ -2,6 +2,7 @@ package com.thewizrd.simpleweather.radar
 
 import android.content.Context
 import android.content.pm.PackageInfo
+import com.thewizrd.shared_resources.Constants
 import org.osmdroid.config.Configuration
 import java.io.File
 
@@ -15,7 +16,7 @@ fun Context.initializeMap() {
         }.getOrDefault("")
 
         Configuration.getInstance().userAgentValue =
-            String.format("SimpleWeather (thewizrd.dev+SimpleWeatherAndroid@gmail.com) %s", version)
+            String.format("SimpleWeather (${Constants.SUPPORT_EMAIL_ADDRESS}) %s", version)
         Configuration.getInstance().osmdroidTileCache = File(cacheDir, "tiles")
         Configuration.getInstance().osmdroidBasePath = File(noBackupFilesDir, "osmdroid")
 

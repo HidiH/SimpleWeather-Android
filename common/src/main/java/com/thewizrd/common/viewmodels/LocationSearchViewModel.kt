@@ -155,7 +155,7 @@ class LocationSearchViewModel(app: Application) : AndroidViewModel(app) {
                     wm.updateAPI()
                 }
 
-                if (settingsManager.usePersonalKey() && settingsManager.getAPIKey()
+                if (settingsManager.usePersonalKey(settingsManager.getAPI()) && settingsManager.getAPIKey()
                         .isNullOrBlank() && wm.isKeyRequired()
                 ) {
                     postErrorMessage(R.string.werror_invalidkey)
@@ -239,7 +239,7 @@ class LocationSearchViewModel(app: Application) : AndroidViewModel(app) {
                 return@launch
             }
 
-            if (settingsManager.usePersonalKey() && settingsManager.getAPIKey()
+            if (settingsManager.usePersonalKey(settingsManager.getAPI()) && settingsManager.getAPIKey()
                     .isNullOrBlank() && wm.isKeyRequired()
             ) {
                 postErrorMessage(R.string.werror_invalidkey)

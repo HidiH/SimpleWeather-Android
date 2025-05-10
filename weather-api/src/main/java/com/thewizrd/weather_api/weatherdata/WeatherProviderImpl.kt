@@ -320,7 +320,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     abstract override fun getAPIKey(): String?
 
     protected fun getProviderKey(): String? {
-        return if (settingsManager.usePersonalKey()) {
+        return if (settingsManager.usePersonalKey(getWeatherAPI())) {
             settingsManager.getAPIKey(getWeatherAPI())
         } else {
             getAPIKey()
@@ -347,7 +347,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
      * @param weather Weather data used to retrieve updated query
      * @return Returns location query supported by this weather provider
      */
-    abstract override fun updateLocationQuery(weather: Weather): String
+    abstract override suspend fun updateLocationQuery(weather: Weather): String
 
     /**
      * Returns an location query supported by this weather provider
@@ -355,7 +355,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
      * @param location Location data used to retrieve updated query
      * @return Returns location query supported by this weather provider
      */
-    abstract override fun updateLocationQuery(location: LocationData): String
+    abstract override suspend fun updateLocationQuery(location: LocationData): String
 
     /**
      * Returns the locale code supported by this weather provider

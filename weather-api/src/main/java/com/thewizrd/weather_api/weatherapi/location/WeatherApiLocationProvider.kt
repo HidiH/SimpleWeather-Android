@@ -65,7 +65,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
         val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
         val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
 
-        val key = getAPIKey()
+        val key = getProviderKey()
 
         val client = sharedDeps.httpClient
         var response: Response? = null
@@ -157,7 +157,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
         val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
         val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
 
-        val key = getAPIKey()
+        val key = getProviderKey()
 
         val client = sharedDeps.httpClient
         var response: Response? = null

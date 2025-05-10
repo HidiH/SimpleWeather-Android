@@ -6,11 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.thewizrd.shared_resources.R
 
 fun Context.locationPermissionEnabled(): Boolean {
@@ -38,7 +38,7 @@ fun Context.backgroundLocationPermissionEnabled(): Boolean {
 @SuppressLint("QueryPermissionsNeeded")
 fun Context.openAppSettingsActivity() {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.parse("package:${packageName}")
+        data = "package:${packageName}".toUri()
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 

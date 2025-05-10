@@ -11,6 +11,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 
 class PowerUtils {
     companion object {
@@ -46,7 +47,7 @@ class PowerUtils {
         @JvmStatic
         fun startIgnoreBatteryOptActivity(context: Context) {
             val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).also {
-                it.data = Uri.parse("package:${context.packageName}")
+                it.data = "package:${context.packageName}".toUri()
             }
             context.startActivity(intent)
         }

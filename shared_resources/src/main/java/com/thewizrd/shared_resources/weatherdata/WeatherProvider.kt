@@ -61,9 +61,9 @@ interface WeatherProvider {
 
     suspend fun updateLocationData(location: LocationData)
 
-    fun updateLocationQuery(weather: Weather): String
+    suspend fun updateLocationQuery(weather: Weather): String
 
-    fun updateLocationQuery(location: LocationData): String
+    suspend fun updateLocationQuery(location: LocationData): String
 
     fun getLocationProvider(): WeatherLocationProvider
 }

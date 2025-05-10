@@ -1,7 +1,6 @@
 package com.thewizrd.simpleweather.radar.nws
 
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.android.gms.maps.model.TileOverlayOptions
@@ -275,7 +275,7 @@ class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
 
                 /* Define the URL pattern for the tile images */
                 val uri =
-                    Uri.parse("https://mapservices.weather.noaa.gov/eventdriven/rest/services/radar/radar_base_reflectivity_time/ImageServer/exportImage")
+                    "https://mapservices.weather.noaa.gov/eventdriven/rest/services/radar/radar_base_reflectivity_time/ImageServer/exportImage".toUri()
                         .buildUpon()
                         .appendQueryParameter("bbox", bbox.toString())
                         .appendQueryParameter("bboxSR", "4326")

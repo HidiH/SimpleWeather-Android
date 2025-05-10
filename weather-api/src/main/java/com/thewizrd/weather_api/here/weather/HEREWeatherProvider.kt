@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.here.weather
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -105,7 +105,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
                     }
                 }
 
-                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                val requestUri = BASE_URL.toUri().buildUpon()
                     .appendQueryParameter(
                         "products",
                         "forecast7daysSimple,forecastHourly,forecastAstronomy,observation," + if (LocationUtils.isUSorCanada(
@@ -241,7 +241,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
         }
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
@@ -252,7 +252,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(

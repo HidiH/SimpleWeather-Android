@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.accuweather.weather
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -29,7 +29,6 @@ import com.thewizrd.weather_api.utils.APIRequestUtils.throwIfRateLimited
 import com.thewizrd.weather_api.utils.logMissingIcon
 import com.thewizrd.weather_api.weatherdata.WeatherProviderImpl
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.Request
@@ -91,7 +90,7 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
             // If were under rate limit, deny request
             checkRateLimit()
 
-            val requestUri = Uri.parse(CURRENT_CONDITIONS_URL).buildUpon()
+            val requestUri = CURRENT_CONDITIONS_URL.toUri().buildUpon()
                 .appendQueryParameter("apikey", key)
                 .build()
 
@@ -162,7 +161,7 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                val request5dayUri = Uri.parse(DAILY_5DAY_FORECAST_URL).buildUpon()
+                val request5dayUri = DAILY_5DAY_FORECAST_URL.toUri().buildUpon()
                     .appendPath(location.query)
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("language", locale)
@@ -174,7 +173,7 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     .url(request5dayUri.toString())
                     .build()
 
-                val requestHourlyUri = Uri.parse(HOURLY_12HR_FORECAST_URL).buildUpon()
+                val requestHourlyUri = HOURLY_12HR_FORECAST_URL.toUri().buildUpon()
                     .appendPath(location.query)
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("language", locale)
@@ -186,7 +185,7 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     .url(requestHourlyUri.toString())
                     .build()
 
-                val requestCurrentUri = Uri.parse(CURRENT_CONDITIONS_URL).buildUpon()
+                val requestCurrentUri = CURRENT_CONDITIONS_URL.toUri().buildUpon()
                     .appendPath(location.query)
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("language", locale)
@@ -275,7 +274,7 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
-                val key = settingsManager.getAPIKey(getWeatherAPI()) ?: getAPIKey()
+                val key = getProviderKey()
 
                 if (key.isNullOrBlank()) {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
@@ -291,7 +290,7 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     throw WeatherException(ErrorStatus.QUERYNOTFOUND)
                 }
 
-                val request1dayUri = Uri.parse(DAILY_1DAY_FORECAST_URL).buildUpon()
+                val request1dayUri = DAILY_1DAY_FORECAST_URL.toUri().buildUpon()
                     .appendPath(locationKey)
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("language", locale)
@@ -333,27 +332,23 @@ class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
         // no-op
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
-        // TODO: suspend?
-        val locationModel = runBlocking {
-            mLocationProvider.getLocation(
-                Coordinate(
-                    weather.location!!.latitude.toDouble(),
-                    weather.location!!.longitude.toDouble()
-                ), getWeatherAPI()
-            )
-        }
+    override suspend fun updateLocationQuery(weather: Weather): String {
+        val locationModel = mLocationProvider.getLocation(
+            Coordinate(
+                weather.location!!.latitude.toDouble(),
+                weather.location!!.longitude.toDouble()
+            ), getWeatherAPI()
+        )
+
         return locationModel!!.locationQuery!!
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
-        // TODO: suspend?
-        val locationModel = runBlocking {
-            mLocationProvider.getLocation(
-                Coordinate(location.latitude, location.longitude),
-                getWeatherAPI()
-            )
-        }
+    override suspend fun updateLocationQuery(location: LocationData): String {
+        val locationModel = mLocationProvider.getLocation(
+            Coordinate(location.latitude, location.longitude),
+            getWeatherAPI()
+        )
+
         return locationModel!!.locationQuery!!
     }
 

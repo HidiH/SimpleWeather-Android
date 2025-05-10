@@ -632,11 +632,11 @@ class SettingsManager(context: Context) {
         }
     }
 
-    fun getAPIKey(@WeatherAPI.WeatherProviders provider: String): String? {
+    fun getAPIKey(provider: String): String? {
         return preferences.getString("${KEY_APIKEY_PREFIX}_${provider}", null)
     }
 
-    fun setAPIKey(@WeatherAPI.WeatherProviders provider: String, key: String?) {
+    fun setAPIKey(provider: String, key: String?) {
         preferences.edit {
             putString("${KEY_APIKEY_PREFIX}_${provider}", key)
         }
@@ -645,7 +645,7 @@ class SettingsManager(context: Context) {
     fun getAPIKeyMap(): Map<String, Any?> {
         return preferences.all.filter { (key, _) ->
             key.startsWith(KEY_APIKEY_PREFIX, false)
-        }
+        }.mapKeys { it.key.removePrefix(KEY_APIKEY_PREFIX) }
     }
 
     fun useFollowGPS(): Boolean {
@@ -827,6 +827,10 @@ class SettingsManager(context: Context) {
         }
     }
 
+    @Deprecated(
+        "Use usePersonalKey(String, Boolean)",
+        ReplaceWith("usePersonalKey(null, true)")
+    )
     fun usePersonalKey(): Boolean {
         return if (!preferences.contains(KEY_USEPERSONALKEY)) {
             false
@@ -835,9 +839,34 @@ class SettingsManager(context: Context) {
         }
     }
 
+    @Deprecated(
+        "Use setPersonalKey(String, Boolean)",
+        ReplaceWith("setPersonalKey(null, true)")
+    )
     fun setPersonalKey(value: Boolean) {
         preferences.edit {
             putBoolean(KEY_USEPERSONALKEY, value)
+        }
+    }
+
+    fun usePersonalKey(provider: String?): Boolean {
+        val prefKey = "${KEY_USEPERSONALKEY}_${provider}"
+
+        return if (!wuSharedPrefs.contains(prefKey)) {
+            false
+        } else {
+            wuSharedPrefs.getBoolean(prefKey, false)
+        }
+    }
+
+    fun setPersonalKey(provider: String, value: Boolean) {
+        val prefKey = "${KEY_USEPERSONALKEY}_${provider}"
+
+        wuSharedPrefs.edit {
+            putBoolean(prefKey, value)
+            if (!value) {
+                remove(prefKey)
+            }
         }
     }
 
@@ -846,9 +875,9 @@ class SettingsManager(context: Context) {
     }
 
     fun setVersionCode(value: Long) {
-        val versionEditor = versionPrefs.edit()
-        versionEditor.putString(KEY_CURRENTVERSION, value.toString())
-        versionEditor.apply()
+        versionPrefs.edit {
+            putString(KEY_CURRENTVERSION, value.toString())
+        }
     }
 
     fun getSDKVersionCode(): Int {

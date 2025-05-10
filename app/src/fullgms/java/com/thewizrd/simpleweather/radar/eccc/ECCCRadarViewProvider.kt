@@ -1,7 +1,6 @@
 package com.thewizrd.simpleweather.radar.eccc
 
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.android.gms.maps.model.TileOverlayOptions
@@ -354,7 +354,7 @@ class ECCCRadarViewProvider(context: Context, rootView: ViewGroup) :
                 // https://eccc-msc.github.io/open-data/msc-data/obs_radar/readme_radar_geomet_en/
                 // https://eccc-msc.github.io/open-data/msc-geomet/wms_en/#wms-getmap
                 val uri =
-                    Uri.parse("https://geo.weather.gc.ca/geomet")
+                    "https://geo.weather.gc.ca/geomet".toUri()
                         .buildUpon()
                         .appendQueryParameter("SERVICE", "WMS")
                         .appendQueryParameter("VERSION", "1.3.0")

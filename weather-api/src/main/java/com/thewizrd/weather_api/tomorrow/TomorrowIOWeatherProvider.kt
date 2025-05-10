@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.tomorrow
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -184,7 +184,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                val requestUri = BASE_URL.toUri().buildUpon()
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("location", query)
                     .appendQueryParameter(
@@ -202,7 +202,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     .header("Accept", "application/json")
                     .build()
 
-                val minutelyRequestUri = Uri.parse(BASE_URL).buildUpon()
+                val minutelyRequestUri = BASE_URL.toUri().buildUpon()
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("location", query)
                     .appendQueryParameter(
@@ -220,7 +220,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     .header("Accept", "application/json")
                     .build()
 
-                val alertsRequestUri = Uri.parse(EVENTS_BASE_URL).buildUpon()
+                val alertsRequestUri = EVENTS_BASE_URL.toUri().buildUpon()
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("location", query)
                     .appendQueryParameter("insights", "air")
@@ -312,7 +312,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
         withContext(Dispatchers.IO) {
             var pollenData: Pollen? = null
 
-            val key = settingsManager.getAPIKey(getWeatherAPI()) ?: getAPIKey()
+            val key = getProviderKey()
 
             val client = sharedDeps.httpClient
             var response: Response? = null
@@ -325,7 +325,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                val requestUri = BASE_URL.toUri().buildUpon()
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("location", updateLocationQuery(location))
                     .appendQueryParameter(
@@ -475,7 +475,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
         }
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
@@ -486,7 +486,7 @@ class TomorrowIOWeatherProvider : WeatherProviderImpl(), PollenProvider {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(Locale.ROOT, "%s,%s", df.format(location.latitude), df.format(location.longitude))

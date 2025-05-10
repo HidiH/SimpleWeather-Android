@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.tzdb
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.thewizrd.shared_resources.firebase.FirebaseHelper
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
@@ -19,7 +19,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class TimeZoneProviderImpl : TimeZoneProvider, RateLimitedRequest {
@@ -51,7 +51,7 @@ class TimeZoneProviderImpl : TimeZoneProvider, RateLimitedRequest {
                 val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
                 df.applyPattern("0.####")
 
-                val requestUri = Uri.parse(tzAPI).buildUpon()
+                val requestUri = tzAPI.toUri().buildUpon()
                     .appendQueryParameter("lat", df.format(latitude))
                     .appendQueryParameter("lon", df.format(longitude))
                     .build()

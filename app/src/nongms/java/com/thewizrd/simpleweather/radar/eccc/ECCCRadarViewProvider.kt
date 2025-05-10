@@ -50,6 +50,7 @@ import javax.xml.xpath.XPathFactory
 import kotlin.math.atan
 import kotlin.math.pow
 import kotlin.math.sinh
+import androidx.core.net.toUri
 
 @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
 class ECCCRadarViewProvider(context: Context, rootView: ViewGroup) :
@@ -381,7 +382,7 @@ class ECCCRadarViewProvider(context: Context, rootView: ViewGroup) :
                 // https://eccc-msc.github.io/open-data/msc-data/obs_radar/readme_radar_geomet_en/
                 // https://eccc-msc.github.io/open-data/msc-geomet/wms_en/#wms-getmap
                 val uri =
-                    Uri.parse("https://geo.weather.gc.ca/geomet")
+                    "https://geo.weather.gc.ca/geomet".toUri()
                         .buildUpon()
                         .appendQueryParameter("SERVICE", "WMS")
                         .appendQueryParameter("VERSION", "1.3.0")
