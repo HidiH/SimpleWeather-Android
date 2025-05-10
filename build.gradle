@@ -26,8 +26,8 @@ buildscript {
         core_version = '1.16.0'
         arch_core_runtime_version = '2.2.0'
         fragment_version = '1.8.6'
-        lifecycle_version = '2.8.7'
-        nav_version = '2.8.9'
+        lifecycle_version = '2.9.0'
+        nav_version = '2.9.0'
         paging_version = '3.3.6'
         preference_version = '1.2.1'
         recyclerview_version = '1.4.0'
@@ -46,7 +46,7 @@ buildscript {
         material_version = '1.12.0'
 
         compose_compiler_version = '1.5.15'
-        compose_bom_version = '2025.04.01'
+        compose_bom_version = '2025.05.00'
         wear_compose_version = '1.4.1'
         wear_tiles_version = '1.4.1'
         wear_watchface_version = '1.2.1'
@@ -68,7 +68,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.2'
+        classpath 'com.android.tools.build:gradle:8.10.0'
         classpath "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:$ksp_version"
         classpath 'com.google.gms:google-services:4.4.2'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.3'
