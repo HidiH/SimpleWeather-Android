@@ -94,8 +94,8 @@ class LocationQuery {
         }
     }
 
-    fun updateWeatherSource(@WeatherProviders API: String?) {
-        weatherSource = API
+    fun updateWeatherSource(@WeatherProviders api: String?) {
+        weatherSource = api
         updateLocationQuery()
     }
 
@@ -136,7 +136,7 @@ fun LocationQuery.toLocationData(type: LocationType = LocationType.SEARCH): Loca
     val locQuery = this
 
     return LocationData().apply {
-        query = locQuery.locationQuery
+        query = locQuery.locationQuery ?: ""
         name = locQuery.locationName
         latitude = locQuery.locationLat
         longitude = locQuery.locationLong
@@ -151,7 +151,7 @@ fun LocationQuery.toLocationData(location: Location): LocationData {
     val locQuery = this
 
     return LocationData().apply {
-        query = locQuery.locationQuery
+        query = locQuery.locationQuery ?: ""
         name = locQuery.locationName
         latitude = location.latitude
         longitude = location.longitude
