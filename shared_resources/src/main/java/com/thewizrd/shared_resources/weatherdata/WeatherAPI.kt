@@ -62,7 +62,8 @@ object WeatherAPI {
         METEOMATICS,
         APPLE,
         DWD,
-        ECCC
+        ECCC,
+        GOOGLE
     )
     @Retention(AnnotationRetention.SOURCE)
     annotation class WeatherProviders
@@ -208,6 +209,12 @@ object WeatherAPI {
             ProviderEntry(
                 "AccuWeather", ACCUWEATHER,
                 "https://www.accuweather.com/", "https://developer.accuweather.com/"
+            ),
+            ProviderEntry(
+                "Google",
+                GOOGLE,
+                "https://www.google.com/maps",
+                "https://developers.google.com/maps/documentation/weather"
             )
         )
     }

@@ -653,6 +653,25 @@ class UnitTests {
         }
     }
 
+    @Throws(WeatherException::class)
+    @Test
+    fun getGoogleWeather() {
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.GOOGLE)
+
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE, true)
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE, "Google_REPLACE_VALUE")
+
+        runBlocking(Dispatchers.Default) {
+            val provider = weatherModule.weatherManager.getWeatherProvider(WeatherAPI.GOOGLE)
+            val weather =
+                getWeather(provider, Coordinate(37.4220083, -122.0876528)) // ~ Mountain View
+            assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
+        }
+
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE, false)
+    }
+
     @Test
     fun moshiSerializeTest() {
         JSONParser.deserializer<WeatherProviderConfig>(

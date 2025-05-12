@@ -197,7 +197,10 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
                         AccuWeatherProvider().getPollenData(location)?.apply {
                             attribution = context.getString(R.string.api_accuweather)
                         }
-                } else if (isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE_POLLEN)) {
+                } else if ((isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE_POLLEN)) || settingsManager.usePersonalKey(
+                        WeatherAPI.GOOGLE_POLLEN
+                    )
+                ) {
                     weather.condition!!.pollen =
                         GooglePollenProvider().getPollenData(location)?.apply {
                             attribution = context.getString(R.string.api_google)
@@ -300,10 +303,17 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
      * @return A collection of weather alerts currently available
      */
     override suspend fun getAlerts(location: LocationData): Collection<WeatherAlert>? {
-        return if (LocationUtils.isNWSSupported(location)) {
+        val alerts = if (LocationUtils.isNWSSupported(location)) {
             NWSAlertProvider().getAlerts(location)
         } else {
             WeatherApiProvider().getAlerts(location)
+        }
+
+        return alerts?.map { alert ->
+            alert.date = alert.date.withZoneSameInstant(location.tzOffset)
+            alert.expiresDate = alert.expiresDate.withZoneSameInstant(location.tzOffset)
+
+            alert
         }
     }
 

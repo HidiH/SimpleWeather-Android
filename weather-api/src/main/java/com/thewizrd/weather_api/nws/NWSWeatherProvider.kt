@@ -185,7 +185,7 @@ class NWSWeatherProvider : WeatherProviderImpl() {
                 }
                 Logger.writeLine(Log.ERROR, ex, "NWSWeatherProvider: error getting weather data")
             } finally {
-                observationResponse?.close()
+                observationResponse?.closeQuietly()
             }
 
             if (wEx == null && weather.isNullOrInvalid()) {

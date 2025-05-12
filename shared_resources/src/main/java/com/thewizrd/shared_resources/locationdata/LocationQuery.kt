@@ -83,6 +83,14 @@ class LocationQuery {
                     df.format(locationLong)
                 )
             }
+            WeatherAPI.GOOGLE -> {
+                String.format(
+                    Locale.ROOT,
+                    "location.latitude=%s&location.longitude=%s",
+                    df.format(locationLat),
+                    df.format(locationLong)
+                )
+            }
             else -> {
                 String.format(
                     Locale.ROOT,
