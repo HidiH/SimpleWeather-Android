@@ -201,15 +201,13 @@ class HEREWeatherProvider : WeatherProviderImpl() {
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         val offset = location.tzOffset
 
-        if (weather.weatherAlerts?.isNotEmpty() == true) {
-            for (alert in weather.weatherAlerts) {
-                if (alert.date.offset != offset) {
-                    alert.date = alert.date.withZoneSameLocal(offset)
-                }
+        weather.weatherAlerts?.forEach { alert ->
+            if (alert.date.offset != offset) {
+                alert.date = alert.date.withZoneSameLocal(offset)
+            }
 
-                if (alert.expiresDate.offset != offset) {
-                    alert.expiresDate = alert.expiresDate.withZoneSameLocal(offset)
-                }
+            if (alert.expiresDate.offset != offset) {
+                alert.expiresDate = alert.expiresDate.withZoneSameLocal(offset)
             }
         }
 
@@ -236,8 +234,14 @@ class HEREWeatherProvider : WeatherProviderImpl() {
             }
         }
 
-        for (forecast in weather.forecast!!) {
+        weather.forecast?.forEach { forecast ->
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
+        }
+        weather.txtForecast?.forEach { forecast ->
+            forecast.date = forecast.date.withZoneSameInstant(offset)
+        }
+        weather.hrForecast?.forEach { forecast ->
+            forecast.date = forecast.date.withZoneSameInstant(offset)
         }
     }
 
