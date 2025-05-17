@@ -115,6 +115,8 @@ class GoogleWeatherProvider : WeatherProviderImpl() {
                         .build()
                 )
                 .url(requestUri.toString())
+                .addUserAgent(context)
+                .addGoogleAuth(context)
                 .build()
 
             // Connect to webstream
