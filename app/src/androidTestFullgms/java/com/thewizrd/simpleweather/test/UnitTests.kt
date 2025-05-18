@@ -18,6 +18,7 @@ import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.WeatherLocationProvider
 import com.thewizrd.shared_resources.locationdata.toLocationData
+import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.WeatherProviderConfig
 import com.thewizrd.shared_resources.utils.Coordinate
@@ -50,6 +51,7 @@ import com.thewizrd.weather_api.weatherkit.CurrentWeather
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.Request
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -687,5 +689,44 @@ class UnitTests {
             "{\"version\":0,\"updatePriority\":0}",
             UpdateInfo::class.java
         )
+    }
+
+    @Test
+    fun test500error() {
+        val request = Request.Builder()
+            .url("https://httpstat.us/500")
+            .build()
+
+        val client = sharedDeps.httpClient
+
+        runBlocking {
+            client.newCall(request).await()
+        }
+    }
+
+    @Test
+    fun test502error() {
+        val request = Request.Builder()
+            .url("https://httpstat.us/502?sleep=1000")
+            .build()
+
+        val client = sharedDeps.httpClient
+
+        runBlocking {
+            client.newCall(request).await()
+        }
+    }
+
+    @Test
+    fun test504error() {
+        val request = Request.Builder()
+            .url("https://httpstat.us/504?sleep=1000")
+            .build()
+
+        val client = sharedDeps.httpClient
+
+        runBlocking {
+            client.newCall(request).await()
+        }
     }
 }
