@@ -147,6 +147,7 @@ data class SourcesItem(
     var height: Float? = null
 )
 
+@JsonClass(generateAdapter = true)
 data class FallbackSourceIds(
     var any: Any? = null
 )
