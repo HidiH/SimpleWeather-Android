@@ -56,4 +56,8 @@ public class Keys {
     public static String getWeatherBitIoKey() {
         return null;
     }
+
+    public static String getGWeatherKey() {
+        return null;
+    }
 }

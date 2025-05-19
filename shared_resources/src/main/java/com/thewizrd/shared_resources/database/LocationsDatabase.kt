@@ -2,6 +2,7 @@ package com.thewizrd.shared_resources.database
 
 import android.content.Context
 import androidx.annotation.RestrictTo
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -13,7 +14,10 @@ import com.thewizrd.shared_resources.weatherdata.model.Favorites
 
 @Database(
     entities = [LocationData::class, Favorites::class],
-    version = 8 /* NOTE: Add migration paths if needed */
+    version = 9 /* NOTE: Add migration paths if needed */,
+    autoMigrations = [
+        AutoMigration(from = 8, to = 9)
+    ]
 )
 @TypeConverters(LocationDBConverters::class)
 abstract class LocationsDatabase : RoomDatabase() {

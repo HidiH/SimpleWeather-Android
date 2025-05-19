@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.here.weather
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -105,7 +105,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
                     }
                 }
 
-                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                val requestUri = BASE_URL.toUri().buildUpon()
                     .appendQueryParameter(
                         "products",
                         "forecast7daysSimple,forecastHourly,forecastAstronomy,observation," + if (LocationUtils.isUSorCanada(
@@ -201,15 +201,13 @@ class HEREWeatherProvider : WeatherProviderImpl() {
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         val offset = location.tzOffset
 
-        if (weather.weatherAlerts?.isNotEmpty() == true) {
-            for (alert in weather.weatherAlerts) {
-                if (alert.date.offset != offset) {
-                    alert.date = alert.date.withZoneSameLocal(offset)
-                }
+        weather.weatherAlerts?.forEach { alert ->
+            if (alert.date.offset != offset) {
+                alert.date = alert.date.withZoneSameLocal(offset)
+            }
 
-                if (alert.expiresDate.offset != offset) {
-                    alert.expiresDate = alert.expiresDate.withZoneSameLocal(offset)
-                }
+            if (alert.expiresDate.offset != offset) {
+                alert.expiresDate = alert.expiresDate.withZoneSameLocal(offset)
             }
         }
 
@@ -236,12 +234,18 @@ class HEREWeatherProvider : WeatherProviderImpl() {
             }
         }
 
-        for (forecast in weather.forecast!!) {
+        weather.forecast?.forEach { forecast ->
             forecast.date = forecast.date.plusSeconds(offset.totalSeconds.toLong())
+        }
+        weather.txtForecast?.forEach { forecast ->
+            forecast.date = forecast.date.withZoneSameInstant(offset)
+        }
+        weather.hrForecast?.forEach { forecast ->
+            forecast.date = forecast.date.withZoneSameInstant(offset)
         }
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
@@ -252,7 +256,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(

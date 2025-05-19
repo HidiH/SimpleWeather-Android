@@ -1,7 +1,6 @@
 package com.thewizrd.simpleweather.databinding
 
 import android.content.Intent
-import android.net.Uri
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.UnderlineSpan
@@ -9,6 +8,7 @@ import android.util.Log
 import android.widget.GridView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.util.ObjectsCompat
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
@@ -85,7 +85,7 @@ object WeatherNowBindingAdapter {
             text.setSpan(UnderlineSpan(), 0, text.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
             view.text = text
             view.setOnClickListener {
-                val i = Intent(Intent.ACTION_VIEW, Uri.parse(imageData.originalLink))
+                val i = Intent(Intent.ACTION_VIEW, imageData.originalLink.toUri())
                 if (i.resolveActivity(view.context.packageManager) != null) {
                     runCatching {
                         view.context.startActivity(i)

@@ -83,6 +83,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
             onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { preference, newValue ->
                     settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
         })
@@ -99,6 +100,41 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
             onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { preference, newValue ->
                     settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    settingsManager.setPersonalKey(preference.key, true)
+                    true
+                }
+        })
+
+        apiKeyCategory.addPreference(EditTextPreference(context).apply {
+            title = "Google Weather Key"
+            dialogTitle = "API Key"
+
+            key = WeatherAPI.GOOGLE
+            summaryProvider = Preference.SummaryProvider<EditTextPreference> {
+                settingsManager.getAPIKey(WeatherAPI.GOOGLE) ?: "null"
+            }
+            isPersistent = false
+            onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    settingsManager.setPersonalKey(preference.key, true)
+                    true
+                }
+        })
+
+        apiKeyCategory.addPreference(EditTextPreference(context).apply {
+            title = "Google Pollen Key"
+            dialogTitle = "API Key"
+
+            key = WeatherAPI.GOOGLE_POLLEN
+            summaryProvider = Preference.SummaryProvider<EditTextPreference> {
+                settingsManager.getAPIKey(WeatherAPI.GOOGLE_POLLEN) ?: "null"
+            }
+            isPersistent = false
+            onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    settingsManager.setAPIKey(preference.key, newValue?.toString())
+                    settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
         })

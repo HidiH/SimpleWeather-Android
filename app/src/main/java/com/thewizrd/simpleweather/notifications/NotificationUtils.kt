@@ -3,17 +3,17 @@ package com.thewizrd.simpleweather.notifications
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 
 class NotificationUtils {
     companion object {
         @JvmStatic
         fun getAppSettingsActivityIntent(context: Context): Intent {
             return Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.parse("package:${context.packageName}")
+                data = "package:${context.packageName}".toUri()
             }
         }
 

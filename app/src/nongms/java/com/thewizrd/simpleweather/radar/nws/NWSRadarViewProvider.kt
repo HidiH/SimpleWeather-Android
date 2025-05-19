@@ -33,6 +33,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.atan
 import kotlin.math.pow
 import kotlin.math.sinh
+import androidx.core.net.toUri
 
 @RequiresApi(value = Build.VERSION_CODES.LOLLIPOP)
 class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
@@ -292,7 +293,7 @@ class NWSRadarViewProvider(context: Context, rootView: ViewGroup) :
 
                 /* Define the URL pattern for the tile images */
                 val uri =
-                    Uri.parse("https://mapservices.weather.noaa.gov/eventdriven/rest/services/radar/radar_base_reflectivity_time/ImageServer/exportImage")
+                    "https://mapservices.weather.noaa.gov/eventdriven/rest/services/radar/radar_base_reflectivity_time/ImageServer/exportImage".toUri()
                         .buildUpon()
                         .appendQueryParameter("bbox", bbox.toString())
                         .appendQueryParameter("bboxSR", "4326")

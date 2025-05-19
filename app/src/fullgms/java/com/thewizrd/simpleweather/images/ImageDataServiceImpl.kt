@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.firebase.FirebaseHelper
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
@@ -25,7 +26,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.CacheControl
 import okhttp3.Request
 import java.io.File
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 class ImageDataServiceImpl : BaseImageDataService() {
@@ -70,7 +71,7 @@ class ImageDataServiceImpl : BaseImageDataService() {
 
     @WorkerThread
     override suspend fun cacheImage(imageData: ImageData): ImageData? {
-        val imageUri = Uri.parse(imageData.imageURL)
+        val imageUri = imageData.imageURL.toUri()
         return if ("gs" == imageUri.scheme || "https" == imageUri.scheme || "http" == imageUri.scheme) {
             // Download image to storage
             // and image metadata to settings

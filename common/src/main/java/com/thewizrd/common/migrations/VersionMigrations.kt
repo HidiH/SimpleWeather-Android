@@ -139,9 +139,24 @@ object VersionMigrations {
                 }
             }
 
+            if (settingsMgr.getVersionCode() < 345110020) {
+                // Settings.UsePersonalKey
+                settingsMgr.getAPI()
+                    ?.let { settingsMgr.setPersonalKey(it, settingsMgr.usePersonalKey()) }
+
+                settingsMgr.getAPIKeyMap().forEach { (key, value) ->
+                    if (value != null) {
+                        settingsMgr.setPersonalKey(key, true)
+                    }
+                }
+            }
+
             val bundle = Bundle().apply {
                 putString("API", settingsMgr.getAPI())
-                putString("API_IsInternalKey", (!settingsMgr.usePersonalKey()).toString())
+                putString(
+                    "API_IsInternalKey",
+                    (!settingsMgr.usePersonalKey(settingsMgr.getAPI())).toString()
+                )
                 putLong("VersionCode", settingsMgr.getVersionCode())
                 putLong("CurrentVersionCode", versionCode)
             }
@@ -151,7 +166,7 @@ object VersionMigrations {
             AnalyticsLogger.setUserProperty(AnalyticsProps.WEATHER_PROVIDER, settingsMgr.getAPI())
             AnalyticsLogger.setUserProperty(
                 AnalyticsProps.USING_PERSONAL_KEY,
-                settingsMgr.usePersonalKey()
+                settingsMgr.usePersonalKey(settingsMgr.getAPI())
             )
             AnalyticsLogger.setUserProperty(
                 AnalyticsProps.USER_LOCALE,

@@ -18,7 +18,7 @@ object AnalyticsLogger {
     fun logEvent(@Size(min = 1L, max = 40L) eventName: String, properties: Bundle? = null) {
         if (BuildConfig.DEBUG) {
             val append = if (properties == null) "" else lineSeparator() + properties.toString()
-            Logger.writeLine(Log.INFO, "EVENT | $eventName$append")
+            Logger.writeLine(Log.INFO, "EVENT|$eventName$append")
         } else {
             // NOTE: Firebase Analytics only supports eventName with alphanumeric characters and underscores
             analytics.logEvent(eventName.replace("[^a-zA-Z0-9]".toRegex(), "_"), properties)

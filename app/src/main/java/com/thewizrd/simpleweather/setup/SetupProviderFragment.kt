@@ -3,8 +3,6 @@ package com.thewizrd.simpleweather.setup
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -13,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -54,7 +54,7 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
 
-        settingsManager.setPersonalKey(true)
+        settingsManager.getAPI()?.let { settingsManager.setPersonalKey(it, true) }
         if (BuildConfig.IS_NONGMS) {
             settingsManager.setDevSettingsEnabled(true)
         }
@@ -80,7 +80,7 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
 
         binding.fragmentContainer.addView(inflatedView)
 
-        setDivider(ColorDrawable(root.context.getAttrColor(R.attr.colorPrimary)))
+        setDivider(root.context.getAttrColor(R.attr.colorPrimary).toDrawable())
         setDividerHeight(root.context.dpToPx(1f).toInt())
 
         return root
@@ -117,13 +117,13 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
 
                 if (selectedWProv.isKeyRequired()) {
                     if (selectedWProv.getAPIKey().isNullOrBlank()) {
-                        settingsManager.setPersonalKey(true)
+                        settingsManager.setPersonalKey(selectedProvider, true)
                         keyEntry.isEnabled = false
                         prefGroup.removePreference(keyEntry)
                         prefGroup.removePreference(registerPref)
                     }
 
-                    if (!settingsManager.usePersonalKey()) {
+                    if (!settingsManager.usePersonalKey(selectedProvider)) {
                         // We're using our own (verified) keys
                         settingsManager.setKeyVerified(selectedProvider, true)
                         keyEntry.isEnabled = false
@@ -192,22 +192,24 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
         if (weatherModule.weatherManager.isKeyRequired()) {
             keyEntry.isEnabled = true
 
-            if (!settingsManager.getAPIKey(providerPref.value).isNullOrBlank() &&
-                !settingsManager.isKeyVerified(providerPref.value)
+            val provider = providerPref.value
+
+            if (!settingsManager.getAPIKey(provider).isNullOrBlank() &&
+                !settingsManager.isKeyVerified(provider)
             ) {
-                settingsManager.setKeyVerified(providerPref.value, true)
+                settingsManager.setKeyVerified(provider, true)
             }
 
             if (weatherModule.weatherManager.getAPIKey().isNullOrBlank()) {
-                settingsManager.setPersonalKey(true)
+                settingsManager.setPersonalKey(provider, true)
                 keyEntry.isEnabled = false
                 prefGroup.removePreference(keyEntry)
                 prefGroup.removePreference(registerPref)
             }
 
-            if (!settingsManager.usePersonalKey()) {
+            if (!settingsManager.usePersonalKey(provider)) {
                 // We're using our own (verified) keys
-                settingsManager.setKeyVerified(providerPref.value, true)
+                settingsManager.setKeyVerified(provider, true)
                 keyEntry.isEnabled = false
                 prefGroup.removePreference(keyEntry)
                 prefGroup.removePreference(registerPref)
@@ -254,7 +256,7 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
                             settingsManager.setAPIKey(provider, key)
                             settingsManager.setAPI(provider)
                             settingsManager.setKeyVerified(provider, true)
-                            settingsManager.setPersonalKey(true)
+                            settingsManager.setPersonalKey(provider, true)
 
                             updateKeySummary()
 
@@ -307,12 +309,12 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
 
         if (prov != null) {
             registerPref.intent = Intent(Intent.ACTION_VIEW)
-                .setData(Uri.parse(prov.apiRegisterURL))
+                .setData(prov.apiRegisterURL.toUri())
         }
     }
 
     override fun canGoNext(): Boolean {
-        if (settingsManager.usePersonalKey()
+        if (settingsManager.usePersonalKey(providerPref.value)
             && settingsManager.getAPIKey(providerPref.value).isNullOrBlank()
             && weatherModule.weatherManager.isKeyRequired(providerPref.value)
         ) {

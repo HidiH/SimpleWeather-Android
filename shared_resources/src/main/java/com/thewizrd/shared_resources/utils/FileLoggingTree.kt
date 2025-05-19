@@ -14,7 +14,7 @@ import java.io.FileOutputStream
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 @SuppressLint("LogNotTimber")
 class FileLoggingTree(private val context: Context) : Timber.Tree() {
@@ -65,11 +65,7 @@ class FileLoggingTree(private val context: Context) : Timber.Tree() {
                     else -> "DEBUG"
                 }
 
-                if (t != null) {
-                    fileOutputStream.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n$t\n".toByteArray())
-                } else {
-                    fileOutputStream.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n".toByteArray())
-                }
+                fileOutputStream.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n".toByteArray())
 
                 fileOutputStream.close()
             }

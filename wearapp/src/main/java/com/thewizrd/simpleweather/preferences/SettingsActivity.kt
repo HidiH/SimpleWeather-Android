@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -22,6 +21,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.arch.core.util.Function
 import androidx.core.location.LocationManagerCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -220,7 +220,7 @@ class SettingsActivity : UserLocaleActivity() {
         }
 
         private fun isProviderAndKeyInvalid(): Boolean {
-            return settingsManager.usePersonalKey() &&
+            return settingsManager.usePersonalKey(providerPref.value) &&
                     settingsManager.getAPIKey(providerPref.value).isNullOrBlank() &&
                     weatherModule.weatherManager.isKeyRequired(providerPref.value)
         }
@@ -278,7 +278,7 @@ class SettingsActivity : UserLocaleActivity() {
                 settingsManager.setAPI(API)
                 weatherModule.weatherManager.updateAPI()
 
-                settingsManager.setPersonalKey(false)
+                settingsManager.setPersonalKey(API, false)
                 settingsManager.setKeyVerified(API, true)
             }
 
@@ -298,22 +298,24 @@ class SettingsActivity : UserLocaleActivity() {
                             Intent(CommonActions.ACTION_SETTINGS_UPDATEAPI)
                         )
 
+                        val api = settingsManager.getAPI()
+
                         // Log event
                         val bundle = Bundle().apply {
-                            putString("API", settingsManager.getAPI())
+                            putString("API", api)
                             putString(
                                 "API_IsInternalKey",
-                                (!settingsManager.usePersonalKey()).toString()
+                                (!settingsManager.usePersonalKey(api)).toString()
                             )
                         }
                         AnalyticsLogger.logEvent("Update_API", bundle)
                         AnalyticsLogger.setUserProperty(
                             AnalyticsProps.WEATHER_PROVIDER,
-                            settingsManager.getAPI()
+                            api
                         )
                         AnalyticsLogger.setUserProperty(
                             AnalyticsProps.USING_PERSONAL_KEY,
-                            settingsManager.usePersonalKey()
+                            settingsManager.usePersonalKey(api)
                         )
                     }
                     CommonActions.ACTION_SETTINGS_UPDATEGPS -> {
@@ -517,7 +519,7 @@ class SettingsActivity : UserLocaleActivity() {
 
                 if (selectedWProv.isKeyRequired()) {
                     if (selectedWProv.getAPIKey().isNullOrBlank()) {
-                        settingsManager.setPersonalKey(true)
+                        settingsManager.setPersonalKey(selectedProvider, true)
                         personalKeyPref.isChecked = true
                         personalKeyPref.isEnabled =
                             selectedProvider == WeatherAPI.OPENWEATHERMAP && !BuildConfig.IS_NONGMS
@@ -528,7 +530,7 @@ class SettingsActivity : UserLocaleActivity() {
                         personalKeyPref.isEnabled = true
                     }
 
-                    if (!settingsManager.usePersonalKey()) {
+                    if (!settingsManager.usePersonalKey(selectedProvider)) {
                         // We're using our own (verified) keys
                         settingsManager.setKeyVerified(selectedProvider, true)
                         keyEntry.isEnabled = false
@@ -602,14 +604,16 @@ class SettingsActivity : UserLocaleActivity() {
             if (weatherModule.weatherManager.isKeyRequired()) {
                 keyEntry.isEnabled = true
 
+                val provider = providerPref.value
+
                 if (!settingsManager.getAPIKey().isNullOrBlank() &&
-                    !settingsManager.isKeyVerified(providerPref.value)
+                    !settingsManager.isKeyVerified(provider)
                 ) {
-                    settingsManager.setKeyVerified(providerPref.value, true)
+                    settingsManager.setKeyVerified(provider, true)
                 }
 
                 if (weatherModule.weatherManager.getAPIKey().isNullOrBlank()) {
-                    settingsManager.setPersonalKey(true)
+                    settingsManager.setPersonalKey(provider, true)
                     personalKeyPref.isChecked = true
                     personalKeyPref.isEnabled = false
                     keyEntry.isEnabled = false
@@ -619,9 +623,9 @@ class SettingsActivity : UserLocaleActivity() {
                     personalKeyPref.isEnabled = true
                 }
 
-                if (!settingsManager.usePersonalKey()) {
+                if (!settingsManager.usePersonalKey(provider)) {
                     // We're using our own (verified) keys
-                    settingsManager.setKeyVerified(providerPref.value, true)
+                    settingsManager.setKeyVerified(provider, true)
                     keyEntry.isEnabled = false
                     apiCategory.removePreference(keyEntry)
                     apiCategory.removePreference(registerPref)
@@ -700,7 +704,7 @@ class SettingsActivity : UserLocaleActivity() {
                                 settingsManager.setAPIKey(provider, key)
                                 settingsManager.setAPI(provider)
                                 settingsManager.setKeyVerified(provider, true)
-                                settingsManager.setPersonalKey(true)
+                                settingsManager.setPersonalKey(provider, true)
 
                                 updateKeySummary()
 
@@ -792,7 +796,7 @@ class SettingsActivity : UserLocaleActivity() {
 
             if (prov != null) {
                 registerPref.intent = Intent(Intent.ACTION_VIEW)
-                        .setData(Uri.parse(prov.apiRegisterURL))
+                    .setData(prov.apiRegisterURL.toUri())
             }
         }
 

@@ -6,6 +6,7 @@ import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.weather_api.accuweather.weather.AccuWeatherProvider
 import com.thewizrd.weather_api.brightsky.BrightSkyProvider
 import com.thewizrd.weather_api.eccc.ECCCWeatherProvider
+import com.thewizrd.weather_api.google.weather.GoogleWeatherProvider
 import com.thewizrd.weather_api.here.weather.HEREWeatherProvider
 import com.thewizrd.weather_api.meteofrance.weather.MeteoFranceProvider
 import com.thewizrd.weather_api.meteomatics.weather.MeteomaticsWeatherProvider
@@ -41,6 +42,7 @@ class WeatherProviderFactoryImpl : WeatherProviderFactory {
             WeatherAPI.APPLE -> WeatherKitProvider()
             WeatherAPI.DWD -> BrightSkyProvider()
             WeatherAPI.ECCC -> ECCCWeatherProvider()
+            WeatherAPI.GOOGLE -> GoogleWeatherProvider()
             else -> {
                 if (!BuildConfig.DEBUG) {
                     if (!BuildConfig.IS_NONGMS)

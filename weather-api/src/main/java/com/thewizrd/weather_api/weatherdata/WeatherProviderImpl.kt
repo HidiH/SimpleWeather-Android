@@ -21,6 +21,7 @@ import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.shared_resources.weatherdata.auth.AuthType
 import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.weather_api.accuweather.weather.AccuWeatherProvider
 import com.thewizrd.weather_api.aqicn.AQICNData
 import com.thewizrd.weather_api.aqicn.AQICNProvider
 import com.thewizrd.weather_api.extras.isPremiumEnabled
@@ -176,18 +177,34 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
 
         // Additional external data
         if (weather.condition?.airQuality == null && weather.aqiForecast == null) {
-            if (!BuildConfig.IS_NONGMS) {
-                updateAQIData(location, weather)
-            } else if (this is AirQualityProvider) {
-                val aqiData = this.getAirQualityData(location)
-                updateAQIData(location, weather, aqiData)
+            runCatching {
+                if (!BuildConfig.IS_NONGMS) {
+                    updateAQIData(location, weather)
+                } else if (this is AirQualityProvider) {
+                    val aqiData = this.getAirQualityData(location)
+                    updateAQIData(location, weather, aqiData)
+                }
             }
         }
 
         if (weather.condition?.pollen == null) {
-            if (isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE)) {
-                weather.condition!!.pollen = GooglePollenProvider().getPollenData(location)?.apply {
-                    attribution = context.getString(R.string.api_google)
+            runCatching {
+                if (settingsManager.isDevSettingsEnabled() && remoteConfigService.isProviderEnabled(
+                        WeatherAPI.ACCUWEATHER
+                    ) && weather.source != WeatherAPI.ACCUWEATHER
+                ) {
+                    weather.condition!!.pollen =
+                        AccuWeatherProvider().getPollenData(location)?.apply {
+                            attribution = context.getString(R.string.api_accuweather)
+                        }
+                } else if ((isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE_POLLEN)) || settingsManager.usePersonalKey(
+                        WeatherAPI.GOOGLE_POLLEN
+                    )
+                ) {
+                    weather.condition!!.pollen =
+                        GooglePollenProvider().getPollenData(location)?.apply {
+                            attribution = context.getString(R.string.api_google)
+                        }
                 }
             }
         }
@@ -286,10 +303,17 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
      * @return A collection of weather alerts currently available
      */
     override suspend fun getAlerts(location: LocationData): Collection<WeatherAlert>? {
-        return if (LocationUtils.isNWSSupported(location)) {
+        val alerts = if (LocationUtils.isNWSSupported(location)) {
             NWSAlertProvider().getAlerts(location)
         } else {
             WeatherApiProvider().getAlerts(location)
+        }
+
+        return alerts?.map { alert ->
+            alert.date = alert.date.withZoneSameInstant(location.tzOffset)
+            alert.expiresDate = alert.expiresDate.withZoneSameInstant(location.tzOffset)
+
+            alert
         }
     }
 
@@ -306,7 +330,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     abstract override fun getAPIKey(): String?
 
     protected fun getProviderKey(): String? {
-        return if (settingsManager.usePersonalKey()) {
+        return if (settingsManager.usePersonalKey(getWeatherAPI())) {
             settingsManager.getAPIKey(getWeatherAPI())
         } else {
             getAPIKey()
@@ -333,7 +357,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
      * @param weather Weather data used to retrieve updated query
      * @return Returns location query supported by this weather provider
      */
-    abstract override fun updateLocationQuery(weather: Weather): String
+    abstract override suspend fun updateLocationQuery(weather: Weather): String
 
     /**
      * Returns an location query supported by this weather provider
@@ -341,7 +365,7 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
      * @param location Location data used to retrieve updated query
      * @return Returns location query supported by this weather provider
      */
-    abstract override fun updateLocationQuery(location: LocationData): String
+    abstract override suspend fun updateLocationQuery(location: LocationData): String
 
     /**
      * Returns the locale code supported by this weather provider

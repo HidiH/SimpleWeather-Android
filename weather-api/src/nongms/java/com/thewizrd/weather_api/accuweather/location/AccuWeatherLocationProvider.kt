@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.accuweather.location
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -25,7 +25,7 @@ import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import java.io.IOException
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 internal class AccuWeatherLocationProvider : CityDBLocationProvider() {
@@ -65,75 +65,79 @@ internal class AccuWeatherLocationProvider : CityDBLocationProvider() {
 
             val client = sharedDeps.httpClient
             var response: Response? = null
-            var result: GeopositionResponse? = null
+            var result: GeopositionResponse?
             var wEx: WeatherException? = null
 
             try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    val key =
-                        if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(
-                            getLocationAPI()
-                        ) else getAPIKey()
+                val key = getProviderKey()
 
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                    }
-
-                    val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
-                    df.applyPattern("0.##")
-
-                    val requestUri = Uri.parse(BASE_URL).buildUpon()
-                            .appendQueryParameter("apikey", key)
-                            .appendQueryParameter("q", "${df.format(model.locationLat)},${df.format(model.locationLong)}")
-                            .appendQueryParameter("language", locale)
-                            .appendQueryParameter("details", "false")
-                            .appendQueryParameter("toplevel", "false")
-                            .build()
-
-                    val request = Request.Builder()
-                        .cacheControl(
-                            CacheControl.Builder()
-                                .maxAge(14, TimeUnit.DAYS)
-                                .build()
-                        )
-                        .url(requestUri.toString())
-                        .build()
-
-                    // Connect to webstream
-                    response = client.newCall(request).await()
-                    checkForErrors(response)
-
-                    val stream = response.getStream()
-
-                    // Load data
-                    result = JSONParser.deserializer<GeopositionResponse>(
-                        stream,
-                        GeopositionResponse::class.java
-                    )
-
-                    // End Stream
-                    stream.closeQuietly()
-                } catch (ex: Exception) {
-                    result = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "AccuWeatherLocationProvider: error getting location")
-                } finally {
-                    response?.closeQuietly()
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                if (wEx != null) throw wEx
+                val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
+                df.applyPattern("0.##")
 
-                return@withContext if (!result?.key.isNullOrBlank())
-                    createLocationModel(result!!, model)
-                else
-                    LocationQuery()
+                val requestUri = BASE_URL.toUri().buildUpon()
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter(
+                        "q",
+                        "${df.format(model.locationLat)},${df.format(model.locationLong)}"
+                    )
+                    .appendQueryParameter("language", locale)
+                    .appendQueryParameter("details", "false")
+                    .appendQueryParameter("toplevel", "false")
+                    .build()
+
+                val request = Request.Builder()
+                    .cacheControl(
+                        CacheControl.Builder()
+                            .maxAge(14, TimeUnit.DAYS)
+                            .build()
+                    )
+                    .url(requestUri.toString())
+                    .build()
+
+                // Connect to webstream
+                response = client.newCall(request).await()
+                checkForErrors(response)
+
+                val stream = response.getStream()
+
+                // Load data
+                result = JSONParser.deserializer<GeopositionResponse>(
+                    stream,
+                    GeopositionResponse::class.java
+                )
+
+                // End Stream
+                stream.closeQuietly()
+            } catch (ex: Exception) {
+                result = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR)
+                } else if (ex is WeatherException) {
+                    wEx = ex
+                }
+                Logger.writeLine(
+                    Log.ERROR,
+                    ex,
+                    "AccuWeatherLocationProvider: error getting location"
+                )
+            } finally {
+                response?.closeQuietly()
             }
+
+            if (wEx != null) throw wEx
+
+            return@withContext if (!result?.key.isNullOrBlank())
+                createLocationModel(result!!, model)
+            else
+                LocationQuery()
+        }
 
     override suspend fun getLocation(coordinate: Coordinate, weatherAPI: String?): LocationQuery =
         withContext(Dispatchers.IO) {
@@ -146,71 +150,75 @@ internal class AccuWeatherLocationProvider : CityDBLocationProvider() {
             var wEx: WeatherException? = null
 
             try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    val key =
-                        if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(
-                            getLocationAPI()
-                        ) else getAPIKey()
+                val key = getProviderKey()
 
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                    }
-
-                    val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
-                    df.applyPattern("0.##")
-
-                    val requestUri = Uri.parse(BASE_URL).buildUpon()
-                            .appendQueryParameter("apikey", key)
-                            .appendQueryParameter("q", "${df.format(coordinate.latitude)},${df.format(coordinate.longitude)}")
-                            .appendQueryParameter("language", locale)
-                            .appendQueryParameter("details", "false")
-                            .appendQueryParameter("toplevel", "false")
-                            .build()
-
-                    val request = Request.Builder()
-                        .cacheControl(
-                            CacheControl.Builder()
-                                .maxAge(14, TimeUnit.DAYS)
-                                .build()
-                        )
-                        .url(requestUri.toString())
-                        .build()
-
-                    // Connect to webstream
-                    response = client.newCall(request).await()
-                    checkForErrors(response)
-
-                    val stream = response.getStream()
-
-                    // Load data
-                    result = JSONParser.deserializer<GeopositionResponse>(
-                        stream,
-                        GeopositionResponse::class.java
-                    )
-
-                    // End Stream
-                    stream.closeQuietly()
-                } catch (ex: Exception) {
-                    result = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "AccuWeatherLocationProvider: error getting location")
-                } finally {
-                    response?.closeQuietly()
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                if (wEx != null) throw wEx
+                val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
+                df.applyPattern("0.##")
 
-                return@withContext if (!result?.key.isNullOrBlank())
-                    createLocationModel(result!!)
-                else
-                    LocationQuery()
+                val requestUri = BASE_URL.toUri().buildUpon()
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter(
+                        "q",
+                        "${df.format(coordinate.latitude)},${df.format(coordinate.longitude)}"
+                    )
+                    .appendQueryParameter("language", locale)
+                    .appendQueryParameter("details", "false")
+                    .appendQueryParameter("toplevel", "false")
+                    .build()
+
+                val request = Request.Builder()
+                    .cacheControl(
+                        CacheControl.Builder()
+                            .maxAge(14, TimeUnit.DAYS)
+                            .build()
+                    )
+                    .url(requestUri.toString())
+                    .build()
+
+                // Connect to webstream
+                response = client.newCall(request).await()
+                checkForErrors(response)
+
+                val stream = response.getStream()
+
+                // Load data
+                result = JSONParser.deserializer<GeopositionResponse>(
+                    stream,
+                    GeopositionResponse::class.java
+                )
+
+                // End Stream
+                stream.closeQuietly()
+            } catch (ex: Exception) {
+                result = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR)
+                } else if (ex is WeatherException) {
+                    wEx = ex
+                }
+                Logger.writeLine(
+                    Log.ERROR,
+                    ex,
+                    "AccuWeatherLocationProvider: error getting location"
+                )
+            } finally {
+                response?.closeQuietly()
             }
+
+            if (wEx != null) throw wEx
+
+            return@withContext if (!result?.key.isNullOrBlank())
+                createLocationModel(result!!)
+            else
+                LocationQuery()
+        }
 
     override fun localeToLangCode(iso: String, name: String): String {
         return name

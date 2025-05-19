@@ -58,9 +58,9 @@ class NoopWeatherProvider : WeatherProvider {
 
     override suspend fun updateLocationData(location: LocationData) {}
 
-    override fun updateLocationQuery(weather: Weather): String = ""
+    override suspend fun updateLocationQuery(weather: Weather): String = ""
 
-    override fun updateLocationQuery(location: LocationData): String = ""
+    override suspend fun updateLocationQuery(location: LocationData): String = ""
 
     override fun getLocationProvider(): WeatherLocationProvider = NoopWeatherLocationProvider()
 

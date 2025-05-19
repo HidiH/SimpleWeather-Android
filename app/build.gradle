@@ -16,8 +16,8 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 0, WearOS: 1)
         // ex) 345100131 = (34, 5.10, 013, 0)
-        versionCode 345100190
-        versionName "5.10.4"
+        versionCode 345110040
+        versionName "5.11.1"
 
         vectorDrawables {
             useSupportLibrary true
@@ -170,7 +170,7 @@ dependencies {
 
     fullgmsImplementation "com.google.android.gms:play-services-base:$gms_base_version"
     fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation 'com.google.android.gms:play-services-maps:19.0.0'
+    fullgmsImplementation 'com.google.android.gms:play-services-maps:19.2.0'
     fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
     fullgmsImplementation 'com.google.android.play:app-update-ktx:2.1.0'
     fullgmsImplementation 'com.google.android.play:feature-delivery-ktx:2.1.0'

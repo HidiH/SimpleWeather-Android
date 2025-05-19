@@ -36,6 +36,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -44,13 +45,11 @@ import kotlin.math.roundToInt
 fun createWeatherData(root: ForecastResponse): Weather {
     return Weather().apply {
         location = createLocation(root.location!!)
-        updateTime = ZonedDateTime.of(
-            LocalDateTime.parse(
-                root.location!!.localtime,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
-            ),
-            ZoneIdCompat.of(root.location!!.tzId)
-        )
+        val tzid = ZoneIdCompat.of(root.location!!.tzId)
+        updateTime = root.location?.localtimeEpoch?.let {
+            ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneOffset.UTC)
+                .withZoneSameInstant(tzid)
+        } ?: ZonedDateTime.now(tzid)
 
         forecast = ArrayList(root.forecast!!.forecastday!!.size)
         hrForecast = ArrayList<HourlyForecast>().apply {
@@ -61,7 +60,7 @@ fun createWeatherData(root: ForecastResponse): Weather {
 
         // Forecast
         for (day in root.forecast!!.forecastday!!) {
-            val fcast = createForecast(day)
+            val fcast = createForecast(day, tzid)
 
             day.hour?.forEach { hour ->
                 val date = ZonedDateTime.ofInstant(
@@ -70,14 +69,14 @@ fun createWeatherData(root: ForecastResponse): Weather {
                 )
 
                 if (!date.isBefore(updateTime)) {
-                    hrForecast!!.add(createHourlyForecast(hour, root.location!!.tzId!!))
+                    hrForecast!!.add(createHourlyForecast(hour, tzid))
                 }
             }
 
             forecast!!.add(fcast)
         }
 
-        condition = createCondition(root.current!!, root.location!!.tzId!!)
+        condition = createCondition(root.current!!, tzid)
         atmosphere = createAtmosphere(root.current!!)
         if (root.forecast!!.forecastday!![0].date == condition!!.observationTime.toLocalDate()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -110,9 +109,12 @@ fun createLocation(location: com.thewizrd.weather_api.weatherapi.weather.Locatio
     }
 }
 
-fun createForecast(day: ForecastdayItem): Forecast {
+fun createForecast(day: ForecastdayItem, tzid: ZoneId): Forecast {
     return Forecast().apply {
-        date = LocalDate.parse(day.date!!).atStartOfDay()
+        date = day.dateEpoch?.let {
+            ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneOffset.UTC)
+                .toLocalDateTime()
+        } ?: LocalDate.parse(day.date!!).atStartOfDay()
 
         highF = day.day!!.maxtempF
         highC = day.day!!.maxtempC
@@ -135,6 +137,8 @@ fun createForecast(day: ForecastdayItem): Forecast {
                 ?: day.day!!.dailyChanceOfSnow?.toIntOrNull()
         extras.qpfRainIn = day.day!!.totalprecipIn
         extras.qpfRainMm = day.day!!.totalprecipMm
+        extras.qpfSnowCm = day.day!!.totalsnowCm
+        extras.qpfSnowIn = day.day!!.totalsnowCm?.let { ConversionMethods.mmToIn(it * 10) }
         extras.windMph = day.day!!.maxwindMph
         extras.windKph = day.day!!.maxwindKph
         extras.visibilityMi = day.day!!.avgvisMiles
@@ -142,11 +146,14 @@ fun createForecast(day: ForecastdayItem): Forecast {
     }
 }
 
-fun createHourlyForecast(hour: HourItem, tzId: String): HourlyForecast {
+fun createHourlyForecast(hour: HourItem, tzId: ZoneId): HourlyForecast {
     return HourlyForecast().apply {
-        date = ZonedDateTime.of(
-                LocalDateTime.parse(hour.time, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-            ZoneIdCompat.of(tzId)
+        date = hour.timeEpoch?.let {
+            ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneOffset.UTC)
+                .withZoneSameInstant(tzId)
+        } ?: ZonedDateTime.of(
+            LocalDateTime.parse(hour.time, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+            tzId
         )
 
         highF = hour.tempF
@@ -171,6 +178,8 @@ fun createHourlyForecast(hour: HourItem, tzId: String): HourlyForecast {
         extras.cloudiness = hour.cloud
         extras.qpfRainIn = hour.precipIn
         extras.qpfRainMm = hour.precipMm
+        extras.qpfSnowCm = hour.snowCm
+        extras.qpfSnowIn = hour.snowCm?.let { ConversionMethods.mmToIn(it * 10) }
         extras.pressureIn = hour.pressureIn
         extras.pressureMb = hour.pressureMb
         extras.windDegrees = windDegrees
@@ -183,7 +192,7 @@ fun createHourlyForecast(hour: HourItem, tzId: String): HourlyForecast {
     }
 }
 
-fun createCondition(current: Current, tzId: String): Condition {
+fun createCondition(current: Current, tzId: ZoneId): Condition {
     return Condition().apply {
         weather = current.condition?.text
 
@@ -208,13 +217,10 @@ fun createCondition(current: Current, tzId: String): Condition {
 
         airQuality = createAirQuality(current.airQuality)
 
-        observationTime = ZonedDateTime.of(
-            LocalDateTime.parse(
-                current.lastUpdated,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
-            ),
-            ZoneIdCompat.of(tzId)
-        )
+        observationTime = current.lastUpdatedEpoch?.let {
+            ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneOffset.UTC)
+                .withZoneSameInstant(tzId)
+        }
     }
 }
 

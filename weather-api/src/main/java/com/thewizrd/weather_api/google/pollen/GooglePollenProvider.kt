@@ -1,6 +1,7 @@
 package com.thewizrd.weather_api.google.pollen
 
 import android.util.Log
+import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
@@ -42,7 +43,7 @@ class GooglePollenProvider : PollenProvider, RateLimitedRequest {
         withContext(Dispatchers.IO) {
             var pollenData: Pollen? = null
 
-            val key = Keys.getGPollenKey()
+            val key = settingsManager.getAPIKey(WeatherAPI.GOOGLE_POLLEN) ?: Keys.getGPollenKey()
 
             if (key.isNullOrBlank()) return@withContext null
 

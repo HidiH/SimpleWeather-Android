@@ -18,6 +18,7 @@ import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.WeatherLocationProvider
 import com.thewizrd.shared_resources.locationdata.toLocationData
+import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.WeatherProviderConfig
 import com.thewizrd.shared_resources.utils.Coordinate
@@ -50,6 +51,7 @@ import com.thewizrd.weather_api.weatherkit.CurrentWeather
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.Request
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -105,17 +107,21 @@ class UnitTests {
             settingsManager.loadIfNeeded()
         }
 
-        if (settingsManager.usePersonalKey()) {
-            settingsManager.setPersonalKey(false)
-            wasUsingPersonalKey = true
+        settingsManager.getAPI()?.let { api ->
+            if (settingsManager.usePersonalKey(api)) {
+                settingsManager.setPersonalKey(api, false)
+                wasUsingPersonalKey = true
+            }
         }
     }
 
     @After
     fun destroy() {
-        if (wasUsingPersonalKey) {
-            settingsManager.setPersonalKey(true)
-            wasUsingPersonalKey = false
+        settingsManager.getAPI()?.let { api ->
+            if (wasUsingPersonalKey) {
+                settingsManager.setPersonalKey(api, true)
+                wasUsingPersonalKey = false
+            }
         }
     }
 
@@ -263,7 +269,7 @@ class UnitTests {
                 val json2 = withContext(Dispatchers.Default) {
                     JSONParser.serializer(weather, Weather::class.java)
                 }
-                val desW2 = withContext(Dispatchers.Default) {
+                withContext(Dispatchers.Default) {
                     JSONParser.deserializer(json2, Weather::class.java)
                 }
                 val endTime2 = SystemClock.elapsedRealtimeNanos()
@@ -500,7 +506,9 @@ class UnitTests {
     @Throws(WeatherException::class)
     @Test
     fun getTomorrowIOWeather() {
-        settingsManager.setPersonalKey(true)
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.TOMORROWIO)
+
+        settingsManager.setPersonalKey(WeatherAPI.TOMORROWIO, true)
         settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, "TomorrowIo_REPLACE_VALUE")
 
         runBlocking(Dispatchers.Default) {
@@ -510,14 +518,16 @@ class UnitTests {
             assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
         }
 
-        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, null)
-        settingsManager.setPersonalKey(false)
+        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.TOMORROWIO, false)
     }
 
     @Throws(WeatherException::class)
     @Test
     fun getWeatherbitIOWeather() {
-        settingsManager.setPersonalKey(true)
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.WEATHERBITIO)
+
+        settingsManager.setPersonalKey(WeatherAPI.WEATHERBITIO, true)
         settingsManager.setAPIKey(WeatherAPI.WEATHERBITIO, "WeatherBitIo_REPLACE_VALUE")
 
         runBlocking(Dispatchers.Default) {
@@ -528,13 +538,15 @@ class UnitTests {
             assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
         }
 
-        settingsManager.setAPIKey(WeatherAPI.WEATHERBITIO, null)
-        settingsManager.setPersonalKey(false)
+        settingsManager.setAPIKey(WeatherAPI.WEATHERBITIO, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.WEATHERBITIO, false)
     }
 
     @Test
     fun getPollenData() {
-        settingsManager.setPersonalKey(true)
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.TOMORROWIO)
+
+        settingsManager.setPersonalKey(WeatherAPI.TOMORROWIO, true)
         settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, "TomorrowIo_REPLACE_VALUE")
 
         runBlocking(Dispatchers.Default) {
@@ -546,14 +558,16 @@ class UnitTests {
             assertNotNull(pollenData)
         }
 
-        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, null)
-        settingsManager.setPersonalKey(false)
+        settingsManager.setAPIKey(WeatherAPI.TOMORROWIO, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.TOMORROWIO, false)
     }
 
     @Throws(WeatherException::class)
     @Test
     fun getMeteomaticsWeather() {
-        settingsManager.setPersonalKey(true)
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.METEOMATICS)
+
+        settingsManager.setPersonalKey(WeatherAPI.METEOMATICS, true)
         settingsManager.setAPIKey(
             WeatherAPI.METEOMATICS,
             BasicAuthProviderKey("username", "password").toString()
@@ -567,8 +581,8 @@ class UnitTests {
             assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
         }
 
-        settingsManager.setAPIKey(WeatherAPI.METEOMATICS, null)
-        settingsManager.setPersonalKey(false)
+        settingsManager.setAPIKey(WeatherAPI.METEOMATICS, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.METEOMATICS, false)
     }
 
     @Test
@@ -641,6 +655,25 @@ class UnitTests {
         }
     }
 
+    @Throws(WeatherException::class)
+    @Test
+    fun getGoogleWeather() {
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.GOOGLE)
+
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE, true)
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE, "Google_REPLACE_VALUE")
+
+        runBlocking(Dispatchers.Default) {
+            val provider = weatherModule.weatherManager.getWeatherProvider(WeatherAPI.GOOGLE)
+            val weather =
+                getWeather(provider, Coordinate(37.4220083, -122.0876528)) // ~ Mountain View
+            assertTrue(weather.isValid && WeatherUiModel(weather).isValid)
+        }
+
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE, false)
+    }
+
     @Test
     fun moshiSerializeTest() {
         JSONParser.deserializer<WeatherProviderConfig>(
@@ -656,5 +689,44 @@ class UnitTests {
             "{\"version\":0,\"updatePriority\":0}",
             UpdateInfo::class.java
         )
+    }
+
+    @Test
+    fun test500error() {
+        val request = Request.Builder()
+            .url("https://httpstat.us/500")
+            .build()
+
+        val client = sharedDeps.httpClient
+
+        runBlocking {
+            client.newCall(request).await()
+        }
+    }
+
+    @Test
+    fun test502error() {
+        val request = Request.Builder()
+            .url("https://httpstat.us/502?sleep=1000")
+            .build()
+
+        val client = sharedDeps.httpClient
+
+        runBlocking {
+            client.newCall(request).await()
+        }
+    }
+
+    @Test
+    fun test504error() {
+        val request = Request.Builder()
+            .url("https://httpstat.us/504?sleep=1000")
+            .build()
+
+        val client = sharedDeps.httpClient
+
+        runBlocking {
+            client.newCall(request).await()
+        }
     }
 }

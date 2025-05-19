@@ -24,13 +24,40 @@ import com.thewizrd.shared_resources.icons.WeatherIconsEFProvider
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.buildEmptyGPSLocation
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.CommonActions
+import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.DateTimeUtils.LOCAL_DATE_TIME_FORMATTER
 import com.thewizrd.shared_resources.utils.DateTimeUtils.LOCAL_DATE_TIME_MIN
-import com.thewizrd.shared_resources.utils.Units.*
+import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.shared_resources.utils.Units.CELSIUS
+import com.thewizrd.shared_resources.utils.Units.DistanceUnits
+import com.thewizrd.shared_resources.utils.Units.FAHRENHEIT
+import com.thewizrd.shared_resources.utils.Units.INCHES
+import com.thewizrd.shared_resources.utils.Units.INHG
+import com.thewizrd.shared_resources.utils.Units.KILOMETERS
+import com.thewizrd.shared_resources.utils.Units.KILOMETERS_PER_HOUR
+import com.thewizrd.shared_resources.utils.Units.MILES
+import com.thewizrd.shared_resources.utils.Units.MILES_PER_HOUR
+import com.thewizrd.shared_resources.utils.Units.MILLIBAR
+import com.thewizrd.shared_resources.utils.Units.MILLIMETERS
+import com.thewizrd.shared_resources.utils.Units.PrecipitationUnits
+import com.thewizrd.shared_resources.utils.Units.PressureUnits
+import com.thewizrd.shared_resources.utils.Units.SpeedUnits
+import com.thewizrd.shared_resources.utils.Units.TemperatureUnits
+import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
-import com.thewizrd.shared_resources.weatherdata.model.*
+import com.thewizrd.shared_resources.weatherdata.model.Favorites
+import com.thewizrd.shared_resources.weatherdata.model.Forecasts
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
+import com.thewizrd.shared_resources.weatherdata.model.HourlyForecasts
+import com.thewizrd.shared_resources.weatherdata.model.LocationType
+import com.thewizrd.shared_resources.weatherdata.model.Weather
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlertSeverity
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlerts
+import com.thewizrd.shared_resources.weatherdata.model.isNullOrInvalid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -43,7 +70,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 class SettingsManager(context: Context) {
     private val appContext = context.applicationContext
@@ -99,6 +126,7 @@ class SettingsManager(context: Context) {
         private const val KEY_ONBOARDINGCOMPLETE = "key_onboardcomplete"
         const val KEY_USERTHEME = "key_usertheme"
         private const val KEY_DEVSETTINGSENABLED = "key_devsettingsenabled"
+        private const val KEY_DEBUGMODEENABLED = "key_debugmodeenabled"
         const val KEY_MINALERTSEVERITY = "key_minalertseverity"
 
         const val TEMPERATURE_ICON = "0"
@@ -604,11 +632,11 @@ class SettingsManager(context: Context) {
         }
     }
 
-    fun getAPIKey(@WeatherAPI.WeatherProviders provider: String): String? {
+    fun getAPIKey(provider: String): String? {
         return preferences.getString("${KEY_APIKEY_PREFIX}_${provider}", null)
     }
 
-    fun setAPIKey(@WeatherAPI.WeatherProviders provider: String, key: String?) {
+    fun setAPIKey(provider: String, key: String?) {
         preferences.edit {
             putString("${KEY_APIKEY_PREFIX}_${provider}", key)
         }
@@ -617,7 +645,7 @@ class SettingsManager(context: Context) {
     fun getAPIKeyMap(): Map<String, Any?> {
         return preferences.all.filter { (key, _) ->
             key.startsWith(KEY_APIKEY_PREFIX, false)
-        }
+        }.mapKeys { it.key.removePrefix(KEY_APIKEY_PREFIX) }
     }
 
     fun useFollowGPS(): Boolean {
@@ -799,6 +827,10 @@ class SettingsManager(context: Context) {
         }
     }
 
+    @Deprecated(
+        "Use usePersonalKey(String, Boolean)",
+        ReplaceWith("usePersonalKey(null, true)")
+    )
     fun usePersonalKey(): Boolean {
         return if (!preferences.contains(KEY_USEPERSONALKEY)) {
             false
@@ -807,9 +839,34 @@ class SettingsManager(context: Context) {
         }
     }
 
+    @Deprecated(
+        "Use setPersonalKey(String, Boolean)",
+        ReplaceWith("setPersonalKey(null, true)")
+    )
     fun setPersonalKey(value: Boolean) {
         preferences.edit {
             putBoolean(KEY_USEPERSONALKEY, value)
+        }
+    }
+
+    fun usePersonalKey(provider: String?): Boolean {
+        val prefKey = "${KEY_USEPERSONALKEY}_${provider}"
+
+        return if (!wuSharedPrefs.contains(prefKey)) {
+            false
+        } else {
+            wuSharedPrefs.getBoolean(prefKey, false)
+        }
+    }
+
+    fun setPersonalKey(provider: String, value: Boolean) {
+        val prefKey = "${KEY_USEPERSONALKEY}_${provider}"
+
+        wuSharedPrefs.edit {
+            putBoolean(prefKey, value)
+            if (!value) {
+                remove(prefKey)
+            }
         }
     }
 
@@ -818,9 +875,9 @@ class SettingsManager(context: Context) {
     }
 
     fun setVersionCode(value: Long) {
-        val versionEditor = versionPrefs.edit()
-        versionEditor.putString(KEY_CURRENTVERSION, value.toString())
-        versionEditor.apply()
+        versionPrefs.edit {
+            putString(KEY_CURRENTVERSION, value.toString())
+        }
     }
 
     fun getSDKVersionCode(): Int {
@@ -860,6 +917,16 @@ class SettingsManager(context: Context) {
             putBoolean(KEY_DEVSETTINGSENABLED, enable)
         }
         localBroadcastManager.sendBroadcast(Intent(CommonActions.ACTION_SETTINGS_SENDUPDATE))
+    }
+
+    fun isDebugModeEnabled(): Boolean {
+        return devSettings.getBoolean(KEY_DEBUGMODEENABLED, false)
+    }
+
+    fun setDebugModeEnabled(enable: Boolean) {
+        devSettings.edit {
+            putBoolean(KEY_DEBUGMODEENABLED, enable)
+        }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)

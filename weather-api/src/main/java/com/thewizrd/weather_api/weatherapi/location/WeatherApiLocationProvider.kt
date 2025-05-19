@@ -65,7 +65,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
         val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
         val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
 
-        val key = getAPIKey()
+        val key = getProviderKey()
 
         val client = sharedDeps.httpClient
         var response: Response? = null
@@ -82,7 +82,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
             val request = Request.Builder()
                 .cacheControl(
                     CacheControl.Builder()
-                        .maxAge(1, TimeUnit.DAYS)
+                        .maxAge(14, TimeUnit.DAYS)
                         .build()
                 )
                 .get()
@@ -157,7 +157,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
         val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
         val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
 
-        val key = getAPIKey()
+        val key = getProviderKey()
 
         val client = sharedDeps.httpClient
         var response: Response? = null
@@ -178,7 +178,7 @@ class WeatherApiLocationProvider : WeatherLocationProviderImpl() {
             val request = Request.Builder()
                 .cacheControl(
                     CacheControl.Builder()
-                        .maxAge(1, TimeUnit.DAYS)
+                        .maxAge(14, TimeUnit.DAYS)
                         .build()
                 )
                 .get()
