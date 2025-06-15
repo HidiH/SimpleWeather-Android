@@ -114,7 +114,7 @@ class SetupLocationFragment : CustomFragment() {
         binding = FragmentSetupLocationBinding.inflate(inflater, container, false)
 
         /* Event Listeners */
-        binding.searchBar.searchViewContainer.setOnClickListener {
+        binding.searchBar.setOnClickListener {
             locationSearchLauncher.launch(
                 ActivityOptionsCompat.makeSceneTransitionAnimation(
                     requireActivity(),
@@ -123,10 +123,7 @@ class SetupLocationFragment : CustomFragment() {
                 )
             )
         }
-        ViewCompat.setTransitionName(
-            binding.searchBar.searchViewContainer,
-            Constants.SHARED_ELEMENT
-        )
+        ViewCompat.setTransitionName(binding.searchBar, Constants.SHARED_ELEMENT)
 
         binding.gpsFollow.setOnClickListener { fetchGeoLocation() }
 
