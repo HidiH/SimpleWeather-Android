@@ -125,24 +125,34 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
     }
 
     override suspend fun doWork(): Result {
-        WidgetUpdaterWork.executeWork(applicationContext)
-        return Result.success()
+        return WidgetUpdaterWork.executeWork(applicationContext)
     }
 
     private object WidgetUpdaterWork {
-        suspend fun executeWork(context: Context) {
+        suspend fun executeWork(context: Context): Result {
+            var result = Result.success()
+
             val settingsManager = SettingsManager(context.applicationContext)
 
             if (settingsManager.isWeatherLoaded()) {
                 // If saved data DNE (for current location), refresh weather
-                val result = loadWeather()
-                if (result !is WeatherResult.Success && result !is WeatherResult.WeatherWithError) {
-                    if (loadWeather(true).let { it is WeatherResult.Success && !it.isSavedData }) {
+                var weatherResult = loadWeather()
+                if (weatherResult !is WeatherResult.Success && weatherResult !is WeatherResult.WeatherWithError) {
+                    weatherResult = loadWeather(true)
+
+                    if (weatherResult.let { it is WeatherResult.Success && !it.isSavedData }) {
                         localBroadcastManager.sendBroadcast(
                             Intent(CommonActions.ACTION_WEATHER_SENDWEATHERUPDATE).apply {
                                 putExtra(WearableSettings.KEY_PARTIAL_WEATHER_UPDATE, true)
                             }
                         )
+                    }
+
+                    result = when (weatherResult) {
+                        is WeatherResult.Success -> Result.success()
+                        is WeatherResult.NoWeather -> Result.failure()
+                        is WeatherResult.Error,
+                        is WeatherResult.WeatherWithError -> Result.retry()
                     }
                 }
 
@@ -163,7 +173,21 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
                 }
             }
 
-            Timber.tag(TAG).i("Work completed successfully...")
+            when (result) {
+                Result.success() -> {
+                    Timber.tag(TAG).i("Work completed successfully...")
+                }
+
+                Result.retry() -> {
+                    Timber.tag(TAG).w("Work failed. Will retry...")
+                }
+
+                Result.failure() -> {
+                    Timber.tag(TAG).e("Work failed...")
+                }
+            }
+
+            return result
         }
 
         private suspend fun loadWeather(forceRefresh: Boolean = false): WeatherResult =

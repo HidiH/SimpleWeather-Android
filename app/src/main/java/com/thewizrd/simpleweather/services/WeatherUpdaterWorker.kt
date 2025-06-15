@@ -19,13 +19,13 @@ import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.utils.LiveDataUtils.awaitWithTimeout
 import com.thewizrd.common.weatherdata.WeatherDataLoader
 import com.thewizrd.common.weatherdata.WeatherRequest
+import com.thewizrd.common.weatherdata.WeatherResult
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.utils.*
 import com.thewizrd.shared_resources.utils.Logger
-import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.notifications.PoPChanceNotificationHelper
 import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
@@ -154,15 +154,13 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
 
     override suspend fun doWork(): Result {
         Logger.writeLine(Log.INFO, "%s: Work started", TAG)
-
-        if (!WeatherUpdaterHelper.executeWork(applicationContext))
-            return Result.failure()
-
-        return Result.success()
+        return WeatherUpdaterHelper.executeWork(applicationContext)
     }
 
     private object WeatherUpdaterHelper {
-        suspend fun executeWork(context: Context): Boolean {
+        suspend fun executeWork(context: Context): Result {
+            var result = Result.success()
+
             val wm = weatherModule.weatherManager
             var locationChanged = false
 
@@ -174,12 +172,12 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
             if (settingsManager.isWeatherLoaded()) {
                 if (settingsManager.useFollowGPS()) {
                     try {
-                        val result = updateLocation()
+                        val locationResult = updateLocation()
 
-                        when (result) {
+                        when (locationResult) {
                             is LocationResult.Changed -> {
                                 locationChanged = true
-                                settingsManager.saveLastGPSLocData(result.data)
+                                settingsManager.saveLastGPSLocData(locationResult.data)
                             }
                             else -> {
                                 // no-op
@@ -197,7 +195,7 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                 // Refresh weather data for widgets
                 preloadWeather()
 
-                val weather = getWeather()
+                val weatherResult = getWeather()
 
                 if (WidgetUpdaterHelper.widgetsExist()) {
                     WidgetUpdaterHelper.refreshWidgets(context)
@@ -215,11 +213,11 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                     ShortcutCreatorWorker.updateShortcuts(context)
                 }
 
-                if (weather != null) {
+                if (weatherResult is WeatherResult.Success || weatherResult is WeatherResult.WeatherWithError) {
                     if (settingsManager.useAlerts() && wm.supportsAlerts()) {
                         WeatherAlertHandler.postAlerts(
                             settingsManager.getHomeData()!!,
-                            weather.weatherAlerts
+                            weatherResult.data?.weatherAlerts
                         )
                     }
 
@@ -233,35 +231,48 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                     }
                     LocalBroadcastManager.getInstance(context)
                         .sendBroadcast(Intent(CommonActions.ACTION_WEATHER_SENDWEATHERUPDATE))
-                } else {
-                    Timber.tag(TAG).i("Work failed...")
-                    return false
+                }
+
+                result = when (weatherResult) {
+                    is WeatherResult.Success -> Result.success()
+                    is WeatherResult.NoWeather -> Result.failure()
+                    is WeatherResult.Error,
+                    is WeatherResult.WeatherWithError -> Result.retry()
                 }
             }
 
-            Timber.tag(TAG).i("Work completed successfully...")
-            return true
+            when (result) {
+                Result.success() -> {
+                    Timber.tag(TAG).i("Work completed successfully...")
+                }
+
+                Result.retry() -> {
+                    Timber.tag(TAG).w("Work failed. Will retry...")
+                }
+
+                Result.failure() -> {
+                    Timber.tag(TAG).e("Work failed...")
+                }
+            }
+
+            return result
         }
 
         // Re-schedule alarm at selected interval from now
-        private suspend fun getWeather(): Weather? = withContext(Dispatchers.IO) {
+        private suspend fun getWeather(): WeatherResult = withContext(Dispatchers.IO) {
             Timber.tag(TAG).d("Getting weather data for home...")
 
-            val weather = try {
-                val locData = settingsManager.getHomeData() ?: return@withContext null
-                WeatherDataLoader(locData)
-                    .loadWeatherData(
-                        WeatherRequest.Builder()
-                            .forceRefresh(false)
-                            .loadAlerts()
-                            .loadForecasts()
-                            .build()
-                    )
-            } catch (ex: Exception) {
-                Logger.writeLine(Log.ERROR, ex, "%s: getWeather error", TAG)
-                null
-            }
-            weather
+            val locData =
+                settingsManager.getHomeData() ?: return@withContext WeatherResult.NoWeather()
+
+            WeatherDataLoader(locData)
+                .loadWeatherResult(
+                    WeatherRequest.Builder()
+                        .forceRefresh(false)
+                        .loadAlerts()
+                        .loadForecasts()
+                        .build()
+                )
         }
 
         private suspend fun preloadWeather() = withContext(Dispatchers.IO) {

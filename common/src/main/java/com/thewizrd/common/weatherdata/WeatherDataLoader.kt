@@ -18,6 +18,7 @@ import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.time.Duration
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -179,6 +180,9 @@ class WeatherDataLoader {
             }
         } catch (weatherEx: WeatherException) {
             wEx = weatherEx
+            weather = null
+        } catch (ioEx: IOException) {
+            wEx = WeatherException(ErrorStatus.NETWORKERROR, ioEx)
             weather = null
         } catch (ex: Exception) {
             Logger.writeLine(Log.ERROR, ex, "WeatherDataLoader: error getting weather data")
