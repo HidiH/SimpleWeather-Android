@@ -182,8 +182,12 @@ class WeatherListFragment : ToolbarFragment() {
         if (args.data.isNullOrBlank() && savedInstanceState?.containsKey(Constants.KEY_DATA) != true) {
             viewLifecycleOwner.lifecycleScope.launch {
                 wNowViewModel.uiState.collect {
+                    val oldData = locationData
                     locationData = it.locationData
-                    initialize()
+
+                    if (oldData != locationData) {
+                        initialize()
+                    }
                 }
             }
         }
@@ -195,18 +199,20 @@ class WeatherListFragment : ToolbarFragment() {
         }
 
         //
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            runCatching {
-                delay(5000)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                runCatching {
+                    delay(5000)
 
-                if (isActive && inAppReviewManager.shouldShowReviewFlow()) {
-                    // Wait for no movement
-                    while (isActive && binding.recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
-                        delay(1500)
-                    }
+                    if (isActive && isVisible && isViewAlive && inAppReviewManager.shouldShowReviewFlow()) {
+                        // Wait for no movement
+                        while (isActive && binding.recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+                            delay(1500)
+                        }
 
-                    activity?.run {
-                        inAppReviewManager.showReviewFlow(this)
+                        activity?.run {
+                            inAppReviewManager.showReviewFlow(this)
+                        }
                     }
                 }
             }

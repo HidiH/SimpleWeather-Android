@@ -11,6 +11,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewConfiguration
@@ -84,6 +85,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.getOrientation
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
 import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.shared_resources.weatherdata.model.MoonPhase.MoonPhaseType
@@ -888,8 +890,6 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 detailPaneNavHostFragment.arguments = Bundle()
             }
 
-            detailPaneNavHostFragment.arguments?.putString("testing", "value")
-
             slidingPaneLayout.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
                 val paneLayout = v as SlidingPaneLayout
                 twoPaneStateViewModel.updateSideBySide(!paneLayout.isSlideable)
@@ -984,6 +984,24 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                         } else {
                             // Update widgets anyway
                             WidgetWorker.enqueueRefreshWidgets(context, locationData)
+                        }
+                    }
+
+                    // NOTE: Startup workaround for unloaded detail fragment
+                    runWithView {
+                        runCatching {
+                            if (it?.isValid == true && isVisible &&
+                                detailPaneNavHostFragment.isAdded &&
+                                twoPaneStateViewModel.twoPaneState.value.isSideBySide &&
+                                detailPaneNavHostFragment.navController.visibleEntries.value.size == 1
+                            ) {
+                                openDetails(
+                                    TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
+                                        .setWeatherListType(WeatherListType.FORECAST)
+                                )
+                            }
+                        }.onFailure {
+                            Logger.writeLine(Log.ERROR, it)
                         }
                     }
                 }
