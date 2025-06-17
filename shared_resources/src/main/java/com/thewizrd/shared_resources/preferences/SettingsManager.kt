@@ -1012,7 +1012,7 @@ class SettingsManager(context: Context) {
     }
 
     fun getPoPChanceMinimumPercentage(): Int {
-        return preferences.getString(KEY_POPCHANCEPCT, "60")?.toIntOrNull() ?: 60
+        return preferences.getString(KEY_POPCHANCEPCT, "50")?.toIntOrNull() ?: 50
     }
 
     fun setPoPChanceMinimumPercentage(
@@ -1027,7 +1027,7 @@ class SettingsManager(context: Context) {
                 if (pct in 40..90) {
                     pct
                 } else {
-                    60
+                    50
                 }.toString()
             )
         }
