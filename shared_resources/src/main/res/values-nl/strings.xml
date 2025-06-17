@@ -33,6 +33,8 @@
     <string name="label_sunset">"Zon onder"</string>
     <string name="label_hourlyforecast">"Per uur"</string>
     <string name="label_precipitation">"Neerslag"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Kans"</string>
     <string name="label_cloudiness">"Bewolking"</string>
     <string name="label_qpf_rain">"Regen"</string>

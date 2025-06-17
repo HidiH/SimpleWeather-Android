@@ -104,8 +104,6 @@
     <!-- Example: 80% chance of rain in 2 hours
 (%1$d) -> Percentage | (%2$s) -> Time in minutes or hours -->
     <string name="precipitation_text_format">"%1$d%% szans na opady w ciągu %2$s"</string>
-
-    <!-- Changed to "Percipation" in translation, because this string applies also to other type of percip. -->
     <string name="precipitation_nexthour_text_format">"%1$d%% szans na opady w ciągu najbliższej godziny"</string>
 
     <!-- Weather Summary or Weather Overview -->
@@ -145,4 +143,7 @@
     <string name="alertsev_extreme">"Ekstremalny"</string>
     <string name="pref_title_txtshadow">"Cień tekstu"</string>
     <string name="pref_summary_txtshadow">"Dodaj warstwę cienia do tekstu"</string>
+    <string name="precipitation_likely_text_format">"Prawdopodobny deszcz około %1$s (szansa %2$d%%)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Oczekuje się, że deszcz zacznie padać około %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Oczekuje się, że deszcz przestanie padać około %1$s"</string>
 </resources>

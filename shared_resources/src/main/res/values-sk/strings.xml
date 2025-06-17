@@ -33,6 +33,8 @@
     <string name="label_sunset">"Súmrak"</string>
     <string name="label_hourlyforecast">"Hodinovo"</string>
     <string name="label_precipitation">"Zrážky"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Šanca"</string>
     <string name="label_cloudiness">"Oblačnosť"</string>
     <string name="label_qpf_rain">"Dážď"</string>

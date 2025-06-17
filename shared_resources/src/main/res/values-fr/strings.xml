@@ -33,6 +33,8 @@
     <string name="label_sunset">"Coucher de soleil"</string>
     <string name="label_hourlyforecast">"Par heure"</string>
     <string name="label_precipitation">"Précipitation"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Chance"</string>
     <string name="label_cloudiness">"Nébulosité"</string>
     <string name="label_qpf_rain">"Pluie"</string>

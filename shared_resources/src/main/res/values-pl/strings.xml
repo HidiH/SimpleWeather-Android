@@ -33,6 +33,8 @@
     <string name="label_sunset">"Zachód słońca"</string>
     <string name="label_hourlyforecast">"Godzinowa"</string>
     <string name="label_precipitation">"Opady"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Szansa na opady"</string>
     <string name="label_cloudiness">"Zachmurzenie"</string>
     <string name="label_qpf_rain">"Deszcz"</string>

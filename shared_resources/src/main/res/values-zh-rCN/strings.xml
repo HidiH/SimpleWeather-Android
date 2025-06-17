@@ -33,6 +33,8 @@
     <string name="label_sunset">"日落"</string>
     <string name="label_hourlyforecast">"小时概览"</string>
     <string name="label_precipitation">"降水"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"概率"</string>
     <string name="label_cloudiness">"云量"</string>
     <string name="label_qpf_rain">"雨量"</string>

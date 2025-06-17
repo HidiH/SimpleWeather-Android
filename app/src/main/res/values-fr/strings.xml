@@ -62,8 +62,6 @@
 
     <!-- Feedback -->
     <string name="pref_title_feedback">"Commentaires"</string>
-
-    <!-- 'Bug' can be replaced with 'issue' -->
     <string name="pref_summary_feedback">"Rapporter tout problème ou suggestion pour améliorer l'application"</string>
 
     <!-- Rate / Review -->
@@ -137,13 +135,7 @@
     <string name="pref_category_customsize">"Taille des icônes et de la police"</string>
     <string name="pref_title_textsize">"Taille de la police"</string>
     <string name="pref_title_iconsize">"Taille de l'icône"</string>
-
-    <!-- Example: Rain will start in about 20 minutes
-(%1$s) - Time in minutes or hours -->
     <string name="precipitation_minutely_starting_text_format">"La pluie va commencer dans environ %1$s"</string>
-
-    <!-- Example: Rain will stop in about 20 minutes
-(%1$s) - Time in minutes or hours -->
     <string name="precipitation_minutely_stopping_text_format">"La pluie s'arrêtera dans environ %1$s"</string>
 
     <!-- Minimum Alert Severity -->
@@ -154,4 +146,7 @@
     <string name="alertsev_extreme">"Extrême"</string>
     <string name="pref_title_txtshadow">"Ombre du texte"</string>
     <string name="pref_summary_txtshadow">"Ajouter une couche d'ombre au texte"</string>
+    <string name="precipitation_likely_text_format">"Pluie probable vers %1$s (probabilité de %2$d%%)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"La pluie devrait commencer vers %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"La pluie devrait cesser vers %1$s"</string>
 </resources>
