@@ -219,4 +219,5 @@
     <string name="label_count_high_short">"Hoch"</string>
     <string name="label_count_veryhigh_short">"Hoch"</string>
     <string name="werror_ratelimited">"Zu viele Anfragen. Bitte versuchen Sie es nach ein paar Minuten erneut"</string>
+    <string name="werror_locationnotsupported">"Dieser Standort wird von diesem Wetteranbieter nicht unterstützt"</string>
 </resources>

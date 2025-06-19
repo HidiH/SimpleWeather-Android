@@ -240,4 +240,5 @@
     <string name="label_count_high_short">"Alto"</string>
     <string name="label_count_veryhigh_short">"Alto"</string>
     <string name="werror_ratelimited">"Demasiadas solicitudes. Vuelva a intentarlo pasados unos minutos"</string>
+    <string name="werror_locationnotsupported">"Esta ubicación no es compatible con este proveedor meteorológico"</string>
 </resources>

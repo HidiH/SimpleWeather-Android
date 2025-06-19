@@ -1177,9 +1177,16 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                         }
                     })
             }
-            ErrorStatus.QUERYNOTFOUND -> {
+            ErrorStatus.LOCATIONNOTSUPPORTED -> {
                 showSnackbar(
-                    Snackbar.make(binding.root.context, wEx.message, Snackbar.Duration.LONG)
+                    Snackbar.make(binding.root.context, wEx.message, Snackbar.Duration.LONG).apply {
+                        setAction(R.string.action_settings) {
+                            runCatching {
+                                binding.root.findNavController()
+                                    .safeNavigate(WeatherNowFragmentDirections.actionWeatherNowFragmentToSettingsFragment())
+                            }
+                        }
+                    }
                 )
             }
             else -> {

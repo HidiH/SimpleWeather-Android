@@ -5,12 +5,12 @@ import android.util.Log
 import androidx.core.util.ObjectsCompat
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.Constants
-import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.localBroadcastManager
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
+import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.utils.*
 import com.thewizrd.shared_resources.utils.NumberUtils.getValueOrDefault
 import com.thewizrd.shared_resources.weatherdata.model.*
@@ -150,28 +150,24 @@ class WeatherDataLoader {
 
             if (!wm.isRegionSupported(location)) {
                 if (location.latitude != 0.0 && location.longitude != 0.0) {
-                    // If location data hasn't been updated, try loading weather from the previous provider
-                    if (!location.weatherSource.isNullOrBlank()) {
-                        val provider =
-                            weatherModule.weatherManager.getWeatherProvider(location.weatherSource)
-                        if (provider.isRegionSupported(location)) {
-                            weather = provider.getWeather(location)
-                        }
+                    // If location data hasn't been updated, try loading weather from the default provider
+                    val provider = remoteConfigService.getDefaultWeatherProvider()
+                        .takeIf { it.isNotBlank() && remoteConfigService.isProviderEnabled(it) }
+                        ?.let { weatherModule.weatherManager.getWeatherProvider(it) }
+
+                    if (provider?.isRegionSupported(location) == true) {
+                        weather = provider.getWeather(location)
                     }
 
                     // Nothing to fallback on; error out
                     if (weather == null) {
-                        Logger.writeLine(
-                            Log.WARN,
-                            "Location: %s; countryCode: %s",
-                            JSONParser.serializer(location),
-                            location.countryCode
-                        )
-                        throw WeatherException(ErrorStatus.QUERYNOTFOUND).initCause(
-                            CustomException(
-                                R.string.error_message_weather_region_unsupported
+                        throw WeatherException(ErrorStatus.LOCATIONNOTSUPPORTED)
+                            .initCause(
+                                createUnsupportedLocationException(
+                                    wm.getWeatherAPI(),
+                                    location
+                                )
                             )
-                        )
                     }
                 }
             } else {
@@ -186,6 +182,7 @@ class WeatherDataLoader {
             weather = null
         } catch (ex: Exception) {
             Logger.writeLine(Log.ERROR, ex, "WeatherDataLoader: error getting weather data")
+            wEx = WeatherException(ErrorStatus.NOWEATHER).initCause(ex)
             weather = null
         }
 

@@ -207,4 +207,5 @@
     <string name="label_count_high_short">"Élevé"</string>
     <string name="label_count_veryhigh_short">"Élevé"</string>
     <string name="werror_ratelimited">"Trop de demandes. Veuillez réessayer après quelques minutes"</string>
+    <string name="werror_locationnotsupported">"Cet emplacement n'est pas pris en charge par ce fournisseur météo"</string>
 </resources>

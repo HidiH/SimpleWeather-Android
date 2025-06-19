@@ -231,4 +231,5 @@
     <string name="label_count_high_short">"高"</string>
     <string name="label_count_veryhigh_short">"很高"</string>
     <string name="werror_ratelimited">"请求太多。请几分钟后再试一次"</string>
+    <string name="werror_locationnotsupported">"此天气提供商不支持该位置"</string>
 </resources>

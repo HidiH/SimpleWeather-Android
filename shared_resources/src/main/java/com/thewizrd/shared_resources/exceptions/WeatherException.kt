@@ -4,7 +4,7 @@ import com.thewizrd.shared_resources.R
 import com.thewizrd.shared_resources.sharedDeps
 
 enum class ErrorStatus {
-    UNKNOWN, SUCCESS, NOWEATHER, NETWORKERROR, INVALIDAPIKEY, QUERYNOTFOUND, RATELIMITED
+    UNKNOWN, SUCCESS, NOWEATHER, NETWORKERROR, INVALIDAPIKEY, QUERYNOTFOUND, LOCATIONNOTSUPPORTED, RATELIMITED
 }
 
 class WeatherException : Exception {
@@ -33,6 +33,9 @@ class WeatherException : Exception {
                 ErrorStatus.QUERYNOTFOUND -> {
                     sharedDeps.context.getString(R.string.werror_querynotfound)
                 }
+                ErrorStatus.LOCATIONNOTSUPPORTED -> {
+                    sharedDeps.context.getString(R.string.werror_locationnotsupported)
+                }
                 ErrorStatus.RATELIMITED -> {
                     sharedDeps.context.getString(R.string.werror_ratelimited)
                 }
@@ -42,4 +45,9 @@ class WeatherException : Exception {
                 }
             }
         }
+
+    override fun initCause(cause: Throwable?): WeatherException {
+        super.initCause(cause)
+        return this
+    }
 }

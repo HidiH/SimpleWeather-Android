@@ -214,4 +214,5 @@
     <string name="label_count_high_short">"Wysoki"</string>
     <string name="label_count_veryhigh_short">"Wysoki"</string>
     <string name="werror_ratelimited">"Zbyt wiele żądań. Spróbuj ponownie za kilka minut"</string>
+    <string name="werror_locationnotsupported">"Ta lokalizacja nie jest obsługiwana przez tego dostawcę pogody"</string>
 </resources>
