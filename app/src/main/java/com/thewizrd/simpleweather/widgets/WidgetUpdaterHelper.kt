@@ -60,7 +60,7 @@ object WidgetUpdaterHelper {
 
     @JvmStatic
     fun widgetsExist(): Boolean {
-        for (widgetType in WidgetType.values()) {
+        for (widgetType in WidgetType.entries) {
             val info = WidgetUtils.getWidgetProviderInfoFromType(widgetType)
             if (info?.hasInstances == true) return true
         }
@@ -73,7 +73,7 @@ object WidgetUpdaterHelper {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val jobs = mutableListOf<Deferred<*>>()
 
-            for (widgetType in WidgetType.values()) {
+            for (widgetType in WidgetType.entries) {
                 val info = WidgetUtils.getWidgetProviderInfoFromType(widgetType)
 
                 if (info != null) {
