@@ -4,7 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.work.*
+import androidx.annotation.IntDef
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.ForegroundInfo
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import androidx.work.multiprocess.RemoteWorkManager
 import com.thewizrd.common.utils.LiveDataUtils.awaitWithTimeout
 import com.thewizrd.common.wearable.WearableSettings
@@ -27,11 +39,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
     companion object {
         private const val TAG = "WidgetUpdaterWorker"
+        private const val KEY_ACTION = "action"
 
         const val ACTION_UPDATEWIDGETS = "SimpleWeather.Droid.action.UPDATE_WIDGETS"
         const val ACTION_ENQUEUEWORK = "SimpleWeather.Droid.action.START_ALARM"
@@ -95,6 +109,57 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
             Logger.writeLine(Log.INFO, "%s: Work enqueued", TAG)
         }
 
+        @JvmStatic
+        suspend fun schedulePoPNotification(
+            context: Context,
+            duration: Duration,
+            expedited: Boolean = false
+        ) {
+            // Check if there is existing work pending
+            val tag = "${TAG}_sched_pop"
+            val workMgr = WorkManager.getInstance(context.applicationContext)
+            val workInfos = withContext(Dispatchers.IO) {
+                runCatching {
+                    workMgr.getWorkInfosForUniqueWork(tag).get(10, TimeUnit.SECONDS)
+                }.getOrElse { emptyList() }
+            }
+
+            var existingWorkPolicy = ExistingWorkPolicy.REPLACE
+            val requestedDelayInMillis = duration.toMillis()
+            val nextScheduleTimeMillis = System.currentTimeMillis() + requestedDelayInMillis
+
+            // If any existing work exists with a shorter delay, keep it, else replace it
+            for (workInfo in workInfos) {
+                if (workInfo.state == WorkInfo.State.ENQUEUED) {
+                    val estimatedDelayInMillis =
+                        workInfo.nextScheduleTimeMillis - System.currentTimeMillis()
+
+                    if (estimatedDelayInMillis in 1..<nextScheduleTimeMillis) {
+                        existingWorkPolicy = ExistingWorkPolicy.KEEP
+                        break
+                    }
+                }
+            }
+
+            val request = OneTimeWorkRequestBuilder<WidgetWorker>()
+                .apply {
+                    if (expedited) {
+                        setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    }
+                }
+                .setConstraints(Constraints.NONE)
+                .setInputData(
+                    Data.Builder()
+                        .putInt(KEY_ACTION, WidgetUpdaterWork.ACTION_UPDATEPOPNOTIFICATION)
+                        .build()
+                )
+                .setInitialDelay(requestedDelayInMillis, TimeUnit.MILLISECONDS)
+                .build()
+
+            RemoteWorkManager.getInstance(context)
+                .enqueueUniqueWork(tag, existingWorkPolicy, request)
+        }
+
         private suspend fun isWorkScheduled(context: Context): Boolean {
             val workMgr = WorkManager.getInstance(context.applicationContext)
             val statuses = workMgr.getWorkInfosForUniqueWorkLiveData(TAG).awaitWithTimeout(10000)
@@ -125,11 +190,29 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
     }
 
     override suspend fun doWork(): Result {
-        return WidgetUpdaterWork.executeWork(applicationContext)
+        val action = inputData.getInt(KEY_ACTION, WidgetUpdaterWork.ACTION_UPDATEALL)
+        return WidgetUpdaterWork.executeWork(applicationContext, action)
     }
 
     private object WidgetUpdaterWork {
-        suspend fun executeWork(context: Context): Result {
+        const val ACTION_UPDATEALL = 0.inv()
+        const val ACTION_UPDATEWIDGETS = 1
+        const val ACTION_UPDATENOTIFICATION = 1 shl 1
+        const val ACTION_UPDATEPOPNOTIFICATION = 1 shl 2
+
+        @Retention(AnnotationRetention.SOURCE)
+        @IntDef(
+            ACTION_UPDATEALL,
+            ACTION_UPDATEWIDGETS,
+            ACTION_UPDATENOTIFICATION,
+            ACTION_UPDATEPOPNOTIFICATION
+        )
+        annotation class UpdateAction
+
+        suspend fun executeWork(
+            context: Context,
+            @UpdateAction action: Int = ACTION_UPDATEALL
+        ): Result {
             var result = Result.success()
 
             val settingsManager = SettingsManager(context.applicationContext)
@@ -151,24 +234,28 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
                     result = when (weatherResult) {
                         is WeatherResult.Success -> Result.success()
                         is WeatherResult.NoWeather -> Result.failure()
-                        is WeatherResult.Error,
-                        is WeatherResult.WeatherWithError -> Result.retry()
+                        is WeatherResult.Error -> Result.retry()
+                        is WeatherResult.WeatherWithError -> if (action == ACTION_UPDATENOTIFICATION || action == ACTION_UPDATEPOPNOTIFICATION) {
+                            Result.success()
+                        } else {
+                            Result.retry()
+                        }
                     }
                 }
 
-                if (WidgetUpdaterHelper.widgetsExist()) {
+                if (action and ACTION_UPDATEWIDGETS != 0 && WidgetUpdaterHelper.widgetsExist()) {
                     WidgetUpdaterHelper.refreshWidgets(context)
                 }
 
-                if (settingsManager.showOngoingNotification()) {
+                if (action and ACTION_UPDATENOTIFICATION != 0 && settingsManager.showOngoingNotification()) {
                     WeatherNotificationWorker.refreshNotification(context)
                 }
 
-                if (settingsManager.isPoPChanceNotificationEnabled()) {
+                if (action and ACTION_UPDATEPOPNOTIFICATION != 0 && settingsManager.isPoPChanceNotificationEnabled()) {
                     PoPChanceNotificationHelper.postNotification(context)
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                if (action and ACTION_UPDATEWIDGETS != 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     ShortcutCreatorWorker.updateShortcuts(context)
                 }
             }
