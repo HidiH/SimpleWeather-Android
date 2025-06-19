@@ -289,6 +289,8 @@ class LocationSearchActivity : WindowColorActivity() {
     }
 
     private fun onErrorMessage(error: ErrorMessage) {
+        binding.searchView.clearFocusAndHideKeyboard()
+
         when (error) {
             is ErrorMessage.Resource -> {
                 Snackbar.make(binding.root, error.stringId, Snackbar.LENGTH_SHORT).apply {
