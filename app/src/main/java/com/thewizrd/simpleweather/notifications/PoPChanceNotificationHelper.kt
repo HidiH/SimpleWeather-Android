@@ -79,7 +79,11 @@ object PoPChanceNotificationHelper {
 
         // Find the next hour with a 60% or higher chance of precipitation
         val forecast =
-            hrForecasts.find { it.extras?.pop != null && it.extras.pop >= settingsManager.getPoPChanceMinimumPercentage() }
+            hrForecasts.find {
+                !it.date.isBefore(
+                    now.truncatedTo(ChronoUnit.HOURS).plusHours(1)
+                ) && it.extras?.pop != null && it.extras.pop >= settingsManager.getPoPChanceMinimumPercentage()
+            }
 
         // Proceed if within the next 2hrs
         if (forecast == null || Duration.between(now.truncatedTo(ChronoUnit.HOURS), forecast.date)
@@ -133,9 +137,9 @@ object PoPChanceNotificationHelper {
 
         // Find the next hour with < 60% or higher chance of precipitation
         val stopForecast =
-            hrForecasts.find { it.extras?.pop == null || it.extras.pop < settingsManager.getPoPChanceMinimumPercentage() }
+            hrForecasts.find { it.date.isAfter(forecast.date) && (it.extras?.pop == null || it.extras.pop < settingsManager.getPoPChanceMinimumPercentage()) }
         // Delay further notifications until this time
-        val nextTime = stopForecast?.date?.truncatedTo(ChronoUnit.HOURS) ?: now.plusHours(2)
+        val nextTime = stopForecast?.date?.truncatedTo(ChronoUnit.HOURS) ?: now.plusHours(1)
         settingsManager.setLastPoPChanceNotificationTime(nextTime.minusMinutes(5))
 
         return true
