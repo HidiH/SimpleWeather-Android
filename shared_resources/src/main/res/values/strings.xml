@@ -176,6 +176,7 @@
     <string name="not_channel_desc_alerts">Notifications for weather alerts</string>
     <string name="not_channel_name_general">Service notifications</string>
     <string name="not_title_weather_update">Updating weather…</string>
+    <string name="notification_perm_denied">Notification permission denied</string>
 
     <!-- Alerts -->
     <string name="datetime_day_ago">%1$dd ago</string>
