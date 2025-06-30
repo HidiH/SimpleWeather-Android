@@ -65,11 +65,9 @@ buildscript {
         mavenCentral()
         google()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://storage.googleapis.com/r8-releases/raw' } // TODO: remove when resolved
     }
 
     dependencies {
-        classpath 'com.android.tools:r8:8.12.9-dev' // TODO: remove when resolved
         classpath 'com.android.tools.build:gradle:8.11.0'
         classpath "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:$ksp_version"
         classpath 'com.google.gms:google-services:4.4.3'
