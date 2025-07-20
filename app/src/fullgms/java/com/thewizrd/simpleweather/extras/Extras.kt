@@ -6,11 +6,14 @@ package com.thewizrd.simpleweather.extras
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.play.core.splitcompat.SplitCompat
+import com.google.firebase.installations.ktx.installations
+import com.google.firebase.ktx.Firebase
 import com.thewizrd.extras.extrasModule
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.store.PlayStoreUtils
@@ -21,10 +24,13 @@ import com.thewizrd.simpleweather.NavGraphDirections
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.preferences.BaseSettingsFragment
+import com.thewizrd.simpleweather.preferences.DevSettingsFragment
 import com.thewizrd.simpleweather.preferences.SettingsFragment
 import com.thewizrd.simpleweather.preferences.`SettingsFragment$IconsFragmentDirections`
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 fun initializeExtras() {
@@ -177,6 +183,15 @@ fun SettingsFragment.AboutAppFragment.setupReviewPreference(preference: Preferen
                     startActivity(i)
                 }
             }
+        }
+    }
+}
+
+fun DevSettingsFragment.updateFirebaseIdPreference(preference: Preference) {
+    runCatching {
+        lifecycleScope.launch {
+            val firebaseId = Firebase.installations.id.await()
+            preference.summary = firebaseId
         }
     }
 }

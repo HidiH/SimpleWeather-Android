@@ -9,6 +9,7 @@ import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.simpleweather.App
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.preferences.BaseSettingsFragment
+import com.thewizrd.simpleweather.preferences.DevSettingsFragment
 import com.thewizrd.simpleweather.preferences.SettingsFragment
 
 fun initializeExtras() {
@@ -75,4 +76,8 @@ fun SettingsFragment.createPremiumPreference(): Preference? {
 
 fun SettingsFragment.AboutAppFragment.setupReviewPreference(preference: Preference) {
     preference.isVisible = false
+}
+
+fun DevSettingsFragment.updateFirebaseIdPreference(preference: Preference) {
+    // no-op
 }

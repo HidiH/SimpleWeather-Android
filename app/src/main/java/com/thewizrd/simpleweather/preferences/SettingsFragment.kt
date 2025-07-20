@@ -1546,6 +1546,7 @@ class SettingsFragment : BaseSettingsFragment(),
             private const val KEY_FEEDBACK = "key_feedback"
             private const val KEY_RATEREVIEW = "key_ratereview"
             private const val KEY_TRANSLATE = "key_translate"
+            private const val KEY_PRIVACY_TOS = "key_privacy_tos"
             private const val KEY_ABOUTVERSION = "key_aboutversion"
         }
 
@@ -1599,6 +1600,8 @@ class SettingsFragment : BaseSettingsFragment(),
                     }
                     true
                 }
+
+            findPreference<PreferenceCategory>(KEY_PRIVACY_TOS)?.isVisible = !BuildConfig.IS_NONGMS
 
             runCatching {
                 val packageInfo =
