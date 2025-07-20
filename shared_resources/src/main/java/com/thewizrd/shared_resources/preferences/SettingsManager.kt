@@ -24,6 +24,8 @@ import com.thewizrd.shared_resources.icons.WeatherIconsEFProvider
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.buildEmptyGPSLocation
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
+import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.DateTimeUtils.LOCAL_DATE_TIME_FORMATTER
@@ -610,6 +612,10 @@ class SettingsManager(context: Context) {
         preferences.edit {
             putString(KEY_API, api)
         }
+        AnalyticsLogger.setUserProperty(
+            AnalyticsProps.WEATHER_PROVIDER,
+            api
+        )
     }
 
     @Deprecated("Use getAPIKey()", ReplaceWith("getAPIKey()"))
@@ -867,6 +873,13 @@ class SettingsManager(context: Context) {
             if (!value) {
                 remove(prefKey)
             }
+        }
+
+        if (provider == getAPI()) {
+            AnalyticsLogger.setUserProperty(
+                AnalyticsProps.USING_PERSONAL_KEY,
+                value
+            )
         }
     }
 
