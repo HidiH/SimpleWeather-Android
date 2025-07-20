@@ -243,12 +243,17 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
                     }
                 }
 
+                val willRetry = result == Result.retry()
+
                 if (action and ACTION_UPDATEWIDGETS != 0 && WidgetUpdaterHelper.widgetsExist()) {
-                    WidgetUpdaterHelper.refreshWidgets(context)
+                    WidgetUpdaterHelper.refreshWidgets(context, resetIfUnavailable = !willRetry)
                 }
 
                 if (action and ACTION_UPDATENOTIFICATION != 0 && settingsManager.showOngoingNotification()) {
-                    WeatherNotificationWorker.refreshNotification(context)
+                    WeatherNotificationWorker.refreshNotification(
+                        context,
+                        resetIfUnavailable = !willRetry
+                    )
                 }
 
                 if (action and ACTION_UPDATEPOPNOTIFICATION != 0 && settingsManager.isPoPChanceNotificationEnabled()) {

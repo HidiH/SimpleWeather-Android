@@ -68,7 +68,7 @@ object WidgetUpdaterHelper {
         return false
     }
 
-    suspend fun refreshWidgets(context: Context) {
+    suspend fun refreshWidgets(context: Context, resetIfUnavailable: Boolean = true) {
         coroutineScope {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val jobs = mutableListOf<Deferred<*>>()
@@ -80,7 +80,13 @@ object WidgetUpdaterHelper {
                     jobs.add(
                         async {
                             runCatching {
-                                refreshWidget(context, info, appWidgetManager, info.appWidgetIds)
+                                refreshWidget(
+                                    context,
+                                    info,
+                                    appWidgetManager,
+                                    info.appWidgetIds,
+                                    resetIfUnavailable
+                                )
                             }
                         }
                     )
@@ -131,7 +137,11 @@ object WidgetUpdaterHelper {
         }
     }
 
-    suspend fun refreshWidgets(context: Context, location_query: String) {
+    suspend fun refreshWidgets(
+        context: Context,
+        location_query: String,
+        resetIfUnavailable: Boolean = true
+    ) {
         coroutineScope {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val appWidgetIds = WidgetUtils.getWidgetIds(location_query)
@@ -144,7 +154,13 @@ object WidgetUpdaterHelper {
                         val info = WidgetUtils.getWidgetProviderInfoFromType(widgetType)
                             ?: return@async
 
-                        refreshWidget(context, info, appWidgetManager, IntArray(1) { appWidgetId })
+                        refreshWidget(
+                            context,
+                            info,
+                            appWidgetManager,
+                            IntArray(1) { appWidgetId },
+                            resetIfUnavailable
+                        )
                     }
                 )
             }
@@ -153,7 +169,13 @@ object WidgetUpdaterHelper {
         }
     }
 
-    suspend fun refreshWidget(context: Context, info: WidgetProviderInfo, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    suspend fun refreshWidget(
+        context: Context,
+        info: WidgetProviderInfo,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+        resetIfUnavailable: Boolean = true
+    ) {
         for (appWidgetId in appWidgetIds) {
             val creator = WidgetUtils.getRemoteViewCreator(context, appWidgetId)
             val newOptions = appWidgetManager.getAppWidgetOptions(appWidgetId)
@@ -170,7 +192,10 @@ object WidgetUpdaterHelper {
                     info.className,
                     appWidgetId
                 )
-                resetWidget(context, appWidgetId, appWidgetManager)
+
+                if (resetIfUnavailable) {
+                    resetWidget(context, appWidgetId, appWidgetManager)
+                }
             }
         }
     }

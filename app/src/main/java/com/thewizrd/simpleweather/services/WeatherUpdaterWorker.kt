@@ -197,12 +197,17 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
 
                 val weatherResult = getWeather()
 
+                val willRetry = result == Result.retry()
+
                 if (WidgetUpdaterHelper.widgetsExist()) {
-                    WidgetUpdaterHelper.refreshWidgets(context)
+                    WidgetUpdaterHelper.refreshWidgets(context, resetIfUnavailable = !willRetry)
                 }
 
                 if (settingsManager.showOngoingNotification()) {
-                    WeatherNotificationWorker.refreshNotification(context)
+                    WeatherNotificationWorker.refreshNotification(
+                        context,
+                        resetIfUnavailable = !willRetry
+                    )
                 }
 
                 if (settingsManager.isPoPChanceNotificationEnabled()) {
@@ -276,25 +281,33 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
         }
 
         private suspend fun preloadWeather() = withContext(Dispatchers.IO) {
+            val results = mutableListOf<Boolean>()
+
             val locations = settingsManager.getFavorites() ?: emptyList()
 
             Timber.tag(TAG).d("Preloading weather data for favorites...")
 
             for (location in locations) {
                 if (WidgetUtils.exists(location.query)) {
-                    try {
-                        WeatherDataLoader(location)
-                            .loadWeatherData(
-                                WeatherRequest.Builder()
-                                    .forceRefresh(false)
-                                    .loadAlerts()
-                                    .build()
-                            )
-                    } catch (ex: Exception) {
-                        Logger.writeLine(Log.ERROR, ex, "%s: preloadWeather error", TAG)
+                    val result = WeatherDataLoader(location)
+                        .loadWeatherResult(
+                            WeatherRequest.Builder()
+                                .forceRefresh(false)
+                                .loadAlerts()
+                                .build()
+                        )
+
+                    if (result is WeatherResult.Error) {
+                        Logger.error(TAG, result.exception, "preloadWeather error")
+                    } else if (result is WeatherResult.WeatherWithError) {
+                        Logger.error(TAG, result.exception, "preloadWeather error")
                     }
+
+                    results.add(result is WeatherResult.Success || result is WeatherResult.WeatherWithError)
                 }
             }
+
+            results.all { it }
         }
 
         private suspend fun updateLocation(): LocationResult {
