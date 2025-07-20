@@ -607,8 +607,10 @@ class SettingsFragment : BaseSettingsFragment(),
 
                     val providerEntry =
                         providers.find { entry -> entry.value == selectedProvider }
-                    updateKeySummary(providerEntry!!.display)
-                    updateRegisterLink(providerEntry.value)
+                    runWithView {
+                        updateKeySummary(providerEntry!!.display)
+                        updateRegisterLink(providerEntry.value)
+                    }
                 } else {
                     settingsManager.setKeyVerified(selectedProvider, false)
                     keyEntry.isEnabled = false
@@ -621,8 +623,10 @@ class SettingsFragment : BaseSettingsFragment(),
                     apiCategory.removePreference(personalKeyPref)
                     apiCategory.removePreference(keyEntry)
                     apiCategory.removePreference(registerPref)
-                    updateKeySummary()
-                    updateRegisterLink()
+                    runWithView {
+                        updateKeySummary()
+                        updateRegisterLink()
+                    }
                 }
 
                 lifecycleScope.launch(Dispatchers.Main) {

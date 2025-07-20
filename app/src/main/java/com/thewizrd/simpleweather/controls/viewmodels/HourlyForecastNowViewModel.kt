@@ -84,7 +84,8 @@ class HourlyForecastNowViewModel(forecast: HourlyForecast) {
             Logger.writeLine(Log.ERROR, nFe)
         }
 
-        condition = if (wm.supportsWeatherLocale()) forecast.condition else wm.getWeatherCondition(forecast.icon)
+        condition = if (wm.supportsWeatherLocale()) forecast.condition
+            ?: context.getString(R.string.weather_notavailable) else wm.getWeatherCondition(forecast.icon)
 
         if (forecast.windMph != null && forecast.windKph != null && forecast.windMph >= 0 && forecast.windDegrees != null && forecast.windDegrees >= 0) {
             val unit = settingsManager.getSpeedUnit()
