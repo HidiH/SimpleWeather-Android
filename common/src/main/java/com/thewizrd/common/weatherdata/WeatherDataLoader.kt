@@ -61,6 +61,10 @@ class WeatherDataLoader {
     private val wm = weatherModule.weatherManager
     private val settingsMgr = appLib.settingsManager
 
+    @Deprecated(
+        "Use loadWeatherResult(WeatherRequest)",
+        replaceWith = ReplaceWith("loadWeatherResult(request)")
+    )
     suspend fun loadWeatherData(request: WeatherRequest): Weather? {
         val result = getWeatherResult(request)
 

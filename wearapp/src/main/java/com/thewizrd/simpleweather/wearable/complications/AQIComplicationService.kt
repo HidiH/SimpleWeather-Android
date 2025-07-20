@@ -50,9 +50,9 @@ class AQIComplicationService : BaseWeatherComplicationService() {
             if (settingsManager.isWeatherLoaded()) {
                 complicationData = settingsManager.getHomeData()?.let { locData ->
                     val weather = withContext(Dispatchers.IO) {
-                        try {
+                        val result = try {
                             WeatherDataLoader(locData)
-                                .loadWeatherData(
+                                .loadWeatherResult(
                                     WeatherRequest.Builder()
                                         .loadForecasts()
                                         .forceLoadSavedData()
@@ -61,6 +61,8 @@ class AQIComplicationService : BaseWeatherComplicationService() {
                         } catch (e: Exception) {
                             null
                         }
+
+                        result?.data
                     }
 
                     val today = LocalDate.now(locData.tzOffset)

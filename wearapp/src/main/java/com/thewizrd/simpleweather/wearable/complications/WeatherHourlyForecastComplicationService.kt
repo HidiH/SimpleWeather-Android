@@ -35,9 +35,9 @@ abstract class WeatherHourlyForecastComplicationService : BaseWeatherComplicatio
             if (settingsManager.isWeatherLoaded()) {
                 complicationData = settingsManager.getHomeData()?.let { locData ->
                     val weather = withContext(Dispatchers.IO) {
-                        try {
+                        val result = try {
                             WeatherDataLoader(locData)
-                                .loadWeatherData(
+                                .loadWeatherResult(
                                     WeatherRequest.Builder()
                                         .forceLoadSavedData()
                                         .build()
@@ -45,6 +45,8 @@ abstract class WeatherHourlyForecastComplicationService : BaseWeatherComplicatio
                         } catch (e: Exception) {
                             null
                         }
+
+                        result?.data
                     }
 
                     val now = ZonedDateTime.now().withZoneSameInstant(locData.tzOffset)

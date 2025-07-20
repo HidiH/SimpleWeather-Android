@@ -95,16 +95,15 @@ class ShortcutCreatorWorker(context: Context, workerParams: WorkerParameters) : 
             var i = 0
             while (i < MAX_SHORTCUTS) {
                 val location = locations[i]
-                val weather = try {
+                val result = runCatching {
                     WeatherDataLoader(location)
-                        .loadWeatherData(
+                        .loadWeatherResult(
                             WeatherRequest.Builder()
                                 .forceLoadSavedData()
                                 .build()
                         )
-                } catch (e: Exception) {
-                    null
-                }
+                }.getOrNull()
+                val weather = result?.data
 
                 if (weather == null || !weather.isValid || (location.name == null && weather.location?.name == null)) {
                     locations.removeAt(i)

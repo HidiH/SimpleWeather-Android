@@ -18,7 +18,11 @@ import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.main.MainActivity
-import com.thewizrd.simpleweather.widgets.*
+import com.thewizrd.simpleweather.widgets.WeatherWidgetConfigActivity
+import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider
+import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
+import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper
+import com.thewizrd.simpleweather.widgets.WidgetUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -55,14 +59,14 @@ abstract class AbstractWidgetRemoteViewCreator(protected val context: Context) {
         return try {
             // If saved data DNE (for current location), refresh weather
             val wLoader = WeatherDataLoader(locData)
-            var weather = wLoader.loadWeatherData(
+            var result = wLoader.loadWeatherResult(
                 WeatherRequest.Builder()
                     .forceLoadSavedData()
                     .build()
             )
 
-            if (weather == null) {
-                weather = wLoader.loadWeatherData(
+            if (result.data == null) {
+                result = wLoader.loadWeatherResult(
                     WeatherRequest.Builder()
                         .forceRefresh(false)
                         .loadAlerts()
@@ -71,7 +75,7 @@ abstract class AbstractWidgetRemoteViewCreator(protected val context: Context) {
                 )
             }
 
-            weather
+            result.data
         } catch (e: Exception) {
             null
         }
