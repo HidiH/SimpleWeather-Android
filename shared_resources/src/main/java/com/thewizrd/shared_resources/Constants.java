@@ -20,4 +20,6 @@ public final class Constants {
 
     public static final String SHARED_ELEMENT = "shared_element_container";
     public static final int ANIMATION_DURATION = 300;
+
+    public static final String SUPPORT_EMAIL_ADDRESS = "thewizrd.dev+SimpleWeatherAndroid@gmail.com";
 }

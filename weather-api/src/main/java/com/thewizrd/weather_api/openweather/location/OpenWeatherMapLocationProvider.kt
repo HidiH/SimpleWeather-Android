@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.openweather.location
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -64,8 +64,7 @@ class OpenWeatherMapLocationProvider : WeatherLocationProviderImpl() {
             // If were under rate limit, deny request
             checkRateLimit()
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getLocationAPI()) else getAPIKey()
+            val key = getProviderKey()
 
             if (key.isNullOrBlank()) {
                 throw WeatherException(ErrorStatus.INVALIDAPIKEY)
@@ -75,7 +74,7 @@ class OpenWeatherMapLocationProvider : WeatherLocationProviderImpl() {
             df.applyPattern("0.##")
 
             // http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-            val requestUri = Uri.parse(DIRECT_BASE_URL).buildUpon()
+            val requestUri = DIRECT_BASE_URL.toUri().buildUpon()
                 .appendQueryParameter("q", "$ac_query")
                 .appendQueryParameter("limit", "10")
                 .appendQueryParameter("appid", key)
@@ -154,8 +153,7 @@ class OpenWeatherMapLocationProvider : WeatherLocationProviderImpl() {
             // If were under rate limit, deny request
             checkRateLimit()
 
-            val key =
-                if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(getLocationAPI()) else getAPIKey()
+            val key = getProviderKey()
 
             if (key.isNullOrBlank()) {
                 throw WeatherException(ErrorStatus.INVALIDAPIKEY)
@@ -165,7 +163,7 @@ class OpenWeatherMapLocationProvider : WeatherLocationProviderImpl() {
             df.applyPattern("0.##")
 
             // http://api.openweathermap.org/geo/1.0/reverse?lat={lat}&lon={lon}&limit={limit}&appid={API key}
-            val requestUri = Uri.parse(GEOCODER_BASE_URL).buildUpon()
+            val requestUri = GEOCODER_BASE_URL.toUri().buildUpon()
                 .appendQueryParameter("lat", df.format(coordinate.latitude))
                 .appendQueryParameter("lon", df.format(coordinate.longitude))
                 .appendQueryParameter("limit", "1")

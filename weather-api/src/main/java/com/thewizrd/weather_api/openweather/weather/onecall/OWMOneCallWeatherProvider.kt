@@ -173,69 +173,73 @@ class OWMOneCallWeatherProvider : WeatherProviderImpl, AirQualityProvider {
                 String.format(Locale.ROOT, "id=%d", location.query.toInt())
             } catch (ex: NumberFormatException) {
                 updateLocationQuery(location)
-                }
+            }
 
             val key = getProviderKey()
 
-                val client = sharedDeps.httpClient
-                var response: Response? = null
-                var wEx: WeatherException? = null
+            val client = sharedDeps.httpClient
+            var response: Response? = null
+            var wEx: WeatherException? = null
 
-                try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                    }
-
-                    val request = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
-                        .url(String.format(WEATHER_QUERY_URL, query, key, locale))
-                        .build()
-
-                    // Connect to webstream
-                    response = client.newCall(request).await()
-                    checkForErrors(response)
-
-                    val stream = response.getStream()
-
-                    // Load weather
-                    val root = JSONParser.deserializer<OneCallRootobject>(
-                        stream,
-                        OneCallRootobject::class.java
-                    )
-
-                    // End Stream
-                    stream.closeQuietly()
-
-                    requireNotNull(root)
-
-                    weather = createOneCallWeatherData(root)
-                } catch (ex: Exception) {
-                    weather = null
-                    if (ex is IOException) {
-                        wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
-                    } else if (ex is WeatherException) {
-                        wEx = ex
-                    }
-                    Logger.writeLine(Log.ERROR, ex, "OpenWeatherMapProvider: error getting weather data")
-                } finally {
-                    response?.closeQuietly()
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                if (wEx == null && weather.isNullOrInvalid()) {
-                    wEx = WeatherException(ErrorStatus.NOWEATHER)
-                } else if (weather != null) {
-                    if (supportsWeatherLocale()) weather.locale = locale
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 15, TimeUnit.MINUTES)
+                    .url(String.format(WEATHER_QUERY_URL, query, key, locale))
+                    .build()
 
-                    weather.query = location.query
+                // Connect to webstream
+                response = client.newCall(request).await()
+                checkForErrors(response)
+
+                val stream = response.getStream()
+
+                // Load weather
+                val root = JSONParser.deserializer<OneCallRootobject>(
+                    stream,
+                    OneCallRootobject::class.java
+                )
+
+                // End Stream
+                stream.closeQuietly()
+
+                requireNotNull(root)
+
+                weather = createOneCallWeatherData(root)
+            } catch (ex: Exception) {
+                weather = null
+                if (ex is IOException) {
+                    wEx = WeatherException(ErrorStatus.NETWORKERROR, ex)
+                } else if (ex is WeatherException) {
+                    wEx = ex
                 }
-
-                if (wEx != null) throw wEx
-
-                return@withContext weather!!
+                Logger.writeLine(
+                    Log.ERROR,
+                    ex,
+                    "OpenWeatherMapProvider: error getting weather data"
+                )
+            } finally {
+                response?.closeQuietly()
             }
+
+            if (wEx == null && weather.isNullOrInvalid()) {
+                wEx = WeatherException(ErrorStatus.NOWEATHER)
+            } else if (weather != null) {
+                if (supportsWeatherLocale()) weather.locale = locale
+
+                weather.query = location.query
+            }
+
+            if (wEx != null) throw wEx
+
+            return@withContext weather!!
+        }
 
     @Throws(WeatherException::class)
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
@@ -298,66 +302,66 @@ class OWMOneCallWeatherProvider : WeatherProviderImpl, AirQualityProvider {
     }
 
     override suspend fun getAirQualityData(location: LocationData): AirQualityData? =
-            withContext(Dispatchers.IO) {
-                var aqiData: AirQualityData? = null
+        withContext(Dispatchers.IO) {
+            var aqiData: AirQualityData? = null
 
-                val key = getProviderKey()
+            val key = getProviderKey()
 
-                val client = sharedDeps.httpClient
-                var response: Response? = null
+            val client = sharedDeps.httpClient
+            var response: Response? = null
 
-                try {
-                    // If were under rate limit, deny request
-                    checkRateLimit()
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
 
-                    if (key.isNullOrBlank()) {
-                        throw WeatherException(ErrorStatus.INVALIDAPIKEY)
-                    }
-
-                    val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
-                    df.applyPattern("0.####")
-
-                    val request = Request.Builder()
-                        .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
-                        .url(
-                            String.format(
-                                AQI_QUERY_URL,
-                                df.format(location.latitude),
-                                df.format(location.latitude),
-                                key
-                            )
-                        )
-                        .build()
-
-                    // Connect to webstream
-                    response = client.newCall(request).await()
-                    checkForErrors(response)
-
-                    val stream = response.getStream()
-
-                    // Load weather
-                    val root = JSONParser.deserializer<AirPollutionResponse>(
-                        stream,
-                        AirPollutionResponse::class.java
-                    )
-
-                    // End Stream
-                    stream.closeQuietly()
-
-                    requireNotNull(root)
-
-                    aqiData = createAirQuality(root)
-                } catch (ex: Exception) {
-                    aqiData = null
-                    Logger.writeLine(Log.ERROR, ex, "OpenWeatherMapProvider: error getting aqi data")
-                } finally {
-                    response?.closeQuietly()
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                return@withContext aqiData
+                val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
+                df.applyPattern("0.####")
+
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 1, TimeUnit.HOURS)
+                    .url(
+                        String.format(
+                            AQI_QUERY_URL,
+                            df.format(location.latitude),
+                            df.format(location.latitude),
+                            key
+                        )
+                    )
+                    .build()
+
+                // Connect to webstream
+                response = client.newCall(request).await()
+                checkForErrors(response)
+
+                val stream = response.getStream()
+
+                // Load weather
+                val root = JSONParser.deserializer<AirPollutionResponse>(
+                    stream,
+                    AirPollutionResponse::class.java
+                )
+
+                // End Stream
+                stream.closeQuietly()
+
+                requireNotNull(root)
+
+                aqiData = createAirQuality(root)
+            } catch (ex: Exception) {
+                aqiData = null
+                Logger.writeLine(Log.ERROR, ex, "OpenWeatherMapProvider: error getting aqi data")
+            } finally {
+                response?.closeQuietly()
             }
 
-    override fun updateLocationQuery(weather: Weather): String {
+            return@withContext aqiData
+        }
+
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
@@ -368,7 +372,7 @@ class OWMOneCallWeatherProvider : WeatherProviderImpl, AirQualityProvider {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(Locale.ROOT, "lat=%s&lon=%s", df.format(location.latitude), df.format(location.longitude))

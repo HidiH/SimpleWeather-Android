@@ -201,6 +201,14 @@ abstract class WeatherLocationProviderImpl : WeatherLocationProvider, RateLimite
 
     abstract override fun getAPIKey(): String?
 
+    protected fun getProviderKey(): String? {
+        return if (settingsManager.usePersonalKey(getLocationAPI())) {
+            settingsManager.getAPIKey(getLocationAPI())
+        } else {
+            getAPIKey()
+        }
+    }
+
     /**
      * Refresh/update the location data from the supported location provider
      * and commit update to the database
@@ -238,8 +246,8 @@ abstract class WeatherLocationProviderImpl : WeatherLocationProvider, RateLimite
     /**
      * Returns the locale code supported by this location provider
      *
-     * @param iso See [ULocale.getLanguage]
-     * @param name See [ULocale.toLanguageTag]
+     * @param iso See [com.ibm.icu.util.ULocale.getLanguage]
+     * @param name See [com.ibm.icu.util.ULocale.toLanguageTag]
      * @return The locale code supported by this provider
      */
     override fun localeToLangCode(iso: String, name: String): String {

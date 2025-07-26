@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -26,6 +25,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.location.LocationManagerCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.EditTextPreference
@@ -47,6 +47,7 @@ import com.thewizrd.common.helpers.getBackgroundLocationRationale
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.helpers.notificationPermissionEnabled
 import com.thewizrd.common.preferences.KeyEntryPreferenceDialogFragment
+import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.controls.ProviderEntry
 import com.thewizrd.shared_resources.di.localBroadcastManager
@@ -249,9 +250,10 @@ class SettingsFragment : BaseSettingsFragment(),
     }
 
     private fun isProviderAndKeyInvalid(): Boolean {
-        return settingsManager.usePersonalKey() &&
-                settingsManager.getAPIKey(providerPref.value).isNullOrBlank() &&
-                weatherModule.weatherManager.isKeyRequired(providerPref.value)
+        val provider = providerPref.value
+        return settingsManager.usePersonalKey(provider) &&
+                settingsManager.getAPIKey(provider).isNullOrBlank() &&
+                weatherModule.weatherManager.isKeyRequired(provider)
     }
 
     override fun onResume() {
@@ -280,7 +282,7 @@ class SettingsFragment : BaseSettingsFragment(),
             settingsManager.setAPI(API)
             weatherModule.weatherManager.updateAPI()
 
-            settingsManager.setPersonalKey(false)
+            settingsManager.setPersonalKey(API, false)
             settingsManager.setKeyVerified(API, true)
         }
 
@@ -298,21 +300,25 @@ class SettingsFragment : BaseSettingsFragment(),
             when {
                 CommonActions.ACTION_SETTINGS_UPDATEAPI == filter.intent.action -> {
                     weatherModule.weatherManager.updateAPI()
+
+                    val api = settingsManager.getAPI()
+
                     // Log event
-                    val bundle = Bundle()
-                    bundle.putString("API", settingsManager.getAPI())
-                    bundle.putString(
-                        "API_IsInternalKey",
-                        (!settingsManager.usePersonalKey()).toString()
-                    )
+                    val bundle = Bundle().apply {
+                        putString("API", api)
+                        putString(
+                            "API_IsInternalKey",
+                            (!settingsManager.usePersonalKey(api)).toString()
+                        )
+                    }
                     AnalyticsLogger.logEvent("Update_API", bundle)
                     AnalyticsLogger.setUserProperty(
                         AnalyticsProps.WEATHER_PROVIDER,
-                        settingsManager.getAPI()
+                        api
                     )
                     AnalyticsLogger.setUserProperty(
                         AnalyticsProps.USING_PERSONAL_KEY,
-                        settingsManager.usePersonalKey()
+                        settingsManager.usePersonalKey(api)
                     )
 
                     WeatherUpdaterWorker.enqueueAction(
@@ -449,7 +455,7 @@ class SettingsFragment : BaseSettingsFragment(),
 
         themePref = findPreference(SettingsManager.KEY_USERTHEME)!!
         themePref.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { preference, newValue ->
+            Preference.OnPreferenceChangeListener { _, newValue ->
                 val args = Bundle()
                 args.putString("mode", newValue.toString())
                 AnalyticsLogger.logEvent("Settings: theme changed", args)
@@ -553,7 +559,7 @@ class SettingsFragment : BaseSettingsFragment(),
 
                 if (selectedWProv.isKeyRequired()) {
                     if (selectedWProv.getAPIKey().isNullOrBlank()) {
-                        settingsManager.setPersonalKey(true)
+                        settingsManager.setPersonalKey(selectedProvider, true)
                         personalKeyPref.isChecked = true
                         personalKeyPref.isEnabled =
                             selectedProvider == WeatherAPI.OPENWEATHERMAP && !BuildConfig.IS_NONGMS
@@ -564,7 +570,7 @@ class SettingsFragment : BaseSettingsFragment(),
                         personalKeyPref.isEnabled = true
                     }
 
-                    if (!settingsManager.usePersonalKey()) {
+                    if (!settingsManager.usePersonalKey(selectedProvider)) {
                         // We're using our own (verified) keys
                         settingsManager.setKeyVerified(selectedProvider, true)
                         keyEntry.isEnabled = false
@@ -641,14 +647,16 @@ class SettingsFragment : BaseSettingsFragment(),
         if (weatherModule.weatherManager.isKeyRequired()) {
             keyEntry.isEnabled = true
 
+            val provider = providerPref.value
+
             if (!settingsManager.getAPIKey().isNullOrBlank() &&
-                !settingsManager.isKeyVerified(providerPref.value)
+                !settingsManager.isKeyVerified(provider)
             ) {
-                settingsManager.setKeyVerified(providerPref.value, true)
+                settingsManager.setKeyVerified(provider, true)
             }
 
             if (weatherModule.weatherManager.getAPIKey().isNullOrBlank()) {
-                settingsManager.setPersonalKey(true)
+                settingsManager.setPersonalKey(provider, true)
                 personalKeyPref.isChecked = true
                 personalKeyPref.isEnabled = false
                 keyEntry.isEnabled = false
@@ -658,9 +666,9 @@ class SettingsFragment : BaseSettingsFragment(),
                 personalKeyPref.isEnabled = true
             }
 
-            if (!settingsManager.usePersonalKey()) {
+            if (!settingsManager.usePersonalKey(provider)) {
                 // We're using our own (verified) keys
-                settingsManager.setKeyVerified(providerPref.value, true)
+                settingsManager.setKeyVerified(provider, true)
                 keyEntry.isEnabled = false
                 apiCategory.removePreference(keyEntry)
                 apiCategory.removePreference(registerPref)
@@ -744,7 +752,7 @@ class SettingsFragment : BaseSettingsFragment(),
         languagePref.setDefaultValue("")
         languagePref.value = LocaleUtils.getLocaleCode()
         languagePref.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { preference, newValue ->
+            Preference.OnPreferenceChangeListener { _, newValue ->
                 val requestedLang = newValue.toString()
                 LocaleUtils.setLocaleCode(requestedLang)
                 true
@@ -753,7 +761,7 @@ class SettingsFragment : BaseSettingsFragment(),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 runCatching {
                     it.context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-                        data = Uri.parse("package:${it.context.packageName}")
+                        data = "package:${it.context.packageName}".toUri()
                     })
                 }
             }
@@ -855,7 +863,7 @@ class SettingsFragment : BaseSettingsFragment(),
                             settingsManager.setAPIKey(provider, key)
                             settingsManager.setAPI(provider)
                             settingsManager.setKeyVerified(provider, true)
-                            settingsManager.setPersonalKey(true)
+                            settingsManager.setPersonalKey(provider, true)
 
                             updateKeySummary()
 
@@ -932,7 +940,7 @@ class SettingsFragment : BaseSettingsFragment(),
 
         if (prov != null) {
             registerPref.intent = Intent(Intent.ACTION_VIEW)
-                .setData(Uri.parse(prov.apiRegisterURL))
+                .setData(prov.apiRegisterURL.toUri())
         }
     }
 
@@ -1160,6 +1168,24 @@ class SettingsFragment : BaseSettingsFragment(),
                     gravity = Gravity.CENTER
                 ) {
                     orderableFeaturesAdapter.updateList(FeaturesAdapter.ORDERABLE_ITEMS.toList())
+
+                    // Reset enabled status
+                    FeaturesAdapter.ORDERABLE_ITEMS.forEach { key ->
+                        FeatureSettings.setFeatureEnabled(key, true)
+                    }
+
+                    FeaturesAdapter.NON_ORDERABLE_ITEMS.forEach { key ->
+                        FeatureSettings.setFeatureEnabled(key, true)
+                    }
+
+                    orderableFeaturesAdapter.notifyItemRangeChanged(
+                        0,
+                        orderableFeaturesAdapter.itemCount
+                    )
+                    nonOrderableFeaturesAdapter.notifyItemRangeChanged(
+                        0,
+                        nonOrderableFeaturesAdapter.itemCount
+                    )
                 }
             )
 
@@ -1496,7 +1522,7 @@ class SettingsFragment : BaseSettingsFragment(),
             findPreference<Preference>(KEY_FEEDBACK)!!.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
                     val sendTo = Intent(Intent.ACTION_SENDTO)
-                    sendTo.data = Uri.parse("mailto:thewizrd.dev+SimpleWeatherAndroid@gmail.com")
+                    sendTo.data = "mailto:${Constants.SUPPORT_EMAIL_ADDRESS}".toUri()
                     startActivity(Intent.createChooser(sendTo, null))
                     true
                 }
@@ -1556,7 +1582,7 @@ class SettingsFragment : BaseSettingsFragment(),
                 if (wiProvider.attributionLink != null) {
                     pref.intent = Intent(Intent.ACTION_VIEW)
                         .addCategory(Intent.CATEGORY_BROWSABLE)
-                        .setData(Uri.parse(wiProvider.attributionLink))
+                        .setData(wiProvider.attributionLink.toUri())
                 }
 
                 iconsCategory.addPreference(pref)

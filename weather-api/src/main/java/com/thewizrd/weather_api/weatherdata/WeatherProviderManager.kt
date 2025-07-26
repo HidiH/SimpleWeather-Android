@@ -89,11 +89,11 @@ class WeatherProviderManager internal constructor() : WeatherProvider {
         _weatherProvider!!.updateLocationData(location)
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         return _weatherProvider!!.updateLocationQuery(weather)
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         return _weatherProvider!!.updateLocationQuery(location)
     }
 

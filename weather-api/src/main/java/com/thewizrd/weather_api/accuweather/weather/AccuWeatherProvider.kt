@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.accuweather.weather
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -15,8 +15,10 @@ import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.shared_resources.weatherdata.PollenProvider
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.auth.AuthType
+import com.thewizrd.shared_resources.weatherdata.model.Pollen
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.shared_resources.weatherdata.model.isNullOrInvalid
 import com.thewizrd.weather_api.accuweather.location.AccuWeatherLocationProvider
@@ -27,7 +29,6 @@ import com.thewizrd.weather_api.utils.APIRequestUtils.throwIfRateLimited
 import com.thewizrd.weather_api.utils.logMissingIcon
 import com.thewizrd.weather_api.weatherdata.WeatherProviderImpl
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.Request
@@ -37,8 +38,10 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
-class AccuWeatherProvider : WeatherProviderImpl() {
+class AccuWeatherProvider : WeatherProviderImpl(), PollenProvider {
     companion object {
+        private const val DAILY_1DAY_FORECAST_URL =
+            "https://dataservice.accuweather.com/forecasts/v1/daily/1day"
         private const val DAILY_5DAY_FORECAST_URL = "https://dataservice.accuweather.com/forecasts/v1/daily/5day"
         private const val HOURLY_12HR_FORECAST_URL = "https://dataservice.accuweather.com/forecasts/v1/hourly/12hour"
         private const val CURRENT_CONDITIONS_URL = "https://dataservice.accuweather.com/currentconditions/v1"
@@ -87,7 +90,7 @@ class AccuWeatherProvider : WeatherProviderImpl() {
             // If were under rate limit, deny request
             checkRateLimit()
 
-            val requestUri = Uri.parse(CURRENT_CONDITIONS_URL).buildUpon()
+            val requestUri = CURRENT_CONDITIONS_URL.toUri().buildUpon()
                 .appendQueryParameter("apikey", key)
                 .build()
 
@@ -158,7 +161,7 @@ class AccuWeatherProvider : WeatherProviderImpl() {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
                 }
 
-                val request5dayUri = Uri.parse(DAILY_5DAY_FORECAST_URL).buildUpon()
+                val request5dayUri = DAILY_5DAY_FORECAST_URL.toUri().buildUpon()
                     .appendPath(location.query)
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("language", locale)
@@ -170,7 +173,7 @@ class AccuWeatherProvider : WeatherProviderImpl() {
                     .url(request5dayUri.toString())
                     .build()
 
-                val requestHourlyUri = Uri.parse(HOURLY_12HR_FORECAST_URL).buildUpon()
+                val requestHourlyUri = HOURLY_12HR_FORECAST_URL.toUri().buildUpon()
                     .appendPath(location.query)
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("language", locale)
@@ -182,7 +185,7 @@ class AccuWeatherProvider : WeatherProviderImpl() {
                     .url(requestHourlyUri.toString())
                     .build()
 
-                val requestCurrentUri = Uri.parse(CURRENT_CONDITIONS_URL).buildUpon()
+                val requestCurrentUri = CURRENT_CONDITIONS_URL.toUri().buildUpon()
                     .appendPath(location.query)
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter("language", locale)
@@ -258,32 +261,94 @@ class AccuWeatherProvider : WeatherProviderImpl() {
             return@withContext weather!!
         }
 
+    override suspend fun getPollenData(location: LocationData): Pollen? =
+        withContext(Dispatchers.IO) {
+            var pollenData: Pollen? = null
+
+            val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
+            val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
+
+            val client = sharedDeps.httpClient
+
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit()
+
+                val key = getProviderKey()
+
+                if (key.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+                }
+
+                val locationKey = if (location.locationSource == WeatherAPI.ACCUWEATHER) {
+                    location.query
+                } else {
+                    updateLocationQuery(location)
+                }
+
+                if (locationKey.isNullOrBlank()) {
+                    throw WeatherException(ErrorStatus.QUERYNOTFOUND)
+                }
+
+                val request1dayUri = DAILY_1DAY_FORECAST_URL.toUri().buildUpon()
+                    .appendPath(locationKey)
+                    .appendQueryParameter("apikey", key)
+                    .appendQueryParameter("language", locale)
+                    .appendQueryParameter("details", "true")
+                    .appendQueryParameter("metric", "true")
+
+                val request = Request.Builder()
+                    .cacheRequestIfNeeded(isKeyRequired(), 3, TimeUnit.HOURS)
+                    .url(request1dayUri.toString())
+                    .build()
+
+                // Connect to webstream
+                val dailyResponse = client.newCall(request).await()
+                checkForErrors(dailyResponse)
+
+                val dailyRoot = dailyResponse.use { r ->
+                    r.getStream().use { s ->
+                        JSONParser.deserializer<DailyResponse>(s, DailyResponse::class.java)
+                    }
+                }
+
+                requireNotNull(dailyRoot)
+
+                val dailyForecast =
+                    dailyRoot.dailyForecasts?.firstOrNull { !it?.airAndPollen.isNullOrEmpty() }
+                dailyForecast?.let {
+                    pollenData = createPollen(it)
+                }
+            } catch (ex: Exception) {
+                pollenData = null
+                Logger.writeLine(Log.ERROR, ex, "AccuWeatherProvider: error getting pollen data")
+            }
+
+            return@withContext pollenData
+        }
+
     @Throws(WeatherException::class)
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
         // no-op
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
-        // TODO: suspend?
-        val locationModel = runBlocking {
-            mLocationProvider.getLocation(
-                Coordinate(
-                    weather.location!!.latitude.toDouble(),
-                    weather.location!!.longitude.toDouble()
-                ), getWeatherAPI()
-            )
-        }
+    override suspend fun updateLocationQuery(weather: Weather): String {
+        val locationModel = mLocationProvider.getLocation(
+            Coordinate(
+                weather.location!!.latitude.toDouble(),
+                weather.location!!.longitude.toDouble()
+            ), getWeatherAPI()
+        )
+
         return locationModel!!.locationQuery!!
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
-        // TODO: suspend?
-        val locationModel = runBlocking {
-            mLocationProvider.getLocation(
-                Coordinate(location.latitude, location.longitude),
-                getWeatherAPI()
-            )
-        }
+    override suspend fun updateLocationQuery(location: LocationData): String {
+        val locationModel = mLocationProvider.getLocation(
+            Coordinate(location.latitude, location.longitude),
+            getWeatherAPI()
+        )
+
         return locationModel!!.locationQuery!!
     }
 

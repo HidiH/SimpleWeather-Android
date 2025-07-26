@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.brightsky
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.icons.WeatherIcons
@@ -126,7 +126,7 @@ class BrightSkyProvider : WeatherProviderImpl() {
                 val now = ZonedDateTime.now(ZoneOffset.UTC)
                 val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT)
 
-                val currentRequestUri = Uri.parse(CURRENT_QUERY_URL.format(query)).buildUpon()
+                val currentRequestUri = CURRENT_QUERY_URL.format(query).toUri().buildUpon()
                     .appendQueryParameter("tz", "Etc/UTC")
                     .appendQueryParameter("units", "dwd")
                     .build()
@@ -137,7 +137,7 @@ class BrightSkyProvider : WeatherProviderImpl() {
                     .url(currentRequestUri)
                     .build()
 
-                val forecastRequestUri = Uri.parse(FORECAST_QUERY_URL.format(query)).buildUpon()
+                val forecastRequestUri = FORECAST_QUERY_URL.format(query).toUri().buildUpon()
                     .appendQueryParameter("date", now.format(dtf))
                     .appendQueryParameter("last_date", now.plusDays(5).format(dtf))
                     .appendQueryParameter("tz", "Etc/UTC")
@@ -150,7 +150,7 @@ class BrightSkyProvider : WeatherProviderImpl() {
                     .url(forecastRequestUri)
                     .build()
 
-                val alertsRequestUri = Uri.parse(ALERTS_QUERY_URL.format(query)).buildUpon()
+                val alertsRequestUri = ALERTS_QUERY_URL.format(query).toUri().buildUpon()
                     .appendQueryParameter("tz", "Etc/UTC")
                     .build()
                     .toString()
@@ -284,7 +284,7 @@ class BrightSkyProvider : WeatherProviderImpl() {
         }
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
@@ -295,7 +295,7 @@ class BrightSkyProvider : WeatherProviderImpl() {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(

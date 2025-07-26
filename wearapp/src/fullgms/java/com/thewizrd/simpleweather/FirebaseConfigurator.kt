@@ -12,10 +12,13 @@ import com.thewizrd.shared_resources.utils.Logger
 object FirebaseConfigurator {
     @SuppressLint("MissingPermission")
     fun initialize(context: Context) {
-        FirebaseAnalytics.getInstance(context).setUserProperty(AnalyticsProps.DEVICE_TYPE, "watch")
+        FirebaseAnalytics.getInstance(context).run {
+            setUserProperty(AnalyticsProps.DEVICE_TYPE, "watch")
+            setUserProperty(AnalyticsProps.PLATFORM, "Android")
+        }
 
         FirebaseCrashlytics.getInstance().apply {
-            setCrashlyticsCollectionEnabled(true)
+            isCrashlyticsCollectionEnabled = true
             sendUnsentReports()
         }
         FirebaseRemoteConfig.getInstance().setDefaultsAsync(R.xml.remote_config_defaults)

@@ -215,7 +215,7 @@ class WeatherUnlockedProvider : WeatherProviderImpl() {
         }
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.##")
         return String.format(
@@ -226,7 +226,7 @@ class WeatherUnlockedProvider : WeatherProviderImpl() {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.##")
         return String.format(Locale.ROOT, "%s,%s", df.format(location.latitude), df.format(location.longitude))

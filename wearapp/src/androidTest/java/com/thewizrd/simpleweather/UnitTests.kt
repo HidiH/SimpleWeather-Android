@@ -7,12 +7,21 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.thewizrd.shared_resources.*
+import com.thewizrd.common.CommonModule
+import com.thewizrd.common.commonModule
+import com.thewizrd.shared_resources.AppState
+import com.thewizrd.shared_resources.ApplicationLib
+import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.shared_resources.SharedModule
+import com.thewizrd.shared_resources.appLib
+import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.preferences.SettingsManager
+import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.ZoneIdCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -55,13 +64,29 @@ class UnitTests {
             }
         }
 
-        runBlocking {
-            appLib.settingsManager.loadIfNeeded()
+        commonModule = object : CommonModule() {
+            override val context = appLib.context
         }
 
-        if (appLib.settingsManager.usePersonalKey()) {
-            appLib.settingsManager.setPersonalKey(false)
-            wasUsingPersonalKey = true
+        runBlocking {
+            settingsManager.loadIfNeeded()
+        }
+
+        settingsManager.getAPI()?.let { api ->
+            if (settingsManager.usePersonalKey(api)) {
+                settingsManager.setPersonalKey(api, false)
+                wasUsingPersonalKey = true
+            }
+        }
+    }
+
+    @After
+    fun destroy() {
+        settingsManager.getAPI()?.let { api ->
+            if (wasUsingPersonalKey) {
+                settingsManager.setPersonalKey(api, true)
+                wasUsingPersonalKey = false
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 package com.thewizrd.weather_api.accuweather.location
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.ibm.icu.util.ULocale
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
@@ -25,7 +25,7 @@ import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import java.io.IOException
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 internal class AccuWeatherLocationProvider : AndroidLocationProvider() {
@@ -72,10 +72,7 @@ internal class AccuWeatherLocationProvider : AndroidLocationProvider() {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
-                val key =
-                    if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(
-                        getLocationAPI()
-                    ) else getAPIKey()
+                val key = getProviderKey()
 
                 if (key.isNullOrBlank()) {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
@@ -84,7 +81,7 @@ internal class AccuWeatherLocationProvider : AndroidLocationProvider() {
                 val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
                 df.applyPattern("0.##")
 
-                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                val requestUri = BASE_URL.toUri().buildUpon()
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter(
                         "q",
@@ -156,10 +153,7 @@ internal class AccuWeatherLocationProvider : AndroidLocationProvider() {
                 // If were under rate limit, deny request
                 checkRateLimit()
 
-                val key =
-                    if (settingsManager.usePersonalKey()) settingsManager.getAPIKey(
-                        getLocationAPI()
-                    ) else getAPIKey()
+                val key = getProviderKey()
 
                 if (key.isNullOrBlank()) {
                     throw WeatherException(ErrorStatus.INVALIDAPIKEY)
@@ -168,7 +162,7 @@ internal class AccuWeatherLocationProvider : AndroidLocationProvider() {
                 val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
                 df.applyPattern("0.##")
 
-                val requestUri = Uri.parse(BASE_URL).buildUpon()
+                val requestUri = BASE_URL.toUri().buildUpon()
                     .appendQueryParameter("apikey", key)
                     .appendQueryParameter(
                         "q",

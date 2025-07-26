@@ -7,11 +7,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
-import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.common.helpers.areNotificationsEnabled
 import com.thewizrd.common.utils.ImageUtils
@@ -108,7 +108,7 @@ object WeatherAlertNotificationBuilder {
                                 PendingIntent.getActivity(
                                     context,
                                     alertVM.message.hashCode(),
-                                    Intent(Intent.ACTION_VIEW, Uri.parse(alertVM.message)),
+                                    Intent(Intent.ACTION_VIEW, alertVM.message.toUri()),
                                     0.toImmutableCompatFlag()
                                 )
                             }.getOrDefault(

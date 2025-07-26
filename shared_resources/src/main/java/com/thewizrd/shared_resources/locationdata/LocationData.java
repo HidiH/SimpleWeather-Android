@@ -43,7 +43,7 @@ public class LocationData extends CustomJsonObject {
     @Nullable
     @ColumnInfo(name = "tz_long")
     private String tzLong;
-    @Nullable
+    @NonNull
     private LocationType locationType = LocationType.SEARCH;
     @Nullable
     @ColumnInfo(name = "source")
@@ -52,7 +52,7 @@ public class LocationData extends CustomJsonObject {
     @ColumnInfo(name = "locsource")
     private String locationSource;
 
-    //@NonNull
+    @NonNull
     public String getQuery() {
         return query;
     }
@@ -123,12 +123,12 @@ public class LocationData extends CustomJsonObject {
         this.tzLong = tzLong;
     }
 
-    @Nullable
+    @NonNull
     public LocationType getLocationType() {
         return locationType;
     }
 
-    public void setLocationType(@Nullable LocationType locationType) {
+    public void setLocationType(@NonNull LocationType locationType) {
         this.locationType = locationType;
     }
 
@@ -162,7 +162,7 @@ public class LocationData extends CustomJsonObject {
     @Ignore
     public LocationData(@NonNull Weather weather) {
         query = weather.getQuery();
-        name = weather.getLocation().getName();
+        name = weather.getLocation() != null ? weather.getLocation().getName() : null;
         latitude = weather.getLocation().getLatitude();
         longitude = weather.getLocation().getLongitude();
         tzLong = weather.getLocation().getTzLong();
@@ -190,7 +190,7 @@ public class LocationData extends CustomJsonObject {
         temp = Double.doubleToLongBits(longitude);
         hashCode = hashCode * -1521134295 + (int) (temp ^ (temp >>> 32));
         hashCode = hashCode * -1521134295 + (tzLong != null ? tzLong.hashCode() : 0);
-        hashCode = hashCode * -1521134295 + locationType.hashCode();
+        hashCode = hashCode * -1521134295 + (locationType != null ? locationType.hashCode() : 0);
         hashCode = hashCode * -1521134295 + (weatherSource != null ? weatherSource.hashCode() : 0);
         hashCode = hashCode * -1521134295 + (locationSource != null ? locationSource.hashCode() : 0);
         return hashCode;
@@ -294,12 +294,15 @@ public class LocationData extends CustomJsonObject {
     }
 
     public boolean isValid() {
-        return !StringUtils.isNullOrWhitespace(query) && !StringUtils.isNullOrWhitespace(weatherSource) && !StringUtils.isNullOrWhitespace(locationSource);
+        return !StringUtils.isNullOrWhitespace(query) &&
+                !StringUtils.isNullOrWhitespace(weatherSource) &&
+                !StringUtils.isNullOrWhitespace(locationSource) &&
+                !(latitude == 0d && longitude == 0d);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return String.format("%s|%s|%s", this.query, this.name, this.locationType.toString());
+        return String.format("%s|%s|%s", this.query, this.name, this.locationType);
     }
 }

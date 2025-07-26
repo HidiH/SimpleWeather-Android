@@ -233,7 +233,7 @@ class WeatherApiProvider : WeatherProviderImpl(), WeatherAlertProvider {
             val uLocale = ULocale.forLocale(LocaleUtils.getLocale())
             val locale = localeToLangCode(uLocale.language, uLocale.toLanguageTag())
 
-            val key = settingsManager.getAPIKey(getWeatherAPI()) ?: getAPIKey()
+            val key = getProviderKey()
 
             val client = sharedDeps.httpClient
             var response: Response? = null
@@ -298,7 +298,7 @@ class WeatherApiProvider : WeatherProviderImpl(), WeatherAlertProvider {
         // no-op
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
@@ -309,7 +309,7 @@ class WeatherApiProvider : WeatherProviderImpl(), WeatherAlertProvider {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(Locale.ROOT, "%s,%s", df.format(location.latitude), df.format(location.longitude))

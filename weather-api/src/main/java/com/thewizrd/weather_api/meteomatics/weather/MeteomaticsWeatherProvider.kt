@@ -2,6 +2,7 @@ package com.thewizrd.weather_api.meteomatics.weather
 
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.icons.WeatherIcons
@@ -245,7 +246,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
     // NOTE: Uri format
     // https://api.meteomatics.com/validdatetime/parameters/locations/format?optionals
     private fun createCurrentRequestUri(location_query: String): Uri {
-        return Uri.parse(BASE_QUERY_URL).buildUpon()
+        return BASE_QUERY_URL.toUri().buildUpon()
             .appendPath("now") // time interval
             .appendPath(
                 listOf(
@@ -267,7 +268,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
     }
 
     private fun createDailyRequestUri(location_query: String): Uri {
-        return Uri.parse(BASE_QUERY_URL).buildUpon()
+        return BASE_QUERY_URL.toUri().buildUpon()
             .appendPath("todayT23:59:59ZP8D:P1D") // time interval
             .appendPath(
                 listOf(
@@ -287,7 +288,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
     private fun createHourlyRequestUri(date: ZonedDateTime, location_query: String): Uri {
         val requestDate = date.truncatedTo(ChronoUnit.HOURS).format(DateTimeFormatter.ISO_INSTANT)
 
-        return Uri.parse(BASE_QUERY_URL).buildUpon()
+        return BASE_QUERY_URL.toUri().buildUpon()
             .appendPath("${requestDate}P2D:PT1H") // time interval
             .appendPath(
                 listOf(
@@ -354,7 +355,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
         }
     }
 
-    override fun updateLocationQuery(weather: Weather): String {
+    override suspend fun updateLocationQuery(weather: Weather): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(
@@ -365,7 +366,7 @@ class MeteomaticsWeatherProvider : WeatherProviderImpl() {
         )
     }
 
-    override fun updateLocationQuery(location: LocationData): String {
+    override suspend fun updateLocationQuery(location: LocationData): String {
         val df = DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat
         df.applyPattern("0.####")
         return String.format(

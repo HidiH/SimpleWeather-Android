@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 fun Request.Builder.cacheRequestIfNeeded(keyRequired: Boolean, maxAge: Int, timeUnit: TimeUnit) =
     apply {
-        if (keyRequired && appLib.settingsManager.usePersonalKey()) {
+        if (keyRequired && appLib.settingsManager.usePersonalKey(appLib.settingsManager.getAPI())) {
             // relax cache rules for the following users
         } else {
             cacheControl(

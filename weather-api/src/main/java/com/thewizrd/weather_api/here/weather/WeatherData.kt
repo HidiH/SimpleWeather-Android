@@ -38,7 +38,7 @@ import kotlin.math.roundToInt
 @SuppressLint("VisibleForTests")
 fun createWeatherData(root: PlacesItem): Weather {
     return Weather().apply {
-        val now = ZonedDateTime.now()
+        val now = ZonedDateTime.now(ZoneOffset.UTC)
         var todaysForecast: Forecast? = null
         var todaysTxtForecast: TextForecast? = null
 
@@ -49,12 +49,13 @@ fun createWeatherData(root: PlacesItem): Weather {
         for (fcast in root.dailyForecasts!![0].forecasts!!) {
             val dailyFcast = createForecast(fcast)
             val txtFcast = createTextForecast(fcast)
+            val offset = txtFcast.date.offset
 
             forecast!!.add(dailyFcast)
             txtForecast!!.add(txtFcast)
 
             if (todaysForecast == null && dailyFcast.date.toLocalDate()
-                    .isEqual(now.toLocalDate())
+                    .isEqual(now.withZoneSameInstant(offset).toLocalDate())
             ) {
                 todaysForecast = dailyFcast
                 todaysTxtForecast = txtFcast
@@ -371,6 +372,10 @@ fun createAstronomy(astronomy: List<AstronomyItem>): Astronomy {
                 astroData.moonSet,
                 DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ROOT)
             ).atDate(now)
+            if (moonrise != null && moonset.isBefore(moonrise)) {
+                // Is next day
+                moonset = moonset.plusDays(1)
+            }
         }
 
         // If the sun won't set/rise, set time to the future

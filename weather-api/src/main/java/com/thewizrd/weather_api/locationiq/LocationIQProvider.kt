@@ -85,7 +85,7 @@ class LocationIQProvider : WeatherLocationProviderImpl() {
             val request = Request.Builder()
                 .cacheControl(
                     CacheControl.Builder()
-                        .maxAge(1, TimeUnit.DAYS)
+                        .maxAge(2, TimeUnit.DAYS)
                         .build()
                 )
                 .get()
@@ -182,7 +182,7 @@ class LocationIQProvider : WeatherLocationProviderImpl() {
             val request = Request.Builder()
                 .cacheControl(
                     CacheControl.Builder()
-                        .maxAge(1, TimeUnit.DAYS)
+                        .maxAge(2, TimeUnit.DAYS)
                         .build()
                 )
                 .get()

@@ -3,6 +3,7 @@ package com.thewizrd.shared_resources
 import android.content.Context
 import com.thewizrd.shared_resources.icons.WeatherIconsManager
 import com.thewizrd.shared_resources.okhttp3.CacheInterceptor
+import com.thewizrd.shared_resources.okhttp3.RetryPolicyInterceptor
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.utils.Logger
 import okhttp3.Cache
@@ -38,6 +39,7 @@ abstract class SharedModule {
             .retryOnConnectionFailure(true)
             .cache(Cache(File(context.cacheDir, "okhttp3"), 50L * 1024 * 1024))
             .addNetworkInterceptor(CacheInterceptor())
+            .addInterceptor(RetryPolicyInterceptor())
             .build()
     }
 

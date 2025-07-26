@@ -3,9 +3,9 @@
 
 package com.thewizrd.simpleweather.images
 
-import android.net.Uri
 import android.util.Log
 import androidx.annotation.ColorInt
+import androidx.core.net.toUri
 import com.thewizrd.common.utils.ImageUtils
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.icons.WeatherIcons
@@ -324,7 +324,7 @@ suspend fun ImageData.isImageValid(): Boolean {
         val ctx = appLib.context
 
         if (imgData.isValid(ctx)) {
-            val uri = Uri.parse(imgData.imageURL)
+            val uri = imgData.imageURL.toUri()
             if ("file" == uri.scheme) {
                 val stream = uri.path?.let {
                     try {

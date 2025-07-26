@@ -14,6 +14,7 @@
     <string name="api_wunlocked" translatable="false">WeatherUnlocked</string>
     <string name="api_weatherapi" translatable="false">WeatherAPI.com</string>
     <string name="api_tomorrowio" translatable="false">Tomorrow.io</string>
+    <string name="api_accuweather" translatable="false">AccuWeather</string>
     <string name="api_apple_weather" translatable="false">Apple Weather</string>
     <string name="api_google" translatable="false">Google</string>
     <string name="api_brightsky" translatable="false">Bright Sky (DWD)</string>
