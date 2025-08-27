@@ -378,7 +378,9 @@ class UnitTests {
             val queryVM = locations.firstOrNull()
             assertNotNull(queryVM)
 
-            val locModel = if (locationProvider.needsLocationFromName()) {
+            val locModel = if (locationProvider.needsLocationFromID()) {
+                locationProvider.getLocationFromID(queryVM!!)
+            } else if (locationProvider.needsLocationFromName()) {
                 locationProvider.getLocationFromName(queryVM!!)
             } else if (locationProvider.needsLocationFromGeocoder()) {
                 locationProvider.getLocation(
@@ -387,8 +389,6 @@ class UnitTests {
                         queryVM.locationLong
                     ), WeatherAPI.GOOGLE
                 )
-            } else if (locationProvider.needsLocationFromID()) {
-                locationProvider.getLocationFromID(queryVM!!)
             } else {
                 queryVM
             }

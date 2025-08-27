@@ -1,5 +1,7 @@
 package com.thewizrd.simpleweather.preferences
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -13,7 +15,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
+import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.extras.updateFirebaseIdPreference
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -62,11 +66,16 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
         preferenceScreen = preferenceManager.createPreferenceScreen(context)
 
         val apiKeyCategory: PreferenceCategory
+        val firebaseCategory: PreferenceCategory
         val miscCategory: PreferenceCategory
 
         preferenceScreen.addPreference(PreferenceCategory(context).apply {
             title = "API Keys"
         }.also { apiKeyCategory = it })
+        preferenceScreen.addPreference(PreferenceCategory(context).apply {
+            title = "Firebase"
+            isVisible = !BuildConfig.IS_NONGMS
+        }.also { firebaseCategory = it })
         preferenceScreen.addPreference(PreferenceCategory(context).apply {
             title = "Misc"
         }.also { miscCategory = it })
@@ -137,6 +146,24 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                     settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
+        })
+
+        firebaseCategory.addPreference(Preference(context).apply {
+            title = "Firebase Id"
+            isPersistent = false
+            onPreferenceClickListener =
+                Preference.OnPreferenceClickListener { preference ->
+                    val clipService =
+                        preference.context.getSystemService(ClipboardManager::class.java)
+                    val clipData = ClipData.newPlainText("Firebase Id", preference.summary)
+                    clipService.setPrimaryClip(clipData)
+
+                    Toast.makeText(preference.context, "Copied to clipboard", Toast.LENGTH_SHORT)
+                        .show()
+                    true
+                }
+        }.also { preference ->
+            updateFirebaseIdPreference(preference)
         })
 
         miscCategory.addPreference(SwitchPreference(context).apply {

@@ -33,6 +33,8 @@
     <string name="label_sunset">"日落"</string>
     <string name="label_hourlyforecast">"小时概览"</string>
     <string name="label_precipitation">"降水"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"概率"</string>
     <string name="label_cloudiness">"云量"</string>
     <string name="label_qpf_rain">"雨量"</string>
@@ -229,4 +231,6 @@
     <string name="label_count_high_short">"高"</string>
     <string name="label_count_veryhigh_short">"很高"</string>
     <string name="werror_ratelimited">"请求太多。请几分钟后再试一次"</string>
+    <string name="werror_locationnotsupported">"此天气提供商不支持该位置"</string>
+    <string name="notification_perm_denied">"拒绝通知许可"</string>
 </resources>

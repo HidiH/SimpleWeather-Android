@@ -33,6 +33,8 @@
     <string name="label_sunset">"Zachód słońca"</string>
     <string name="label_hourlyforecast">"Godzinowa"</string>
     <string name="label_precipitation">"Opady"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Szansa na opady"</string>
     <string name="label_cloudiness">"Zachmurzenie"</string>
     <string name="label_qpf_rain">"Deszcz"</string>
@@ -212,4 +214,6 @@
     <string name="label_count_high_short">"Wysoki"</string>
     <string name="label_count_veryhigh_short">"Wysoki"</string>
     <string name="werror_ratelimited">"Zbyt wiele żądań. Spróbuj ponownie za kilka minut"</string>
+    <string name="werror_locationnotsupported">"Ta lokalizacja nie jest obsługiwana przez tego dostawcę pogody"</string>
+    <string name="notification_perm_denied">"Odmowa pozwolenia na powiadomienie"</string>
 </resources>

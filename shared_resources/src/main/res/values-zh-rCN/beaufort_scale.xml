@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Standard from https://www.renrendoc.com/paper/102496606.html :) -->
     <!-- Fuzzy -->
     <string name="beaufort_0">"无风"</string>
 

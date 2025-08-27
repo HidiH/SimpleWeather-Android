@@ -33,4 +33,10 @@ class HourlyForecastItemAdapter : ListAdapter<HourlyForecastNowViewModel, Hourly
             onClickListener?.onClick(it, position)
         }
     }
+
+    override fun onViewRecycled(holder: ViewHolder) {
+        super.onViewRecycled(holder)
+        holder.itemView.cancelPendingInputEvents()
+        holder.itemView.animate().cancel()
+    }
 }

@@ -33,6 +33,8 @@
     <string name="label_sunset">"Zon onder"</string>
     <string name="label_hourlyforecast">"Per uur"</string>
     <string name="label_precipitation">"Neerslag"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Kans"</string>
     <string name="label_cloudiness">"Bewolking"</string>
     <string name="label_qpf_rain">"Regen"</string>
@@ -209,4 +211,6 @@
     <string name="label_count_high_short">"Hoog"</string>
     <string name="label_count_veryhigh_short">"Hoog"</string>
     <string name="werror_ratelimited">"Te veel aanvragen. Probeer het opnieuw na een paar minuten"</string>
+    <string name="werror_locationnotsupported">"Locatie wordt niet ondersteund door huidige weerprovider"</string>
+    <string name="notification_perm_denied">"Melding toestemming geweigerd"</string>
 </resources>

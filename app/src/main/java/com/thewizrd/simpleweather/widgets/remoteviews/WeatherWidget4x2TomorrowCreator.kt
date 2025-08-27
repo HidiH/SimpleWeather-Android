@@ -16,6 +16,7 @@ import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.helpers.ColorsUtils
 import com.thewizrd.common.utils.ImageUtils
 import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.sharedDeps
@@ -27,6 +28,7 @@ import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.services.WidgetWorker
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider4x2Tomorrow
 import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
 import com.thewizrd.simpleweather.widgets.WidgetUtils
@@ -41,8 +43,10 @@ import com.thewizrd.simpleweather.widgets.preferences.KEY_TEXTSIZE
 import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTCOLORCODE
 import com.thewizrd.simpleweather.widgets.preferences.KEY_TXTSHADOW
 import com.thewizrd.simpleweather.widgets.preferences.KEY_USETIMEZONE
+import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -243,7 +247,17 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
             backgroundColor,
             panelTextColor,
             textAppearanceSpan
-        )
+        ) {
+            // Schedule an update if below WidgetUpdateWorker update interval
+            val now = ZonedDateTime.now()
+            val duration = Duration.between(now, it)
+
+            if (duration.toMinutes() < 60) {
+                appLib.appScope.launch {
+                    WidgetWorker.scheduleRefreshWidget(context, appWidgetId, info, duration)
+                }
+            }
+        }
 
         weather.airQuality?.let {
             val dotSize = (context.dpToPx(24f) * txtSizeMultiplier).toInt()
@@ -377,7 +391,8 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
         txtSizeMultiplier: Float,
         backgroundColor: Int,
         textColor: Int,
-        shadowSpan: TextAppearanceSpan? = null
+        shadowSpan: TextAppearanceSpan? = null,
+        nextTimeResult: ((ZonedDateTime) -> Unit)? = null
     ) {
         val now = ZonedDateTime.now(location.tzOffset ?: ZoneOffset.UTC)
         val minForecasts =
@@ -386,7 +401,13 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
             }
 
         // Create minutely precipitation text if possible
-        if (!buildMinutelyForecast(updateViews, minForecasts, now, shadowSpan)) {
+        if (!buildMinutelyForecast(
+                updateViews,
+                minForecasts,
+                now,
+                shadowSpan
+            ) { nextTimeResult?.invoke(it) }
+        ) {
             // If not fallback to PoP% text
             val nowHour = now.withZoneSameInstant(location.tzOffset).truncatedTo(ChronoUnit.HOURS)
             val hrForecasts =
@@ -396,7 +417,13 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
                     nowHour
                 )
 
-            if (!buildPoPForecast(updateViews, hrForecasts, now, shadowSpan)) {
+            if (!buildPoPForecast(
+                    updateViews,
+                    hrForecasts,
+                    now,
+                    shadowSpan
+                ) { nextTimeResult?.invoke(it) }
+            ) {
                 updateViews.setTextViewText(
                     R.id.precipitation_text,
                     (weather.weatherDetailsMap[WeatherDetailsType.POPCHANCE]?.value
@@ -464,7 +491,8 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
         updateViews: RemoteViews,
         minForecasts: List<MinutelyForecast>?,
         now: ZonedDateTime,
-        shadowSpan: TextAppearanceSpan? = null
+        shadowSpan: TextAppearanceSpan? = null,
+        nextTimeResult: ((ZonedDateTime) -> Unit)? = null
     ): Boolean {
         if (minForecasts.isNullOrEmpty()) return false
 
@@ -490,28 +518,24 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
         } ?: return false
 
         val formatStrResId = if (isRainingMinute != null) {
-            R.string.precipitation_minutely_stopping_text_format
+            R.string.precipitation_likely_minutely_stopping_text_format
         } else {
-            R.string.precipitation_minutely_starting_text_format
+            R.string.precipitation_likely_minutely_starting_text_format
         }
-        val duration = Duration.between(now, minute.date).toMinutes()
-        val duraStr = when {
-            duration < 120 -> {
-                context.getString(
-                    formatStrResId,
-                    context.getString(R.string.refresh_30min).replace("30", duration.toString())
-                )
-            }
-            else -> {
-                context.getString(
-                    formatStrResId,
-                    context.getString(R.string.refresh_12hrs)
-                        .replace("12", (duration / 60).toString())
-                )
-            }
+        val dt =
+            minute.date.truncatedTo(ChronoUnit.MINUTES).withZoneSameInstant(ZoneId.systemDefault())
+        val time = if (DateFormat.is24HourFormat(context)) {
+            dt.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_24HR))
+        } else {
+            dt.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM))
         }
+        val formatStr = context.getString(formatStrResId, time)
 
-        updateViews.setTextViewText(R.id.precipitation_text, duraStr.applySpan(shadowSpan))
+        updateViews.setTextViewText(R.id.precipitation_text, formatStr.applySpan(shadowSpan))
+
+        // Schedule an update at this time
+        nextTimeResult?.invoke(minute.date.truncatedTo(ChronoUnit.MINUTES))
+
         return true
     }
 
@@ -519,35 +543,53 @@ class WeatherWidget4x2TomorrowCreator(context: Context, loadBackground: Boolean 
         updateViews: RemoteViews,
         hrForecasts: List<HourlyForecast>?,
         now: ZonedDateTime,
-        shadowSpan: TextAppearanceSpan? = null
+        shadowSpan: TextAppearanceSpan? = null,
+        nextTimeResult: ((ZonedDateTime) -> Unit)? = null
     ): Boolean {
         if (hrForecasts.isNullOrEmpty()) return false
 
         // Find the next hour with a 60% or higher chance of precipitation
-        val forecast = hrForecasts.find { it.extras?.pop != null && it.extras.pop >= 60 }
+        val forecast =
+            hrForecasts.find {
+                !it.date.isBefore(
+                    now.truncatedTo(ChronoUnit.HOURS).plusHours(1)
+                ) && it.extras?.pop != null && it.extras.pop >= settingsManager.getPoPChanceMinimumPercentage()
+            }
 
-        // Proceed if within the next 3hrs
+        // Proceed if within the next 2hrs
         if (forecast == null || Duration.between(now.truncatedTo(ChronoUnit.HOURS), forecast.date)
-                .toHours() > 3
+                .toHours() >= 2
         ) return false
 
         // Should be within 0-3 hours
-        val duration = Duration.between(now, forecast.date).toMinutes()
-        val duraStr = if (duration <= 60) {
-            context.getString(R.string.precipitation_nexthour_text_format, forecast.extras.pop)
-        } else if (duration < 120) {
-            context.getString(
-                R.string.precipitation_text_format, forecast.extras.pop,
-                context.getString(R.string.refresh_30min).replace("30", duration.toString())
+        val dt =
+            forecast.date.truncatedTo(ChronoUnit.HOURS).withZoneSameInstant(ZoneId.systemDefault())
+        val time = if (DateFormat.is24HourFormat(context)) {
+            val skeleton = DateTimeConstants.SKELETON_24HR
+            dt.format(
+                DateTimeUtils.ofPatternForUserLocale(
+                    DateTimeUtils.getBestPatternForSkeleton(
+                        skeleton
+                    )
+                )
             )
         } else {
-            context.getString(
-                R.string.precipitation_text_format, forecast.extras.pop,
-                context.getString(R.string.refresh_12hrs).replace("12", (duration / 60).toString())
-            )
+            val pattern = DateTimeConstants.ABBREV_12HR_AMPM
+            dt.format(DateTimeUtils.ofPatternForUserLocale(pattern))
         }
+        val duraStr =
+            context.getString(R.string.precipitation_likely_text_format, time, forecast.extras.pop)
 
         updateViews.setTextViewText(R.id.precipitation_text, duraStr.applySpan(shadowSpan))
+
+        // Find the next hour with < 60% or higher chance of precipitation
+        val stopForecast =
+            hrForecasts.find { it.date.isAfter(forecast.date) && (it.extras?.pop == null || it.extras.pop < com.thewizrd.shared_resources.di.settingsManager.getPoPChanceMinimumPercentage()) }
+        // Delay further notifications until this time
+        if (stopForecast != null) {
+            nextTimeResult?.invoke(stopForecast.date.truncatedTo(ChronoUnit.HOURS))
+        }
+
         return true
     }
 

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
@@ -40,6 +41,8 @@ class SetupActivity : UserLocaleActivity() {
     private val viewModel: SetupViewModel by viewModels()
     private var mNavController: NavController? = null
     private var isWeatherLoaded = false
+
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     // Widget id for ConfigurationActivity
     private var mAppWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -133,6 +136,24 @@ class SetupActivity : UserLocaleActivity() {
             setupBottomNavBar()
             initializeNavController()
         }
+
+        onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val destination = mNavController?.currentDestination
+
+                if (destination != null) {
+                    if (!canGoBack(destination.id)) {
+                        finish()
+                    } else {
+                        mNavController?.navigateUp()
+                    }
+                } else {
+                    mNavController?.navigateUp()
+                }
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     override fun onStart() {
@@ -155,6 +176,7 @@ class SetupActivity : UserLocaleActivity() {
             mNavController!!.addOnDestinationChangedListener { _, destination, _ ->
                 Timber.d("Destination: $destination")
                 updateBottomNavigationBarForDestination(destination.id)
+                onBackPressedCallback.isEnabled = !canGoBack(destination.id)
             }
         }
     }
@@ -288,6 +310,24 @@ class SetupActivity : UserLocaleActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun canGoBack(@IdRes destinationId: Int): Boolean {
+        return when (destinationId) {
+            R.id.setupLocationFragment -> {
+                BuildConfig.IS_NONGMS
+            }
+
+            R.id.setupSettingsFragment -> {
+                false
+            }
+
+            R.id.mainActivity -> {
+                false
+            }
+
+            else -> true
         }
     }
 

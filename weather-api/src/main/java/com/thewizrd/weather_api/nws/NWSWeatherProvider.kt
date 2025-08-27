@@ -16,6 +16,7 @@ import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.LocationUtils
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.ZoneIdCompat
+import com.thewizrd.shared_resources.utils.createUnsupportedLocationException
 import com.thewizrd.shared_resources.utils.forEachString
 import com.thewizrd.shared_resources.utils.getAsJSONArray
 import com.thewizrd.shared_resources.utils.getAsJSONObject
@@ -115,9 +116,8 @@ class NWSWeatherProvider : WeatherProviderImpl() {
 
             // NWS only supports locations in U.S. or U.S. territories
             if (!LocationUtils.isNWSSupported(location)) {
-                throw WeatherException(ErrorStatus.QUERYNOTFOUND).apply {
-                    initCause(Exception("Unsupported country code: provider (${getWeatherAPI()}), country (${location.countryCode})"))
-                }
+                throw WeatherException(ErrorStatus.LOCATIONNOTSUPPORTED)
+                    .initCause(createUnsupportedLocationException(getWeatherAPI(), location))
             }
 
             val query = updateLocationQuery(location)

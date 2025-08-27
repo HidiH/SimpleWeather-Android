@@ -71,6 +71,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.getOrientation
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
+import com.thewizrd.simpleweather.NavGraphDirections
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.activities.LocationSearch
 import com.thewizrd.simpleweather.adapters.FavoritesPanelAdapter
@@ -631,9 +632,16 @@ class LocationsFragment : ToolbarFragment() {
                 }
                 showSnackbar(snackbar)
             }
-            ErrorStatus.QUERYNOTFOUND -> {
+            ErrorStatus.LOCATIONNOTSUPPORTED -> {
                 showSnackbar(
-                    Snackbar.make(rootView.context, wEx.message, Snackbar.Duration.LONG)
+                    Snackbar.make(rootView.context, wEx.message, Snackbar.Duration.LONG).apply {
+                        setAction(R.string.action_settings) {
+                            runCatching {
+                                rootView.findNavController()
+                                    .safeNavigate(NavGraphDirections.actionGlobalSettingsFragment())
+                            }
+                        }
+                    }
                 )
             }
             else -> {

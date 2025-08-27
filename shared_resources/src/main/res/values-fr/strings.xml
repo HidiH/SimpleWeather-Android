@@ -33,6 +33,8 @@
     <string name="label_sunset">"Coucher de soleil"</string>
     <string name="label_hourlyforecast">"Par heure"</string>
     <string name="label_precipitation">"Précipitation"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Chance"</string>
     <string name="label_cloudiness">"Nébulosité"</string>
     <string name="label_qpf_rain">"Pluie"</string>
@@ -205,4 +207,6 @@
     <string name="label_count_high_short">"Élevé"</string>
     <string name="label_count_veryhigh_short">"Élevé"</string>
     <string name="werror_ratelimited">"Trop de demandes. Veuillez réessayer après quelques minutes"</string>
+    <string name="werror_locationnotsupported">"Cet emplacement n'est pas pris en charge par ce fournisseur météo"</string>
+    <string name="notification_perm_denied">"Autorisation de notification refusée"</string>
 </resources>

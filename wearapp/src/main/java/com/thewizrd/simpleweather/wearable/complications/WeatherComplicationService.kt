@@ -126,7 +126,7 @@ class WeatherComplicationService : WeatherForecastComplicationService() {
             weather.condition!!.weather
         } else {
             provider.getWeatherCondition(weather.condition!!.icon)
-        }
+        } ?: getString(R.string.weather_notavailable)
 
         val wim = sharedDeps.weatherIconsManager
         val weatherIcon = wim.getWeatherIconResource(weather.condition!!.icon)

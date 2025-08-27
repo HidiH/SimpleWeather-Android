@@ -39,6 +39,31 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="key_privacy_tos"
+        app:isPreferenceVisible="false"
+        tools:isPreferenceVisible="true">
+
+        <Preference
+            android:key="key_privacypolicy"
+            android:title="@string/pref_title_privacypolicy"
+            app:icon="@drawable/ic_privacy_tip">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://simpleweather-91d01.web.app/privacy-policy" />
+        </Preference>
+
+        <Preference
+            android:key="key_tos"
+            android:title="@string/pref_title_termsofservice"
+            app:icon="@drawable/ic_outline_contract">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://play.google.com/about/play-terms/" />
+        </Preference>
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_category_version">
 
         <Preference

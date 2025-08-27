@@ -63,15 +63,14 @@ abstract class WeatherCoroutinesTileService : SuspendingTileService() {
             val locData = settingsManager.getHomeData() ?: return@withContext null
             // If saved data DNE (for current location), refresh weather
             val wLoader = WeatherDataLoader(locData)
-
-            var weather = wLoader.loadWeatherData(
+            var result = wLoader.loadWeatherResult(
                 WeatherRequest.Builder()
                     .forceLoadSavedData()
                     .build()
             )
 
-            if (weather == null && settingsManager.getDataSync() == WearableDataSync.OFF) {
-                weather = wLoader.loadWeatherData(
+            if (result.data == null && settingsManager.getDataSync() == WearableDataSync.OFF) {
+                result = wLoader.loadWeatherResult(
                     WeatherRequest.Builder()
                         .forceRefresh(false)
                         .loadAlerts()
@@ -80,7 +79,7 @@ abstract class WeatherCoroutinesTileService : SuspendingTileService() {
                 )
             }
 
-            weather
+            result.data
         } catch (e: Exception) {
             null
         }

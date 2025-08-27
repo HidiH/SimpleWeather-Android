@@ -104,9 +104,8 @@ class ECCCWeatherProvider : WeatherProviderImpl() {
 
             // ECCC
             if (!LocationUtils.isCanada(location)) {
-                throw WeatherException(ErrorStatus.QUERYNOTFOUND).apply {
-                    initCause(Exception("Unsupported country code: provider (${getWeatherAPI()}), country (${location.countryCode})"))
-                }
+                throw WeatherException(ErrorStatus.LOCATIONNOTSUPPORTED)
+                    .initCause(createUnsupportedLocationException(getWeatherAPI(), location))
             }
 
             val uLocale = ULocale.forLocale(LocaleUtils.getLocale())

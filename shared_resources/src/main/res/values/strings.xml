@@ -153,6 +153,7 @@
     <string name="werror_querynotfound">No cities match your search query</string>
     <string name="werror_unknown">Unknown error occurred</string>
     <string name="werror_ratelimited">Too many requests. Please try again after a few minutes</string>
+    <string name="werror_locationnotsupported">Location not supported by this weather provider</string>
 
     <!-- Refresh Intervals -->
     <string name="pref_title_refreshinterval">Update Interval</string>
@@ -175,6 +176,7 @@
     <string name="not_channel_desc_alerts">Notifications for weather alerts</string>
     <string name="not_channel_name_general">Service notifications</string>
     <string name="not_title_weather_update">Updating weather…</string>
+    <string name="notification_perm_denied">Notification permission denied</string>
 
     <!-- Alerts -->
     <string name="datetime_day_ago">%1$dd ago</string>

@@ -46,6 +46,7 @@ import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
 import com.thewizrd.common.helpers.getBackgroundLocationRationale
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.helpers.notificationPermissionEnabled
+import com.thewizrd.common.helpers.openAppSettingsActivity
 import com.thewizrd.common.preferences.KeyEntryPreferenceDialogFragment
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.appLib
@@ -88,6 +89,7 @@ import com.thewizrd.simpleweather.extras.setupReviewPreference
 import com.thewizrd.simpleweather.fragments.ToolbarFragment
 import com.thewizrd.simpleweather.locale.InstallRequest
 import com.thewizrd.simpleweather.locale.LocaleInstaller
+import com.thewizrd.simpleweather.notifications.NotificationUtils.Companion.openAppNotificationSettingsActivity
 import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
 import com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
 import com.thewizrd.simpleweather.preferences.iconpreference.IconProviderPickerFragment
@@ -605,8 +607,10 @@ class SettingsFragment : BaseSettingsFragment(),
 
                     val providerEntry =
                         providers.find { entry -> entry.value == selectedProvider }
-                    updateKeySummary(providerEntry!!.display)
-                    updateRegisterLink(providerEntry.value)
+                    runWithView {
+                        updateKeySummary(providerEntry!!.display)
+                        updateRegisterLink(providerEntry.value)
+                    }
                 } else {
                     settingsManager.setKeyVerified(selectedProvider, false)
                     keyEntry.isEnabled = false
@@ -619,8 +623,10 @@ class SettingsFragment : BaseSettingsFragment(),
                     apiCategory.removePreference(personalKeyPref)
                     apiCategory.removePreference(keyEntry)
                     apiCategory.removePreference(registerPref)
-                    updateKeySummary()
-                    updateRegisterLink()
+                    runWithView {
+                        updateKeySummary()
+                        updateRegisterLink()
+                    }
                 }
 
                 lifecycleScope.launch(Dispatchers.Main) {
@@ -1292,9 +1298,28 @@ class SettingsFragment : BaseSettingsFragment(),
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             onGoingNotifPermissionLauncher = PermissionLauncher(this) { results ->
-                val isChecked = results.all { it.value }
-                if (onGoingNotification.callChangeListener(isChecked)) {
-                    onGoingNotification.isChecked = isChecked
+                val isChecked = results.isNotEmpty() && results.all { it.value }
+                if (isChecked) {
+                    onGoingNotification.isChecked = true
+                } else {
+                    context?.let {
+                        showSnackbar(
+                            Snackbar.make(
+                                it,
+                                R.string.notification_perm_denied,
+                                Snackbar.Duration.SHORT
+                            ).apply {
+                                setAction(R.string.action_settings) {
+                                    runCatching {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            it.context.openAppNotificationSettingsActivity()
+                                        } else {
+                                            it.context.openAppSettingsActivity()
+                                        }
+                                    }
+                                }
+                            })
+                    }
                 }
             }
         }
@@ -1391,15 +1416,53 @@ class SettingsFragment : BaseSettingsFragment(),
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             alertNotifPermissionLauncher = PermissionLauncher(this) { results ->
-                val isChecked = results.all { it.value }
-                if (alertNotification.callChangeListener(isChecked)) {
-                    alertNotification.isChecked = isChecked
+                val isChecked = results.isNotEmpty() && results.all { it.value }
+                if (isChecked) {
+                    alertNotification.isChecked = true
+                } else {
+                    context?.let {
+                        showSnackbar(
+                            Snackbar.make(
+                                it,
+                                R.string.notification_perm_denied,
+                                Snackbar.Duration.SHORT
+                            ).apply {
+                                setAction(R.string.action_settings) {
+                                    runCatching {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            it.context.openAppNotificationSettingsActivity()
+                                        } else {
+                                            it.context.openAppSettingsActivity()
+                                        }
+                                    }
+                                }
+                            })
+                    }
                 }
             }
             popChanceNotifPermissionLauncher = PermissionLauncher(this) { results ->
-                val isChecked = results.all { it.value }
-                if (popChanceNotifPref.callChangeListener(isChecked)) {
-                    popChanceNotifPref.isChecked = isChecked
+                val isChecked = results.isNotEmpty() && results.all { it.value }
+                if (isChecked) {
+                    popChanceNotifPref.isChecked = true
+                } else {
+                    context?.let {
+                        showSnackbar(
+                            Snackbar.make(
+                                it,
+                                R.string.notification_perm_denied,
+                                Snackbar.Duration.SHORT
+                            ).apply {
+                                setAction(R.string.action_settings) {
+                                    runCatching {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            it.context.openAppNotificationSettingsActivity()
+                                        } else {
+                                            it.context.openAppSettingsActivity()
+                                        }
+                                    }
+                                }
+                            })
+                    }
                 }
             }
         }
@@ -1487,6 +1550,7 @@ class SettingsFragment : BaseSettingsFragment(),
             private const val KEY_FEEDBACK = "key_feedback"
             private const val KEY_RATEREVIEW = "key_ratereview"
             private const val KEY_TRANSLATE = "key_translate"
+            private const val KEY_PRIVACY_TOS = "key_privacy_tos"
             private const val KEY_ABOUTVERSION = "key_aboutversion"
         }
 
@@ -1540,6 +1604,8 @@ class SettingsFragment : BaseSettingsFragment(),
                     }
                     true
                 }
+
+            findPreference<PreferenceCategory>(KEY_PRIVACY_TOS)?.isVisible = !BuildConfig.IS_NONGMS
 
             runCatching {
                 val packageInfo =

@@ -6,11 +6,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.helpers.areNotificationsEnabled
 import com.thewizrd.common.weatherdata.WeatherDataLoader
 import com.thewizrd.common.weatherdata.WeatherRequest
+import com.thewizrd.common.weatherdata.WeatherResult
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.simpleweather.R
@@ -30,8 +36,16 @@ class WeatherNotificationWorker(context: Context, workerParams: WorkerParameters
         // Extras
         private const val EXTRA_FORCEREFRESH = "SimpleWeather.Droid.extra.FORCE_REFRESH"
 
-        suspend fun refreshNotification(context: Context, forceRefresh: Boolean = false) {
-            WeatherNotificationHelper.refreshNotification(context.applicationContext, forceRefresh)
+        suspend fun refreshNotification(
+            context: Context,
+            forceRefresh: Boolean = false,
+            resetIfUnavailable: Boolean = true
+        ) {
+            WeatherNotificationHelper.refreshNotification(
+                context.applicationContext,
+                forceRefresh,
+                resetIfUnavailable
+            )
         }
 
         @JvmStatic
@@ -91,7 +105,11 @@ class WeatherNotificationWorker(context: Context, workerParams: WorkerParameters
         private const val JOB_ID = 1003
         private const val PERSISTENT_NOT_ID = JOB_ID
 
-        suspend fun refreshNotification(context: Context, forceRefresh: Boolean) {
+        suspend fun refreshNotification(
+            context: Context,
+            forceRefresh: Boolean,
+            resetIfUnavailable: Boolean = true
+        ) {
             Timber.tag("WeatherNotifWorker")
                 .d("Refreshing notification (forceRefresh = $forceRefresh)...")
 
@@ -100,7 +118,7 @@ class WeatherNotificationWorker(context: Context, workerParams: WorkerParameters
             if (settingsManager.isWeatherLoaded() && context.areNotificationsEnabled()) {
                 if (settingsManager.showOngoingNotification()) {
                     val locData = settingsManager.getHomeData() ?: return
-                    val weather = withContext(Dispatchers.IO) {
+                    val weatherResult = withContext(Dispatchers.IO) {
                         val wLoader = WeatherDataLoader(locData)
                         val request = WeatherRequest.Builder()
                         if (forceRefresh)
@@ -108,11 +126,15 @@ class WeatherNotificationWorker(context: Context, workerParams: WorkerParameters
                         else
                             request.forceLoadSavedData()
 
-                        try {
-                            wLoader.loadWeatherData(request.build())
-                        } catch (e: Exception) {
-                            null
-                        }
+                        wLoader.loadWeatherResult(request.build())
+                    }
+
+                    val weather = when (weatherResult) {
+                        is WeatherResult.Error,
+                        is WeatherResult.NoWeather -> if (resetIfUnavailable) weatherResult.data else return
+
+                        is WeatherResult.Success,
+                        is WeatherResult.WeatherWithError -> weatherResult.data
                     }
 
                     // Gets an instance of the NotificationManager service

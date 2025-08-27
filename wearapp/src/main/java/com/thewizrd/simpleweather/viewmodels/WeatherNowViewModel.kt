@@ -26,7 +26,6 @@ import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.buildEmptyGPSLocation
 import com.thewizrd.shared_resources.preferences.SettingsManager
-import com.thewizrd.shared_resources.utils.CustomException
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.wearable.WearableDataSync
@@ -290,19 +289,6 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
         viewModelState.update { state ->
             when (result) {
                 is WeatherResult.Error -> {
-                    if (state.locationData?.let { !wm.isRegionSupported(it) } == true) {
-                        Logger.writeLine(
-                            Log.WARN,
-                            "Location: %s; countryCode: %s",
-                            JSONParser.serializer(state.locationData),
-                            state.locationData.countryCode
-                        )
-                        Logger.writeLine(
-                            Log.WARN,
-                            CustomException(R.string.error_message_weather_region_unsupported)
-                        )
-                    }
-
                     val errorMessages =
                         state.errorMessages + ErrorMessage.WeatherError(result.exception)
                     state.copy(
@@ -329,19 +315,6 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
                     )
                 }
                 is WeatherResult.WeatherWithError -> {
-                    if (state.locationData?.let { !wm.isRegionSupported(it) } == true) {
-                        Logger.writeLine(
-                            Log.WARN,
-                            "Location: %s; countryCode: %s",
-                            JSONParser.serializer(state.locationData),
-                            state.locationData.countryCode
-                        )
-                        Logger.writeLine(
-                            Log.WARN,
-                            CustomException(R.string.error_message_weather_region_unsupported)
-                        )
-                    }
-
                     val errorMessages =
                         state.errorMessages + ErrorMessage.WeatherError(result.exception)
                     state.copy(

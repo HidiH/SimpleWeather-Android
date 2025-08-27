@@ -81,6 +81,14 @@ class RemoteConfigServiceImpl : RemoteConfigService {
                 WeatherAPI.METEOFRANCE
             }
 
+            LocationUtils.isGermany(location) && isProviderEnabled(WeatherAPI.DWD) -> {
+                WeatherAPI.DWD
+            }
+
+            LocationUtils.isCanada(location) && isProviderEnabled(WeatherAPI.ECCC) -> {
+                WeatherAPI.ECCC
+            }
+
             else -> {
                 getDefaultWeatherProvider()
             }
@@ -96,6 +104,14 @@ class RemoteConfigServiceImpl : RemoteConfigService {
 
             LocationUtils.isFrance(location) && isProviderEnabled(WeatherAPI.METEOFRANCE) -> {
                 WeatherAPI.METEOFRANCE
+            }
+
+            LocationUtils.isGermany(location) && isProviderEnabled(WeatherAPI.DWD) -> {
+                WeatherAPI.DWD
+            }
+
+            LocationUtils.isCanada(location) && isProviderEnabled(WeatherAPI.ECCC) -> {
+                WeatherAPI.ECCC
             }
 
             else -> {
