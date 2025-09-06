@@ -19,8 +19,9 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
@@ -42,7 +43,10 @@ fun WeatherAlertsScreen(
     ScalingLazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .rotaryWithScroll(scrollStateViewModel.scrollState, focusRequester),
+            .rotaryScrollable(
+                RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
+                focusRequester
+            ),
         state = scrollStateViewModel.scrollState,
         anchorType = ScalingLazyListAnchorType.ItemCenter,
         autoCentering = AutoCenteringParams(itemIndex = 0)
@@ -84,7 +88,7 @@ private fun PreviewWeatherAlertsScreen() {
     ScalingLazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .rotaryWithScroll(scrollState, focusRequester),
+            .rotaryScrollable(RotaryScrollableDefaults.behavior(scrollState), focusRequester),
         state = scrollState,
         anchorType = ScalingLazyListAnchorType.ItemCenter,
         autoCentering = AutoCenteringParams(itemIndex = 0)

@@ -61,6 +61,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
@@ -77,7 +79,6 @@ import androidx.wear.compose.material.dialog.Dialog
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.fillMaxRectangle
-import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
 import com.thewizrd.common.controls.WeatherAlertViewModel
@@ -162,7 +163,7 @@ fun WeatherNowScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .rotaryWithScroll(scrollState, focusRequester)
+                .rotaryScrollable(RotaryScrollableDefaults.behavior(scrollState), focusRequester)
                 .verticalScroll(scrollState)
         ) {
             Column(
@@ -614,7 +615,10 @@ private fun WeatherSummary(
     ) {
         Alert(
             modifier = Modifier
-                .rotaryWithScroll(dialogScrollState, focusRequester),
+                .rotaryScrollable(
+                    RotaryScrollableDefaults.behavior(dialogScrollState),
+                    focusRequester
+                ),
             title = {
                 Text(
                     text = "",

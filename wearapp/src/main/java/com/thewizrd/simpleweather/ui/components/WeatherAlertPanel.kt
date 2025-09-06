@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Icon
@@ -37,7 +39,6 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Dialog
 import androidx.wear.compose.ui.tooling.preview.WearPreviewFontScales
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.shared_resources.utils.getColorFromAlertSeverity
 import com.thewizrd.shared_resources.utils.getDrawableFromAlertType
@@ -107,7 +108,11 @@ private fun WeatherAlertPanel(
     ) {
         val focusRequester = rememberActiveFocusRequester()
         Alert(
-            modifier = Modifier.rotaryWithScroll(dialogScrollState, focusRequester),
+            modifier = Modifier
+                .rotaryScrollable(
+                    RotaryScrollableDefaults.behavior(dialogScrollState),
+                    focusRequester
+                ),
             scrollState = dialogScrollState,
             title = {
                 Text(

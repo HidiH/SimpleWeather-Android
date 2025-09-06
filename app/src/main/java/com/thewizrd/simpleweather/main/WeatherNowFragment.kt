@@ -1228,7 +1228,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                         )
                         .placeholder(ColorDrawable(Colors.LIGHTGRAY))
                         .transition(BitmapTransitionOptions.withCrossFade(300))
-                        .addListener(object : RequestListener<Bitmap?> {
+                        .addListener(object : RequestListener<Bitmap> {
                             override fun onLoadFailed(
                                 e: GlideException?, model: Any?,
                                 target: Target<Bitmap?>,
