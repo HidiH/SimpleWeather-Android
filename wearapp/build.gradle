@@ -152,8 +152,8 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
 
     implementation 'androidx.wear:wear:1.3.0'
-    implementation "androidx.wear:wear-input:1.2.0-alpha02"
-    debugImplementation "androidx.wear:wear-input-testing:1.2.0-alpha02"
+    implementation 'androidx.wear:wear-input:1.2.0-rc01'
+    debugImplementation 'androidx.wear:wear-input-testing:1.2.0-rc01'
     implementation 'androidx.wear:wear-phone-interactions:1.1.0'
     implementation 'androidx.wear:wear-remote-interactions:1.1.0'
     implementation "androidx.wear.watchface:watchface-complications-data:$wear_watchface_version"
@@ -189,7 +189,7 @@ dependencies {
     implementation "com.google.android.horologist:horologist-compose-material:$horologist_version"
     implementation "com.google.android.horologist:horologist-compose-tools:$horologist_version"
 
-    implementation 'sh.calvin.reorderable:reorderable:2.5.1'
+    implementation 'sh.calvin.reorderable:reorderable:3.0.0'
 
     androidTestImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
