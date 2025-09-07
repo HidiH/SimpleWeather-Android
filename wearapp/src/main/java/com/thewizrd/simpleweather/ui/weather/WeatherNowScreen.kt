@@ -76,6 +76,7 @@ import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Dialog
+import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.fillMaxRectangle
@@ -143,132 +144,137 @@ fun WeatherNowScreen(
         LogCompositions(tag = "WeatherNow", msg = "WeatherNowScreen")
     }
 
-    LoadingContent(
-        empty = uiState.isLoading && (uiState.noLocationAvailable || weather.location.isNullOrEmpty()) || scrollLoading,
-        emptyContent = {
-            Box(
-                modifier = Modifier.fillMaxRectangle(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    trackColor = Color.Transparent
-                )
+    ScreenScaffold(scrollState = scrollState) {
+        LoadingContent(
+            empty = uiState.isLoading && (uiState.noLocationAvailable || weather.location.isNullOrEmpty()) || scrollLoading,
+            emptyContent = {
+                Box(
+                    modifier = Modifier.fillMaxRectangle(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        trackColor = Color.Transparent
+                    )
+                }
+            },
+            loading = uiState.isLoading,
+            onRefresh = {
+                wNowViewModel.refreshWeather(true)
             }
-        },
-        loading = uiState.isLoading,
-        onRefresh = {
-            wNowViewModel.refreshWeather(true)
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .rotaryScrollable(RotaryScrollableDefaults.behavior(scrollState), focusRequester)
-                .verticalScroll(scrollState)
         ) {
-            Column(
-                modifier = Modifier.padding(top = 24.dp, bottom = 48.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .rotaryScrollable(
+                        RotaryScrollableDefaults.behavior(scrollState),
+                        focusRequester
+                    )
+                    .verticalScroll(scrollState)
             ) {
-                if (uiState.noLocationAvailable) {
-                    NoLocationsPrompt(activity)
-                }
-                if (uiState.showDisconnectedView) {
-                    DisconnectionAlert()
-                }
-                if (alerts.isNotEmpty()) {
-                    AlertsBox(navController)
-                }
-                if (!weather.location.isNullOrEmpty()) {
-                    WeatherLocation(
-                        locationName = weather.location,
-                        isGPSLocation = uiState.isGPSLocation
-                    )
-                    // Icon + Temp
-                    IconTempRow(
-                        weatherIcon = weather.weatherIcon,
-                        iconProvider = weather.iconProvider,
-                        curTemp = weather.curTemp,
-                        tempUnit = weather.tempUnit
-                    )
-                    // Condition
-                    weather.curCondition?.let { condition ->
-                        ConditionText(condition)
+                Column(
+                    modifier = Modifier.padding(top = 24.dp, bottom = 48.dp)
+                ) {
+                    if (uiState.noLocationAvailable) {
+                        NoLocationsPrompt(activity)
                     }
-
-                    // HiLo Layout
-                    if (weather.isShowHiLo) {
-                        HiLoLayout(
-                            hiTemp = weather.hiTemp,
-                            loTemp = weather.loTemp
+                    if (uiState.showDisconnectedView) {
+                        DisconnectionAlert()
+                    }
+                    if (alerts.isNotEmpty()) {
+                        AlertsBox(navController)
+                    }
+                    if (!weather.location.isNullOrEmpty()) {
+                        WeatherLocation(
+                            locationName = weather.location,
+                            isGPSLocation = uiState.isGPSLocation
                         )
-                    }
-
-                    // Condition Details
-                    ConditionDetails(
-                        weather = weather,
-                        navController = navController
-                    )
-
-                    weather.weatherSummary?.let { summary ->
-                        WeatherSummary(weatherSummary = summary)
-                    }
-
-                    WearDivider()
-                    if (forecasts.isNotEmpty()) {
-                        ForecastPanels(
-                            forecasts = forecasts,
+                        // Icon + Temp
+                        IconTempRow(
+                            weatherIcon = weather.weatherIcon,
                             iconProvider = weather.iconProvider,
+                            curTemp = weather.curTemp,
+                            tempUnit = weather.tempUnit
+                        )
+                        // Condition
+                        weather.curCondition?.let { condition ->
+                            ConditionText(condition)
+                        }
+
+                        // HiLo Layout
+                        if (weather.isShowHiLo) {
+                            HiLoLayout(
+                                hiTemp = weather.hiTemp,
+                                loTemp = weather.loTemp
+                            )
+                        }
+
+                        // Condition Details
+                        ConditionDetails(
+                            weather = weather,
                             navController = navController
                         )
+
+                        weather.weatherSummary?.let { summary ->
+                            WeatherSummary(weatherSummary = summary)
+                        }
+
+                        WearDivider()
+                        if (forecasts.isNotEmpty()) {
+                            ForecastPanels(
+                                forecasts = forecasts,
+                                iconProvider = weather.iconProvider,
+                                navController = navController
+                            )
+                        }
+                        if (hourlyForecasts.isNotEmpty()) {
+                            HourlyForecastPanels(
+                                hourlyForecasts = hourlyForecasts,
+                                iconProvider = weather.iconProvider,
+                                navController = navController
+                            )
+                        }
+                        weather.updateDate?.let { date ->
+                            UpdateDateText(date = date)
+                        }
+                        weather.weatherCredit?.let { credit ->
+                            WeatherCreditText(credit = credit)
+                        }
+                    }
+
+                    // Top divider
+                    if (forecasts.isNotEmpty() || hourlyForecasts.isNotEmpty() || hasMinutely || weather.weatherDetailsMap.isNotEmpty()) {
+                        WearDivider()
+                    }
+                    if (forecasts.isNotEmpty()) {
+                        ForecastsButton(navController = navController)
                     }
                     if (hourlyForecasts.isNotEmpty()) {
-                        HourlyForecastPanels(
-                            hourlyForecasts = hourlyForecasts,
-                            iconProvider = weather.iconProvider,
-                            navController = navController
-                        )
+                        HourlyForecastsButton(navController = navController)
                     }
-                    weather.updateDate?.let { date ->
-                        UpdateDateText(date = date)
+                    if (hasMinutely) {
+                        MinutelyForecastsButton(navController = navController)
                     }
-                    weather.weatherCredit?.let { credit ->
-                        WeatherCreditText(credit = credit)
+                    if (weather.weatherDetailsMap.isNotEmpty()) {
+                        DetailsButton(navController = navController)
                     }
-                }
 
-                // Top divider
-                if (forecasts.isNotEmpty() || hourlyForecasts.isNotEmpty() || hasMinutely || weather.weatherDetailsMap.isNotEmpty()) {
+                    // Navigation divider
                     WearDivider()
-                }
-                if (forecasts.isNotEmpty()) {
-                    ForecastsButton(navController = navController)
-                }
-                if (hourlyForecasts.isNotEmpty()) {
-                    HourlyForecastsButton(navController = navController)
-                }
-                if (hasMinutely) {
-                    MinutelyForecastsButton(navController = navController)
-                }
-                if (weather.weatherDetailsMap.isNotEmpty()) {
-                    DetailsButton(navController = navController)
-                }
+                    DetailsTileEditorButton(navController = navController)
+                    WearDivider()
 
-                // Navigation divider
-                WearDivider()
-                DetailsTileEditorButton(navController = navController)
-                WearDivider()
-
-                ChangeLocationButton(activity = activity)
-                SettingsButton(activity = activity)
-                if (!BuildConfig.IS_NONGMS) {
-                    OpenOnPhoneButton()
+                    ChangeLocationButton(activity = activity)
+                    SettingsButton(activity = activity)
+                    if (!BuildConfig.IS_NONGMS) {
+                        OpenOnPhoneButton()
+                    }
                 }
             }
-        }
 
-        LaunchedEffect(Unit) {
-            lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-                focusRequester.requestFocus()
+            LaunchedEffect(Unit) {
+                lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                    focusRequester.requestFocus()
+                }
             }
         }
     }

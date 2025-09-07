@@ -22,15 +22,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.items
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.ToggleChip
-import androidx.wear.compose.material.ToggleChipDefaults
-import androidx.wear.compose.material.dialog.Alert
-import androidx.wear.compose.material.dialog.Dialog
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.RadioButton
+import androidx.wear.compose.material3.Text
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 
@@ -44,7 +41,6 @@ fun <T : Any> WearListPreference(
     enabled: Boolean = true,
 ) {
     var openDialog by remember { mutableStateOf(false) }
-    val scrollState = rememberScalingLazyListState()
 
     WearPreference(
         title = title,
@@ -56,70 +52,57 @@ fun <T : Any> WearListPreference(
         enabled = enabled,
     )
 
-    Dialog(
-        showDialog = openDialog,
+    AlertDialog(
+        visible = openDialog,
         onDismissRequest = {
             openDialog = false
         },
-        scrollState = scrollState
+        title = {
+            Text(
+                text = title,
+                textAlign = TextAlign.Center
+            )
+        },
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
+        contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 24.dp, bottom = 52.dp),
     ) {
-        Alert(
-            title = {
-                Text(
-                    text = title,
-                    textAlign = TextAlign.Center
-                )
-            },
-            scrollState = scrollState,
-            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
-            contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 24.dp, bottom = 52.dp),
-        ) {
-            items(
-                items = items,
-                key = { it.second }
-            ) { item ->
-                val checked = item.second == selectedItem
+        items(
+            items = items,
+            key = { it.second }
+        ) { item ->
+            val checked = item.second == selectedItem
 
-                ToggleChip(
-                    modifier = Modifier.fillMaxWidth(),
-                    checked = checked,
-                    onCheckedChange = {
-                        if (it) {
-                            onItemSelected(item.second)
-                        }
-                        openDialog = false
-                    },
-                    label = {
-                        Text(text = item.first)
-                    },
-                    toggleControl = {
-                        Icon(
-                            imageVector = ToggleChipDefaults.radioIcon(checked = checked),
-                            contentDescription = if (checked) "Checked" else "Unchecked"
-                        )
-                    }
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            item {
-                Button(
-                    onClick = {
-                        openDialog = false
-                    },
-                    colors = ButtonDefaults.primaryButtonColors()
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .wrapContentSize(align = Alignment.Center),
-                        painter = painterResource(id = R.drawable.ic_close_white_24dp),
-                        contentDescription = stringResource(id = android.R.string.cancel)
-                    )
+            RadioButton(
+                modifier = Modifier.fillMaxWidth(),
+                selected = checked,
+                onSelect = {
+                    onItemSelected(item.second)
+                    openDialog = false
+                },
+                label = {
+                    Text(text = item.first)
                 }
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        item {
+            Button(
+                onClick = {
+                    openDialog = false
+                },
+                colors = ButtonDefaults.buttonColors()
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .wrapContentSize(align = Alignment.Center),
+                    painter = painterResource(id = R.drawable.ic_close_white_24dp),
+                    contentDescription = stringResource(id = android.R.string.cancel)
+                )
             }
         }
     }

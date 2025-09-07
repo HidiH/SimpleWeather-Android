@@ -1,54 +1,26 @@
 package com.thewizrd.simpleweather.ui.weather
 
 import android.text.format.DateFormat
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
-import androidx.navigation.createGraph
 import androidx.navigation.navArgument
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.SwipeToDismissBox
-import androidx.wear.compose.material.SwipeToDismissKeys
-import androidx.wear.compose.material.Vignette
-import androidx.wear.compose.material.VignettePosition
-import androidx.wear.compose.material.scrollAway
+import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
-import androidx.wear.compose.navigation.currentBackStackEntryAsState
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import com.google.android.horologist.compose.layout.scrollAway
 import com.thewizrd.common.controls.WeatherAlertsViewModel
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.DateTimeConstants
-import com.thewizrd.simpleweather.ui.LazyGridStateViewModel
-import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
-import com.thewizrd.simpleweather.ui.ScrollStateViewModel
-import com.thewizrd.simpleweather.ui.components.CustomPositionIndicator
 import com.thewizrd.simpleweather.ui.components.CustomTimeText
-import com.thewizrd.simpleweather.ui.compose.LazyGridPositionIndicator
-import com.thewizrd.simpleweather.ui.navigation.DestinationScrollType
-import com.thewizrd.simpleweather.ui.navigation.SCROLL_TYPE_NAV_ARGUMENT
 import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.preferences.DetailsWeatherTileConfigScreen
 import com.thewizrd.simpleweather.ui.theme.WearAppTheme
@@ -59,7 +31,6 @@ import com.thewizrd.simpleweather.viewmodels.ForecastPanelsViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import kotlinx.coroutines.flow.map
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 @Composable
 fun WeatherNow(
@@ -99,11 +70,10 @@ fun WeatherNow(
     WearAppTheme {
         var showScaffolding by remember { mutableStateOf(true) }
 
-        Scaffold(
-            modifier = modifier.background(MaterialTheme.colors.background),
+        AppScaffold(
+            modifier = modifier,
             timeText = {
                 CustomTimeText(
-                    modifier = Modifier.scrollAway { scrollState },
                     visible = showScaffolding,
                     timeSource = ZonedTimeSource(
                         timeFormat = if (DateFormat.is24HourFormat(LocalContext.current)) {
@@ -114,287 +84,86 @@ fun WeatherNow(
                         timeZone = uiState.locationData?.tzLong
                     )
                 )
-            },
-            vignette = {
-                Vignette(vignettePosition = VignettePosition.TopAndBottom)
-            },
-            positionIndicator = {
-                CustomPositionIndicator(
-                    visible = showScaffolding,
-                    scrollState = scrollState
-                )
             }
         ) {
-            WeatherNowScreen(
-                navController,
-                scrollState,
-                focusRequester,
-                wNowViewModel,
-                uiState,
-                weather,
-                alerts,
-                forecasts,
-                hourlyForecasts,
-                hasMinutely
-            )
-
-            /* WeatherNow Detail Views */
-            val currentBackStackEntry by navController.currentBackStackEntryAsState()
             val swipeFocusRequester = rememberFocusRequester()
 
-            navController.setLifecycleOwner(LocalLifecycleOwner.current)
-            navController.setViewModelStore(LocalViewModelStoreOwner.current!!.viewModelStore)
-            navController.graph = remember {
-                navController.createGraph(
-                    startDestination = Screen.WeatherNow.route
+            SwipeDismissableNavHost(
+                navController = navController,
+                startDestination = Screen.WeatherNow.route
+            ) {
+                composable(
+                    route = Screen.WeatherNow.route
                 ) {
-                    composable(
-                        route = Screen.WeatherNow.route
-                    ) {}
-
-                    composable(
-                        route = Screen.Alerts.route,
-                        arguments = listOf(
-                            navArgument(SCROLL_TYPE_NAV_ARGUMENT) {
-                                type = NavType.EnumType(DestinationScrollType::class.java)
-                                defaultValue = DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING
-                            }
-                        )
-                    ) { backStackEntry ->
-                        WeatherAlertsScreen(backStackEntry, swipeFocusRequester, alerts)
-                    }
-
-                    composable(
-                        route = Screen.Details.route,
-                        arguments = listOf(
-                            navArgument(SCROLL_TYPE_NAV_ARGUMENT) {
-                                type = NavType.EnumType(DestinationScrollType::class.java)
-                                defaultValue = DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING
-                            }
-                        )
-                    ) { backStackEntry ->
-                        val detailItems = remember(weather) {
-                            weather.weatherDetailsMap.values
-                        }
-
-                        WeatherDetailsScreen(backStackEntry, swipeFocusRequester, detailItems)
-                    }
-
-                    composable(
-                        route = Screen.Forecast.route + "?${Constants.KEY_POSITION}={${Constants.KEY_POSITION}}",
-                        arguments = listOf(
-                            navArgument(Constants.KEY_POSITION) {
-                                type = NavType.IntType
-                                defaultValue = 0
-                            },
-                            navArgument(SCROLL_TYPE_NAV_ARGUMENT) {
-                                type = NavType.EnumType(DestinationScrollType::class.java)
-                                defaultValue = DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING
-                            }
-                        )
-                    ) { backStackEntry ->
-                        WeatherForecastScreen(backStackEntry, swipeFocusRequester)
-                    }
-
-                    composable(
-                        route = Screen.HourlyForecast.route + "?${Constants.KEY_POSITION}={${Constants.KEY_POSITION}}",
-                        arguments = listOf(
-                            navArgument(Constants.KEY_POSITION) {
-                                type = NavType.IntType
-                                defaultValue = 0
-                            },
-                            navArgument(SCROLL_TYPE_NAV_ARGUMENT) {
-                                type = NavType.EnumType(DestinationScrollType::class.java)
-                                defaultValue = DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING
-                            }
-                        )
-                    ) { backStackEntry ->
-                        WeatherHourlyForecastScreen(backStackEntry, swipeFocusRequester)
-                    }
-
-                    composable(
-                        route = Screen.Precipitation.route,
-                        arguments = listOf(
-                            navArgument(SCROLL_TYPE_NAV_ARGUMENT) {
-                                type = NavType.EnumType(DestinationScrollType::class.java)
-                                defaultValue = DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING
-                            }
-                        )
-                    ) { backStackEntry ->
-                        WeatherMinutelyForecastScreen(backStackEntry, swipeFocusRequester)
-                    }
-
-                    composable(
-                        route = Screen.DetailsTileEditor.route,
-                        arguments = listOf(
-                            navArgument(SCROLL_TYPE_NAV_ARGUMENT) {
-                                type = NavType.EnumType(DestinationScrollType::class.java)
-                                defaultValue = DestinationScrollType.LAZY_GRID_SCROLLING
-                            }
-                        )
-                    ) { backStackEntry ->
-                        DetailsWeatherTileConfigScreen(
-                            navController,
-                            backStackEntry,
-                            swipeFocusRequester
-                        )
-                    }
-                }
-            }
-
-            if (currentBackStackEntry?.destination?.route != Screen.WeatherNow.route) {
-                val scrollType =
-                    currentBackStackEntry?.arguments?.getSerializable(SCROLL_TYPE_NAV_ARGUMENT)
-                        ?: DestinationScrollType.NONE
-
-                SwipeToDismissBox(
-                    onDismissed = {
-                        navController.popBackStack(Screen.WeatherNow.route, true)
-                    },
-                    backgroundKey = SwipeToDismissKeys.Background,
-                    contentKey = currentBackStackEntry?.destination?.route
-                        ?: SwipeToDismissKeys.Content,
-                    hasBackground = true
-                ) { isBackground ->
-                    if (!isBackground) {
-                        Scaffold(
-                            modifier = Modifier.background(MaterialTheme.colors.background),
-                            timeText = {
-                                key(currentBackStackEntry?.destination?.route) {
-                                    // Scaffold places time at top of screen to follow Material Design guidelines.
-                                    // (Time is hidden while scrolling.)
-                                    val timeTextModifier =
-                                        when (scrollType) {
-                                            DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING -> {
-                                                val scrollViewModel: ScalingLazyListStateViewModel =
-                                                    viewModel(currentBackStackEntry!!)
-                                                Modifier.scrollAway(scrollViewModel.scrollState)
-                                            }
-
-                                            DestinationScrollType.COLUMN_SCROLLING -> {
-                                                val scrollViewModel: ScrollStateViewModel =
-                                                    viewModel(currentBackStackEntry!!)
-                                                Modifier.scrollAway(scrollViewModel.scrollState)
-                                            }
-
-                                            DestinationScrollType.LAZY_GRID_SCROLLING -> {
-                                                val scrollViewModel: LazyGridStateViewModel =
-                                                    viewModel(currentBackStackEntry!!)
-                                                Modifier.offset {
-                                                    if (0 < scrollViewModel.scrollState.layoutInfo.totalItemsCount) {
-                                                        scrollViewModel.scrollState.layoutInfo.visibleItemsInfo.find {
-                                                            it.index == 0
-                                                        }?.offset
-                                                            ?: if (scrollViewModel.scrollState.layoutInfo.orientation == Orientation.Vertical) {
-                                                                IntOffset(
-                                                                    0,
-                                                                    -36.dp.toPx().roundToInt()
-                                                                )
-                                                            } else {
-                                                                IntOffset(
-                                                                    -36.dp.toPx().roundToInt(), 0
-                                                                )
-                                                            }
-                                                    } else {
-                                                        IntOffset.Zero
-                                                    }
-                                                }
-                                            }
-
-                                            DestinationScrollType.TIME_TEXT_ONLY -> {
-                                                Modifier
-                                            }
-
-                                            else -> {
-                                                null
-                                            }
-                                        }
-
-                                    CustomTimeText(
-                                        modifier = timeTextModifier ?: Modifier,
-                                        visible = timeTextModifier != null,
-                                        timeSource = ZonedTimeSource(
-                                            timeFormat = if (DateFormat.is24HourFormat(LocalContext.current)) {
-                                                "${DateTimeConstants.CLOCK_FORMAT_24HR} ${DateTimeConstants.TIMEZONE_NAME}"
-                                            } else {
-                                                "${DateTimeConstants.CLOCK_FORMAT_12HR} ${DateTimeConstants.TIMEZONE_NAME}"
-                                            },
-                                            timeZone = uiState.locationData?.tzLong
-                                        )
-                                    )
-                                }
-                            },
-                            vignette = {
-                                key(currentBackStackEntry?.destination?.route) {
-                                    // Only show vignette for screens with scrollable content.
-                                    if (scrollType == DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING ||
-                                        scrollType == DestinationScrollType.COLUMN_SCROLLING ||
-                                        scrollType == DestinationScrollType.LAZY_GRID_SCROLLING
-                                    ) {
-                                        Vignette(vignettePosition = VignettePosition.TopAndBottom)
-                                    }
-                                }
-                            },
-                            positionIndicator = {
-                                key(currentBackStackEntry?.destination?.route) {
-                                    // Only displays the position indicator for scrollable content.
-                                    when (scrollType) {
-                                        DestinationScrollType.SCALING_LAZY_COLUMN_SCROLLING -> {
-                                            // Get or create the ViewModel associated with the current back stack entry
-                                            val scrollViewModel: ScalingLazyListStateViewModel =
-                                                viewModel(currentBackStackEntry!!)
-                                            PositionIndicator(scalingLazyListState = scrollViewModel.scrollState)
-                                        }
-
-                                        DestinationScrollType.COLUMN_SCROLLING -> {
-                                            // Get or create the ViewModel associated with the current back stack entry
-                                            val scrollViewModel: ScrollStateViewModel =
-                                                viewModel(currentBackStackEntry!!)
-                                            PositionIndicator(scrollState = scrollViewModel.scrollState)
-                                        }
-
-                                        DestinationScrollType.LAZY_GRID_SCROLLING -> {
-                                            // Get or create the ViewModel associated with the current back stack entry
-                                            val scrollViewModel: LazyGridStateViewModel =
-                                                viewModel(currentBackStackEntry!!)
-                                            LazyGridPositionIndicator(lazyGridState = scrollViewModel.scrollState)
-                                        }
-
-                                        else -> {}
-                                    }
-                                }
-                            }
-                        ) {
-                            SwipeDismissableNavHost(
-                                navController = navController,
-                                graph = navController.graph
-                            )
-                        }
-
-                        LaunchedEffect(Unit) {
-                            runCatching {
-                                focusRequester.freeFocus()
-                            }
-                        }
-
-                        DisposableEffect(Unit) {
-                            onDispose {
-                                runCatching {
-                                    focusRequester.requestFocus()
-                                }
-                            }
-                        }
-                    }
+                    WeatherNowScreen(
+                        navController,
+                        scrollState,
+                        focusRequester,
+                        wNowViewModel,
+                        uiState,
+                        weather,
+                        alerts,
+                        forecasts,
+                        hourlyForecasts,
+                        hasMinutely
+                    )
                 }
 
-                LaunchedEffect(Unit) {
-                    showScaffolding = false
+                composable(
+                    route = Screen.Alerts.route
+                ) { backStackEntry ->
+                    WeatherAlertsScreen(backStackEntry, swipeFocusRequester, alerts)
                 }
 
-                DisposableEffect(Unit) {
-                    onDispose {
-                        showScaffolding = true
+                composable(
+                    route = Screen.Details.route
+                ) { backStackEntry ->
+                    val detailItems = remember(weather) {
+                        weather.weatherDetailsMap.values
                     }
+
+                    WeatherDetailsScreen(backStackEntry, swipeFocusRequester, detailItems)
+                }
+
+                composable(
+                    route = Screen.Forecast.route + "?${Constants.KEY_POSITION}={${Constants.KEY_POSITION}}",
+                    arguments = listOf(
+                        navArgument(Constants.KEY_POSITION) {
+                            type = NavType.IntType
+                            defaultValue = 0
+                        },
+                    )
+                ) { backStackEntry ->
+                    WeatherForecastScreen(backStackEntry, swipeFocusRequester)
+                }
+
+                composable(
+                    route = Screen.HourlyForecast.route + "?${Constants.KEY_POSITION}={${Constants.KEY_POSITION}}",
+                    arguments = listOf(
+                        navArgument(Constants.KEY_POSITION) {
+                            type = NavType.IntType
+                            defaultValue = 0
+                        },
+                    )
+                ) { backStackEntry ->
+                    WeatherHourlyForecastScreen(backStackEntry, swipeFocusRequester)
+                }
+
+                composable(
+                    route = Screen.Precipitation.route,
+                ) { backStackEntry ->
+                    WeatherMinutelyForecastScreen(backStackEntry, swipeFocusRequester)
+                }
+
+                composable(
+                    route = Screen.DetailsTileEditor.route,
+                ) { backStackEntry ->
+                    DetailsWeatherTileConfigScreen(
+                        navController,
+                        backStackEntry,
+                        swipeFocusRequester,
+                        uiState
+                    )
                 }
             }
         }

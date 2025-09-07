@@ -21,6 +21,7 @@ import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
+import androidx.wear.compose.material3.ScreenScaffold
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.shared_resources.designer.initializeDependencies
@@ -40,25 +41,27 @@ fun WeatherAlertsScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val scrollStateViewModel: ScalingLazyListStateViewModel = viewModel(backStackEntry)
 
-    ScalingLazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .rotaryScrollable(
-                RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
-                focusRequester
-            ),
-        state = scrollStateViewModel.scrollState,
-        anchorType = ScalingLazyListAnchorType.ItemCenter,
-        autoCentering = AutoCenteringParams(itemIndex = 0)
-    ) {
-        items(alerts) { alert ->
-            WeatherAlertPanel(alert)
+    ScreenScaffold(scrollState = scrollStateViewModel.scrollState) {
+        ScalingLazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .rotaryScrollable(
+                    RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
+                    focusRequester
+                ),
+            state = scrollStateViewModel.scrollState,
+            anchorType = ScalingLazyListAnchorType.ItemCenter,
+            autoCentering = AutoCenteringParams(itemIndex = 0)
+        ) {
+            items(alerts) { alert ->
+                WeatherAlertPanel(alert)
+            }
         }
-    }
 
-    LaunchedEffect(lifecycleOwner) {
-        lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-            focusRequester.requestFocus()
+        LaunchedEffect(lifecycleOwner) {
+            lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                focusRequester.requestFocus()
+            }
         }
     }
 }
