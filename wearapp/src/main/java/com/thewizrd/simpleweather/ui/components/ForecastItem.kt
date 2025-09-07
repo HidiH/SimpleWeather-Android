@@ -8,13 +8,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.horologist.compose.layout.fillMaxRectangle
 import com.thewizrd.common.controls.ForecastItemViewModel
+import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.StringUtils.removeDigitChars
 
@@ -51,7 +53,7 @@ fun ForecastItem(
             modifier = Modifier.padding(2.dp),
             maxLines = 1,
             text = date,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyLarge
         )
         WeatherIcon(
             modifier = Modifier
@@ -65,44 +67,48 @@ fun ForecastItem(
             modifier = Modifier.padding(2.dp),
             maxLines = 1,
             text = hiTemp,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyLarge
         )
         Text(
             modifier = Modifier.padding(2.dp),
             maxLines = 1,
             text = loTemp,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onSurfaceVariant
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_LARGE_ROUND,
+    device = WearDevices.LARGE_ROUND,
     showBackground = true,
     backgroundColor = 0xFF000000
 )
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_SQUARE,
+    device = WearDevices.SQUARE,
     showBackground = true,
     backgroundColor = 0xFF000000
 )
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_SMALL_ROUND,
+    device = WearDevices.SMALL_ROUND,
     showBackground = true,
     backgroundColor = 0xFF000000
 )
 @Composable
 fun PreviewForecastItem() {
+    val context = LocalContext.current.also {
+        it.initializeDependencies(isPhone = false)
+    }
+
     Box(
         modifier = Modifier.fillMaxRectangle(),
         contentAlignment = Alignment.Center

@@ -8,7 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.wear.compose.material.CircularProgressIndicator
+import androidx.wear.compose.material3.CircularProgressIndicator
+import androidx.wear.compose.material3.ProgressIndicatorDefaults
 import com.google.android.horologist.compose.layout.fillMaxRectangle
 
 @Composable
@@ -26,7 +27,7 @@ fun <T : Any> LoadingPagingContent(
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(
-                trackColor = Color.Transparent
+                colors = ProgressIndicatorDefaults.colors(trackColor = Color.Transparent)
             )
         }
     } else {

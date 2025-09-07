@@ -60,23 +60,21 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.CircularProgressIndicator
-import androidx.wear.compose.material.CompactButton
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.LocalContentColor
-import androidx.wear.compose.material.LocalTextStyle
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.dialog.Alert
-import androidx.wear.compose.material.dialog.Dialog
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.CircularProgressIndicator
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButton
+import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.LocalContentColor
+import androidx.wear.compose.material3.LocalTextStyle
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ProgressIndicatorDefaults
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.fillMaxRectangle
@@ -113,7 +111,6 @@ import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
-import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.viewmodels.WeatherNowStateModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
@@ -153,7 +150,7 @@ fun WeatherNowScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
-                        trackColor = Color.Transparent
+                        colors = ProgressIndicatorDefaults.colors(trackColor = Color.Transparent)
                     )
                 }
             },
@@ -316,7 +313,7 @@ private fun NoLocationsPrompt(
         Text(
             text = stringResource(id = R.string.prompt_location_not_set),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -336,13 +333,13 @@ private fun DisconnectionAlert() {
         Icon(
             painter = painterResource(R.drawable.ic_baseline_cloud_off_24),
             contentDescription = null,
-            tint = MaterialTheme.colors.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = stringResource(id = R.string.message_disconnected),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.button,
-            color = MaterialTheme.colors.onSurfaceVariant
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -353,12 +350,12 @@ private fun AlertsBox(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
-        CompactButton(
+        IconButton(
             onClick = {
                 navController.navigate(Screen.Alerts.route)
             },
-            colors = ButtonDefaults.primaryButtonColors(
-                backgroundColor = Color(0xFFFF4500)
+            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                containerColor = Color(0xFFFF4500)
             )
         ) {
             Icon(
@@ -399,7 +396,7 @@ private fun ColumnScope.WeatherLocation(
             text = locationName ?: WeatherIcons.EM_DASH,
             textAlign = TextAlign.Center,
             fontSize = 16.sp,
-            style = MaterialTheme.typography.button,
+            style = MaterialTheme.typography.labelLarge,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -460,7 +457,7 @@ private fun ConditionText(
         overflow = TextOverflow.Ellipsis,
         letterSpacing = 0.sp,
         maxLines = 2,
-        style = MaterialTheme.typography.caption1,
+        style = MaterialTheme.typography.bodySmall,
         fontSize = 16.sp
     )
 }
@@ -485,7 +482,7 @@ private fun HiLoLayout(
             ) {
                 Text(
                     text = hiTemp ?: WeatherIcons.PLACEHOLDER,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.End,
                     maxLines = 1
                 )
@@ -511,7 +508,7 @@ private fun HiLoLayout(
             ) {
                 Text(
                     text = loTemp ?: WeatherIcons.PLACEHOLDER,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.End,
                     maxLines = 1
                 )
@@ -567,7 +564,7 @@ private fun ConditionDetails(
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = spannableStringToAnnotatedString(popData.value),
-                    style = MaterialTheme.typography.caption1,
+                    style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     color = colorResource(R.color.colorPrimaryLight)
@@ -594,7 +591,7 @@ private fun ConditionDetails(
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = spannableStringToAnnotatedString(windData.value),
-                    style = MaterialTheme.typography.caption1,
+                    style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     color = Color(0xFF20B2AA)
@@ -609,33 +606,19 @@ private fun WeatherSummary(
     weatherSummary: String
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    val dialogScrollState = rememberScalingLazyListState(
-        initialCenterItemIndex = 0,
-        initialCenterItemScrollOffset = 0
-    )
-    val focusRequester = rememberFocusRequester()
 
-    Dialog(
-        showDialog = showDialog,
+    AlertDialog(
+        visible = showDialog,
         onDismissRequest = { showDialog = false },
+        title = {
+            Text(
+                text = "",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
     ) {
-        Alert(
-            modifier = Modifier
-                .rotaryScrollable(
-                    RotaryScrollableDefaults.behavior(dialogScrollState),
-                    focusRequester
-                ),
-            title = {
-                Text(
-                    text = "",
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.onBackground
-                )
-            },
-            positiveButton = {},
-            negativeButton = {},
-            scrollState = dialogScrollState
-        ) {
+        item {
             Text(
                 modifier = Modifier.padding(
                     top = dimensionResource(id = R.dimen.header_top_padding),
@@ -643,15 +626,9 @@ private fun WeatherSummary(
                 ),
                 text = weatherSummary,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.caption1,
-                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground,
             )
-        }
-
-        PositionIndicator(scalingLazyListState = dialogScrollState)
-
-        LaunchedEffect(Unit) {
-            dialogScrollState.scrollToItem(0, 0)
         }
     }
     WearDivider()
@@ -668,8 +645,8 @@ private fun WeatherSummary(
         overflow = TextOverflow.Ellipsis,
         maxLines = 3,
         letterSpacing = 0.sp,
-        style = MaterialTheme.typography.caption1,
-        color = MaterialTheme.colors.onSurfaceVariant
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 
@@ -741,7 +718,7 @@ private fun UpdateDateText(
             .fillMaxWidth(),
         textAlign = TextAlign.Center,
         text = date,
-        style = MaterialTheme.typography.caption2
+        style = MaterialTheme.typography.bodyExtraSmall
     )
 }
 
@@ -758,7 +735,7 @@ private fun WeatherCreditText(
             ),
         textAlign = TextAlign.Center,
         text = credit,
-        style = MaterialTheme.typography.caption1
+        style = MaterialTheme.typography.bodySmall
     )
 }
 
@@ -866,13 +843,13 @@ private fun NavigationButton(
     contentDescription: String? = null,
     onClick: () -> Unit,
 ) {
-    Chip(
+    Button(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(vertical = 2.dp, horizontal = 16.dp),
         onClick = onClick,
-        colors = ChipDefaults.secondaryChipColors(),
+        colors = ButtonDefaults.filledTonalButtonColors(),
         label = {
             Text(
                 modifier = Modifier
@@ -943,7 +920,7 @@ private fun PreviewWeatherNowScreen() {
 
     CompositionLocalProvider(
         LocalContentColor provides Color.White,
-        LocalTextStyle provides MaterialTheme.typography.button,
+        LocalTextStyle provides MaterialTheme.typography.labelLarge,
         LocalContext provides context
     ) {
         Box(

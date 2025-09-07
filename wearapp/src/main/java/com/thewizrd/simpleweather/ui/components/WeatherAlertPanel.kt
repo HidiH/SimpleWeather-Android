@@ -5,7 +5,6 @@ package com.thewizrd.simpleweather.ui.components
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,15 +26,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.foundation.rememberActiveFocusRequester
-import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
-import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.dialog.Dialog
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.Text
 import androidx.wear.compose.ui.tooling.preview.WearPreviewFontScales
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.thewizrd.common.controls.WeatherAlertViewModel
@@ -46,7 +40,6 @@ import com.thewizrd.shared_resources.weatherdata.model.WeatherAlertSeverity
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlertType
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
-import com.thewizrd.simpleweather.ui.dialog.Alert
 import com.thewizrd.simpleweather.ui.text.toAnnotatedString
 
 @Composable
@@ -71,7 +64,7 @@ private fun WeatherAlertPanel(
     var showDialog by remember { mutableStateOf(false) }
     val severityColor = remember(alertSeverityColor) { Color(alertSeverityColor) }
 
-    Chip(
+    Button(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -89,8 +82,8 @@ private fun WeatherAlertPanel(
                 contentDescription = null
             )
         },
-        colors = ChipDefaults.gradientBackgroundChipColors(
-            startBackgroundColor = severityColor,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = severityColor,
             contentColor = Color.White,
             iconColor = Color.White
         ),
@@ -98,60 +91,40 @@ private fun WeatherAlertPanel(
     )
 
     // show alert dialog on click
-    val dialogScrollState = rememberScalingLazyListState()
-    Dialog(
-        showDialog = showDialog,
+    AlertDialog(
+        visible = showDialog,
         onDismissRequest = {
             showDialog = false
         },
-        scrollState = dialogScrollState
-    ) {
-        val focusRequester = rememberActiveFocusRequester()
-        Alert(
-            modifier = Modifier
-                .rotaryScrollable(
-                    RotaryScrollableDefaults.behavior(dialogScrollState),
-                    focusRequester
-                ),
-            scrollState = dialogScrollState,
-            title = {
-                Text(
-                    text = title,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2
-                )
-            },
-            icon = {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = severityColor,
-                            shape = CircleShape
-                        )
-                        .padding(2.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .wrapContentSize(align = Alignment.Center),
-                        painter = painterResource(id = alertDrawable),
-                        contentDescription = null
+        title = {
+            Text(
+                text = title,
+                textAlign = TextAlign.Center,
+                maxLines = 2
+            )
+        },
+        icon = {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = severityColor,
+                        shape = CircleShape
                     )
-                }
-            },
-            message = {
-                Text(text = alertBodyMessage.toAnnotatedString())
+                    .padding(2.dp)
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .wrapContentSize(align = Alignment.Center),
+                    painter = painterResource(id = alertDrawable),
+                    contentDescription = null
+                )
             }
-        )
-
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
-            dialogScrollState.scrollToItem(0, 0)
-            if (dialogScrollState.canScrollBackward) {
-                dialogScrollState.scrollBy(dialogScrollState.centerItemScrollOffset.toFloat())
-            }
-        }
-    }
+        },
+        text = {
+            Text(text = alertBodyMessage.toAnnotatedString())
+        },
+    )
 }
 
 @WearPreviewDevices

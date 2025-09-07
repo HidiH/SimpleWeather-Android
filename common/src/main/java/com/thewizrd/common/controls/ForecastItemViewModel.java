@@ -4,12 +4,15 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RestrictTo;
 import androidx.core.util.ObjectsCompat;
 
+import com.thewizrd.shared_resources.ApplicationLibKt;
 import com.thewizrd.shared_resources.DateTimeConstants;
 import com.thewizrd.shared_resources.R;
 import com.thewizrd.shared_resources.SharedModuleKt;
 import com.thewizrd.shared_resources.icons.WeatherIcons;
+import com.thewizrd.shared_resources.preferences.SettingsManager;
 import com.thewizrd.shared_resources.utils.ConversionMethods;
 import com.thewizrd.shared_resources.utils.DateTimeUtils;
 import com.thewizrd.shared_resources.utils.LocaleUtils;
@@ -20,6 +23,8 @@ import com.thewizrd.shared_resources.utils.WeatherUtils;
 import com.thewizrd.shared_resources.weatherdata.model.Forecast;
 import com.thewizrd.shared_resources.weatherdata.model.TextForecast;
 import com.thewizrd.shared_resources.weatherdata.model.UV;
+import com.thewizrd.weather_api.WeatherModuleKt;
+import com.thewizrd.weather_api.weatherdata.WeatherProviderManager;
 
 import java.text.DecimalFormat;
 
@@ -27,8 +32,15 @@ public class ForecastItemViewModel extends BaseForecastItemViewModel {
     private String loTemp;
     private String conditionLongDesc;
 
+    @RestrictTo(RestrictTo.Scope.TESTS)
+    public ForecastItemViewModel() {
+    }
+
     public ForecastItemViewModel(@NonNull Forecast forecast, TextForecast... txtForecasts) {
         final Context context = SharedModuleKt.getSharedDeps().getContext();
+        final WeatherProviderManager wm = WeatherModuleKt.getWeatherModule().getWeatherManager();
+        final SettingsManager settingsMgr = ApplicationLibKt.getAppLib().getSettingsManager();
+
         final boolean isFahrenheit = Units.FAHRENHEIT.equals(settingsMgr.getTemperatureUnit());
         final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
         df.applyPattern("0.##");

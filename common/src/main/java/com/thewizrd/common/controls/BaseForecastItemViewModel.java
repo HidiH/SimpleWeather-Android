@@ -1,21 +1,10 @@
 package com.thewizrd.common.controls;
 
-import com.thewizrd.shared_resources.ApplicationLibKt;
-import com.thewizrd.shared_resources.SharedModuleKt;
-import com.thewizrd.shared_resources.icons.WeatherIconsManager;
-import com.thewizrd.shared_resources.preferences.SettingsManager;
-import com.thewizrd.weather_api.WeatherModuleKt;
-import com.thewizrd.weather_api.weatherdata.WeatherProviderManager;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public abstract class BaseForecastItemViewModel {
-    protected final WeatherProviderManager wm;
-    protected final WeatherIconsManager wim;
-    protected final SettingsManager settingsMgr;
-
     protected String weatherIcon;
     protected String date;
     protected String shortDate;
@@ -29,9 +18,6 @@ public abstract class BaseForecastItemViewModel {
     protected Map<WeatherDetailsType, DetailItemViewModel> detailExtras;
 
     public BaseForecastItemViewModel() {
-        wm = WeatherModuleKt.getWeatherModule().getWeatherManager();
-        wim = SharedModuleKt.getSharedDeps().getWeatherIconsManager();
-        settingsMgr = ApplicationLibKt.getAppLib().getSettingsManager();
         detailExtras = new LinkedHashMap<>(WeatherDetailsType.values().length);
     }
 
