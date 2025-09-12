@@ -1,48 +1,37 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="WearAppTheme" parent="Base.AppTheme">
+    <style name="Base.AppTheme" parent="Base.AppTheme.Bridge">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorSecondary</item>
-        <item name="colorPrimaryDark">?colorPrimaryVariant</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryLight</item>
-        <item name="colorAccent">?attr/colorSecondary</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorPrimaryLight</item>
-
-        <!-- WearOS specific colors -->
-        <item name="android:colorBackground">#000000</item>
-        <item name="colorOnBackground">#ffffff</item>
-        <item name="colorSurface">#202124</item>
-        <item name="colorOnSurface">#ffffff</item>
-        <item name="colorOnSurfaceVariant">#FFDADCE0</item>
-        <item name="colorError">#ee675c</item>
-        <item name="colorOnError">#202124</item>
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="colorBackgroundFloating">?colorSurface</item>
-
-        <item name="wearChipButtonStyle">@style/Widget.Wear.WearChipButton</item>
+        <item name="colorPrimary">@color/md_theme_dark_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_dark_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_dark_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_dark_error</item>
+        <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_dark_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_dark_background</item>
+        <item name="colorOnBackground">@color/md_theme_dark_onBackground</item>
+        <item name="colorSurface">@color/md_theme_dark_surface</item>
+        <item name="colorOnSurface">@color/md_theme_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_dark_primaryInverse</item>
     </style>
 
-    <style name="WearAppTheme.Launcher" parent="Theme.SplashScreen.IconBackground">
-        <item name="postSplashScreenTheme">@style/WearAppTheme</item>
-        <item name="windowSplashScreenBackground">@android:color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
-        <item name="windowSplashScreenIconBackgroundColor">@color/ic_launcher_background</item>
-    </style>
-
-    <style name="WearSettingsTheme" parent="@style/WearAppTheme">
-        <item name="preferenceTheme">@style/WearPreferenceThemeOverlay</item>
-    </style>
-
-    <style name="WearDialogFragmentTheme" parent="@style/WearAppTheme">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="Base.AppTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+    <style name="Base.AppTheme.Bridge" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Text styles -->
         <item name="android:textAppearance">@style/TextAppearance.Roboto</item>
         <item name="android:textAppearanceInverse">@style/TextAppearance.Roboto.Inverse</item>
@@ -58,16 +47,30 @@
         <item name="android:textAppearanceSmallInverse">
             @style/TextAppearance.Roboto.Small.Inverse
         </item>
-        <item name="textAppearanceHeadline1">@style/TextAppearance.Roboto.Headline1</item>
-        <item name="textAppearanceHeadline2">@style/TextAppearance.Roboto.Headline2</item>
-        <item name="textAppearanceHeadline3">@style/TextAppearance.Roboto.Headline3</item>
-        <item name="textAppearanceHeadline4">@style/TextAppearance.Roboto.Headline4</item>
-        <item name="textAppearanceHeadline5">@style/TextAppearance.Roboto.Headline5</item>
+
+        <!-- Material Typography -->
+        <item name="textAppearanceArcLarge">@style/TextAppearance.Roboto.ArcLarge</item>
+        <item name="textAppearanceArcMedium">@style/TextAppearance.Roboto.ArcMedium</item>
+        <item name="textAppearanceArcSmall">@style/TextAppearance.Roboto.ArcSmall</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.Roboto.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.Roboto.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Roboto.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Roboto.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Roboto.HeadlineMedium
+        </item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Roboto.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Roboto.TitleLarge</item>
         <item name="textAppearanceHeadline6">@style/TextAppearance.Roboto.Headline6</item>
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.Roboto.Subtitle1</item>
-        <item name="textAppearanceSubtitle2">@style/TextAppearance.Roboto.Subtitle2</item>
-        <item name="textAppearanceCaption">@style/TextAppearance.Roboto.Caption</item>
-        <item name="textAppearanceOverline">@style/TextAppearance.Roboto.Overline</item>
+        <item name="textAppearanceTitleMediumLarge">?textAppearanceHeadline6</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Roboto.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Roboto.TitleSmall</item>
+        <item name="textAppearanceBodyExtraSmall">@style/TextAppearance.Roboto.BodyExtraSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Roboto.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Roboto.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Roboto.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Roboto.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.Roboto.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Roboto.LabelSmall</item>
 
         <item name="android:textAppearanceListItem">@style/TextAppearance.Roboto.ListItem</item>
         <item name="android:textAppearanceListItemSmall">@style/TextAppearance.Roboto.ListItem
@@ -91,20 +94,57 @@
         </item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Material.LargeComponent
         </item>
+    </style>
 
-        <!-- Wear Material Typography themes -->
-        <item name="textAppearanceDisplay1">@style/TextAppearance.Roboto.Display1</item>
-        <item name="textAppearanceDisplay2">@style/TextAppearance.Roboto.Display2</item>
-        <item name="textAppearanceDisplay3">@style/TextAppearance.Roboto.Display3</item>
-        <item name="textAppearanceTitle1">@style/TextAppearance.Roboto.Title1</item>
-        <item name="textAppearanceTitle2">@style/TextAppearance.Roboto.Title2</item>
-        <item name="textAppearanceTitle3">@style/TextAppearance.Roboto.Title3</item>
-        <item name="textAppearanceBody1">@style/TextAppearance.Roboto.Body1</item>
-        <item name="textAppearanceBody2">@style/TextAppearance.Roboto.Body2</item>
-        <item name="textAppearanceButton">@style/TextAppearance.Roboto.Button</item>
-        <item name="textAppearanceCaption1">@style/TextAppearance.Roboto.Caption1</item>
-        <item name="textAppearanceCaption2">@style/TextAppearance.Roboto.Caption2</item>
-        <item name="textAppearanceCaption3">@style/TextAppearance.Roboto.Caption3</item>
+    <style name="WearAppTheme" parent="Base.AppTheme">
+        <item name="colorPrimary">#FFA2C9FD</item>
+        <item name="colorOnPrimary">#FF00325A</item>
+        <item name="colorPrimaryContainer">#FF1C4975</item>
+        <item name="colorOnPrimaryContainer">#FFD2E4FF</item>
+        <item name="colorSecondary">#FF95CDF7</item>
+        <item name="colorOnSecondary">#FF00344E</item>
+        <item name="colorSecondaryContainer">#FF004B6F</item>
+        <item name="colorOnSecondaryContainer">#FFC9E6FF</item>
+        <item name="colorTertiary">#FFA9C7FF</item>
+        <item name="colorOnTertiary">#FF07305F</item>
+        <item name="colorTertiaryContainer">#FF264777</item>
+        <item name="colorOnTertiaryContainer">#FFD6E3FF</item>
+        <item name="colorError">#FFFFB4AB</item>
+        <item name="colorErrorContainer">#FF93000A</item>
+        <item name="colorOnError">#FF690005</item>
+        <item name="colorOnErrorContainer">#FFFFDAD6</item>
+        <item name="android:colorBackground">#FF111418</item>
+        <item name="colorOnBackground">#FFE1E2E8</item>
+        <item name="colorOnSurface">#FFE1E2E8</item>
+        <item name="colorOnSurfaceVariant">#FFC3C6CF</item>
+        <item name="colorOutline">#FF8D9199</item>
+        <item name="colorOutlineVariant">#FF43474E</item>
+
+        <item name="colorSurfaceContainer">#FF1D2024</item>
+        <item name="colorSurfaceContainerLow">#FF191C20</item>
+        <item name="colorSurfaceContainerHigh">#FF272A2F</item>
+
+        <item name="android:windowBackground">#FF111418</item>
+
+        <item name="wearChipButtonStyle">@style/Widget.Wear.WearChipButton</item>
+    </style>
+
+    <style name="WearAppTheme.Launcher" parent="Theme.SplashScreen.IconBackground">
+        <item name="postSplashScreenTheme">@style/WearAppTheme</item>
+        <item name="windowSplashScreenBackground">@android:color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/ic_launcher_background</item>
+    </style>
+
+    <style name="WearSettingsTheme" parent="@style/WearAppTheme">
+        <item name="preferenceTheme">@style/WearPreferenceThemeOverlay</item>
+    </style>
+
+    <style name="WearDialogFragmentTheme" parent="@style/WearAppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="Widget.MaterialButton.OutlinedButton.IconOnly" parent="@style/Widget.MaterialComponents.Button.OutlinedButton">
@@ -117,133 +157,234 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
+    <!-- Wear Material 3 Typography -->
+    <style name="TextAppearance.Roboto.ArcLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/roboto_flex_arc_large</item>
+        <item name="fontFamily">@font/roboto_flex_arc_large</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">22sp</item>
+        <item name="lineHeight">22sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.ArcMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/roboto_flex_arc_medium</item>
+        <item name="fontFamily">@font/roboto_flex_arc_medium</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">18sp</item>
+        <item name="lineHeight">18sp</item>
+        <item name="android:letterSpacing">0.006</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.ArcSmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/roboto_flex_arc_small</item>
+        <item name="fontFamily">@font/roboto_flex_arc_small</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">16sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0.006</item>
+    </style>
+
+    <!-- Material 3 Typography -->
+    <style name="TextAppearance.Roboto.BodyExtraSmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/roboto_flex_body_extra_small</item>
+        <item name="fontFamily">@font/roboto_flex_body_extra_small</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">12sp</item>
+        <item name="lineHeight">12sp</item>
+        <item name="android:letterSpacing">0.002</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/roboto_flex_body_large</item>
+        <item name="fontFamily">@font/roboto_flex_body_large</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">18sp</item>
+        <item name="lineHeight">18sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/roboto_flex_body_medium</item>
+        <item name="fontFamily">@font/roboto_flex_body_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">16sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/roboto_flex_body_small</item>
+        <item name="fontFamily">@font/roboto_flex_body_small</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">14sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/roboto_flex_display_large</item>
+        <item name="fontFamily">@font/roboto_flex_display_large</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">44sp</item>
+        <item name="lineHeight">44sp</item>
+        <item name="android:letterSpacing">0.002</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:fontFamily">@font/roboto_flex_display_medium</item>
+        <item name="fontFamily">@font/roboto_flex_display_medium</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">34sp</item>
+        <item name="lineHeight">34sp</item>
+        <item name="android:letterSpacing">0.002</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/roboto_flex_display_small</item>
+        <item name="fontFamily">@font/roboto_flex_display_small</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">26sp</item>
+        <item name="lineHeight">26sp</item>
+        <item name="android:letterSpacing">0.002</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/roboto_flex_label_large</item>
+        <item name="fontFamily">@font/roboto_flex_label_large</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">22sp</item>
+        <item name="lineHeight">22sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/roboto_flex_label_medium</item>
+        <item name="fontFamily">@font/roboto_flex_label_medium</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">18sp</item>
+        <item name="lineHeight">18sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/roboto_flex_label_small</item>
+        <item name="fontFamily">@font/roboto_flex_label_small</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">16sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/roboto_flex_title_large</item>
+        <item name="fontFamily">@font/roboto_flex_title_large</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">20sp</item>
+        <item name="lineHeight">20sp</item>
+        <item name="android:letterSpacing">0.002</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/roboto_flex_title_medium</item>
+        <item name="fontFamily">@font/roboto_flex_title_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">18sp</item>
+        <item name="lineHeight">18sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/roboto_flex_title_small</item>
+        <item name="fontFamily">@font/roboto_flex_title_small</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight" tools:ignore="NewApi">16sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <!-- App Compat Typography -->
+    <style name="TextAppearance.Roboto.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.Menu" parent="TextAppearance.AppCompat.Menu">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.ListItem" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.ListItemSecondary" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
+    </style>
+
+    <!-- System Typography -->
     <style name="TextAppearance.Roboto" parent="@android:style/TextAppearance.DeviceDefault">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
         <item name="android:textColor">?colorOnSurface</item>
     </style>
 
     <style name="TextAppearance.Roboto.Inverse" parent="@android:style/TextAppearance.DeviceDefault.Inverse">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <style name="TextAppearance.Roboto.Large" parent="@android:style/TextAppearance.DeviceDefault.Large">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <style name="TextAppearance.Roboto.Large.Inverse" parent="@android:style/TextAppearance.DeviceDefault.Large.Inverse">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <style name="TextAppearance.Roboto.Medium" parent="@android:style/TextAppearance.DeviceDefault.Medium">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <style name="TextAppearance.Roboto.Medium.Inverse" parent="@android:style/TextAppearance.DeviceDefault.Medium.Inverse">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <style name="TextAppearance.Roboto.Small" parent="@android:style/TextAppearance.DeviceDefault.Small">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <style name="TextAppearance.Roboto.Small.Inverse" parent="@android:style/TextAppearance.DeviceDefault.Small.Inverse">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">50sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">56dp</item>
-        <item name="lineHeight">56dp</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">40sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">46dp</item>
-        <item name="lineHeight">46dp</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">30sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">36dp</item>
-        <item name="lineHeight">36dp</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">28dp</item>
-        <item name="lineHeight">28dp</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">24dp</item>
-        <item name="lineHeight">24dp</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">20dp</item>
-        <item name="lineHeight">20dp</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Caption" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Overline" parent="TextAppearance.MaterialComponents.Overline">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Menu" parent="TextAppearance.AppCompat.Menu">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.ListItem" parent="@style/TextAppearance.AppCompat.Subhead">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.ListItemSecondary" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Title" parent="TextAppearance.Roboto">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/roboto_flex</item>
+        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <style name="ShapeAppearance.Material.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
@@ -259,118 +400,6 @@
     <style name="ShapeAppearance.Material.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/shape_corner_radius</item>
-    </style>
-
-    <!-- Wear Material -->
-    <!-- Note: android:letterSpacing = letterSpacing.sp / textSize.sp -->
-    <style name="TextAppearance.Roboto.Display1" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">40sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">46dp</item>
-        <item name="lineHeight">46dp</item>
-        <item name="android:letterSpacing">0.0125</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Display2" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">34sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">40dp</item>
-        <item name="lineHeight">40dp</item>
-        <item name="android:letterSpacing">0.0294117647058824</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Display3" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">30sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">36dp</item>
-        <item name="lineHeight">36dp</item>
-        <item name="android:letterSpacing">0.026666666666666</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Title1" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">28dp</item>
-        <item name="lineHeight">28dp</item>
-        <item name="android:letterSpacing">0.0083333333333333</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Title2" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">24dp</item>
-        <item name="lineHeight">24dp</item>
-        <item name="android:letterSpacing">0.01</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Title3" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">20dp</item>
-        <item name="lineHeight">20dp</item>
-        <item name="android:letterSpacing">0.0125</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Body1" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">20dp</item>
-        <item name="lineHeight">20dp</item>
-        <item name="android:letterSpacing">0.01125</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Body2" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">18dp</item>
-        <item name="lineHeight">18dp</item>
-        <item name="android:letterSpacing">0.0142857142857143</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Button" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="fontFamily">@font/roboto</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">19dp</item>
-        <item name="lineHeight">19dp</item>
-        <item name="android:letterSpacing">0.0253333333333333</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Caption1" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">18dp</item>
-        <item name="lineHeight">18dp</item>
-        <item name="android:letterSpacing">0.0071428571428571</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Caption2" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">16dp</item>
-        <item name="lineHeight">16dp</item>
-        <item name="android:letterSpacing">0.0083333333333333</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Caption3" parent="TextAppearance.Roboto">
-        <item name="android:fontFamily">@font/roboto_medium</item>
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:textSize">10sp</item>
-        <item name="android:lineHeight" tools:ignore="NewApi">14dp</item>
-        <item name="lineHeight">14dp</item>
-        <item name="android:letterSpacing">0.01</item>
     </style>
 
 </resources>

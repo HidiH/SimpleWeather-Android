@@ -1,25 +1,27 @@
 package com.thewizrd.simpleweather.ui.navigation
 
-// Navigation Argument for Screens with scrollable types:
-// 1. WatchList -> ScalingLazyColumn
-// 2. WatchDetail -> Column (with scaling enabled)
-const val SCROLL_TYPE_NAV_ARGUMENT = "scrollType"
-
 /**
  * Represent all Screens (Composables) in the app.
  */
 sealed class Screen(
     val route: String
 ) {
+    // Weather Screens
     object WeatherNow : Screen("weathernow")
     object Alerts : Screen("alerts")
     object Details : Screen("weatherdetails")
-
-    // WeatherSummary dialog
     object Forecast : Screen("forecast")
     object HourlyForecast : Screen("hourlyforecast")
     object Precipitation : Screen("precipitation")
 
-    // Preferences
+    // Weather Preferences
     object DetailsTileEditor : Screen("detailstileeditor")
+
+    // Settings
+    object SettingsGeneral : Screen("pref_general")
+    object SettingsUnits : Screen("pref_units")
+    object SettingsIcons : Screen("pref_icons")
+    object SettingsAboutApp : Screen("pref_aboutapp")
+    object SettingsCredits : Screen("pref_credits")
+    object SettingsOSSCredits : Screen("pref_oslibs")
 }

@@ -15,8 +15,5 @@
 -->
 <resources>
 
-    <style name="TextAppearanceTime" parent="@style/TextAppearance.Roboto.Caption1">
-        <item name="android:textStyle">bold</item>
-        <item name="android:lineSpacingExtra">4sp</item>
-    </style>
+    <style name="TextAppearanceTime" parent="@style/TextAppearance.Roboto.ArcMedium" />
 </resources>

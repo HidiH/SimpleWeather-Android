@@ -50,7 +50,7 @@ class LocationQueryAdapter :
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            setIconTint(parent.context.getAttrColorStateList(R.attr.colorAccent))
+            setIconTint(parent.context.getAttrColorStateList(R.attr.colorPrimary))
         }
         return ViewHolder(item)
     }

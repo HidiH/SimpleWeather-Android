@@ -15,7 +15,7 @@
         android:paddingTop="@dimen/inner_layout_padding"
         android:paddingHorizontal="@dimen/sync_message_horizontal_margin"
         android:textColor="?colorOnSurface"
-        android:textAppearance="?textAppearanceButton"
+        android:textAppearance="?textAppearanceLabelMedium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

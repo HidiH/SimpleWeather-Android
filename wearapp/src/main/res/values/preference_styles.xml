@@ -5,6 +5,9 @@
         <item name="android:scrollbars">vertical</item>
         <item name="alertDialogStyle">@style/WearAlertDialogStyle</item>
         <item name="sliderPreferenceStyle">@style/Preference.SliderPreference.Material</item>
+        <item name="preferenceCategoryTitleTextAppearance">@style/TextAppearance.Roboto.BodyMedium
+        </item>
+        <item name="preferenceCategoryTitleTextColor">?colorPrimary</item>
     </style>
 
     <style name="WearAlertDialogStyle" parent="@style/AlertDialog.AppCompat">

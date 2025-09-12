@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="?textAppearanceCaption1"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?textAppearanceTitleMedium"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="14dp"
@@ -10,8 +10,5 @@
     android:gravity="center"
     android:includeFontPadding="false"
     android:maxLines="1"
-    android:textSize="13sp"
-    android:textColor="?colorAccent"
-    app:firstBaselineToTopHeight="13sp"
-    app:lastBaselineToBottomHeight="4sp"
-    app:lineHeight="17sp" />
+    android:textColor="?colorPrimary"
+    tools:text="Category" />

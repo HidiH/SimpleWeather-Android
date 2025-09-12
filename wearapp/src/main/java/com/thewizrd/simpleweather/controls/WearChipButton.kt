@@ -363,13 +363,8 @@ class WearChipButton @JvmOverloads constructor(
                 val layerCount = backgroundDrawable.numberOfLayers
                 for (i in 1 until layerCount) {
                     val layer = backgroundDrawable.getDrawable(i)
-                    val id = backgroundDrawable.getId(i)
-                    if (id == R.id.start_accent) {
-                        layer.alpha = 0xFF
-                        backgroundDrawable.setDrawable(i, layer.setButtonBackgroundDrawableTint())
-                    } else {
-                        layer.alpha = 0
-                    }
+                    layer.alpha = 0xFF
+                    backgroundDrawable.setDrawable(i, layer.setButtonBackgroundDrawableTint())
                 }
                 return
             }

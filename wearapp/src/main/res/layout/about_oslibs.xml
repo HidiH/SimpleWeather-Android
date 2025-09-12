@@ -7,10 +7,11 @@
     android:padding="@dimen/horizontal_padding"
     tools:viewBindingIgnore="true">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:textAppearance="?textAppearanceBodyMedium" />
 
     <ProgressBar
         android:id="@+id/progressBar"
