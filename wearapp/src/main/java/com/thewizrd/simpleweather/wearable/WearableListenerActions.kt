@@ -1,6 +1,7 @@
 package com.thewizrd.simpleweather.wearable
 
 import com.thewizrd.common.wearable.WearConnectionStatus
+import com.thewizrd.simpleweather.viewmodels.WearableListenerViewModel
 
 object WearableListenerActions {
     // Actions
@@ -10,6 +11,13 @@ object WearableListenerActions {
     const val ACTION_UPDATECONNECTIONSTATUS =
         "SimpleWeather.Droid.Wear.action.UPDATE_CONNECTION_STATUS"
     const val ACTION_REQUESTSETUPSTATUS = "SimpleWeather.Droid.Wear.action.REQUEST_SETUP_STATUS"
+
+    const val ACTION_REQUESTSYNCWEATHER = "SimpleWeather.Droid.Wear.action.REQUEST_SYNC_WEATHER"
+    const val ACTION_UPDATESYNCSTATUS = "SimpleWeather.Droid.Wear.action.UPDATE_SYNC_STATUS"
+
+    const val ACTION_SYNCSETTINGUPDATED = "SimpleWeather.Droid.Wear.action.SYNC_SETTING_UPDATED"
+    const val ACTION_REQUESTREFRESHWEATHER =
+        "SimpleWeather.Droid.Wear.action.REQUEST_REFRESH_WEATHER"
 
     // Extras
     /**
@@ -31,7 +39,7 @@ object WearableListenerActions {
      *
      * @see WearConnectionStatus
      *
-     * @see WearableListenerManager
+     * @see WearableListenerViewModel
      */
     const val EXTRA_CONNECTIONSTATUS = "SimpleWeather.Droid.Wear.extra.CONNECTION_STATUS"
     const val EXTRA_DEVICESETUPSTATUS = "SimpleWeather.Droid.Wear.extra.DEVICE_SETUP_STATUS"

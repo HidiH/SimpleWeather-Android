@@ -1,20 +1,16 @@
 package com.thewizrd.simpleweather.wearable
 
+import android.app.Activity
 import android.content.Intent
 import com.thewizrd.common.wearable.WearConnectionStatus
 
 interface WearableListener {
-    fun onStart()
-    fun onResume()
-    fun onPause()
+    fun initActivityContext(activity: Activity)
 
-    fun openAppOnPhone(showAnimation: Boolean = true)
-    fun openPlayStoreOnPhone(showAnimation: Boolean = true)
+    fun openAppOnPhone(activity: Activity, showAnimation: Boolean = true)
+    suspend fun openPlayStore(activity: Activity, showAnimation: Boolean = true)
+    suspend fun startRemoteActivity(targetIntent: Intent, targetNodeId: String? = null): Boolean
 
     suspend fun sendSetupStatusRequest()
-    suspend fun updateConnectionStatus()
-    suspend fun checkConnectionStatus()
     suspend fun getConnectionStatus(): WearConnectionStatus
-    fun setConnectionStatus(status: WearConnectionStatus)
-    suspend fun startRemoteActivity(targetIntent: Intent, targetNodeId: String? = null)
 }

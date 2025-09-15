@@ -107,7 +107,6 @@ fun DetailsWeatherTileConfigScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val coroutineScope = rememberCoroutineScope()
     val scrollStateViewModel: LazyGridStateViewModel = viewModel(backStackEntry)
 
     var isConfigChanged by remember { mutableStateOf(false) }

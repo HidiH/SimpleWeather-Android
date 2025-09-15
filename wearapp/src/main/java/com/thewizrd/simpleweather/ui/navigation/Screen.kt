@@ -17,6 +17,11 @@ sealed class Screen(
     // Weather Preferences
     object DetailsTileEditor : Screen("detailstileeditor")
 
+    // Setup
+    object Setup : Screen("setup")
+    object SetupLocationSearch : Screen("setup_locationSearch")
+    object SetupSync : Screen("setup_sync")
+
     // Settings
     object SettingsGeneral : Screen("pref_general")
     object SettingsUnits : Screen("pref_units")

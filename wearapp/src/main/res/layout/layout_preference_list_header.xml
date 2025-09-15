@@ -17,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/list_header_horizontal_padding"
-        android:textColor="?colorOnSurfaceVariant"
-        android:textAppearance="?titleTextAppearance"
+        android:textColor="?colorOnBackground"
+        android:textAppearance="?textAppearanceTitleMedium"
         android:gravity="center"
         tools:text="Open Source Libraries" />
 

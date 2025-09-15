@@ -30,10 +30,6 @@ fun isPremiumWeatherAPI(api: String?): Boolean {
     return false
 }
 
-fun SetupActivity.startSetupSyncActivity() {
-    // no-op
-}
-
 fun SettingsActivity.SettingsFragment.navigateToPremiumFragment() {
     // no-op
 }

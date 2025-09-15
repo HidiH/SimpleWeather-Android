@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalLayoutApi::class, ExperimentalHorologistApi::class)
-
 package com.thewizrd.simpleweather.ui.weather
 
 import android.app.Activity
@@ -56,7 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -76,7 +76,6 @@ import androidx.wear.compose.material3.ProgressIndicatorDefaults
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.fillMaxRectangle
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
@@ -84,9 +83,9 @@ import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.controls.toUiModel
+import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.designer.initializeDependencies
-import com.thewizrd.shared_resources.di.localBroadcastManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ConversionMethods
@@ -100,6 +99,7 @@ import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.SettingsActivity
 import com.thewizrd.simpleweather.setup.SetupActivity
+import com.thewizrd.simpleweather.ui.components.ConfirmationOverlay
 import com.thewizrd.simpleweather.ui.components.ForecastItem
 import com.thewizrd.simpleweather.ui.components.HourlyForecastItem
 import com.thewizrd.simpleweather.ui.components.IconAlignment
@@ -111,10 +111,13 @@ import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
+import com.thewizrd.simpleweather.viewmodels.ConfirmationViewModel
+import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncState
+import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.viewmodels.WeatherNowStateModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
-import com.thewizrd.simpleweather.wearable.WearableListenerActions
+import kotlinx.coroutines.launch
 
 @Composable
 fun WeatherNowScreen(
@@ -122,7 +125,9 @@ fun WeatherNowScreen(
     scrollState: ScrollState,
     focusRequester: FocusRequester,
     wNowViewModel: WeatherNowViewModel,
+    dataSyncViewModel: WeatherDataSyncViewModel,
     uiState: WeatherNowState,
+    syncState: WeatherDataSyncState,
     weather: WeatherUiModel,
     alerts: List<WeatherAlertViewModel>,
     forecasts: List<ForecastItemViewModel>,
@@ -130,6 +135,8 @@ fun WeatherNowScreen(
     hasMinutely: Boolean
 ) {
     val stateModel = viewModel<WeatherNowStateModel>()
+    val confirmationViewModel = viewModel<ConfirmationViewModel>()
+    val confirmationData by confirmationViewModel.confirmationEventsFlow.collectAsState()
 
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
@@ -143,7 +150,7 @@ fun WeatherNowScreen(
 
     ScreenScaffold(scrollState = scrollState) {
         LoadingContent(
-            empty = uiState.isLoading && (uiState.noLocationAvailable || weather.location.isNullOrEmpty()) || scrollLoading,
+            empty = (uiState.isLoading || syncState.isSyncInProgress) && (uiState.noLocationAvailable || weather.location.isNullOrEmpty()) || scrollLoading,
             emptyContent = {
                 Box(
                     modifier = Modifier.fillMaxRectangle(),
@@ -154,7 +161,7 @@ fun WeatherNowScreen(
                     )
                 }
             },
-            loading = uiState.isLoading,
+            loading = (uiState.isLoading || syncState.isSyncInProgress),
             onRefresh = {
                 wNowViewModel.refreshWeather(true)
             }
@@ -174,7 +181,7 @@ fun WeatherNowScreen(
                     if (uiState.noLocationAvailable) {
                         NoLocationsPrompt(activity)
                     }
-                    if (uiState.showDisconnectedView) {
+                    if (syncState.showDisconnectedView) {
                         DisconnectionAlert()
                     }
                     if (alerts.isNotEmpty()) {
@@ -263,7 +270,12 @@ fun WeatherNowScreen(
                     ChangeLocationButton(activity = activity)
                     SettingsButton(activity = activity)
                     if (!BuildConfig.IS_NONGMS) {
-                        OpenOnPhoneButton()
+                        OpenOnPhoneButton(
+                            onOpenOnPhone = {
+                                dataSyncViewModel.openAppOnPhone(activity, showAnimation = false)
+                                confirmationViewModel.showOpenOnPhone()
+                            }
+                        )
                     }
                 }
             }
@@ -273,6 +285,35 @@ fun WeatherNowScreen(
                     focusRequester.requestFocus()
                 }
             }
+        }
+    }
+
+    ConfirmationOverlay(
+        confirmationData = confirmationData,
+        onTimeout = { confirmationViewModel.clearFlow() }
+    )
+
+    LifecycleResumeEffect(activity) {
+        val job = lifecycleOwner.lifecycleScope.launch {
+            dataSyncViewModel.errorMessagesFlow.collect { error ->
+                when (error) {
+                    is ErrorMessage.Resource -> {
+                        confirmationViewModel.showFailure(context.getString(error.stringId))
+                    }
+
+                    is ErrorMessage.String -> {
+                        confirmationViewModel.showFailure(error.message)
+                    }
+
+                    is ErrorMessage.WeatherError -> {
+                        confirmationViewModel.showFailure(error.exception.message)
+                    }
+                }
+            }
+        }
+
+        onPauseOrDispose {
+            job.cancel()
         }
     }
 
@@ -366,6 +407,7 @@ private fun AlertsBox(navController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ColumnScope.WeatherLocation(
     locationName: String? = WeatherIcons.EM_DASH,
@@ -386,13 +428,17 @@ private fun ColumnScope.WeatherLocation(
     ) {
         if (isGPSLocation) {
             Icon(
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier
+                    .size(18.dp)
+                    .align(Alignment.CenterVertically),
                 painter = painterResource(id = R.drawable.ic_place_white_24dp),
                 contentDescription = null
             )
         }
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically),
             text = locationName ?: WeatherIcons.EM_DASH,
             textAlign = TextAlign.Center,
             fontSize = 16.sp,
@@ -824,16 +870,14 @@ private fun SettingsButton(
 }
 
 @Composable
-private fun OpenOnPhoneButton() {
+private fun OpenOnPhoneButton(
+    onOpenOnPhone: () -> Unit
+) {
     NavigationButton(
         label = stringResource(id = R.string.action_openonphone),
-        iconDrawableId = R.drawable.common_full_open_on_phone
-    ) {
-        localBroadcastManager.sendBroadcast(
-            Intent(WearableListenerActions.ACTION_OPENONPHONE)
-                .putExtra(WearableListenerActions.EXTRA_SHOWANIMATION, true)
-        )
-    }
+        iconDrawableId = R.drawable.common_full_open_on_phone,
+        onClick = onOpenOnPhone
+    )
 }
 
 @Composable

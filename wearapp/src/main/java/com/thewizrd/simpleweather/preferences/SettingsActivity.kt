@@ -1,11 +1,9 @@
 package com.thewizrd.simpleweather.preferences
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.Intent.FilterComparison
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
@@ -17,11 +15,13 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.arch.core.util.Function
 import androidx.core.location.LocationManagerCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -36,6 +36,7 @@ import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
 import com.thewizrd.common.helpers.getBackgroundLocationRationale
 import com.thewizrd.common.helpers.locationPermissionEnabled
+import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.wearable.WearConnectionStatus
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.controls.ProviderEntry
@@ -69,10 +70,9 @@ import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.preferences.iconpreference.WearIconProviderPickerFragment
 import com.thewizrd.simpleweather.preferences.radiopreference.CandidateInfo
 import com.thewizrd.simpleweather.preferences.radiopreference.RadioButtonPreference
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_SENDCONNECTIONSTATUS
+import com.thewizrd.simpleweather.viewmodels.SettingsViewModel
 import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS
 import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_CONNECTIONSTATUS
-import com.thewizrd.simpleweather.wearable.WearableListenerManager
 import com.thewizrd.simpleweather.wearable.complications.WeatherComplicationHelper
 import com.thewizrd.simpleweather.wearable.tiles.WeatherTileHelper
 import com.thewizrd.weather_api.weatherModule
@@ -159,9 +159,7 @@ class SettingsActivity : UserLocaleActivity() {
         private val intentQueue = mutableSetOf<FilterComparison>()
 
         // Wearable status
-        private var mConnectionStatus = WearConnectionStatus.DISCONNECTED
-        private var statusReceiver: BroadcastReceiver? = null
-        private lateinit var wearListenerMgr: WearableListenerManager
+        private val settingsViewModel: SettingsViewModel by viewModels()
 
         private lateinit var locationPermissionLauncher: LocationPermissionLauncher
 
@@ -172,18 +170,6 @@ class SettingsActivity : UserLocaleActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-
-            wearListenerMgr = WearableListenerManager(
-                requireActivity(),
-                object : BroadcastReceiver() {
-                    override fun onReceive(context: Context, intent: Intent) {
-                        if (ACTION_SENDCONNECTIONSTATUS == intent.action) {
-                            lifecycleScope.launch { wearListenerMgr.updateConnectionStatus() }
-                        }
-                    }
-                },
-                IntentFilter(ACTION_SENDCONNECTIONSTATUS)
-            )
 
             locationPermissionLauncher = LocationPermissionLauncher(
                 this,
@@ -215,6 +201,28 @@ class SettingsActivity : UserLocaleActivity() {
             requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         }
 
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                settingsViewModel.errorMessagesFlow.collect { error ->
+                    when (error) {
+                        is ErrorMessage.Resource -> {
+                            showToast(error.stringId, Toast.LENGTH_SHORT)
+                        }
+
+                        is ErrorMessage.String -> {
+                            showToast(error.message, Toast.LENGTH_SHORT)
+                        }
+
+                        is ErrorMessage.WeatherError -> {
+                            showToast(error.exception.message, Toast.LENGTH_SHORT)
+                        }
+                    }
+                }
+            }
+        }
+
         private fun checkBackPressedCallback() {
             onBackPressedCallback.isEnabled = isProviderAndKeyInvalid()
         }
@@ -225,15 +233,8 @@ class SettingsActivity : UserLocaleActivity() {
                     weatherModule.weatherManager.isKeyRequired(providerPref.value)
         }
 
-        override fun onStart() {
-            wearListenerMgr.onStart()
-            super.onStart()
-        }
-
         override fun onResume() {
             super.onResume()
-            wearListenerMgr.onResume()
-
             AnalyticsLogger.logEvent("SettingsFragment: onResume")
 
             // Register listener
@@ -241,27 +242,23 @@ class SettingsActivity : UserLocaleActivity() {
             appLib.registerAppSharedPreferenceListener(this)
 
             if (!BuildConfig.IS_NONGMS) {
-                statusReceiver = object : BroadcastReceiver() {
-                    override fun onReceive(context: Context, intent: Intent) {
-                        if (ACTION_UPDATECONNECTIONSTATUS == intent.action) {
-                            mConnectionStatus = WearConnectionStatus.valueOf(
-                                intent.getIntExtra(
-                                    EXTRA_CONNECTIONSTATUS,
-                                    0
+                lifecycleScope.launch {
+                    settingsViewModel.eventFlow.collect { (eventType, data) ->
+                        when (eventType) {
+                            ACTION_UPDATECONNECTIONSTATUS -> {
+                                val status = WearConnectionStatus.valueOf(
+                                    data.getInt(
+                                        EXTRA_CONNECTIONSTATUS,
+                                        0
+                                    )
                                 )
-                            )
-                            updateConnectionPref()
+                                updateConnectionPref(status)
+                            }
                         }
                     }
                 }
 
-                localBroadcastManager.registerReceiver(
-                    statusReceiver!!,
-                    IntentFilter(ACTION_UPDATECONNECTIONSTATUS)
-                )
-                localBroadcastManager.sendBroadcast(
-                    Intent(ACTION_SENDCONNECTIONSTATUS)
-                )
+                settingsViewModel.requestConnectionStatus()
             }
 
             updateBGLocationPrefState()
@@ -285,10 +282,6 @@ class SettingsActivity : UserLocaleActivity() {
             // Unregister listener
             appLib.unregisterAppSharedPreferenceListener(this)
             appLib.registerAppSharedPreferenceListener()
-
-            if (!BuildConfig.IS_NONGMS) {
-                statusReceiver?.run { localBroadcastManager.unregisterReceiver(this) }
-            }
 
             intentQueue.forEach { filter ->
                 when (filter.intent.action) {
@@ -341,7 +334,6 @@ class SettingsActivity : UserLocaleActivity() {
 
             intentQueue.clear()
 
-            wearListenerMgr.onPause()
             super.onPause()
         }
 
@@ -747,7 +739,9 @@ class SettingsActivity : UserLocaleActivity() {
         }
 
         private val connStatusPrefClickListener = Preference.OnPreferenceClickListener {
-            wearListenerMgr.openPlayStoreOnPhone(true)
+            lifecycleScope.launch {
+                settingsViewModel.openPlayStore(requireActivity(), true)
+            }
             true
         }
 
@@ -757,7 +751,7 @@ class SettingsActivity : UserLocaleActivity() {
 
             lifecycleScope.launch {
                 runCatching {
-                    wearListenerMgr.startRemoteActivity(intentAndroid)
+                    settingsViewModel.startRemoteActivity(intentAndroid)
                     showConfirmationOverlay(true)
                 }.onFailure {
                     if (it !is CancellationException) {
@@ -822,8 +816,8 @@ class SettingsActivity : UserLocaleActivity() {
             }
         }
 
-        private fun updateConnectionPref() {
-            when (mConnectionStatus) {
+        private fun updateConnectionPref(status: WearConnectionStatus) {
+            when (status) {
                 WearConnectionStatus.DISCONNECTED -> {
                     connStatusPref.setSummary(R.string.status_disconnected)
                     connStatusPref.onPreferenceClickListener = null

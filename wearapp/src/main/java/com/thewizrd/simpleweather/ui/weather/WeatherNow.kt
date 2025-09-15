@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.wear.compose.material3.AppScaffold
@@ -28,6 +29,7 @@ import com.thewizrd.simpleweather.ui.theme.activityViewModel
 import com.thewizrd.simpleweather.ui.time.ZonedTimeSource
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.viewmodels.ForecastPanelsViewModel
+import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import kotlinx.coroutines.flow.map
 import kotlin.math.max
@@ -41,9 +43,11 @@ fun WeatherNow(
     val wNowViewModel = activityViewModel<WeatherNowViewModel>()
     val alertsView = activityViewModel<WeatherAlertsViewModel>()
     val forecastsPanelView = activityViewModel<ForecastPanelsViewModel>()
+    val dataSyncViewModel = viewModel<WeatherDataSyncViewModel>()
 
     val uiState by wNowViewModel.uiState.collectAsState()
     val weather by wNowViewModel.weather.collectAsState()
+    val dataSyncState by dataSyncViewModel.uiState.collectAsState()
 
     val alerts by alertsView.getAlerts().collectAsState()
     val forecasts by remember(forecastsPanelView.getForecasts()) {
@@ -100,7 +104,9 @@ fun WeatherNow(
                         scrollState,
                         focusRequester,
                         wNowViewModel,
+                        dataSyncViewModel,
                         uiState,
+                        dataSyncState,
                         weather,
                         alerts,
                         forecasts,

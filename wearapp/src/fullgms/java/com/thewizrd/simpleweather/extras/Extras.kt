@@ -11,9 +11,6 @@ import com.thewizrd.shared_resources.di.localBroadcastManager
 import com.thewizrd.simpleweather.FirebaseConfigurator
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.SettingsActivity
-import com.thewizrd.simpleweather.setup.SetupActivity
-import com.thewizrd.simpleweather.setup.SetupActivity.Companion.REQUEST_CODE_SYNC_ACTIVITY
-import com.thewizrd.simpleweather.setup.SetupSyncActivity
 import com.thewizrd.simpleweather.wearable.WearableListenerActions
 
 fun initializeExtras() {
@@ -34,13 +31,6 @@ fun isWeatherAPISupported(api: String?): Boolean {
 
 fun isPremiumWeatherAPI(api: String?): Boolean {
     return extrasModule.isPremiumWeatherAPI(api)
-}
-
-fun SetupActivity.startSetupSyncActivity() {
-    startActivityForResult(
-        Intent(this, SetupSyncActivity::class.java),
-        REQUEST_CODE_SYNC_ACTIVITY
-    )
 }
 
 fun SettingsActivity.SettingsFragment.navigateToPremiumFragment() {

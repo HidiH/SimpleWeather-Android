@@ -1,148 +1,116 @@
-package com.thewizrd.simpleweather.wearable
+package com.thewizrd.simpleweather.viewmodels
 
-import android.content.BroadcastReceiver
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Application
+import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
+import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.concurrent.futures.await
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.wear.phone.interactions.PhoneTypeHelper
 import androidx.wear.remote.interactions.RemoteActivityHelper
-import androidx.wear.widget.ConfirmationOverlay
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.wearable.CapabilityClient
-import com.google.android.gms.wearable.CapabilityClient.OnCapabilityChangedListener
 import com.google.android.gms.wearable.CapabilityInfo
-import com.google.android.gms.wearable.MessageClient.OnMessageReceivedListener
+import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.Wearable
 import com.google.android.gms.wearable.WearableStatusCodes
+import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.wearable.WearConnectionStatus
 import com.thewizrd.common.wearable.WearableHelper
-import com.thewizrd.shared_resources.di.localBroadcastManager
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.store.PlayStoreUtils
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.helpers.showConfirmationOverlay
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_CONNECTIONSTATUS
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_DEVICESETUPSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListener
+import com.thewizrd.simpleweather.wearable.WearableListenerActions
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class WearableListenerManager(
-    protected val activityContext: ComponentActivity,
-    protected val broadcastReceiver: BroadcastReceiver,
-    protected val intentFilter: IntentFilter
-) : WearableListener, OnMessageReceivedListener, OnCapabilityChangedListener {
-    companion object {
-        /*
-         * There should only ever be one phone in a node set (much less w/ the correct capability), so
-         * I am just grabbing the first one (which should be the only one).
-         */
-        private fun pickBestNodeId(nodes: Collection<Node>): Node? {
-            var bestNode: Node? = null
+abstract class WearableListenerViewModel(private val app: Application) : AndroidViewModel(app),
+    WearableListener, MessageClient.OnMessageReceivedListener,
+    CapabilityClient.OnCapabilityChangedListener {
+    protected val appContext: Context
+        get() = app.applicationContext
 
-            // Find a nearby node/phone or pick one arbitrarily. Realistically, there is only one phone.
-            for (node in nodes) {
-                if (node.isNearby) {
-                    return node
-                }
-                bestNode = node
-            }
-            return bestNode
-        }
-    }
-
-    private var isReceiverRegistered = false
+    @SuppressLint("StaticFieldLeak")
+    protected var activityContext: Activity? = null
 
     @Volatile
-    private var mPhoneNodeWithApp: Node? = null
+    protected var mPhoneNodeWithApp: Node? = null
     private var mConnectionStatus = WearConnectionStatus.CONNECTING
     var isAcceptingDataUpdates = false
 
-    private val lifecycleScope = activityContext.lifecycleScope
+    protected val remoteActivityHelper: RemoteActivityHelper = RemoteActivityHelper(appContext)
 
-    private val remoteActivityHelper = RemoteActivityHelper(activityContext)
+    protected val _eventsFlow = MutableSharedFlow<WearableEvent>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val eventFlow: SharedFlow<WearableEvent> = _eventsFlow
 
-    /**
-     * Register listeners before fragments are started
-     */
-    override fun onStart() {
-        Wearable.getCapabilityClient(activityContext)
+    protected val _channelEventsFlow = MutableSharedFlow<WearableEvent>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val channelEventsFlow: SharedFlow<WearableEvent> = _channelEventsFlow
+
+    protected val _errorMessagesFlow = MutableSharedFlow<ErrorMessage>(replay = 0)
+    val errorMessagesFlow: SharedFlow<ErrorMessage> = _errorMessagesFlow
+
+    init {
+        Wearable.getCapabilityClient(appContext)
             .addListener(this, WearableHelper.CAPABILITY_PHONE_APP)
-        Wearable.getMessageClient(activityContext).addListener(this)
-
-        if (!isReceiverRegistered) {
-            localBroadcastManager.registerReceiver(broadcastReceiver, intentFilter)
-        }
-
-        lifecycleScope.launch { checkConnectionStatus() }
+        Wearable.getMessageClient(appContext).addListener(this)
     }
 
-    override fun onResume() {
-        if (!isReceiverRegistered) {
-            localBroadcastManager.registerReceiver(broadcastReceiver, intentFilter)
-        }
+    override fun initActivityContext(activity: Activity) {
+        activityContext = activity
     }
 
-    /**
-     * Unregister listeners before pause
-     */
-    override fun onPause() {
-        localBroadcastManager.unregisterReceiver(broadcastReceiver)
-        isReceiverRegistered = false
-
-        Wearable.getCapabilityClient(activityContext)
+    override fun onCleared() {
+        super.onCleared()
+        Wearable.getCapabilityClient(appContext)
             .removeListener(this, WearableHelper.CAPABILITY_PHONE_APP)
-        Wearable.getMessageClient(activityContext).removeListener(this)
+        Wearable.getMessageClient(appContext).removeListener(this)
+        activityContext = null
     }
 
-    override fun openAppOnPhone(showAnimation: Boolean) {
-        lifecycleScope.launch {
+    override fun openAppOnPhone(activity: Activity, showAnimation: Boolean) {
+        viewModelScope.launch {
             connect()
 
             if (mPhoneNodeWithApp == null) {
-                Toast.makeText(
-                    activityContext,
-                    R.string.status_node_unavailable,
-                    Toast.LENGTH_SHORT
-                ).show()
+                _errorMessagesFlow.tryEmit(ErrorMessage.Resource(R.string.status_node_unavailable))
 
-                when (PhoneTypeHelper.getPhoneDeviceType(activityContext)) {
-                    PhoneTypeHelper.DEVICE_TYPE_ANDROID -> {
-                        val intentAndroid = Intent(Intent.ACTION_VIEW)
-                            .addCategory(Intent.CATEGORY_BROWSABLE)
-                            .setData(PlayStoreUtils.getPlayStoreURI())
-
-                        runCatching {
-                            remoteActivityHelper.startRemoteActivity(intentAndroid)
-                                .await()
-
-                            activityContext.showConfirmationOverlay(true)
-                        }.onFailure {
-                            if (it !is CancellationException) {
-                                activityContext.showConfirmationOverlay(false)
-                            }
-                        }
+                when (PhoneTypeHelper.Companion.getPhoneDeviceType(appContext)) {
+                    PhoneTypeHelper.Companion.DEVICE_TYPE_ANDROID -> {
+                        openPlayStore(activity, showAnimation)
                     }
+
+                    PhoneTypeHelper.Companion.DEVICE_TYPE_IOS -> {
+                        _errorMessagesFlow.tryEmit(ErrorMessage.Resource(R.string.status_node_notsupported))
+                    }
+
                     else -> {
-                        Toast.makeText(
-                            activityContext,
-                            R.string.status_node_notsupported,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        _errorMessagesFlow.tryEmit(ErrorMessage.Resource(R.string.status_node_notsupported))
                     }
                 }
             } else {
@@ -153,36 +121,49 @@ class WearableListenerManager(
                     ByteArray(0)
                 )
 
-                val success = result != -1
-
                 if (showAnimation) {
-                    launch(Dispatchers.Main) {
-                        ConfirmationOverlay()
-                            .setType(if (success) ConfirmationOverlay.OPEN_ON_PHONE_ANIMATION else ConfirmationOverlay.FAILURE_ANIMATION)
-                            .showOn(activityContext)
-                    }
+                    activity.showConfirmationOverlay(result != -1)
                 }
+
+                _eventsFlow.tryEmit(
+                    WearableEvent(
+                        WearableListenerActions.ACTION_OPENONPHONE,
+                        Bundle().apply {
+                            putBoolean(WearableListenerActions.EXTRA_SUCCESS, result != -1)
+                            putBoolean(WearableListenerActions.EXTRA_SHOWANIMATION, showAnimation)
+                        })
+                )
             }
         }
     }
 
-    override fun openPlayStoreOnPhone(showAnimation: Boolean) {
+    override suspend fun openPlayStore(activity: Activity, showAnimation: Boolean) {
+        // Open store on remote device
         val intentAndroid = Intent(Intent.ACTION_VIEW)
             .addCategory(Intent.CATEGORY_BROWSABLE)
             .setData(PlayStoreUtils.getPlayStoreURI())
 
-        lifecycleScope.launch {
-            runCatching {
-                startRemoteActivity(intentAndroid)
-                if (showAnimation) {
-                    activityContext.showConfirmationOverlay(true)
-                }
-            }.onFailure {
-                if (showAnimation && it !is CancellationException) {
-                    activityContext.showConfirmationOverlay(false)
-                }
+        runCatching {
+            remoteActivityHelper.startRemoteActivity(intentAndroid)
+                .await()
+
+            if (showAnimation) {
+                activity.showConfirmationOverlay(true)
+            }
+        }.onFailure {
+            if (it !is CancellationException && showAnimation) {
+                activity.showConfirmationOverlay(false)
             }
         }
+    }
+
+    override suspend fun startRemoteActivity(targetIntent: Intent, targetNodeId: String?): Boolean {
+        return runCatching {
+            remoteActivityHelper.startRemoteActivity(targetIntent, targetNodeId).await()
+            true
+        }.onFailure {
+            Logger.writeLine(Log.ERROR, it, "Error starting remote activity")
+        }.getOrDefault(false)
     }
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
@@ -190,17 +171,16 @@ class WearableListenerManager(
             if (messageEvent.path == WearableHelper.IsSetupPath) {
                 val data = messageEvent.data
                 val isDeviceSetup = data[0] != 0.toByte()
-                localBroadcastManager.sendBroadcast(
-                    Intent(WearableHelper.IsSetupPath)
-                        .putExtra(EXTRA_DEVICESETUPSTATUS, isDeviceSetup)
-                        .putExtra(EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
-                )
+                _eventsFlow.tryEmit(WearableEvent(WearableHelper.IsSetupPath, Bundle().apply {
+                    putBoolean(WearableListenerActions.EXTRA_DEVICESETUPSTATUS, isDeviceSetup)
+                    putInt(WearableListenerActions.EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
+                }))
             }
         }
     }
 
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-        lifecycleScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.Default) {
             val connectedNodes = getConnectedNodes()
             mPhoneNodeWithApp = pickBestNodeId(capabilityInfo.nodes)
 
@@ -235,21 +215,27 @@ class WearableListenerManager(
                 }
             }
 
-            localBroadcastManager.sendBroadcast(
-                Intent(ACTION_UPDATECONNECTIONSTATUS)
-                    .putExtra(EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
+            _eventsFlow.tryEmit(
+                WearableEvent(
+                    WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS,
+                    Bundle().apply {
+                        putInt(
+                            WearableListenerActions.EXTRA_CONNECTIONSTATUS,
+                            mConnectionStatus.value
+                        )
+                    })
             )
         }
     }
 
     override suspend fun sendSetupStatusRequest() {
         if (!connect()) {
-            localBroadcastManager.sendBroadcast(Intent(WearableHelper.ErrorPath))
+            _eventsFlow.tryEmit(WearableEvent(WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS))
             return
         }
 
         try {
-            Wearable.getMessageClient(activityContext)
+            Wearable.getMessageClient(appContext)
                 .sendMessage(mPhoneNodeWithApp!!.id, WearableHelper.IsSetupPath, ByteArray(0))
                 .await()
         } catch (e: Exception) {
@@ -257,16 +243,19 @@ class WearableListenerManager(
         }
     }
 
-    override suspend fun updateConnectionStatus() {
+    protected suspend fun updateConnectionStatus() {
         checkConnectionStatus()
 
-        localBroadcastManager.sendBroadcast(
-            Intent(ACTION_UPDATECONNECTIONSTATUS)
-                .putExtra(EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
+        _eventsFlow.tryEmit(
+            WearableEvent(
+                WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS,
+                Bundle().apply {
+                    putInt(WearableListenerActions.EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
+                })
         )
     }
 
-    override suspend fun checkConnectionStatus() {
+    protected suspend fun checkConnectionStatus() {
         val connectedNodes = getConnectedNodes()
         mPhoneNodeWithApp = checkIfPhoneHasApp()
 
@@ -279,7 +268,7 @@ class WearableListenerManager(
              *
              * Verify if we're connected to any nodes; if not, we're truly disconnected
              */
-            mConnectionStatus = if (connectedNodes.isNullOrEmpty()) {
+            mConnectionStatus = if (connectedNodes.isEmpty()) {
                 WearConnectionStatus.DISCONNECTED
             } else {
                 WearConnectionStatus.APPNOTINSTALLED
@@ -307,10 +296,11 @@ class WearableListenerManager(
         return mConnectionStatus
     }
 
-    private suspend fun checkIfPhoneHasApp(): Node? = withContext(Dispatchers.IO) {
+    protected suspend fun checkIfPhoneHasApp(): Node? {
         var node: Node? = null
+
         try {
-            val capabilityInfo = Wearable.getCapabilityClient(activityContext)
+            val capabilityInfo = Wearable.getCapabilityClient(appContext)
                 .getCapability(
                     WearableHelper.CAPABILITY_PHONE_APP,
                     CapabilityClient.FILTER_ALL
@@ -320,19 +310,37 @@ class WearableListenerManager(
         } catch (e: Exception) {
             logError(e)
         }
-        return@withContext node
+
+        return node
     }
 
-    private suspend fun connect(): Boolean {
+    protected suspend fun connect(): Boolean {
         if (mPhoneNodeWithApp == null)
             mPhoneNodeWithApp = checkIfPhoneHasApp()
 
         return mPhoneNodeWithApp != null
     }
 
+    /*
+     * There should only ever be one phone in a node set (much less w/ the correct capability), so
+     * I am just grabbing the first one (which should be the only one).
+     */
+    protected fun pickBestNodeId(nodes: Collection<Node>): Node? {
+        var bestNode: Node? = null
+
+        // Find a nearby node/phone or pick one arbitrarily. Realistically, there is only one phone.
+        for (node in nodes) {
+            if (node.isNearby) {
+                return node
+            }
+            bestNode = node
+        }
+        return bestNode
+    }
+
     private suspend fun getConnectedNodes(): List<Node> {
         try {
-            return Wearable.getNodeClient(activityContext)
+            return Wearable.getNodeClient(appContext)
                 .connectedNodes
                 .await()
         } catch (e: Exception) {
@@ -342,9 +350,9 @@ class WearableListenerManager(
         return emptyList()
     }
 
-    private suspend fun sendMessage(nodeID: String, path: String, data: ByteArray?): Int? {
+    protected suspend fun sendMessage(nodeID: String, path: String, data: ByteArray?): Int? {
         try {
-            return Wearable.getMessageClient(activityContext)
+            return Wearable.getMessageClient(appContext)
                 .sendMessage(nodeID, path, data).await()
         } catch (e: Exception) {
             if (e is ApiException || e.cause is ApiException) {
@@ -352,9 +360,15 @@ class WearableListenerManager(
                 if (apiException?.statusCode == WearableStatusCodes.TARGET_NODE_NOT_CONNECTED) {
                     mConnectionStatus = WearConnectionStatus.DISCONNECTED
 
-                    localBroadcastManager.sendBroadcast(
-                        Intent(ACTION_UPDATECONNECTIONSTATUS)
-                            .putExtra(EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
+                    _eventsFlow.tryEmit(
+                        WearableEvent(
+                            WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS,
+                            Bundle().apply {
+                                putInt(
+                                    WearableListenerActions.EXTRA_CONNECTIONSTATUS,
+                                    mConnectionStatus.value
+                                )
+                            })
                     )
                 }
             }
@@ -366,17 +380,15 @@ class WearableListenerManager(
     }
 
     @Throws(ApiException::class)
-    private suspend fun sendPing(nodeID: String) = withContext(Dispatchers.IO) {
+    protected suspend fun sendPing(nodeID: String) {
         try {
-            Wearable.getMessageClient(activityContext)
+            Wearable.getMessageClient(appContext)
                 .sendMessage(nodeID, WearableHelper.PingPath, null)
                 .await()
         } catch (e: Exception) {
-            if (e is ApiException) {
-                throw e
-            }
-            if (e.cause is ApiException) {
-                throw e.cause as ApiException
+            if (e is ApiException || e.cause is ApiException) {
+                val apiException = e.cause as? ApiException ?: e as ApiException
+                throw apiException
             }
             logError(e)
         }
@@ -396,21 +408,20 @@ class WearableListenerManager(
             return
         }
 
-        Timber.e(e)
+        Timber.Forest.e(e)
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.Companion.PACKAGE_PRIVATE)
     @RestrictTo(RestrictTo.Scope.SUBCLASSES)
-    override fun setConnectionStatus(status: WearConnectionStatus) {
+    protected fun setConnectionStatus(status: WearConnectionStatus) {
         mConnectionStatus = status
 
-        localBroadcastManager.sendBroadcast(
-            Intent(ACTION_UPDATECONNECTIONSTATUS)
-                .putExtra(EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
+        _eventsFlow.tryEmit(
+            WearableEvent(
+                WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS,
+                Bundle().apply {
+                    putInt(WearableListenerActions.EXTRA_CONNECTIONSTATUS, mConnectionStatus.value)
+                })
         )
-    }
-
-    override suspend fun startRemoteActivity(targetIntent: Intent, targetNodeId: String?) {
-        remoteActivityHelper.startRemoteActivity(targetIntent, targetNodeId).await()
     }
 }
