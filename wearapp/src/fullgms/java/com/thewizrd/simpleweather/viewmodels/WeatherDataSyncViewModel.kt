@@ -35,11 +35,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import timber.log.Timber
 
-data class WeatherDataSyncState(
-    val showDisconnectedView: Boolean = false,
-    val isSyncInProgress: Boolean = false
-)
-
 class WeatherDataSyncViewModel(app: Application) : WearableListenerViewModel(app),
     SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {

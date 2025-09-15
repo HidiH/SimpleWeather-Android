@@ -168,7 +168,7 @@ private fun SetupScreen(
                         icon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_search_black_24dp),
-                                contentDescription = stringResource(id = R.string.places_autocomplete_search_hint)
+                                contentDescription = stringResource(id = android.R.string.search_go)
                             )
                         }
                     )

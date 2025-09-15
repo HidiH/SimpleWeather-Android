@@ -126,6 +126,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
+    nongmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$kotlinx_version"
 
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.core:core-splashscreen:$coresplash_version"

@@ -1,15 +1,35 @@
-package com.thewizrd.simpleweather.wearable
+package com.thewizrd.simpleweather.viewmodels
 
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
+import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.wearable.WearConnectionStatus
 import com.thewizrd.simpleweather.wearable.WearableListener
-import com.thewizrd.simpleweather.wearable.WearableListenerActions
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 abstract class WearableListenerViewModel(private val app: Application) : AndroidViewModel(app),
     WearableListener {
+    protected val _eventsFlow = MutableSharedFlow<WearableEvent>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val eventFlow: SharedFlow<WearableEvent> = _eventsFlow
+
+    protected val _channelEventsFlow = MutableSharedFlow<WearableEvent>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val channelEventsFlow: SharedFlow<WearableEvent> = _channelEventsFlow
+
+    protected val _errorMessagesFlow = MutableSharedFlow<ErrorMessage>(replay = 0)
+    val errorMessagesFlow: SharedFlow<ErrorMessage> = _errorMessagesFlow
+
     override fun initActivityContext(activity: Activity) {
         // no-op
     }
@@ -18,7 +38,7 @@ abstract class WearableListenerViewModel(private val app: Application) : Android
         // no-op
     }
 
-    override fun openPlayStore(activity: Activity, showAnimation: Boolean) {
+    override suspend fun openPlayStore(activity: Activity, showAnimation: Boolean) {
         // no-op
     }
 
@@ -28,6 +48,10 @@ abstract class WearableListenerViewModel(private val app: Application) : Android
 
     override suspend fun sendSetupStatusRequest() {
         // no-op
+    }
+
+    protected suspend fun updateConnectionStatus() {
+
     }
 
     override suspend fun getConnectionStatus(): WearConnectionStatus =
