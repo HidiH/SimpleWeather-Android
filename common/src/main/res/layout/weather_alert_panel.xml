@@ -14,7 +14,7 @@
 
     <merge
         tools:parentTag="android.widget.FrameLayout"
-        tools:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        tools:theme="@style/Theme.Material3Expressive.DayNight.NoActionBar">
 
         <FrameLayout
             android:id="@+id/body_card"

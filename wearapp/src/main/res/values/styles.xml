@@ -31,7 +31,7 @@
         <item name="colorPrimaryInverse">@color/md_theme_dark_primaryInverse</item>
     </style>
 
-    <style name="Base.AppTheme.Bridge" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Base.AppTheme.Bridge" parent="Theme.Material3Expressive.Dark.NoActionBar">
         <!-- Text styles -->
         <item name="android:textAppearance">@style/TextAppearance.Roboto</item>
         <item name="android:textAppearanceInverse">@style/TextAppearance.Roboto.Inverse</item>
@@ -61,7 +61,6 @@
         <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Roboto.HeadlineSmall</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.Roboto.TitleLarge</item>
         <item name="textAppearanceHeadline6">@style/TextAppearance.Roboto.Headline6</item>
-        <item name="textAppearanceTitleMediumLarge">?textAppearanceHeadline6</item>
         <item name="textAppearanceTitleMedium">@style/TextAppearance.Roboto.TitleMedium</item>
         <item name="textAppearanceTitleSmall">@style/TextAppearance.Roboto.TitleSmall</item>
         <item name="textAppearanceBodyExtraSmall">@style/TextAppearance.Roboto.BodyExtraSmall</item>
@@ -83,8 +82,6 @@
         <item name="textAppearanceListItemSecondary">
             @style/TextAppearance.Roboto.ListItemSecondary
         </item>
-
-        <item name="titleTextAppearance">@style/TextAppearance.Roboto.Title</item>
 
         <!-- ShapeAppearance Attributes -->
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Material.SmallComponent
@@ -338,11 +335,6 @@
         <item name="android:fontFamily">@font/roboto_flex</item>
         <item name="fontFamily">@font/roboto_flex</item>
         <item name="android:textSize">14sp</item>
-    </style>
-
-    <style name="TextAppearance.Roboto.Title" parent="TextAppearance.AppCompat.Title">
-        <item name="android:fontFamily">@font/roboto_flex</item>
-        <item name="fontFamily">@font/roboto_flex</item>
     </style>
 
     <!-- System Typography -->

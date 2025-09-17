@@ -18,7 +18,7 @@
         android:layout_width="@dimen/hr_forecast_item_width"
         android:layout_height="@dimen/hr_forecast_item_height"
         android:background="@drawable/rounded_item_background"
-        tools:theme="@style/Theme.Material3.DayNight">
+        tools:theme="@style/Theme.Material3Expressive.DayNight">
 
         <com.thewizrd.common.controls.TextViewWeatherIconDrawableCompat
             android:id="@+id/forecast_extra_pop"

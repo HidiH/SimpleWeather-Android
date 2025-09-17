@@ -10,7 +10,7 @@
         android:fillViewport="true"
         tools:context=".setup.SetupActivity"
         tools:background="?colorPrimarySurface"
-        tools:theme="@style/Theme.Material3.DayNight">
+        tools:theme="@style/Theme.Material3Expressive.DayNight">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

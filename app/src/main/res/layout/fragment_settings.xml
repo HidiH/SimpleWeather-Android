@@ -15,7 +15,7 @@
         android:fitsSystemWindows="@bool/enable_fitsSystemWindows"
         app:liftOnScroll="true"
         tools:stateListAnimator="@null"
-        tools:theme="@style/Theme.Material3.DayNight">
+        tools:theme="@style/Theme.Material3Expressive.DayNight">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -24,7 +24,8 @@
             app:layout_collapseMode="pin"
             app:navigationIcon="?attr/homeAsUpIndicator"
             android:theme="@style/ToolbarSurfaceTheme"
-            app:title="@string/title_activity_settings" />
+            app:title="@string/title_activity_settings"
+            app:titleTextAppearance="@style/TextAppearance.SimpleWeather.ToolbarTitle" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

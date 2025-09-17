@@ -43,6 +43,7 @@
                 app:navigationIconTint="?attr/colorOnSurface"
                 app:title="@{!StringUtils.isNullOrWhitespace(viewModel.weather.location) ? viewModel.weather.location : @string/title_activity_weather_now}"
                 app:titleCentered="true"
+                app:titleTextAppearance="@style/TextAppearance.SimpleWeather.ToolbarTitle"
                 app:subtitleCentered="true"
                 app:subtitleTextAppearance="?textAppearanceTitleSmall"
                 tools:navigationIcon="@drawable/ic_place_white_24dp"

@@ -35,21 +35,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="24dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="0dp"
         android:clipToPadding="false"
         android:scrollbars="none">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            style="@style/Widget.Material3.MaterialButtonGroup.Connected"
+            android:id="@+id/button_group"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
-            app:singleLine="true"
+            app:overflowMode="none"
             app:singleSelection="true"
-            app:selectionRequired="true"
-            app:chipSpacing="0dp"
-            app:chipSpacingHorizontal="0dp"
-            app:chipSpacingVertical="0dp"
-            app:itemSpacing="0dp" />
+            app:selectionRequired="true" />
 
     </HorizontalScrollView>
 

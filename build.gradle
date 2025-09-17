@@ -43,7 +43,7 @@ buildscript {
         androidx_truth_version = '1.7.0'
         google_truth_version = '1.4.5'
 
-        material_version = '1.13.0'
+        material_version = '1.14.0-alpha04'
 
         compose_compiler_version = '1.5.15'
         compose_bom_version = '2025.09.00'

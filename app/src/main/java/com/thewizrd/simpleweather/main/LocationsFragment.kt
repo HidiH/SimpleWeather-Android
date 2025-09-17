@@ -799,7 +799,7 @@ class LocationsFragment : ToolbarFragment() {
             }
             toolbar.setTitleTextAppearance(
                 toolbar.context,
-                R.style.TextAppearance_OpenSans_ActionModeTitleOnPrimary
+                R.style.TextAppearance_SimpleWeather_ActionModeTitleOnPrimary
             )
         } else {
             toolbar.navigationIcon = null
