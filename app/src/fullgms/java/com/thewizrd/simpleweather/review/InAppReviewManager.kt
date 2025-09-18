@@ -8,7 +8,7 @@ import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.isActive
 import java.time.Instant
-import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import kotlin.coroutines.coroutineContext
 
 class InAppReviewManager private constructor(context: Context) {
@@ -55,7 +55,7 @@ class InAppReviewManager private constructor(context: Context) {
 
     private fun resetReviewPrompt() {
         prefs.edit {
-            val nextDate = ZonedDateTime.now().plusMonths(3).toEpochSecond()
+            val nextDate = Instant.now().plus(90, ChronoUnit.DAYS).epochSecond
 
             putInt(KEY_REVIEW_COUNTER, 0)
             putLong(KEY_NEXT_PROMPT_DATE, nextDate)
