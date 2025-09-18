@@ -88,6 +88,7 @@ import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
+import com.thewizrd.shared_resources.utils.ContextUtils.isLargeWatch
 import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.StringUtils.removeNonDigitChars
 import com.thewizrd.shared_resources.utils.Units
@@ -576,6 +577,9 @@ private fun ConditionDetails(
     weather: WeatherUiModel,
     navController: NavHostController
 ) {
+    val context = LocalContext.current
+    val isLargeWatch = remember(context) { context.isLargeWatch() }
+
     val popData = remember(weather) {
         weather.weatherDetailsMap[WeatherDetailsType.POPCHANCE]
     }
@@ -636,7 +640,7 @@ private fun ConditionDetails(
                 )
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = spannableStringToAnnotatedString(windData.value),
+                    text = spannableStringToAnnotatedString(if (isLargeWatch || popData == null) windData.value else windData.shortValue),
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.End,
                     maxLines = 1,
