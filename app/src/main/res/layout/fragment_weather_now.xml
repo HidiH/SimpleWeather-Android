@@ -86,7 +86,7 @@
                     android:layout_gravity="center_horizontal"
                     android:orientation="vertical">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/weather_credit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

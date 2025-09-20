@@ -5,32 +5,37 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.locationdata.LocationData
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.Colors
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrResourceId
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
+import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.Units
+import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.adapters.ChartsItemAdapter
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.controls.graphs.LineDataSeries
 import com.thewizrd.simpleweather.controls.viewmodels.ChartsViewModel
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
-import com.thewizrd.simpleweather.databinding.LayoutLocationHeaderBinding
-import com.thewizrd.simpleweather.fragments.ToolbarFragment
+import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.navControllerViewModels
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
@@ -40,7 +45,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
-class WeatherChartsFragment : ToolbarFragment() {
+class WeatherChartsFragment : CollapsingToolbarFragment() {
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
     private val chartsView: ChartsViewModel by viewModels()
     private val twoPaneStateViewModel: TwoPaneStateViewModel by navControllerViewModels(R.id.two_pane_nav_graph)
@@ -48,7 +53,6 @@ class WeatherChartsFragment : ToolbarFragment() {
     private var locationData: LocationData? = null
 
     private lateinit var binding: FragmentWeatherListBinding
-    private lateinit var headerBinding: LayoutLocationHeaderBinding
     private lateinit var adapter: ChartsItemAdapter
 
     private val args: WeatherChartsFragmentArgs by navArgs()
@@ -97,11 +101,7 @@ class WeatherChartsFragment : ToolbarFragment() {
         val root = super.onCreateView(inflater, container, savedInstanceState) as ViewGroup?
         // Use this to return your custom view for this Fragment
         binding = FragmentWeatherListBinding.inflate(inflater, root, true)
-        headerBinding = LayoutLocationHeaderBinding.inflate(inflater, appBarLayout, true)
-
         binding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.viewModel = wNowViewModel
 
         // Setup Actionbar
         toolbar.setNavigationIcon(toolbar.context.getAttrResourceId(R.attr.homeAsUpIndicator))
@@ -118,9 +118,12 @@ class WeatherChartsFragment : ToolbarFragment() {
                 binding.recyclerView.addItemDecoration(InsetItemDecoration(it, maxWidth))
             }
         }
-        binding.recyclerView.adapter = ChartsItemAdapter().also {
-            adapter = it
-        }
+        binding.recyclerView.adapter = ConcatAdapter(
+            ChartsItemAdapter().also {
+                adapter = it
+            },
+            SpacerAdapter(binding.recyclerView.context.dpToPx(4f).toInt())
+        )
 
         return root
     }
@@ -133,7 +136,11 @@ class WeatherChartsFragment : ToolbarFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             twoPaneStateViewModel.twoPaneState.collectLatest { state ->
                 setNavigationIconVisible(!state.isSideBySide)
-                headerBinding.root.isVisible = !state.isSideBySide
+                toolbar.subtitle = if (!state.isSideBySide) {
+                    wNowViewModel.uiState.value.weather?.location
+                } else {
+                    ""
+                }
             }
         }
 
@@ -145,6 +152,11 @@ class WeatherChartsFragment : ToolbarFragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 wNowViewModel.uiState.collect {
                     locationData = it.locationData
+                    toolbar.subtitle = if (!twoPaneStateViewModel.twoPaneState.value.isSideBySide) {
+                        wNowViewModel.uiState.value.weather?.location
+                    } else {
+                        ""
+                    }
                     initialize()
                 }
             }

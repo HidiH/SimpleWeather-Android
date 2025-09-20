@@ -261,8 +261,7 @@
         <item name="materialAlertDialogTitleTextStyle">@style/AlertTitleStyle</item>
     </style>
 
-    <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
-        <item name="shapeAppearance">@style/ShapeAppearance.Material.MediumComponent</item>
+    <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3Expressive">
         <item name="multiChoiceItemLayout">@layout/alertdialog_multichoice_material</item>
         <item name="singleChoiceItemLayout">@layout/alertdialog_singlechoice_material</item>
         <item name="listItemLayout">@layout/alertdialog_listitem_material</item>
@@ -294,9 +293,8 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="AlertTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
+    <style name="AlertTitleStyle" parent="@style/MaterialAlertDialog.Material3Expressive.Title.Text.CenterStacked">
+        <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
     </style>
 
     <style name="Preference_TextAppearanceMaterialBody2">

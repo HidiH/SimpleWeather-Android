@@ -10,29 +10,39 @@
             type="com.thewizrd.simpleweather.controls.graphs.BarGraphData" />
     </data>
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginVertical="2dp"
+        style="@style/WeatherNow.CardView">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/graph_label"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingHorizontal="@dimen/section_label_horizontal_padding"
-            android:paddingVertical="@dimen/section_label_vertical_padding"
-            android:text="@{graphData.graphLabel}"
-            android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel" />
+            android:orientation="vertical">
 
-        <com.thewizrd.simpleweather.controls.graphs.BarGraphPanel
-            android:id="@+id/bar_graph_panel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:graphData="@{graphData}"
-            tools:layout_height="@dimen/forecast_panel_height" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/graph_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingHorizontal="@dimen/section_label_horizontal_padding"
+                android:paddingVertical="@dimen/section_label_vertical_padding"
+                android:text="@{graphData.graphLabel}"
+                android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
+                tools:text="Label" />
 
-    </LinearLayout>
+            <com.thewizrd.simpleweather.controls.graphs.BarGraphPanel
+                android:id="@+id/bar_graph_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:graphData="@{graphData}"
+                tools:layout_height="@dimen/forecast_panel_height" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

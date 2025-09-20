@@ -35,7 +35,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/welcome_subtext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

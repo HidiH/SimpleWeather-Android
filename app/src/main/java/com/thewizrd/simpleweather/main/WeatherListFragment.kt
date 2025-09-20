@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,15 +30,16 @@ import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.Colors
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrResourceId
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.adapters.WeatherDetailsAdapter
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
-import com.thewizrd.simpleweather.databinding.LayoutLocationHeaderBinding
-import com.thewizrd.simpleweather.fragments.ToolbarFragment
+import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
 import com.thewizrd.simpleweather.review.InAppReviewManager
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.navControllerViewModels
@@ -50,7 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class WeatherListFragment : ToolbarFragment() {
+class WeatherListFragment : CollapsingToolbarFragment() {
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
     private val forecastsView: ForecastsListViewModel by viewModels()
     private val alertsView: WeatherAlertsViewModel by activityViewModels()
@@ -59,8 +60,9 @@ class WeatherListFragment : ToolbarFragment() {
     private var locationData: LocationData? = null
 
     private lateinit var binding: FragmentWeatherListBinding
-    private lateinit var headerBinding: LayoutLocationHeaderBinding
     private var layoutManager: LinearLayoutManager? = null
+
+    private lateinit var adapter: ConcatAdapter
 
     var weatherListType: WeatherListType? = null
         private set
@@ -141,11 +143,7 @@ class WeatherListFragment : ToolbarFragment() {
         val root = super.onCreateView(inflater, container, savedInstanceState) as ViewGroup
         // Use this to return your custom view for this Fragment
         binding = FragmentWeatherListBinding.inflate(inflater, root, true)
-        headerBinding = LayoutLocationHeaderBinding.inflate(inflater, appBarLayout, true)
-
         binding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.viewModel = wNowViewModel
 
         // Setup Actionbar
         toolbar.setNavigationIcon(toolbar.context.getAttrResourceId(R.attr.homeAsUpIndicator))
@@ -159,6 +157,12 @@ class WeatherListFragment : ToolbarFragment() {
             LinearLayoutManager(requireContext()).also { layoutManager = it }
         binding.recyclerView.itemAnimator = DefaultItemAnimator().apply {
             supportsChangeAnimations = true
+        }
+        binding.recyclerView.adapter = ConcatAdapter(
+            SpacerAdapter(binding.recyclerView.context.dpToPx(4f).toInt()),
+            SpacerAdapter(binding.recyclerView.context.dpToPx(4f).toInt())
+        ).also {
+            adapter = it
         }
 
         return root
@@ -175,7 +179,11 @@ class WeatherListFragment : ToolbarFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             twoPaneStateViewModel.twoPaneState.collectLatest { state ->
                 setNavigationIconVisible(!state.isSideBySide)
-                headerBinding.root.isVisible = !state.isSideBySide
+                toolbar.subtitle = if (!state.isSideBySide) {
+                    wNowViewModel.uiState.value.weather?.location
+                } else {
+                    ""
+                }
             }
         }
 
@@ -184,6 +192,12 @@ class WeatherListFragment : ToolbarFragment() {
                 wNowViewModel.uiState.collect {
                     val oldData = locationData
                     locationData = it.locationData
+
+                    toolbar.subtitle = if (!twoPaneStateViewModel.twoPaneState.value.isSideBySide) {
+                        wNowViewModel.uiState.value.weather?.location
+                    } else {
+                        ""
+                    }
 
                     if (oldData != locationData) {
                         initialize()
@@ -256,7 +270,7 @@ class WeatherListFragment : ToolbarFragment() {
                     dataJob = runWithView {
                         forecastsView.getForecasts().collect {
                             val detailsAdapter =
-                                getForecastAdapter<ForecastItemViewModel>(binding.recyclerView)
+                                getForecastAdapter<ForecastItemViewModel>()
                             detailsAdapter.submitData(it)
                         }
                     }
@@ -264,17 +278,20 @@ class WeatherListFragment : ToolbarFragment() {
                     dataJob = runWithView {
                         forecastsView.getHourlyForecasts().collect {
                             val detailsAdapter =
-                                getForecastAdapter<HourlyForecastItemViewModel>(binding.recyclerView)
+                                getForecastAdapter<HourlyForecastItemViewModel>()
                             detailsAdapter.submitData(it)
                         }
                     }
                 }
             }
             WeatherListType.ALERTS -> {
-                val alertAdapter = binding.recyclerView.adapter as? WeatherAlertPanelAdapter?
+                val alertAdapter =
+                    adapter.adapters.find { it is WeatherAlertPanelAdapter } as? WeatherAlertPanelAdapter
                     ?: WeatherAlertPanelAdapter()
-                if (binding.recyclerView.adapter !== alertAdapter) {
-                    binding.recyclerView.adapter = alertAdapter
+                if (!adapter.containsAdapter(alertAdapter)) {
+                    val innerAdapters = adapter.adapters.filterNot { it is SpacerAdapter }
+                    innerAdapters.forEach { adapter.removeAdapter(it) }
+                    adapter.addAdapter(1, alertAdapter)
                 }
 
                 alertAdapter.registerAdapterDataObserver(object :
@@ -299,14 +316,15 @@ class WeatherListFragment : ToolbarFragment() {
         }
     }
 
-    private fun <T : BaseForecastItemViewModel> getForecastAdapter(recyclerView: RecyclerView
-    ): WeatherDetailsAdapter<T> {
+    private fun <T : BaseForecastItemViewModel> getForecastAdapter(): WeatherDetailsAdapter<T> {
         @Suppress("UNCHECKED_CAST")
         val detailsAdapter: WeatherDetailsAdapter<T> =
-            recyclerView.adapter as? WeatherDetailsAdapter<T>?
+            adapter.adapters.find { it is WeatherDetailsAdapter<*> } as? WeatherDetailsAdapter<T>?
                 ?: WeatherDetailsAdapter()
-        if (recyclerView.adapter !== detailsAdapter) {
-            recyclerView.adapter = detailsAdapter
+        if (!adapter.containsAdapter(detailsAdapter)) {
+            val innerAdapters = adapter.adapters.filterNot { it is SpacerAdapter }
+            innerAdapters.forEach { adapter.removeAdapter(it) }
+            adapter.addAdapter(1, detailsAdapter)
         }
 
         detailsAdapter.registerAdapterDataObserver(object : SimpleRecyclerViewAdapterObserver() {
@@ -329,6 +347,10 @@ class WeatherListFragment : ToolbarFragment() {
         })
 
         return detailsAdapter
+    }
+
+    private fun ConcatAdapter.containsAdapter(adapter: RecyclerView.Adapter<*>): Boolean {
+        return this.adapters.contains(adapter)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

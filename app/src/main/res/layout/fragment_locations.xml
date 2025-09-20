@@ -32,7 +32,7 @@
             app:showIfTrue="@{!viewModel.uiState.loading}"
             tools:listitem="@layout/location_panel" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/no_locations_prompt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

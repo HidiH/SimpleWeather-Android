@@ -46,7 +46,7 @@
                 app:tint="@{FeatureSettings.isBackgroundImageEnabled &amp;&amp; viewModel.imageData != null ? @android:color/white : @color/colorOnSurface}"
                 tools:tint="?attr/colorOnSurface" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/location_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/label_updatetime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             android:padding="4dp"
             android:text="@{viewModel.weather.updateDate}"
             android:textSize="12sp"
-            android:textAppearance="?textAppearanceTitleMedium"
+            android:textAppearance="?textAppearanceBodySmallEmphasized"
             android:textColor="@{FeatureSettings.isBackgroundImageEnabled &amp;&amp; viewModel.imageData != null ? @android:color/white : @color/colorOnSurface}"
             tools:text="Updated on 11:12 PM"
             tools:ignore="MissingConstraints" />
@@ -81,7 +81,7 @@
             android:id="@+id/alert_button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="#FFFF4500"
+            android:background="?colorErrorContainer"
             android:layout_marginBottom="8dp"
             android:orientation="horizontal"
             android:paddingStart="4dp"
@@ -98,16 +98,17 @@
                 android:layout_gravity="center_vertical"
                 android:padding="4dp"
                 app:srcCompat="@drawable/ic_error_white"
-                app:tint="@android:color/white" />
+                app:tint="?colorOnErrorContainer" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:paddingStart="4dp"
                 android:text="@string/title_fragment_alerts"
-                android:textColor="@android:color/white" />
+                android:textAppearance="?textAppearanceLabelLargeEmphasized"
+                android:textColor="?colorOnErrorContainer" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="wrap_content"
@@ -115,7 +116,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="4dp"
                 app:srcCompat="@drawable/ic_chevron_right"
-                app:tint="@android:color/white" />
+                app:tint="?colorOnErrorContainer" />
 
         </LinearLayout>
 
@@ -143,7 +144,7 @@
                 android:layout_weight="1"
                 android:gravity="bottom">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/weather_temp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -230,7 +231,7 @@
 
             </RelativeLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weather_condition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -248,7 +249,7 @@
                 android:textColor="@{FeatureSettings.isBackgroundImageEnabled &amp;&amp; viewModel.imageData != null ? @android:color/white : @color/colorOnSurface}"
                 tools:text="Sunny" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weather_feelslike"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -265,7 +266,7 @@
                 tools:text="Feels like 75°"
                 tools:visibility="visible" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weather_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -282,14 +283,14 @@
                 android:padding="4dp"
                 android:text="@{viewModel.weather.weatherSummary}"
                 android:textSize="14sp"
-                android:textAppearance="?textAppearanceTitleMedium"
+                android:textAppearance="?textAppearanceBodyMediumEmphasized"
                 android:textColor="@{FeatureSettings.isBackgroundImageEnabled &amp;&amp; viewModel.imageData != null ? @android:color/white : @color/colorOnSurface}"
                 app:clickable="@{viewModel.weather.weatherSummary}"
                 app:showIfTrue="@{FeatureSettings.isSummaryEnabled}"
                 app:hideIfNullOrWhitespace="@{viewModel.weather.weatherSummary}"
                 tools:text="Rain, some heavy, to affect the area tonight" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/bg_attribution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

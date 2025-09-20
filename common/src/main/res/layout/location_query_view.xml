@@ -14,56 +14,62 @@
             type="com.thewizrd.shared_resources.locationdata.LocationQuery" />
     </data>
 
-    <RelativeLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/list_horizontal_padding"
-        android:paddingStart="@dimen/list_horizontal_padding"
-        android:paddingEnd="@dimen/list_horizontal_padding"
-        android:paddingRight="@dimen/list_horizontal_padding"
-        android:paddingTop="@dimen/list_vertical_padding"
-        android:paddingBottom="@dimen/list_vertical_padding"
+        app:contentPadding="12dp"
+        app:cardBackgroundColor="?colorSurfaceContainerLow"
+        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large"
+        style="@style/Widget.Material3.CardView.Filled"
         tools:theme="@style/Theme.Material3Expressive.DayNight.NoActionBar">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/pin"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            app:locationPin="@{viewModel}"
-            app:srcCompat="@drawable/ic_place_white_24dp"
-            app:tint="?attr/colorPrimary"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/location_name"
-            android:layout_width="0dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/list_horizontal_padding"
-            android:layout_marginLeft="@dimen/list_horizontal_padding"
-            android:text="@{viewModel.locationName}"
-            android:textColor="?attr/colorOnBackground"
-            android:textSize="@dimen/list_text_size"
-            android:layout_toEndOf="@id/pin"
-            android:layout_alignParentEnd="true"
-            android:layout_alignWithParentIfMissing="true"
-            tools:text="London, United Kingdom" />
+            android:paddingHorizontal="4dp">
 
-        <TextView
-            android:id="@+id/location_country"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/list_horizontal_padding"
-            android:layout_marginLeft="@dimen/list_horizontal_padding"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/list_secondary_text_size"
-            android:layout_toEndOf="@id/pin"
-            android:layout_below="@id/location_name"
-            android:layout_alignParentEnd="true"
-            android:layout_alignWithParentIfMissing="true"
-            app:locationRegion="@{viewModel}"
-            tools:text="City of London, Greater London, United Kingdom" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/pin"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                app:locationPin="@{viewModel}"
+                app:srcCompat="@drawable/ic_place_white_24dp"
+                app:tint="?attr/colorPrimary"
+                tools:visibility="visible" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/location_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/list_horizontal_padding"
+                android:layout_marginLeft="@dimen/list_horizontal_padding"
+                android:text="@{viewModel.locationName}"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="@dimen/list_text_size"
+                android:layout_toEndOf="@id/pin"
+                android:layout_alignParentEnd="true"
+                android:layout_alignWithParentIfMissing="true"
+                tools:text="London, United Kingdom" />
+
+            <TextView
+                android:id="@+id/location_country"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/list_horizontal_padding"
+                android:layout_marginLeft="@dimen/list_horizontal_padding"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/list_secondary_text_size"
+                android:layout_toEndOf="@id/pin"
+                android:layout_below="@id/location_name"
+                android:layout_alignParentEnd="true"
+                android:layout_alignWithParentIfMissing="true"
+                app:locationRegion="@{viewModel}"
+                tools:text="City of London, Greater London, United Kingdom" />
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 </layout>

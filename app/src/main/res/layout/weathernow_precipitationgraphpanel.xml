@@ -27,9 +27,9 @@
             android:id="@+id/minutely_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="4dp"
-            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginVertical="2dp"
+            style="@style/WeatherNow.CardView"
             app:showIfTrue="@{FeatureSettings.chartsEnabled}"
             app:showIfNotEmpty="@{forecastsView.minutelyForecastData}">
 
@@ -45,7 +45,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -82,9 +82,9 @@
             android:id="@+id/precip_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="4dp"
-            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginVertical="2dp"
+            style="@style/WeatherNow.CardView"
             app:showIfTrue="@{FeatureSettings.chartsEnabled}"
             app:showIfNotEmpty="@{forecastsView.hourlyForecastData}">
 
@@ -100,7 +100,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

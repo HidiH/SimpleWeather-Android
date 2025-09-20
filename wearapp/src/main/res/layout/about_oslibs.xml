@@ -7,7 +7,7 @@
     android:padding="@dimen/horizontal_padding"
     tools:viewBindingIgnore="true">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

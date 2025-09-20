@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
+import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColorStateList
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.LocationPanel
 import com.thewizrd.simpleweather.controls.LocationPanelUiModel
@@ -34,10 +36,20 @@ class GPSPanelAdapter : LocationPanelAdapter() {
 
         override fun setHeader() {
             header.setText(R.string.label_currentlocation)
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                R.drawable.ic_place_white_24dp,
+                0,
+                0,
+                0
+            )
         }
 
         override fun setHeaderTextColor() {
             header.setTextColor(header.context.getAttrColor(android.R.attr.textColorPrimary))
+            TextViewCompat.setCompoundDrawableTintList(
+                header,
+                header.context.getAttrColorStateList(android.R.attr.textColorPrimary)
+            )
         }
     }
 

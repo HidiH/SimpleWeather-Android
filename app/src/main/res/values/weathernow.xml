@@ -21,6 +21,13 @@
         <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.WeatherNow.SectionLabel" parent="TextAppearance.SimpleWeather.LabelLarge.Emphasized" />
+    <style name="TextAppearance.WeatherNow.SectionLabel" parent="TextAppearance.SimpleWeather.LabelLarge.Emphasized">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="WeatherNow.CardView" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.LargeIncreased</item>
+    </style>
 
 </resources>

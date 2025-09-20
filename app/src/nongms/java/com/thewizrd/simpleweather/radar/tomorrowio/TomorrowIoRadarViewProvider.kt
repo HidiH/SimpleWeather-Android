@@ -58,7 +58,7 @@ class TomorrowIoRadarViewProvider(context: Context, rootView: ViewGroup) :
         radarContainerBinding = RadarAnimateContainerBinding.inflate(LayoutInflater.from(context))
         viewContainer.addView(radarContainerBinding!!.root)
 
-        radarContainerBinding!!.playButton.setOnCheckedChangeListener { _, isChecked ->
+        radarContainerBinding!!.playButton.addOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 mMainHandler.post(animationRunnable)
             } else {
