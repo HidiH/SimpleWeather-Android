@@ -24,7 +24,7 @@ fun List<AirQuality>?.createAQIGraphData(context: Context): BarGraphData? {
 
             if (aqiIndexData.getDataSet() == null) {
                 aqiIndexData.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 
@@ -62,7 +62,7 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
 
             if (aqiIndexData.getDataSet() == null) {
                 aqiIndexData.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 
@@ -83,7 +83,7 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
 
             if (pm25Data.getDataSet() == null) {
                 pm25Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 
@@ -104,7 +104,7 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
 
             if (pm10Data.getDataSet() == null) {
                 pm10Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 
@@ -125,7 +125,7 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
 
             if (o3Data.getDataSet() == null) {
                 o3Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 
@@ -146,7 +146,7 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
 
             if (coData.getDataSet() == null) {
                 coData.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 
@@ -167,7 +167,7 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
 
             if (no2Data.getDataSet() == null) {
                 no2Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 
@@ -188,7 +188,7 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
 
             if (so2Data.getDataSet() == null) {
                 so2Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
-                    setMinMax(0f)
+                    setMinMax(0f, 301f)
                 })
             }
 

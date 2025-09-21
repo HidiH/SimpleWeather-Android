@@ -36,7 +36,7 @@
                 app:graphLabel="@{graphData}"
                 tools:text="Label" />
 
-            <com.thewizrd.simpleweather.controls.BarView
+            <com.thewizrd.simpleweather.controls.ForecastBarGraphView
                 android:id="@+id/bar_graph_panel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

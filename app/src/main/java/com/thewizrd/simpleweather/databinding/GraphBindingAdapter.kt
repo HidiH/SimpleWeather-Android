@@ -7,7 +7,7 @@ import com.thewizrd.shared_resources.weatherdata.model.Forecast
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
 import com.thewizrd.simpleweather.R
-import com.thewizrd.simpleweather.controls.BarView
+import com.thewizrd.simpleweather.controls.ForecastBarGraphView
 import com.thewizrd.simpleweather.controls.ForecastRangeBarGraphView
 import com.thewizrd.simpleweather.controls.graphs.BarGraphData
 import com.thewizrd.simpleweather.controls.graphs.BarGraphPanel
@@ -52,7 +52,7 @@ object GraphBindingAdapter {
 
     @JvmStatic
     @BindingAdapter("minForecastData")
-    fun updateMinForecastGraph(view: BarView, forecastData: List<MinutelyForecast>?) {
+    fun updateMinForecastGraph(view: ForecastBarGraphView, forecastData: List<MinutelyForecast>?) {
         if (!forecastData.isNullOrEmpty()) {
             val vm = ForecastGraphViewModel(view.context)
             vm.setMinutelyForecastData(forecastData, GraphType.Bar)
@@ -82,7 +82,7 @@ object GraphBindingAdapter {
 
     @JvmStatic
     @BindingAdapter("forecastData")
-    fun updateForecastGraph(view: BarView, forecastData: List<HourlyForecast>?) {
+    fun updateForecastGraph(view: ForecastBarGraphView, forecastData: List<HourlyForecast>?) {
         if (!forecastData.isNullOrEmpty()) {
             val vm = ForecastGraphViewModel(view.context).apply {
                 setForecastData(
@@ -142,7 +142,7 @@ object GraphBindingAdapter {
     @JvmStatic
     @BindingAdapter(value = ["graphData", "forecastType"], requireAll = true)
     fun updateBarGraph(
-        view: BarView,
+        view: ForecastBarGraphView,
         graphData: BarGraphData?,
         forecastType: ForecastType? = null
     ) {

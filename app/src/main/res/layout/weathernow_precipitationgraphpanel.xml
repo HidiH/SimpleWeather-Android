@@ -65,7 +65,7 @@
 
                 </LinearLayout>
 
-                <com.thewizrd.simpleweather.controls.BarView
+                <com.thewizrd.simpleweather.controls.ForecastBarGraphView
                     android:id="@+id/minutely_precip_graph_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
 
                 </LinearLayout>
 
-                <com.thewizrd.simpleweather.controls.BarView
+                <com.thewizrd.simpleweather.controls.ForecastBarGraphView
                     android:id="@+id/precip_graph_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

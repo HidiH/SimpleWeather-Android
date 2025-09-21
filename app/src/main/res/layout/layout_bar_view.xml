@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".controls.BarView"
+    tools:context=".controls.ForecastBarGraphView"
     tools:parentTag="android.widget.LinearLayout"
     tools:orientation="vertical"
     tools:layout_height="wrap_content"
@@ -36,7 +36,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:minHeight="@dimen/bargraph_panel_height"
             android:measureWithLargestChild="true"
             android:orientation="horizontal" />
 

@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
-import androidx.core.view.children
+import androidx.core.content.res.use
 import androidx.core.view.isGone
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
@@ -19,15 +19,15 @@ import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.databinding.LayoutBarBinding
 import com.thewizrd.simpleweather.databinding.LayoutBarViewBinding
 import kotlin.math.max
-import kotlin.math.min
 
-class BarView @JvmOverloads constructor(
+class ForecastBarGraphView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : LinearLayout(context, attrs) {
     private val binding: LayoutBarViewBinding
 
-    private var scale: Float = 1f
-    private var isMeasured: Boolean = false
+    private val graphViewHeight: Int
+    private val zeroValueItemHeight: Int
+    private var bottomTextHeights: Int = 0
 
     private var graphData: BarGraphData? = null
     private var forecastType: ForecastType? = null
@@ -42,30 +42,38 @@ class BarView @JvmOverloads constructor(
     init {
         orientation = VERTICAL
 
+        graphViewHeight =
+            context.obtainStyledAttributes(attrs, intArrayOf(R.attr.graphHeight)).use {
+                it.getDimensionPixelSize(
+                    0,
+                    context.resources.getDimensionPixelSize(R.dimen.barview_panel_height)
+                )
+            }
+        zeroValueItemHeight = context.dpToPx(1f).toInt()
+
         val inflater = LayoutInflater.from(context)
         binding = LayoutBarViewBinding.inflate(inflater, this)
+
+        binding.innerLayout.updateLayoutParams {
+            height = graphViewHeight + bottomTextHeights
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        binding.innerLayout.children.minWithOrNull { v1, v2 ->
-            return@minWithOrNull v1.measuredHeight.compareTo(v2.measuredHeight)
-        }?.also { v ->
+        binding.innerLayout.getChildAt(0)?.also { v ->
             graphData?.let {
-                val binding = DataBindingUtil.getBinding<LayoutBarBinding>(v)
-                if (binding != null) {
-                    val remainingSpace = v.measuredHeight - binding.innerBar.measuredHeight
-
-                    if (remainingSpace > 0) {
-                        val dataBarHeight = it.yMax - it.yMin
-                        scale = min(remainingSpace / dataBarHeight, 1f) * context.dpToPx(1f)
-
-                        if (!isMeasured) {
-                            postOnAnimation { setData(graphData, forecastType) }
+                val barBinding = DataBindingUtil.getBinding<LayoutBarBinding>(v)
+                if (barBinding != null) {
+                    val measuredBottomTextHeights =
+                        barBinding.barValue.measuredHeight + barBinding.barDate.measuredHeight
+                    if (bottomTextHeights != measuredBottomTextHeights) {
+                        bottomTextHeights = measuredBottomTextHeights
+                        // resize items
+                        binding.innerLayout.updateLayoutParams {
+                            height = graphViewHeight + bottomTextHeights
                         }
-
-                        isMeasured = true
                     }
                 }
             }
@@ -74,7 +82,6 @@ class BarView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        isMeasured = false
     }
 
     fun setData(graphData: BarGraphData?, forecastType: ForecastType? = null) {
@@ -153,23 +160,37 @@ class BarView @JvmOverloads constructor(
                     }
 
                     if (data.entryData == null) {
-                        item.bar.updateLayoutParams<LinearLayout.LayoutParams> {
+                        item.bar.updateLayoutParams<LayoutParams> {
                             height = width
                             weight = 0f
                         }
                     } else {
-                        item.bar.updateLayoutParams<LinearLayout.LayoutParams> {
+                        item.bar.updateLayoutParams<LayoutParams> {
                             height = 0
                             weight = 1f
                         }
                     }
 
-                    item.innerBar.layoutParams =
-                        LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0, 1f).apply {
-                            topMargin = data.entryData?.y?.let { (max - it) * scale }?.toInt() ?: 0
-                            bottomMargin = 0
-                            gravity = Gravity.CENTER_HORIZONTAL
+                    item.innerBar.updateLayoutParams {
+                        val normalizedValue = when {
+                            min == max -> {
+                                1f
+                            }
+
+                            else -> {
+                                val dataRange = max - min
+
+                                data.entryData?.y?.let {
+                                    if (dataRange == 0f) {
+                                        0f
+                                    } else {
+                                        (it.coerceIn(min, max) - min) / dataRange
+                                    }
+                                } ?: 0f
+                            }
                         }
+                        height = zeroValueItemHeight + (normalizedValue * graphViewHeight).toInt()
+                    }
 
                     // Update icon
                     item.barIcon.rotation = data.xIconRotation.toFloat()
@@ -178,7 +199,7 @@ class BarView @JvmOverloads constructor(
                     if (getChildAt(i) == null) {
                         addView(
                             item.root,
-                            LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+                            LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
                                 .apply {
                                     gravity = Gravity.BOTTOM
                                 })
@@ -202,7 +223,7 @@ class BarView @JvmOverloads constructor(
             ForecastType.WIND -> R.drawable.wi_direction_up_2x
             ForecastType.HUMIDITY -> R.drawable.material_humidity_percentage
             ForecastType.UVINDEX -> 0
-            ForecastType.RAIN -> R.drawable.wi_raindrops
+            ForecastType.RAIN -> R.drawable.material_water_drop
             ForecastType.SNOW -> R.drawable.wi_snowflake_cold
             ForecastType.AIRQUALITY -> 0
             null -> 0

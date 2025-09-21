@@ -501,7 +501,7 @@ public class ForecastGraphViewModel {
 
                     final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(speedVal, windSpeed));
                     if (forecast.getExtras().getWindDegrees() != null) {
-                        entry.setXIconRotation(forecast.getExtras().getWindDegrees());
+                        entry.setXIconRotation(forecast.getExtras().getWindDegrees() + 180);
                     }
                     entry.setFillColor(Colors.SEAGREEN);
                     dataSet.addEntry(entry);
