@@ -22,13 +22,13 @@ fun List<AirQuality>?.createAQIGraphData(context: Context): BarGraphData? {
                 }
             }
 
-            if (aqiIndexData?.getDataSet() == null) {
-                aqiIndexData?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (aqiIndexData.getDataSet() == null) {
+                aqiIndexData.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            aqiIndexData?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            aqiIndexData.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.index.toFloat(), aqi.index.toString())
@@ -60,13 +60,13 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
                 }
             }
 
-            if (aqiIndexData?.getDataSet() == null) {
-                aqiIndexData?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (aqiIndexData.getDataSet() == null) {
+                aqiIndexData.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            aqiIndexData?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            aqiIndexData.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.index.toFloat(), aqi.index.toString())
@@ -81,13 +81,13 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
                 }
             }
 
-            if (pm25Data?.getDataSet() == null) {
-                pm25Data?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (pm25Data.getDataSet() == null) {
+                pm25Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            pm25Data?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            pm25Data.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.pm25.toFloat(), aqi.pm25.toString())
@@ -102,13 +102,13 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
                 }
             }
 
-            if (pm10Data?.getDataSet() == null) {
-                pm10Data?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (pm10Data.getDataSet() == null) {
+                pm10Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            pm10Data?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            pm10Data.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.pm10.toFloat(), aqi.pm10.toString())
@@ -123,13 +123,13 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
                 }
             }
 
-            if (o3Data?.getDataSet() == null) {
-                o3Data?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (o3Data.getDataSet() == null) {
+                o3Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            o3Data?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            o3Data.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.o3.toFloat(), aqi.o3.toString())
@@ -144,13 +144,13 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
                 }
             }
 
-            if (coData?.getDataSet() == null) {
-                coData?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (coData.getDataSet() == null) {
+                coData.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            coData?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            coData.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.co.toFloat(), aqi.co.toString())
@@ -165,13 +165,13 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
                 }
             }
 
-            if (no2Data?.getDataSet() == null) {
-                no2Data?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (no2Data.getDataSet() == null) {
+                no2Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            no2Data?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            no2Data.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.no2.toFloat(), aqi.no2.toString())
@@ -186,13 +186,13 @@ fun List<AirQuality>?.createGraphData(context: Context): List<BarGraphData> {
                 }
             }
 
-            if (so2Data?.getDataSet() == null) {
-                so2Data?.setDataSet(BarGraphDataSet(mutableListOf()).apply {
+            if (so2Data.getDataSet() == null) {
+                so2Data.setDataSet(BarGraphDataSet(mutableListOf()).apply {
                     setMinMax(0f)
                 })
             }
 
-            so2Data?.getDataSet()?.addEntry(BarGraphEntry().apply {
+            so2Data.getDataSet()?.addEntry(BarGraphEntry().apply {
                 xLabel =
                     aqi.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
                 entryData = YEntryData(aqi.so2.toFloat(), aqi.so2.toString())

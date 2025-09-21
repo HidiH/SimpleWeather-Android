@@ -4,10 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="graphData"
             type="com.thewizrd.simpleweather.controls.graphs.BarGraphData" />
+
+        <variable
+            name="forecastType"
+            type="com.thewizrd.simpleweather.controls.viewmodels.ForecastType" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -29,16 +32,18 @@
                 android:layout_gravity="center_vertical"
                 android:paddingHorizontal="@dimen/section_label_horizontal_padding"
                 android:paddingVertical="@dimen/section_label_vertical_padding"
-                android:text="@{graphData.graphLabel}"
                 android:textAppearance="@style/TextAppearance.WeatherNow.SectionLabel"
+                app:graphLabel="@{graphData}"
                 tools:text="Label" />
 
-            <com.thewizrd.simpleweather.controls.graphs.BarGraphPanel
+            <com.thewizrd.simpleweather.controls.BarView
                 android:id="@+id/bar_graph_panel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="4dp"
                 android:layout_marginBottom="12dp"
                 app:graphData="@{graphData}"
+                app:forecastType="@{forecastType}"
                 tools:layout_height="@dimen/forecast_panel_height" />
 
         </LinearLayout>

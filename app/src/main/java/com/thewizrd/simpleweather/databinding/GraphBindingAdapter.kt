@@ -1,11 +1,13 @@
 package com.thewizrd.simpleweather.databinding
 
+import android.annotation.SuppressLint
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.thewizrd.shared_resources.weatherdata.model.Forecast
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.controls.BarView
 import com.thewizrd.simpleweather.controls.ForecastRangeBarGraphView
 import com.thewizrd.simpleweather.controls.graphs.BarGraphData
 import com.thewizrd.simpleweather.controls.graphs.BarGraphPanel
@@ -15,6 +17,9 @@ import com.thewizrd.simpleweather.controls.graphs.LineViewData
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphData
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphPanel
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel.GraphType
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
+import com.thewizrd.simpleweather.controls.viewmodels.GraphModelUtils
 import com.thewizrd.simpleweather.controls.viewmodels.RangeBarGraphMapper.createForecastGraphData
 import com.thewizrd.simpleweather.controls.viewmodels.RangeBarGraphMapper.createGraphData
 
@@ -37,11 +42,23 @@ object GraphBindingAdapter {
     fun updateMinForecastGraph(view: ForecastGraphPanel, forecastData: List<MinutelyForecast>?) {
         if (!forecastData.isNullOrEmpty()) {
             val vm = ForecastGraphViewModel(view.context)
-            vm.setMinutelyForecastData(forecastData)
+            vm.setMinutelyForecastData(forecastData, GraphType.Line)
             view.setGraphData(vm.graphData as LineViewData?)
             view.setDrawSeriesLabels((vm.graphData as? LineViewData)?.dataSets?.any { !it.seriesLabel.isNullOrEmpty() } == true)
         } else {
             view.setGraphData(null)
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("minForecastData")
+    fun updateMinForecastGraph(view: BarView, forecastData: List<MinutelyForecast>?) {
+        if (!forecastData.isNullOrEmpty()) {
+            val vm = ForecastGraphViewModel(view.context)
+            vm.setMinutelyForecastData(forecastData, GraphType.Bar)
+            view.setData(vm.graphData as BarGraphData?, vm.forecastType)
+        } else {
+            view.setData(null)
         }
     }
 
@@ -52,7 +69,8 @@ object GraphBindingAdapter {
             val vm = ForecastGraphViewModel(view.context).apply {
                 setForecastData(
                     forecastData,
-                    forecastData.getRecommendedGraphType()
+                    forecastData.getRecommendedForecastType(),
+                    GraphType.Line
                 )
             }
             view.setGraphData(vm.graphData as? LineViewData)
@@ -63,25 +81,42 @@ object GraphBindingAdapter {
     }
 
     @JvmStatic
+    @BindingAdapter("forecastData")
+    fun updateForecastGraph(view: BarView, forecastData: List<HourlyForecast>?) {
+        if (!forecastData.isNullOrEmpty()) {
+            val vm = ForecastGraphViewModel(view.context).apply {
+                setForecastData(
+                    forecastData,
+                    forecastData.getRecommendedForecastType(),
+                    GraphType.Bar
+                )
+            }
+            view.setData(vm.graphData as? BarGraphData, vm.forecastType)
+        } else {
+            view.setData(null)
+        }
+    }
+
+    @JvmStatic
     @BindingAdapter("forecastDataLabel")
     fun updateForecastGraphLabel(view: TextView, forecastData: List<HourlyForecast>?) {
         if (!forecastData.isNullOrEmpty()) {
-            view.text = ForecastGraphViewModel.getLabelForGraphType(
+            view.text = GraphModelUtils.getLabelForGraphType(
                 view.context,
-                forecastData.getRecommendedGraphType()
+                forecastData.getRecommendedForecastType()
             )
         } else {
             view.text = ""
         }
     }
 
-    private fun List<HourlyForecast>.getRecommendedGraphType(): ForecastGraphViewModel.ForecastGraphType {
+    private fun List<HourlyForecast>.getRecommendedForecastType(): ForecastType {
         return if (this.firstOrNull()?.extras?.pop != null && this.lastOrNull()?.extras?.pop != null) {
-            ForecastGraphViewModel.ForecastGraphType.PRECIPITATION
+            ForecastType.PRECIPITATION
         } else if (this.firstOrNull()?.extras?.qpfRainMm != null && this.lastOrNull()?.extras?.qpfRainMm != null) {
-            ForecastGraphViewModel.ForecastGraphType.RAIN
+            ForecastType.RAIN
         } else {
-            ForecastGraphViewModel.ForecastGraphType.WIND
+            ForecastType.WIND
         }
     }
 
@@ -102,5 +137,29 @@ object GraphBindingAdapter {
     @BindingAdapter("graphData")
     fun updateBarGraph(view: BarGraphPanel, graphData: BarGraphData?) {
         view.setGraphData(graphData)
+    }
+
+    @JvmStatic
+    @BindingAdapter(value = ["graphData", "forecastType"], requireAll = true)
+    fun updateBarGraph(
+        view: BarView,
+        graphData: BarGraphData?,
+        forecastType: ForecastType? = null
+    ) {
+        view.setData(graphData, forecastType)
+    }
+
+    @SuppressLint("SetTextI18n")
+    @JvmStatic
+    @BindingAdapter("graphLabel")
+    fun updateBarGraph(view: TextView, graphData: BarGraphData?) {
+        val graphLabel = graphData?.graphLabel
+        val dataSetLabel = graphData?.getDataSet()?.label
+
+        if (graphLabel != null && dataSetLabel != null) {
+            view.text = "$graphLabel ($dataSetLabel)"
+        } else {
+            view.text = graphLabel
+        }
     }
 }

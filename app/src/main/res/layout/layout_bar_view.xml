@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".controls.BarView"
+    tools:parentTag="android.widget.LinearLayout"
+    tools:orientation="vertical"
+    tools:layout_height="wrap_content"
+    tools:layout_width="match_parent">
+
+    <com.thewizrd.common.controls.TextViewDrawableCompat
+        android:id="@+id/graph_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp"
+        android:textAppearance="?textAppearanceLabelMediumEmphasized"
+        android:drawablePadding="8dp"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/box"
+        app:drawableWidth="16dp"
+        app:drawableHeight="16dp"
+        tools:text="Label" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:id="@+id/inner_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:minHeight="@dimen/bargraph_panel_height"
+            android:measureWithLargestChild="true"
+            android:orientation="horizontal" />
+
+    </HorizontalScrollView>
+
+</merge>

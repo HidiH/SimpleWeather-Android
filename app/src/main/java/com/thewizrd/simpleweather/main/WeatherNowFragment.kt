@@ -623,9 +623,6 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 onClickListener.onClick(it, 0)
             }
 
-            precipPanelBinding!!.minutelyPrecipGraphPanel.setDrawIconLabels(false)
-            precipPanelBinding!!.precipGraphPanel.setDrawIconLabels(false)
-
             precipPanelBinding!!.minutelyPrecipGraphPanel.setOnClickPositionListener(onClickListener)
             precipPanelBinding!!.precipGraphPanel.setOnClickPositionListener(onClickListener)
 

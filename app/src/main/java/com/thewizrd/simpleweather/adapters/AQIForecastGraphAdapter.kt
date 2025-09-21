@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
-import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.graphs.BarGraphData
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.databinding.ChartsBargraphpanelBinding
 import java.util.Objects
 
@@ -44,20 +44,8 @@ class AQIForecastGraphAdapter : ListAdapter<BarGraphData, AQIForecastGraphAdapte
 
     inner class ViewHolder(internal val binding: ChartsBargraphpanelBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.barGraphPanel.setScrollingEnabled(false)
-            binding.barGraphPanel.setDrawIconLabels(false)
-            binding.barGraphPanel.setFillParentWidth(!itemView.context.isLargeTablet())
-            binding.barGraphPanel.setGraphMaxWidth(
-                if (itemView.context.isLargeTablet()) {
-                    -1
-                } else {
-                    itemView.context.resources.getDimensionPixelSize(R.dimen.graph_max_width)
-                }
-            )
-        }
-
         fun bindModel(aqiData: BarGraphData) {
+            binding.forecastType = ForecastType.AIRQUALITY
             binding.graphData = aqiData
             binding.executePendingBindings()
         }
@@ -92,7 +80,6 @@ class AQIForecastGraphAdapter : ListAdapter<BarGraphData, AQIForecastGraphAdapte
 
     override fun onViewAttachedToWindow(holder: ViewHolder) {
         super.onViewAttachedToWindow(holder)
-        holder.binding.barGraphPanel.requestGraphLayout()
     }
 
     @CornersType

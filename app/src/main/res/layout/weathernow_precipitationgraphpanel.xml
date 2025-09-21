@@ -65,13 +65,12 @@
 
                 </LinearLayout>
 
-                <com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
+                <com.thewizrd.simpleweather.controls.BarView
                     android:id="@+id/minutely_precip_graph_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="2dp"
                     android:padding="8dp"
-                    app:graphHeight="150dp"
                     app:minForecastData="@{forecastsView.minutelyForecastData}" />
 
             </LinearLayout>
@@ -121,14 +120,13 @@
 
                 </LinearLayout>
 
-                <com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
+                <com.thewizrd.simpleweather.controls.BarView
                     android:id="@+id/precip_graph_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="2dp"
                     android:layout_marginHorizontal="8dp"
                     android:padding="8dp"
-                    app:graphHeight="150dp"
                     app:forecastData="@{forecastsView.hourlyForecastData}" />
 
             </LinearLayout>

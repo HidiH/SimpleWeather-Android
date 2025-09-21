@@ -34,6 +34,8 @@ import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.controls.graphs.LineDataSeries
 import com.thewizrd.simpleweather.controls.viewmodels.ChartsViewModel
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel.GraphType
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
 import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
@@ -119,6 +121,7 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
             }
         }
         binding.recyclerView.adapter = ConcatAdapter(
+            SpacerAdapter(binding.recyclerView.context.dpToPx(4f).toInt()),
             ChartsItemAdapter().also {
                 adapter = it
             },
@@ -229,12 +232,12 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
     ): List<ForecastGraphViewModel> {
         val ctx = requireContext()
 
-        val graphTypes = ForecastGraphViewModel.ForecastGraphType.values()
+        val graphTypes = ForecastType.entries
         val data = ArrayList<ForecastGraphViewModel>(graphTypes.size)
 
         if (!minfcasts.isNullOrEmpty()) {
             data.add(ForecastGraphViewModel(ctx).apply {
-                setMinutelyForecastData(minfcasts)
+                setMinutelyForecastData(minfcasts, GraphType.Bar)
             })
         }
 
@@ -285,7 +288,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                     if (hrfcast.extras?.pop != null) {
                         popData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.PRECIPITATION
+                            ForecastType.PRECIPITATION,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -293,7 +297,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                     if (hrfcast.windMph != null && hrfcast.windKph != null) {
                         windData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.WIND
+                            ForecastType.WIND,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -301,7 +306,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                     if (hrfcast.extras?.qpfRainIn != null && hrfcast.extras?.qpfRainMm != null) {
                         rainData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.RAIN
+                            ForecastType.RAIN,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -309,7 +315,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                     if (hrfcast.extras?.qpfSnowIn != null && hrfcast.extras?.qpfSnowCm != null) {
                         snowData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.SNOW
+                            ForecastType.SNOW,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -317,7 +324,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                     if (hrfcast.extras?.uvIndex != null) {
                         uviData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.UVINDEX
+                            ForecastType.UVINDEX,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -325,7 +333,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                     if (hrfcast.extras?.humidity != null) {
                         humidityData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.HUMIDITY
+                            ForecastType.HUMIDITY,
+                            GraphType.Bar
                         )
                     }
                 }

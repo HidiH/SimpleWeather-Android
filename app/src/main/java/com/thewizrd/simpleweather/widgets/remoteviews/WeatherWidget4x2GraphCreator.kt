@@ -28,6 +28,8 @@ import com.thewizrd.simpleweather.controls.graphs.LineViewData
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphView
 import com.thewizrd.simpleweather.controls.graphs.isNullOrEmpty
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel.GraphType
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.controls.viewmodels.RangeBarGraphMapper
 import com.thewizrd.simpleweather.controls.viewmodels.createAQIGraphData
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider4x2ForecastGraph
@@ -402,7 +404,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
             }
 
             val graphData = ForecastGraphViewModel(viewCtx).apply {
-                setMinutelyForecastData(minutelyData)
+                setMinutelyForecastData(minutelyData, GraphType.Line)
             }.graphData
 
             return if (!graphData.isEmpty && !graphData.getDataSetByIndex(0).isNullOrEmpty()) {
@@ -458,16 +460,21 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                 return null
             }
 
-            val forecastGraphType = when (graphType) {
-                WidgetGraphType.Precipitation -> ForecastGraphViewModel.ForecastGraphType.PRECIPITATION
-                WidgetGraphType.Wind -> ForecastGraphViewModel.ForecastGraphType.WIND
-                WidgetGraphType.Humidity -> ForecastGraphViewModel.ForecastGraphType.HUMIDITY
-                WidgetGraphType.UVIndex -> ForecastGraphViewModel.ForecastGraphType.UVINDEX
-                else -> ForecastGraphViewModel.ForecastGraphType.TEMPERATURE
+            val forecastType = when (graphType) {
+                WidgetGraphType.Precipitation -> ForecastType.PRECIPITATION
+                WidgetGraphType.Wind -> ForecastType.WIND
+                WidgetGraphType.Humidity -> ForecastType.HUMIDITY
+                WidgetGraphType.UVIndex -> ForecastType.UVINDEX
+                else -> ForecastType.TEMPERATURE
+            }
+
+            val graphType = when (graphType) {
+                WidgetGraphType.UVIndex -> GraphType.Bar
+                else -> GraphType.Line
             }
 
             val graphData = ForecastGraphViewModel(viewCtx).apply {
-                setForecastData(hrfcastData, forecastGraphType)
+                setForecastData(hrfcastData, forecastType, graphType)
             }.graphData
 
             return if (!graphData.isEmpty && !graphData.getDataSetByIndex(0).isNullOrEmpty()) {

@@ -61,11 +61,8 @@ class ChartsItemAdapter : ListAdapter<ForecastGraphViewModel, RecyclerView.ViewH
     }
 
     inner class BarChartViewViewHolder(private val binding: ChartsBargraphpanelBinding) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.barGraphPanel.setDrawIconLabels(false)
-        }
-
         fun bind(model: ForecastGraphViewModel) {
+            binding.forecastType = model.forecastType
             binding.graphData = model.graphData as BarGraphData?
             binding.executePendingBindings()
         }
