@@ -43,10 +43,10 @@ class ForecastBarGraphView @JvmOverloads constructor(
         orientation = VERTICAL
 
         graphViewHeight =
-            context.obtainStyledAttributes(attrs, intArrayOf(R.attr.graphHeight)).use {
+            context.obtainStyledAttributes(attrs, R.styleable.ForecastBarGraphView).use {
                 it.getDimensionPixelSize(
-                    0,
-                    context.resources.getDimensionPixelSize(R.dimen.barview_panel_height)
+                    R.styleable.ForecastBarGraphView_graphHeight,
+                    context.resources.getDimensionPixelSize(R.dimen.bargraph_panel_height)
                 )
             }
         zeroValueItemHeight = context.dpToPx(1f).toInt()
@@ -54,9 +54,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
         val inflater = LayoutInflater.from(context)
         binding = LayoutBarViewBinding.inflate(inflater, this)
 
-        binding.innerLayout.updateLayoutParams {
-            height = graphViewHeight + bottomTextHeights
-        }
+        minimumHeight = graphViewHeight
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -70,10 +68,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
                         barBinding.barValue.measuredHeight + barBinding.barDate.measuredHeight
                     if (bottomTextHeights != measuredBottomTextHeights) {
                         bottomTextHeights = measuredBottomTextHeights
-                        // resize items
-                        binding.innerLayout.updateLayoutParams {
-                            height = graphViewHeight + bottomTextHeights
-                        }
+                        minimumHeight = graphViewHeight + measuredBottomTextHeights
                     }
                 }
             }
@@ -88,44 +83,9 @@ class ForecastBarGraphView @JvmOverloads constructor(
         this.graphData = graphData
         this.forecastType = forecastType
 
-        val dataSet = graphData?.getDataSetByIndex(0)
+        val dataSet = graphData?.getDataSet()
 
         if (dataSet != null && !dataSet.isEmpty) {
-//            binding.graphLabel.text =  when (forecastType) {
-//                ForecastType.TEMPERATURE,
-//                ForecastType.PRECIPITATION,
-//                ForecastType.HUMIDITY,
-//                ForecastType.UVINDEX -> null
-//                ForecastType.WIND -> {
-//                    val maxValue = dataSet.yMax
-//                    "${context.getString(R.string.label_high)}: ${maxValue.roundToInt()} ${dataSet.label}"
-//                }
-//                ForecastType.MINUTELY,
-//                ForecastType.RAIN,
-//                ForecastType.SNOW -> {
-//                    dataSet.label
-//                }
-//                null -> null
-//            }
-//            when (forecastType) {
-//                ForecastType.MINUTELY,
-//                ForecastType.RAIN,
-//                ForecastType.SNOW -> {
-//                    var startDrawable = binding.graphLabel.compoundDrawablesRelative[0]
-//
-//                    if (startDrawable == null) {
-//                        startDrawable = ContextCompat.getDrawable(context, R.drawable.box)
-//                        binding.graphLabel.setCompoundDrawablesRelative(startDrawable, null, null, null)
-//                    }
-//
-//                    TextViewCompat.setCompoundDrawableTintList(binding.graphLabel, dataSet.getEntryForIndex(0).fillColor?.let { ColorStateList.valueOf(it) })
-//                }
-//                else -> {
-//                    binding.graphLabel.setCompoundDrawablesRelative(null, null, null, null)
-//                }
-//            }
-//            binding.graphLabel.isVisible = !binding.graphLabel.text.isNullOrEmpty()
-
             binding.innerLayout.run {
                 val itemCount = dataSet.dataCount
                 val layoutInflater = LayoutInflater.from(context)
@@ -148,7 +108,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
 
                                 if (shouldBeGone != barIcon.isGone) {
                                     barIcon.isGone = shouldBeGone
-                                    bar.requestLayout()
+                                    innerBar.requestLayout()
                                 }
                             }
                         }
@@ -157,18 +117,6 @@ class ForecastBarGraphView @JvmOverloads constructor(
                     item.data = data
                     item.root.setOnClickListener { v ->
                         onClickListener?.onClick(v, max(indexOfChild(v), 0))
-                    }
-
-                    if (data.entryData == null) {
-                        item.bar.updateLayoutParams<LayoutParams> {
-                            height = width
-                            weight = 0f
-                        }
-                    } else {
-                        item.bar.updateLayoutParams<LayoutParams> {
-                            height = 0
-                            weight = 1f
-                        }
                     }
 
                     item.innerBar.updateLayoutParams {
@@ -189,7 +137,8 @@ class ForecastBarGraphView @JvmOverloads constructor(
                                 } ?: 0f
                             }
                         }
-                        height = zeroValueItemHeight + (normalizedValue * graphViewHeight).toInt()
+                        height =
+                            zeroValueItemHeight + (normalizedValue * (graphViewHeight + item.barValue.measuredHeight * 2)).toInt()
                     }
 
                     // Update icon
@@ -199,7 +148,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
                     if (getChildAt(i) == null) {
                         addView(
                             item.root,
-                            LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+                            LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
                                 .apply {
                                     gravity = Gravity.BOTTOM
                                 })
@@ -210,7 +159,6 @@ class ForecastBarGraphView @JvmOverloads constructor(
             }
         } else {
             binding.innerLayout.removeAllViews()
-            //binding.graphLabel.isVisible = false
         }
     }
 

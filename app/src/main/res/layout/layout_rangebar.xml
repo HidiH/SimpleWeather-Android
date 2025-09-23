@@ -11,9 +11,15 @@
 
         <import type="com.thewizrd.simpleweather.controls.graphs.ForecastRangeBarEntry" />
 
+        <import type="com.thewizrd.simpleweather.controls.viewmodels.ForecastType" />
+
         <variable
             name="data"
             type="ForecastRangeBarEntry" />
+
+        <variable
+            name="forecastType"
+            type="ForecastType" />
     </data>
 
     <LinearLayout
@@ -27,8 +33,8 @@
 
         <LinearLayout
             android:id="@+id/inner_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:gravity="bottom"
@@ -42,14 +48,17 @@
                 android:maxLines="1"
                 android:padding="4dp"
                 android:text="@{data.hiTempData.label}"
+                android:textAlignment="center"
+                android:textAppearance="?textAppearanceLabelMedium"
                 tools:text="89°" />
 
             <com.thewizrd.simpleweather.controls.GradientBar
                 android:id="@+id/rangebar"
                 android:layout_width="6dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                tools:layout_height="0dp"
+                tools:layout_weight="1" />
 
             <TextView
                 android:id="@+id/bar_lo"
@@ -59,6 +68,8 @@
                 android:maxLines="1"
                 android:padding="4dp"
                 android:text="@{data.loTempData.label}"
+                android:textAlignment="center"
+                android:textAppearance="?textAppearanceLabelMedium"
                 tools:text="66°" />
 
         </LinearLayout>
@@ -73,6 +84,8 @@
             android:maxLines="1"
             android:minHeight="8dp"
             android:text="@{data.pop != null ? data.pop + `%` : null}"
+            android:textAlignment="center"
+            android:textAppearance="?textAppearanceLabelMedium"
             android:textColor="@{Colors.SIMPLEBLUELIGHT}"
             android:textSize="12sp"
             app:drawableHeight="16dp"
@@ -80,6 +93,7 @@
             android:drawablePadding="1dp"
             app:drawableTint="@{Colors.SIMPLEBLUELIGHT}"
             app:invisibleIfTrue="@{data.pop == null}"
+            app:goneIfTrue="@{forecastType != ForecastType.TEMPERATURE}"
             app:weatherIconStart="@{WeatherIcons.UMBRELLA}"
             tools:drawableTint="@color/colorPrimaryLight"
             tools:textColor="@color/colorPrimaryLight"
@@ -93,9 +107,10 @@
             android:layout_gravity="center_horizontal"
             android:adjustViewBounds="true"
             android:scaleType="fitEnd"
-            android:rotation="@{data.iconRotation}"
+            android:rotation="@{data.XIconRotation}"
             app:animate="true"
-            app:weatherIcon="@{data.weatherIcon}"
+            app:showIfTrue="@{data.XWeatherIcon != null}"
+            app:weatherIcon="@{data.XWeatherIcon}"
             tools:srcCompat="@drawable/wi_day_sunny"
             tools:weatherIcon="&#xf00d;" />
 
@@ -107,7 +122,8 @@
             android:gravity="center"
             android:maxLines="1"
             android:padding="4dp"
-            android:text="@{data.date}"
+            android:text="@{data.XLabel}"
+            android:textAppearance="?textAppearanceLabelMediumEmphasized"
             tools:text="Sat 10" />
 
     </LinearLayout>

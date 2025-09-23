@@ -20,49 +20,39 @@
         tools:layout_width="70dp"
         tools:layout_height="250dp">
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/inner_bar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal|bottom"
             android:gravity="bottom"
             android:orientation="vertical"
             tools:layout_height="0dp"
             tools:layout_weight="1">
 
-            <FrameLayout
-                android:id="@+id/bar"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_gravity="center_horizontal|bottom"
-                android:gravity="bottom"
-                android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="24dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                app:srcCompat="@drawable/bar"
+                app:tint="@{data.fillColor}"
+                tools:tint="@color/colorPrimaryLight" />
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="24dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    app:srcCompat="@drawable/bar"
-                    app:tint="@{data.fillColor}"
-                    tools:tint="@color/colorPrimaryLight" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/bar_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_gravity="top|center_horizontal"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:translationY="4dp"
+                android:visibility="gone"
+                app:tint="@android:color/white"
+                tools:srcCompat="@drawable/wi_raindrop"
+                tools:visibility="visible" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/bar_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_gravity="top|center_horizontal"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:translationY="4dp"
-                    android:visibility="gone"
-                    app:tint="@android:color/white"
-                    tools:srcCompat="@drawable/wi_raindrop"
-                    tools:visibility="visible" />
-
-            </FrameLayout>
-
-        </LinearLayout>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/bar_value"

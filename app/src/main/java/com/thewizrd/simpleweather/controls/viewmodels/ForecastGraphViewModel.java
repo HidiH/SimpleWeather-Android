@@ -162,25 +162,48 @@ public class ForecastGraphViewModel {
     }
 
     public void setMinutelyForecastData(@NonNull List<MinutelyForecast> forecasts, GraphType graphType) {
-        LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), ForecastType.MINUTELY);
+        if (graphType == GraphType.Bar) {
+            BarGraphDataSet dataSet = createDataSet(new ArrayList<>(forecasts.size()), ForecastType.MINUTELY);
 
-        for (MinutelyForecast forecast : forecasts) {
-            addMinutelyEntryData(forecast, series);
+            for (MinutelyForecast forecast : forecasts) {
+                addMinutelyEntryData(forecast, dataSet);
+            }
+
+            // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+            final String unit = settingsMgr.getPrecipitationUnit();
+            switch (unit) {
+                default:
+                case Units.INCHES:
+                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.3f));
+                    break;
+                case Units.MILLIMETERS:
+                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 7.6f));
+                    break;
+            }
+
+            this.graphData = createGraphData(dataSet, ForecastType.MINUTELY);
+        } else {
+            LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), ForecastType.MINUTELY);
+
+            for (MinutelyForecast forecast : forecasts) {
+                addMinutelyEntryData(forecast, series);
+            }
+
+            // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+            final String unit = settingsMgr.getPrecipitationUnit();
+            switch (unit) {
+                default:
+                case Units.INCHES:
+                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
+                    break;
+                case Units.MILLIMETERS:
+                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
+                    break;
+            }
+
+            this.graphData = createGraphData(Collections.singletonList(series), ForecastType.MINUTELY);
         }
 
-        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-        final String unit = settingsMgr.getPrecipitationUnit();
-        switch (unit) {
-            default:
-            case Units.INCHES:
-                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
-                break;
-            case Units.MILLIMETERS:
-                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
-                break;
-        }
-
-        this.graphData = createGraphData(Collections.singletonList(series), ForecastType.MINUTELY);
         this.forecastType = ForecastType.MINUTELY;
         this.graphType = graphType;
     }
@@ -561,6 +584,36 @@ public class ForecastGraphViewModel {
                     dataSet.addEntry(entry);
                 }
             }
+        }
+    }
+
+    private void addMinutelyEntryData(@NonNull MinutelyForecast forecast, BarGraphDataSet dataSet) {
+        if (forecast.getRainMm() != null && forecast.getRainMm() >= 0) {
+
+            final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
+            df.applyPattern("0.##");
+
+            String date;
+            if (DateFormat.is24HourFormat(context)) {
+                date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_24HR)));
+            } else {
+                date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM));
+            }
+
+            final String unit = settingsMgr.getPrecipitationUnit();
+            float precipValue;
+
+            switch (unit) {
+                case Units.INCHES:
+                default:
+                    precipValue = ConversionMethods.mmToIn(forecast.getRainMm());
+                    break;
+                case Units.MILLIMETERS:
+                    precipValue = forecast.getRainMm();
+                    break;
+            }
+
+            dataSet.addEntry(new BarGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue)))));
         }
     }
 

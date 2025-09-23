@@ -12,6 +12,7 @@ import com.thewizrd.simpleweather.controls.ForecastRangeBarGraphView
 import com.thewizrd.simpleweather.controls.graphs.BarGraphData
 import com.thewizrd.simpleweather.controls.graphs.BarGraphPanel
 import com.thewizrd.simpleweather.controls.graphs.ForecastGraphPanel
+import com.thewizrd.simpleweather.controls.graphs.ForecastRangeBarGraphData
 import com.thewizrd.simpleweather.controls.graphs.GraphData
 import com.thewizrd.simpleweather.controls.graphs.LineViewData
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphData
@@ -130,7 +131,31 @@ object GraphBindingAdapter {
     @JvmStatic
     @BindingAdapter("forecastData")
     fun updateForecastGraph(view: ForecastRangeBarGraphView, forecastData: List<Forecast>?) {
-        view.setData(createForecastGraphData(forecastData))
+        view.setData(createForecastGraphData(forecastData), ForecastType.TEMPERATURE)
+    }
+
+    @JvmStatic
+    @BindingAdapter(value = ["graphData", "forecastType"], requireAll = true)
+    fun updateForecastGraph(
+        view: ForecastRangeBarGraphView,
+        graphData: ForecastRangeBarGraphData?,
+        forecastType: ForecastType? = null
+    ) {
+        view.setData(graphData, forecastType)
+    }
+
+    @SuppressLint("SetTextI18n")
+    @JvmStatic
+    @BindingAdapter("graphLabel")
+    fun updateForecastGraphLabel(view: TextView, graphData: ForecastRangeBarGraphData?) {
+        val graphLabel = graphData?.graphLabel
+        val dataSetLabel = graphData?.getDataSet()?.label
+
+        if (graphLabel != null && dataSetLabel != null) {
+            view.text = "$graphLabel ($dataSetLabel)"
+        } else {
+            view.text = graphLabel
+        }
     }
 
     @JvmStatic
@@ -152,7 +177,7 @@ object GraphBindingAdapter {
     @SuppressLint("SetTextI18n")
     @JvmStatic
     @BindingAdapter("graphLabel")
-    fun updateBarGraph(view: TextView, graphData: BarGraphData?) {
+    fun updateBarGraphLabel(view: TextView, graphData: BarGraphData?) {
         val graphLabel = graphData?.graphLabel
         val dataSetLabel = graphData?.getDataSet()?.label
 

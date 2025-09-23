@@ -44,5 +44,11 @@
     <declare-styleable name="AQIProgressBar">
         <attr name="android:progress" />
     </declare-styleable>
+    <declare-styleable name="ForecastRangeBarGraphView">
+        <attr name="graphHeight" />
+    </declare-styleable>
+    <declare-styleable name="ForecastBarGraphView">
+        <attr name="graphHeight" />
+    </declare-styleable>
     <attr name="graphHeight" format="dimension" />
 </resources>
