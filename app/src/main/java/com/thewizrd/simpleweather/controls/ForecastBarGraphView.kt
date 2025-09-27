@@ -41,6 +41,10 @@ class ForecastBarGraphView @JvmOverloads constructor(
         this.onClickListener = onClickListener
     }
 
+    override fun setOnClickListener(l: OnClickListener?) {
+        binding.innerLayout.setOnClickListener(l)
+    }
+
     init {
         orientation = VERTICAL
         zeroValueItemHeight = context.dpToPx(1f).toInt()

@@ -43,7 +43,7 @@
             app:weatherIconStart="@{viewModel.popChanceIcon}"
             tools:drawableStart="@drawable/ic_settings_black_24dp"
             tools:drawableTint="#FF599EF3"
-            tools:text="45%" />
+            tools:text="100%" />
 
         <com.thewizrd.common.controls.IconControl
             android:id="@+id/forecast_icon"
@@ -116,7 +116,7 @@
             app:weatherIconStart="@{viewModel.windIcon}"
             tools:drawableStart="@drawable/ic_chevron_right"
             tools:drawableTint="#FF20B2AA"
-            tools:text="5 mph" />
+            tools:text="122 mph" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

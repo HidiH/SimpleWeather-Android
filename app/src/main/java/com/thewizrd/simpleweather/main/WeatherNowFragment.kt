@@ -626,6 +626,13 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             precipPanelBinding!!.minutelyPrecipGraphPanel.setOnClickPositionListener(onClickListener)
             precipPanelBinding!!.precipGraphPanel.setOnClickPositionListener(onClickListener)
 
+            precipPanelBinding!!.minutelyPrecipGraphPanel.setOnClickListener {
+                onClickListener.onClick(it, 0)
+            }
+            precipPanelBinding!!.precipGraphPanel.setOnClickListener {
+                onClickListener.onClick(it, 0)
+            }
+
             binding.listLayout.addView(precipPanelBinding!!.root)
             precipPanelBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, GridLayout.CENTER)
