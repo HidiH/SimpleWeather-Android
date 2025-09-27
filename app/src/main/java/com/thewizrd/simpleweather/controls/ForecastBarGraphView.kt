@@ -4,10 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
-import androidx.core.content.res.use
+import androidx.core.view.forEach
+import androidx.core.view.forEachIndexed
 import androidx.core.view.isGone
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
@@ -15,6 +17,7 @@ import com.thewizrd.shared_resources.helpers.RecyclerOnClickListenerInterface
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.graphs.BarGraphData
+import com.thewizrd.simpleweather.controls.graphs.BarGraphEntry
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.databinding.LayoutBarBinding
 import com.thewizrd.simpleweather.databinding.LayoutBarViewBinding
@@ -25,7 +28,6 @@ class ForecastBarGraphView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs) {
     private val binding: LayoutBarViewBinding
 
-    private val graphViewHeight: Int
     private val zeroValueItemHeight: Int
     private var bottomTextHeights: Int = 0
 
@@ -41,34 +43,63 @@ class ForecastBarGraphView @JvmOverloads constructor(
 
     init {
         orientation = VERTICAL
-
-        graphViewHeight =
-            context.obtainStyledAttributes(attrs, R.styleable.ForecastBarGraphView).use {
-                it.getDimensionPixelSize(
-                    R.styleable.ForecastBarGraphView_graphHeight,
-                    context.resources.getDimensionPixelSize(R.dimen.bargraph_panel_height)
-                )
-            }
         zeroValueItemHeight = context.dpToPx(1f).toInt()
 
         val inflater = LayoutInflater.from(context)
         binding = LayoutBarViewBinding.inflate(inflater, this)
-
-        minimumHeight = graphViewHeight
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        binding.innerLayout.getChildAt(0)?.also { v ->
-            graphData?.let {
-                val barBinding = DataBindingUtil.getBinding<LayoutBarBinding>(v)
-                if (barBinding != null) {
+        val barIconHeight = context.dpToPx(32f).toInt()
+        var heightChanged = false
+
+        binding.innerLayout.forEachIndexed { idx, bar ->
+            val barBinding = DataBindingUtil.getBinding<LayoutBarBinding>(bar)
+            if (barBinding != null) {
+                if (idx == 0) {
                     val measuredBottomTextHeights =
                         barBinding.barValue.measuredHeight + barBinding.barDate.measuredHeight
                     if (bottomTextHeights != measuredBottomTextHeights) {
                         bottomTextHeights = measuredBottomTextHeights
-                        minimumHeight = graphViewHeight + measuredBottomTextHeights
+                    }
+                }
+
+                // Update bar measurement
+                graphData?.getDataSet()?.getEntryForIndex(idx)?.let { data ->
+                    val max = graphData?.yMax
+                    val min = graphData?.yMin
+                    if (min != null && max != null) {
+                        if (updateInnerBarHeight(barBinding.innerBar, min, max, data)) {
+                            heightChanged = true
+                        }
+                    }
+                }
+
+                if (!heightChanged) {
+                    val shouldBeGone = (barBinding.innerBar.measuredHeight.takeIf { it > 0 }
+                        ?: barBinding.innerBar.layoutParams.height) <= barIconHeight
+
+                    if (shouldBeGone != barBinding.barIcon.isGone) {
+                        barBinding.barIcon.isGone = shouldBeGone
+                    }
+                }
+            }
+        }
+
+        if (heightChanged) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+            binding.innerLayout.forEach { bar ->
+                val barBinding = DataBindingUtil.getBinding<LayoutBarBinding>(bar)
+                if (barBinding != null) {
+                    val shouldBeGone = (barBinding.innerBar.measuredHeight.takeIf { it > 0 }
+                        ?: barBinding.innerBar.layoutParams.height) <= barIconHeight
+
+                    if (shouldBeGone != barBinding.barIcon.isGone) {
+                        barBinding.barIcon.isGone = shouldBeGone
+                        barBinding.innerBar.forceLayout()
                     }
                 }
             }
@@ -100,18 +131,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
                     val item: LayoutBarBinding = if (view != null) {
                         DataBindingUtil.getBinding(view) ?: LayoutBarBinding.bind(view)
                     } else {
-                        LayoutBarBinding.inflate(layoutInflater).apply {
-                            val barIconHeight = context.dpToPx(32f).toInt()
-
-                            root.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-                                val shouldBeGone = innerBar.measuredHeight <= barIconHeight
-
-                                if (shouldBeGone != barIcon.isGone) {
-                                    barIcon.isGone = shouldBeGone
-                                    innerBar.requestLayout()
-                                }
-                            }
-                        }
+                        LayoutBarBinding.inflate(layoutInflater)
                     }
 
                     item.data = data
@@ -119,27 +139,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
                         onClickListener?.onClick(v, max(indexOfChild(v), 0))
                     }
 
-                    item.innerBar.updateLayoutParams {
-                        val normalizedValue = when {
-                            min == max -> {
-                                1f
-                            }
-
-                            else -> {
-                                val dataRange = max - min
-
-                                data.entryData?.y?.let {
-                                    if (dataRange == 0f) {
-                                        0f
-                                    } else {
-                                        (it.coerceIn(min, max) - min) / dataRange
-                                    }
-                                } ?: 0f
-                            }
-                        }
-                        height =
-                            zeroValueItemHeight + (normalizedValue * (graphViewHeight + item.barValue.measuredHeight * 2)).toInt()
-                    }
+                    updateInnerBarHeight(item.innerBar, min, max, data)
 
                     // Update icon
                     item.barIcon.rotation = data.xIconRotation.toFloat()
@@ -151,7 +151,8 @@ class ForecastBarGraphView @JvmOverloads constructor(
                             LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
                                 .apply {
                                     gravity = Gravity.BOTTOM
-                                })
+                                }
+                        )
                     }
                 }
 
@@ -160,6 +161,44 @@ class ForecastBarGraphView @JvmOverloads constructor(
         } else {
             binding.innerLayout.removeAllViews()
         }
+    }
+
+    private fun updateInnerBarHeight(
+        innerBar: View,
+        min: Float,
+        max: Float,
+        data: BarGraphEntry
+    ): Boolean {
+        var heightChanged = false
+
+        innerBar.updateLayoutParams {
+            val normalizedValue = when {
+                min == max -> {
+                    1f
+                }
+
+                else -> {
+                    val dataRange = max - min
+
+                    data.entryData?.y?.let {
+                        if (dataRange == 0f) {
+                            0f
+                        } else {
+                            (it.coerceIn(min, max) - min) / dataRange
+                        }
+                    } ?: 0f
+                }
+            }
+            val newHeight =
+                zeroValueItemHeight + (normalizedValue * (this@ForecastBarGraphView.measuredHeight - bottomTextHeights)).toInt()
+
+            if (height != newHeight) {
+                height = newHeight
+                heightChanged = true
+            }
+        }
+
+        return heightChanged
     }
 
     @DrawableRes

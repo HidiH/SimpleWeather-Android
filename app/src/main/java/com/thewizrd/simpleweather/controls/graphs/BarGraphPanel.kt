@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.widget.LinearLayout
 import androidx.annotation.Px
 import androidx.core.view.ViewGroupCompat
@@ -148,5 +147,9 @@ class BarGraphPanel : LinearLayout, GraphPanel {
 
     override fun requestGraphLayout() {
         barChartView.requestGraphLayout()
+    }
+
+    fun setBarWidth(@Px width: Float) {
+        barChartView.setBarWidth(width)
     }
 }

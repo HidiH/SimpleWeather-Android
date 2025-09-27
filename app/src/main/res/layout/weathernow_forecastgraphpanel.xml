@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -58,12 +57,11 @@
             <com.thewizrd.simpleweather.controls.ForecastRangeBarGraphView
                 android:id="@+id/rangebar_graph_panel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/forecast_panel_height"
                 android:padding="8dp"
                 android:layout_marginBottom="4dp"
                 app:forecastData="@{forecastsView.forecastData}"
-                app:showIfTrue="@{FeatureSettings.forecastEnabled &amp;&amp; forecastsView.forecastData != null}"
-                tools:layout_height="@dimen/forecast_panel_height" />
+                app:showIfTrue="@{FeatureSettings.forecastEnabled &amp;&amp; forecastsView.forecastData != null}" />
 
         </LinearLayout>
 

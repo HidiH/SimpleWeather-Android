@@ -47,7 +47,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:translationY="4dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:tint="@android:color/white"
                 tools:srcCompat="@drawable/wi_raindrop"
                 tools:visibility="visible" />

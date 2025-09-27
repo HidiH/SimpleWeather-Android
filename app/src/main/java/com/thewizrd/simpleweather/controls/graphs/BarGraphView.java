@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Px;
 
 import com.thewizrd.shared_resources.utils.Colors;
 import com.thewizrd.shared_resources.utils.ContextUtils;
@@ -55,6 +56,10 @@ public class BarGraphView extends BaseGraphHorizontalScrollView<BarGraphData> {
 
     public void setData(BarGraphData data) {
         getGraph().setData(data);
+    }
+
+    public void setBarWidth(@Px float width) {
+        getGraph().linePaint.setStrokeWidth(width);
     }
 
     private class BarChartGraph extends BaseGraphView<BarGraphData> {
@@ -314,9 +319,9 @@ public class BarGraphView extends BaseGraphHorizontalScrollView<BarGraphData> {
 
                     drawingRect.set(
                             bar.x - linePaint.getStrokeWidth() / 2f,
-                            bar.y - bottomTextHeight - bottomTextDescent,
+                            bar.y - bottomTextHeight - bottomTextDescent - linePaint.getStrokeWidth() / 2f,
                             bar.x + linePaint.getStrokeWidth() / 2f,
-                            getGraphBottom()
+                            getGraphBottom() + linePaint.getStrokeWidth() / 2f
                     );
 
                     if (RectF.intersects(drawingRect, visibleRect)) {
@@ -324,7 +329,7 @@ public class BarGraphView extends BaseGraphHorizontalScrollView<BarGraphData> {
 
                         if (isDrawDataLabels()) {
                             if (entry.getEntryData() != null)
-                                canvas.drawText(entry.getEntryData().getLabel().toString(), bar.x, bar.y - bottomTextHeight - bottomTextDescent, bottomTextPaint);
+                                canvas.drawText(entry.getEntryData().getLabel().toString(), bar.x, bar.y - bottomTextHeight - bottomTextDescent - linePaint.getStrokeWidth() / 3f, bottomTextPaint);
                         }
                     }
                 }

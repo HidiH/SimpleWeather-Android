@@ -68,7 +68,7 @@
                 <com.thewizrd.simpleweather.controls.ForecastBarGraphView
                     android:id="@+id/minutely_precip_graph_panel"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/bargraph_panel_height"
                     android:layout_marginBottom="2dp"
                     android:padding="8dp"
                     app:minForecastData="@{forecastsView.minutelyForecastData}" />
@@ -123,7 +123,7 @@
                 <com.thewizrd.simpleweather.controls.ForecastBarGraphView
                     android:id="@+id/precip_graph_panel"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/bargraph_panel_height"
                     android:layout_marginBottom="2dp"
                     android:layout_marginHorizontal="8dp"
                     android:padding="8dp"

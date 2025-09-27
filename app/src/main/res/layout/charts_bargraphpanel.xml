@@ -39,12 +39,11 @@
             <com.thewizrd.simpleweather.controls.ForecastBarGraphView
                 android:id="@+id/bar_graph_panel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/bargraph_panel_height"
                 android:paddingHorizontal="4dp"
                 android:layout_marginBottom="12dp"
                 app:graphData="@{graphData}"
-                app:forecastType="@{forecastType}"
-                tools:layout_height="@dimen/forecast_panel_height" />
+                app:forecastType="@{forecastType}" />
 
         </LinearLayout>
 
