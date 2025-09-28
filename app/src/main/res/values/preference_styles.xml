@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="CustomPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
+        <item name="sliderPreferenceStyle">@style/Preference.SliderPreference.Material</item>
+        <item name="switchPreferenceCompatStyle">@style/Preference.MaterialSwitchCompat</item>
+        <item name="switchPreferenceStyle">@style/Preference.MaterialSwitch</item>
+        <item name="chipPreferenceStyle">@style/Preference.ChipPreference</item>
+        <item name="buttonGroupPreferenceStyle">@style/Preference.ButtonGroupPreference</item>
+        <item name="providerIconPreferenceStyle">@style/Preference.ProviderIconPreference</item>
+        <item name="radioButtonPreferenceStyle">@style/Preference.RadioButtonPreference</item>
+        <item name="iconProviderPreferenceStyle">@style/Preference.IconProviderPreference</item>
+        <item name="preferenceCategoryTitleTextAppearance">?textAppearanceBodyMediumEmphasized
+        </item>
+    </style>
+
+    <style name="PreferenceSummaryTextStyle" tools:override="true">
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+    </style>
+
+    <style name="Preference.MaterialSwitch" parent="Preference.SwitchPreference.Material">
+        <item name="android:widgetLayout">@layout/preference_widget_materialswitch</item>
+    </style>
+
+    <style name="Preference.MaterialSwitchCompat" parent="Preference.SwitchPreference.Material">
+        <item name="android:widgetLayout">@layout/preference_widget_materialswitch_compat</item>
+    </style>
+
+    <style name="Preference.ChipPreference">
+        <item name="android:layout">@layout/preference_widget_chip</item>
+        <item name="android:selectable">false</item>
+    </style>
+
+    <style name="Preference.ButtonGroupPreference">
+        <item name="android:layout">@layout/preference_widget_buttongroup</item>
+        <item name="android:selectable">false</item>
+    </style>
+
+    <style name="Preference.ProviderIconPreference">
+        <item name="android:layout">@layout/preference_providericon</item>
+        <item name="android:selectable">true</item>
+    </style>
+
+    <style name="Preference.RadioButtonPreference" parent="Preference.CheckBoxPreference.Material">
+        <item name="android:layout">@layout/preference_radio</item>
+        <item name="android:widgetLayout">@layout/preference_widget_radiobutton</item>
+    </style>
+
+    <style name="Preference.IconProviderPreference" parent="Preference.RadioButtonPreference">
+        <item name="android:layout">@layout/preference_icon</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference_TextAppearanceMaterialBody2">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@font/dm_sans_medium</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Preference_TextAppearanceMaterialSubhead">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@font/dm_sans</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+</resources>

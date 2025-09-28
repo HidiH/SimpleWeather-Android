@@ -79,4 +79,12 @@
     <dimen name="appwidget_cells_4">250dp</dimen>
     <dimen name="appwidget_cells_5">320dp</dimen>
 
+    <!-- Settings -->
+    <dimen name="preference_expressive_corner_radius">20dp</dimen>
+    <dimen name="preference_expressive_space_extraSmall4">8dp</dimen>
+    <dimen name="preference_expressive_space_extraSmall6">12dp</dimen>
+    <dimen name="preference_expressive_space_small1">16dp</dimen>
+    <dimen name="preference_expressive_space_medium3">40dp</dimen>
+    <dimen name="preference_expressive_space_large3">72dp</dimen>
+
 </resources>

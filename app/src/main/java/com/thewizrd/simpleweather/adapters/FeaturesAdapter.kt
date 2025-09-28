@@ -1,10 +1,18 @@
 package com.thewizrd.simpleweather.adapters
 
+import android.content.Context
+import android.graphics.drawable.RippleDrawable
+import android.os.Handler
+import android.os.Looper
 import android.view.ViewGroup
+import androidx.annotation.IntDef
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.thewizrd.common.helpers.ObservableArrayList
 import com.thewizrd.common.helpers.OnListChangedListener
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.FeatureItem
 import com.thewizrd.simpleweather.helpers.ItemTouchHelperAdapter
@@ -23,6 +31,7 @@ import com.thewizrd.simpleweather.preferences.FeatureSettings.KEY_FEATURE_RADAR
 import com.thewizrd.simpleweather.preferences.FeatureSettings.KEY_FEATURE_SUMMARY
 import com.thewizrd.simpleweather.preferences.FeatureSettings.KEY_FEATURE_SUNPHASE
 import com.thewizrd.simpleweather.preferences.FeatureSettings.KEY_FEATURE_UV
+import kotlin.intArrayOf
 
 internal class FeatureItemDiffCallback(
     private val oldList: List<String>,
@@ -79,7 +88,16 @@ class FeaturesAdapter : RecyclerView.Adapter<FeaturesAdapter.ViewHolder>(), Item
             KEY_FEATURE_SUMMARY,
             KEY_FEATURE_LOCPANELIMG
         )
+
+        private const val CORNERS_FULL = 0
+        private const val CORNERS_TOP = 1
+        private const val CORNERS_CENTER = 2
+        private const val CORNERS_BOTTOM = 3
     }
+
+    @IntDef(value = [CORNERS_FULL, CORNERS_TOP, CORNERS_CENTER, CORNERS_BOTTOM])
+    @Retention(AnnotationRetention.SOURCE)
+    private annotation class CornersType
 
     private val dataset = ObservableArrayList<String>()
 
@@ -130,20 +148,98 @@ class FeaturesAdapter : RecyclerView.Adapter<FeaturesAdapter.ViewHolder>(), Item
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(FeatureItem(parent.context))
+        return ViewHolder(FeatureItem(parent.context).apply {
+            val horizontalMargins = parent.context.dpToPx(16f).toInt()
+            val verticalMargins = parent.context.dpToPx(1f).toInt()
+            layoutParams = RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.MATCH_PARENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT
+            ).apply {
+                leftMargin = horizontalMargins
+                rightMargin = horizontalMargins
+                topMargin = verticalMargins
+                bottomMargin = verticalMargins
+            }
+        })
     }
 
     override fun getItemCount(): Int = dataset.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(dataset[position])
+        if (holder.itemView.background is RippleDrawable) {
+            updateItemCorners(
+                holder.itemView.context,
+                holder.itemView.background as RippleDrawable,
+                getCornersType(position)
+            )
+        }
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         dataset.move(fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
+        // Required for expressive corners
+        notifyItemChanged(fromPosition)
+        notifyItemChanged(toPosition)
     }
 
     override fun onItemDismiss(position: Int) { /* no-op */
+    }
+
+    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        notifyItemChanged(viewHolder.bindingAdapterPosition)
+    }
+
+    @CornersType
+    private fun getCornersType(position: Int): Int {
+        return when {
+            itemCount <= 1 && position == 0 -> CORNERS_FULL
+            position == 0 -> CORNERS_TOP
+            position == itemCount - 1 -> CORNERS_BOTTOM
+            else -> CORNERS_CENTER
+        }
+    }
+
+    private fun updateItemCorners(
+        context: Context,
+        background: RippleDrawable,
+        @CornersType cornersType: Int
+    ) {
+        val baseShapeModel = ShapeAppearanceModel.builder(
+            context,
+            R.style.ShapeAppearance_Material3_Corner_Large,
+            0
+        )
+        val smallCornerSize = context.dpToPx(4f)
+
+        when (cornersType) {
+            CORNERS_BOTTOM -> {
+                baseShapeModel.setTopLeftCornerSize(smallCornerSize)
+                baseShapeModel.setTopRightCornerSize(smallCornerSize)
+            }
+
+            CORNERS_CENTER -> {
+                baseShapeModel.setTopLeftCornerSize(smallCornerSize)
+                baseShapeModel.setTopRightCornerSize(smallCornerSize)
+                baseShapeModel.setBottomLeftCornerSize(smallCornerSize)
+                baseShapeModel.setBottomRightCornerSize(smallCornerSize)
+            }
+
+            CORNERS_FULL -> {}
+
+            CORNERS_TOP -> {
+                baseShapeModel.setBottomLeftCornerSize(smallCornerSize)
+                baseShapeModel.setBottomRightCornerSize(smallCornerSize)
+            }
+        }
+
+        for (i in 0 until background.numberOfLayers) {
+            val drawable = background.getDrawable(i)
+            if (drawable is MaterialShapeDrawable) {
+                drawable.shapeAppearanceModel = baseShapeModel.build()
+                break
+            }
+        }
     }
 }

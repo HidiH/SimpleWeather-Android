@@ -31,7 +31,7 @@ import com.thewizrd.simpleweather.R
 class ButtonGroupPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
+    defStyleAttr: Int = R.attr.buttonGroupPreferenceStyle,
     defStyleRes: Int = 0
 ) : Preference(context, attrs, defStyleAttr, defStyleRes) {
     private lateinit var mEntries: Array<CharSequence>
@@ -43,14 +43,11 @@ class ButtonGroupPreference @JvmOverloads constructor(
 
     init {
         context.obtainStyledAttributes(
-            attrs, R.styleable.ListPreference, defStyleAttr, defStyleRes
+            attrs, R.styleable.ButtonGroupPreference, defStyleAttr, defStyleRes
         ).use {
             mEntries = it.getTextArray(R.styleable.ButtonGroupPreference_android_entries)
             mEntryValues = it.getTextArray(R.styleable.ButtonGroupPreference_android_entryValues)
         }
-
-        layoutResource = R.layout.preference_widget_buttongroup
-        isSelectable = false
     }
 
     constructor(
@@ -64,8 +61,6 @@ class ButtonGroupPreference @JvmOverloads constructor(
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        holder.isDividerAllowedAbove = true
-        holder.isDividerAllowedBelow = true
 
         buttonGroup = holder.findViewById(R.id.button_group) as MaterialButtonToggleGroup
 

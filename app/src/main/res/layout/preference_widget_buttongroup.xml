@@ -37,8 +37,9 @@
         android:paddingHorizontal="24dp"
         android:paddingTop="8dp"
         android:paddingBottom="0dp"
-        android:clipToPadding="false"
-        android:scrollbars="none">
+        android:clipToPadding="true"
+        android:scrollbars="none"
+        android:overScrollMode="never">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             style="@style/Widget.Material3.MaterialButtonGroup.Connected"

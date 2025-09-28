@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.Intent.FilterComparison
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.location.LocationManager
 import android.os.Build
@@ -26,6 +27,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.location.LocationManagerCompat
 import androidx.core.net.toUri
+import androidx.core.view.updatePaddingRelative
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.EditTextPreference
@@ -39,6 +41,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.thewizrd.common.helpers.ListChangedArgs
 import com.thewizrd.common.helpers.OnListChangedListener
 import com.thewizrd.common.helpers.PermissionLauncher
@@ -59,8 +62,10 @@ import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.AnalyticsProps
+import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
+import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrResourceId
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
@@ -74,6 +79,7 @@ import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.adapters.ButtonAdapter
 import com.thewizrd.simpleweather.adapters.DividerAdapter
 import com.thewizrd.simpleweather.adapters.FeaturesAdapter
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.adapters.ViewHolderLongClickListener
 import com.thewizrd.simpleweather.controls.FeatureItem
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
@@ -86,6 +92,8 @@ import com.thewizrd.simpleweather.extras.isWeatherAPISupported
 import com.thewizrd.simpleweather.extras.navigateToPremiumFragment
 import com.thewizrd.simpleweather.extras.navigateUnsupportedIconPack
 import com.thewizrd.simpleweather.extras.setupReviewPreference
+import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
+import com.thewizrd.simpleweather.fragments.LargeCollapsingToolbarFragment
 import com.thewizrd.simpleweather.fragments.ToolbarFragment
 import com.thewizrd.simpleweather.locale.InstallRequest
 import com.thewizrd.simpleweather.locale.LocaleInstaller
@@ -1122,7 +1130,7 @@ class SettingsFragment : BaseSettingsFragment(),
         }
     }
 
-    class FeaturesFragment : ToolbarFragment() {
+    class FeaturesFragment : LargeCollapsingToolbarFragment() {
         private lateinit var binding: FragmentWeatherListBinding
         private lateinit var orderableFeaturesAdapter: FeaturesAdapter
         private lateinit var nonOrderableFeaturesAdapter: FeaturesAdapter
@@ -1147,6 +1155,9 @@ class SettingsFragment : BaseSettingsFragment(),
             toolbar.setNavigationIcon(toolbar.context.getAttrResourceId(R.attr.homeAsUpIndicator))
             toolbar.setNavigationOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
 
+            appBarLayout.setExpanded(false)
+            appBarLayout.isLiftOnScroll = false
+
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the binding.recyclerView
             binding.recyclerView.setHasFixedSize(true)
@@ -1163,11 +1174,11 @@ class SettingsFragment : BaseSettingsFragment(),
                             .toList()
                     )
                 }.also { orderableFeaturesAdapter = it },
-                DividerAdapter(),
+                SpacerAdapter(requireContext().dpToPx(16f).toInt()),
                 FeaturesAdapter().apply {
                     updateList(FeaturesAdapter.NON_ORDERABLE_ITEMS.toList())
                 }.also { nonOrderableFeaturesAdapter = it },
-                DividerAdapter(),
+                SpacerAdapter(requireContext().dpToPx(4f).toInt()),
                 ButtonAdapter(
                     resId = R.string.action_reset,
                     padding = context?.dpToPx(8f)?.toInt() ?: 0,
@@ -1240,6 +1251,7 @@ class SettingsFragment : BaseSettingsFragment(),
                     if (viewHolder is FeaturesAdapter.ViewHolder) {
                         viewHolder.itemView.elevation = 0f
                     }
+                    orderableFeaturesAdapter.onClearView(recyclerView, viewHolder)
                 }
             }
 
@@ -1277,6 +1289,30 @@ class SettingsFragment : BaseSettingsFragment(),
             })
 
             return root
+        }
+
+        @SuppressLint("MissingSuperCall")
+        override fun updateWindowColors() {
+            context?.let { ctx ->
+                var backgroundColor = ctx.getAttrColor(R.attr.colorSurfaceContainer)
+                var statusBarColor = ctx.getAttrColor(R.attr.colorSurfaceContainer)
+                if (settingsManager.getUserThemeMode() === UserThemeMode.AMOLED_DARK) {
+                    statusBarColor = Colors.BLACK
+                    backgroundColor = Colors.BLACK
+                }
+
+                rootView.setBackgroundColor(backgroundColor)
+                collapsingToolbar.setContentScrimColor(backgroundColor)
+                collapsingToolbar.setStatusBarScrimColor(statusBarColor)
+                collapsingToolbar.setBackgroundColor(statusBarColor)
+                appBarLayout.setLiftOnScrollColor(ColorStateList.valueOf(statusBarColor))
+                if (appBarLayout.background is MaterialShapeDrawable) {
+                    val materialShapeDrawable = appBarLayout.background as MaterialShapeDrawable
+                    materialShapeDrawable.fillColor = ColorStateList.valueOf(statusBarColor)
+                } else {
+                    appBarLayout.setBackgroundColor(statusBarColor)
+                }
+            }
         }
 
         override val scrollTargetViewId: Int

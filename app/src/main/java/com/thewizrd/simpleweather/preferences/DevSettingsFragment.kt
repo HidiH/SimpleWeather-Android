@@ -95,6 +95,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                     settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
+            isIconSpaceReserved = false
         })
 
         apiKeyCategory.addPreference(EditTextPreference(context).apply {
@@ -112,6 +113,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                     settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
+            isIconSpaceReserved = false
         })
 
         apiKeyCategory.addPreference(EditTextPreference(context).apply {
@@ -129,6 +131,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                     settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
+            isIconSpaceReserved = false
         })
 
         apiKeyCategory.addPreference(EditTextPreference(context).apply {
@@ -146,6 +149,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                     settingsManager.setPersonalKey(preference.key, true)
                     true
                 }
+            isIconSpaceReserved = false
         })
 
         firebaseCategory.addPreference(Preference(context).apply {
@@ -162,6 +166,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                         .show()
                     true
                 }
+            isIconSpaceReserved = false
         }.also { preference ->
             updateFirebaseIdPreference(preference)
         })
@@ -175,6 +180,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                     Logger.enableDebugLogger(context, newValue as Boolean)
                     true
                 }
+            isIconSpaceReserved = false
         })
 
         miscCategory.addPreference(Preference(context).apply {
@@ -208,6 +214,7 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                 }
                 true
             }
+            isIconSpaceReserved = false
         })
     }
 }

@@ -22,7 +22,7 @@ import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 
-class OSSCreditsPreference : Preference {
+class OSSCreditsPreference : Preference, NoBackground {
     private var loadJob: Job? = null
 
     constructor(context: Context) : super(context)

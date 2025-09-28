@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="@bool/enable_fitsSystemWindows"
-        app:liftOnScroll="true"
+        app:liftOnScroll="false"
         tools:stateListAnimator="@null">
 
         <com.google.android.material.appbar.MaterialToolbar

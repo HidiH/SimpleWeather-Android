@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="@bool/enable_fitsSystemWindows"
-            app:liftOnScroll="true"
+            app:liftOnScroll="false"
             app:liftOnScrollTargetViewId="@id/scrollView">
 
             <FrameLayout

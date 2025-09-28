@@ -31,7 +31,7 @@
             android:minHeight="?attr/actionBarSize"
             android:orientation="vertical"
             android:fitsSystemWindows="@bool/enable_fitsSystemWindows"
-            app:liftOnScroll="true"
+            app:liftOnScroll="false"
             app:liftOnScrollTargetViewId="@id/scrollView">
 
             <com.thewizrd.simpleweather.controls.ClockToolbar

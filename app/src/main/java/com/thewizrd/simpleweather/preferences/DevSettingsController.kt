@@ -34,6 +34,7 @@ class DevSettingsController(private val prefFragment: PreferenceFragmentCompat, 
                 true
             }
             isVisible = settingsManager.isDevSettingsEnabled()
+            isIconSpaceReserved = false
         }.also { devSettingPref = it })
     }
 
@@ -61,9 +62,18 @@ class DevSettingsController(private val prefFragment: PreferenceFragmentCompat, 
                     mDevHitToast!!.show()
                 }
             } else if (mDevHitCountdown < 0) {
-                mDevHitToast?.cancel()
-                mDevHitToast = Toast.makeText(preference.context, "Dev settings already enabled.", Toast.LENGTH_LONG)
-                mDevHitToast!!.show()
+                mDevHitCountdown--
+
+                if (mDevHitCountdown < -2) {
+                    mDevHitToast?.cancel()
+                    mDevHitToast = Toast.makeText(
+                        preference.context,
+                        "Dev settings already enabled.",
+                        Toast.LENGTH_LONG
+                    )
+                    mDevHitToast!!.show()
+                    mDevHitCountdown = -1
+                }
             }
             return true
         } else {

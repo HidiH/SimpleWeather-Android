@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="@bool/enable_fitsSystemWindows"
-        app:liftOnScroll="true"
+        app:liftOnScroll="false"
         tools:stateListAnimator="@null">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -23,12 +23,14 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:collapsedTitleTextAppearance="@style/TextAppearance.SimpleWeather.ToolbarTitle"
             app:collapsedSubtitleTextAppearance="@style/TextAppearance.SimpleWeather.TitleSmall"
-            style="@style/Widget.Material3Expressive.CollapsingToolbar.Medium">
+            style="@style/Widget.Material3Expressive.CollapsingToolbar.Medium"
+            app:titleCollapseMode="fade">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:elevation="0dp"
                 app:layout_collapseMode="pin"
                 app:titleTextAppearance="@style/TextAppearance.SimpleWeather.ToolbarTitle"
                 app:subtitleTextAppearance="@style/TextAppearance.SimpleWeather.TitleSmall"

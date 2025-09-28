@@ -1447,6 +1447,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             } else {
                 binding.appBarLayout.setBackgroundColor(statusBarColor)
             }
+            binding.appBarLayout.setLiftOnScrollColor(ColorStateList.valueOf(statusBarColor))
         }
     }
 

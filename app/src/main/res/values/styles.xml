@@ -205,7 +205,7 @@
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base">
-        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay.Expressive</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
@@ -221,28 +221,8 @@
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 
-    <style name="CustomPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
-        <item name="sliderPreferenceStyle">@style/Preference.SliderPreference.Material</item>
-        <item name="switchPreferenceCompatStyle">@style/Preference.MaterialSwitchCompat</item>
-        <item name="switchPreferenceStyle">@style/Preference.MaterialSwitch</item>
-        <item name="preferenceCategoryTitleTextAppearance">?textAppearanceBodyMediumEmphasized
-        </item>
-    </style>
-
-    <style name="PreferenceSummaryTextStyle" tools:override="true">
-        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
-    </style>
-
-    <style name="Preference.MaterialSwitch" parent="Preference.SwitchPreference.Material">
-        <item name="android:widgetLayout">@layout/preference_widget_materialswitch</item>
-    </style>
-
-    <style name="Preference.MaterialSwitchCompat" parent="Preference.SwitchPreference.Material">
-        <item name="android:widgetLayout">@layout/preference_widget_materialswitch_compat</item>
-    </style>
-
     <style name="SetupTheme" parent="AppTheme">
-        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay.Expressive</item>
     </style>
 
     <style name="ActionButton" parent="Widget.AppCompat.ActionButton">
@@ -304,20 +284,6 @@
 
     <style name="AlertTitleStyle" parent="@style/MaterialAlertDialog.Material3Expressive.Title.Text.CenterStacked">
         <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
-    </style>
-
-    <style name="Preference_TextAppearanceMaterialBody2">
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily" tools:ignore="NewApi">@font/dm_sans_medium</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="Preference_TextAppearanceMaterialSubhead">
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily" tools:ignore="NewApi">@font/dm_sans</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="TextAppearance.SimpleWeather" parent="TextAppearance.AppCompat">
