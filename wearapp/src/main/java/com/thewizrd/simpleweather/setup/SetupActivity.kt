@@ -4,14 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.core.text.util.LocalePreferences
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import com.thewizrd.common.viewmodels.LocationSearchViewModel
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.di.localBroadcastManager
 import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.main.MainActivity
@@ -25,6 +29,17 @@ class SetupActivity : UserLocaleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AnalyticsLogger.logEvent("SetupActivity: onCreate")
+
+        // Set default units based on user locale
+        PreferenceManager.getDefaultSharedPreferences(this).run {
+            if (!contains(SettingsManager.KEY_USECELSIUS) && !contains(SettingsManager.KEY_TEMPUNIT)) {
+                if (LocalePreferences.getTemperatureUnit() == LocalePreferences.TemperatureUnit.CELSIUS) {
+                    settingsManager.setDefaultUnits(Units.CELSIUS)
+                } else {
+                    settingsManager.setDefaultUnits(Units.FAHRENHEIT)
+                }
+            }
+        }
 
         setContent {
             Setup()

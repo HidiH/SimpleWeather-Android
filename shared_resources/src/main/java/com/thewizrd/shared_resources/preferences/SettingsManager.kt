@@ -574,6 +574,7 @@ class SettingsManager(context: Context) {
     fun setDefaultUnits(@TemperatureUnits unit: String) {
         val isFahrenheit = FAHRENHEIT == unit
         preferences.edit {
+            putBoolean(KEY_USECELSIUS, !isFahrenheit)
             putString(KEY_TEMPUNIT, unit)
             putString(KEY_SPEEDUNIT, if (isFahrenheit) MILES_PER_HOUR else KILOMETERS_PER_HOUR)
             putString(KEY_PRESSUREUNIT, if (isFahrenheit) INHG else MILLIBAR)
