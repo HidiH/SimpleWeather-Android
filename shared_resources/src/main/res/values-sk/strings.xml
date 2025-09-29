@@ -69,8 +69,8 @@
     <string name="pref_title_general">"Všeobecné"</string>
     <string name="pref_category_version">"Verzia"</string>
     <string name="pref_title_units">"Jednotky"</string>
-    <string name="pref_summary_fahrenheit">"Zobraziť v stupňoch Fahrenheita"</string>
-    <string name="pref_summary_celsius">"Zobraziť v stupňoch Celzia"</string>
+    <string name="pref_summary_fahrenheit">"Zobraziť v stupňoch Fahrenheita (°F)"</string>
+    <string name="pref_summary_celsius">"Zobraziť v stupňoch Celzia (°C)"</string>
     <string name="pref_title_about">"O aplikácii"</string>
     <string name="pref_title_about_app">"O SimpleWeather"</string>
     <string name="pref_title_credits">"S podporou"</string>

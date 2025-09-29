@@ -69,8 +69,8 @@
     <string name="pref_title_general">"Paramètres généraux"</string>
     <string name="pref_category_version">"Version"</string>
     <string name="pref_title_units">"Unités"</string>
-    <string name="pref_summary_fahrenheit">"Afficher les unités en Fahrenheit"</string>
-    <string name="pref_summary_celsius">"Afficher les unités en Celsius"</string>
+    <string name="pref_summary_fahrenheit">"Afficher les unités en Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Afficher les unités en Celsius (°C)"</string>
     <string name="pref_title_about">"À propos"</string>
     <string name="pref_title_about_app">"À propos de SimpleWeather"</string>
     <string name="pref_title_credits">"Crédits"</string>

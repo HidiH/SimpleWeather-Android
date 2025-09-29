@@ -69,8 +69,8 @@
     <string name="pref_title_general">"Algemeen"</string>
     <string name="pref_category_version">"Versie"</string>
     <string name="pref_title_units">"Eenheden"</string>
-    <string name="pref_summary_fahrenheit">"Eenheden in Farenheit weergeven"</string>
-    <string name="pref_summary_celsius">"Eenheden in Celcius weergeven"</string>
+    <string name="pref_summary_fahrenheit">"Eenheden in Farenheit weergeven (°F)"</string>
+    <string name="pref_summary_celsius">"Eenheden in Celcius weergeven (°C)"</string>
     <string name="pref_title_about">"Over"</string>
     <string name="pref_title_about_app">"Over SimpleWeather"</string>
     <string name="pref_title_credits">"Dank aan"</string>
