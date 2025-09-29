@@ -435,10 +435,8 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         })
 
         // SwipeRefresh
-        binding.refreshLayout.setProgressBackgroundColorSchemeColor(
-            requireContext().getAttrColor(R.attr.colorSurface)
-        )
-        binding.refreshLayout.setColorSchemeColors(requireContext().getAttrColor(R.attr.colorAccent))
+        binding.refreshLayout.setContainerColor(requireContext().getAttrColor(R.attr.colorPrimaryContainer))
+        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorOnPrimaryContainer))
         binding.refreshLayout.setOnRefreshListener {
             AnalyticsLogger.logEvent("WeatherNowFragment: onRefresh")
             wNowViewModel.refreshWeather(true)
@@ -1131,10 +1129,8 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        binding.refreshLayout.setProgressBackgroundColorSchemeColor(
-            requireContext().getAttrColor(R.attr.colorSurface)
-        )
-        binding.refreshLayout.setColorSchemeColors(requireContext().getAttrColor(R.attr.colorAccent))
+        binding.refreshLayout.setContainerColor(requireContext().getAttrColor(R.attr.colorPrimaryContainer))
+        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorOnPrimaryContainer))
 
         // Resize necessary views
         adjustConditionPanelLayout()

@@ -63,7 +63,7 @@
             android:indeterminateTintMode="src_in"
             app:showProgressBarIfTrue="@{viewModel.uiState.loading &amp;&amp; (viewModel.uiState.noLocationAvailable || StringUtils.isNullOrWhitespace(viewModel.weather.location))}" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        <com.thewizrd.simpleweather.controls.LoadingIndicatorRefreshLayout
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -101,7 +101,7 @@
 
             </com.thewizrd.simpleweather.controls.ObservableNestedScrollView>
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </com.thewizrd.simpleweather.controls.LoadingIndicatorRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
