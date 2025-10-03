@@ -111,7 +111,6 @@
     <string name="prompt_max_locations_allowed">"Maximum of five locations allowed"</string>
 
     <!-- Forecast Graphs -->
-    <string name="label_nodata">"NO DATA"</string>
     <string name="pref_title_widgetgraphtype">"Forecast Type"</string>
 
     <!-- Widget Labels -->

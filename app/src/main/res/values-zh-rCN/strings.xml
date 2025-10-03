@@ -154,7 +154,6 @@
 
     <!-- Forecast Graphs -->
     <!-- Fuzzy -->
-    <string name="label_nodata">"没有数据"</string>
 
     <!-- Fuzzy -->
     <string name="pref_title_widgetgraphtype">"预测类型"</string>
