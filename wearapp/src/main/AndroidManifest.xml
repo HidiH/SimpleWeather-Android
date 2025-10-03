@@ -391,6 +391,66 @@
         </service>
 
         <service
+            android:icon="@mipmap/ic_launcher_round"
+            android:label="@string/label_hourlyforecast"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER"
+            android:exported="true"
+            android:name=".wearable.tiles.HourlyForecastPillsTileProviderService">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@drawable/tile_preview_pills_hrforecast" />
+        </service>
+
+        <service
+            android:icon="@mipmap/ic_launcher_round"
+            android:label="@string/label_hourlyforecast"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER"
+            android:exported="true"
+            android:name=".wearable.tiles.HourlyForecastCardTileProviderService">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@drawable/tile_preview_card_hrforecast" />
+        </service>
+
+        <service
+            android:icon="@mipmap/ic_launcher_round"
+            android:label="@string/tile_label_weather_forecast"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER"
+            android:exported="true"
+            android:name=".wearable.tiles.M3ForecastWeatherTileProviderService">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@drawable/tile_preview_m3_forecast" />
+        </service>
+
+        <service
+            android:icon="@mipmap/ic_launcher_round"
+            android:label="@string/tile_label_weather_hrforecast"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER"
+            android:exported="true"
+            android:name=".wearable.tiles.M3HourlyForecastWeatherTileProviderService">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@drawable/tile_preview_m3_hrforecast" />
+        </service>
+
+        <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync|location"
             tools:node="merge" />

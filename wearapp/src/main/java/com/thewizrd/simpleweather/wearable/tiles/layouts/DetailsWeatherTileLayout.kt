@@ -7,6 +7,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.wear.protolayout.ActionBuilders
 import androidx.wear.protolayout.ColorBuilders.ColorProp
 import androidx.wear.protolayout.DeviceParametersBuilders.DeviceParameters
+import androidx.wear.protolayout.DeviceParametersBuilders.SCREEN_SHAPE_ROUND
 import androidx.wear.protolayout.DimensionBuilders.DpProp
 import androidx.wear.protolayout.DimensionBuilders.degrees
 import androidx.wear.protolayout.DimensionBuilders.dp
@@ -33,15 +34,22 @@ import androidx.wear.protolayout.ModifiersBuilders.Semantics
 import androidx.wear.protolayout.ModifiersBuilders.Transformation
 import androidx.wear.protolayout.ResourceBuilders.Resources
 import androidx.wear.protolayout.expression.ProtoLayoutExperimental
-import androidx.wear.protolayout.material.Chip
-import androidx.wear.protolayout.material.ChipColors
 import androidx.wear.protolayout.material.CircularProgressIndicator
-import androidx.wear.protolayout.material.CompactChip
 import androidx.wear.protolayout.material.ProgressIndicatorColors
 import androidx.wear.protolayout.material.Text
 import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.MultiButtonLayout
-import androidx.wear.protolayout.material.layouts.PrimaryLayout
+import androidx.wear.protolayout.material3.ButtonDefaults.filledTonalButtonColors
+import androidx.wear.protolayout.material3.MaterialScope
+import androidx.wear.protolayout.material3.button
+import androidx.wear.protolayout.material3.compactButton
+import androidx.wear.protolayout.material3.icon
+import androidx.wear.protolayout.material3.materialScope
+import androidx.wear.protolayout.material3.primaryLayout
+import androidx.wear.protolayout.material3.text
+import androidx.wear.protolayout.material3.textEdgeButton
+import androidx.wear.protolayout.modifiers.clickable
+import androidx.wear.protolayout.types.layoutString
 import androidx.wear.tiles.tooling.preview.TilePreviewData
 import androidx.wear.tiles.tooling.preview.TilePreviewHelper
 import com.google.android.horologist.tiles.images.toImageResource
@@ -133,148 +141,158 @@ internal fun detailsWeatherTileLayout(
 ): LayoutElement {
     val detailItems = filteredTileConfig.take(DetailsWeatherTileUtils.MAX_BUTTONS)
 
-    return Box.Builder()
-        .setHeight(expand())
-        .setWidth(expand())
-        .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
-        .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
-        .addContent(
-            when (detailItems.size) {
-                0 -> {
-                    Text.Builder(context, context.getString(R.string.error_noresults))
-                        .setTypography(Typography.TYPOGRAPHY_BODY1)
-                        .setColor(ColorProp.Builder(Colors.WHITE).build())
-                        .setMaxLines(1)
-                        .build()
-                }
-
-                1, 2 -> {
-                    PrimaryLayout.Builder(deviceParameters)
-                        .setResponsiveContentInsetEnabled(true)
-                        .setPrimaryChipContent(
-                            CompactChip.Builder(
-                                context,
-                                Clickable.Builder()
-                                    .setOnClick(getLaunchAction(context))
-                                    .build(),
-                                deviceParameters
-                            )
-                                .setTextContent(context.getString(R.string.label_nav_weathernow))
-                                .build()
+    return materialScope(context, deviceParameters) {
+        Box.Builder()
+            .setHeight(expand())
+            .setWidth(expand())
+            .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
+            .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
+            .addContent(
+                when (detailItems.size) {
+                    0 -> {
+                        text(
+                            text = context.getString(R.string.label_nodata).layoutString,
+                            typography = androidx.wear.protolayout.material3.Typography.LABEL_LARGE
                         )
-                        .setContent(
-                            Column.Builder()
-                                .setWidth(expand())
-                                .apply {
-                                    detailItems.forEachIndexed { index, (type, model) ->
-                                        addContent(
-                                            detailChipItem(
-                                                context, deviceParameters, weather, type, model
+                    }
+
+                    1, 2 -> {
+                        primaryLayout(
+                            titleSlot = if (deviceParameters.isLargeHeight()) {
+                                weather?.location?.name?.let {
+                                    {
+                                        detailLocation(it)
+                                    }
+                                }
+                            } else {
+                                null
+                            },
+                            mainSlot = {
+                                Column.Builder()
+                                    .setWidth(expand())
+                                    .apply {
+                                        detailItems.forEachIndexed { index, (type, model) ->
+                                            addContent(
+                                                detailChipItem(
+                                                    deviceParameters, weather, type, model
+                                                )
                                             )
+                                            if (index != detailItems.size - 1) {
+                                                addContent(
+                                                    Spacer.Builder().setHeight(dp(4f)).build()
+                                                )
+                                            }
+                                        }
+                                    }
+                                    .build()
+                            },
+                            bottomSlot = {
+                                if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND) {
+                                    textEdgeButton(
+                                        onClick = clickable(getLaunchAction(context)),
+                                        labelContent = {
+                                            text(context.getString(R.string.label_nav_weathernow).layoutString)
+                                        }
+                                    )
+                                } else {
+                                    compactButton(
+                                        onClick = clickable(getLaunchAction(context)),
+                                        labelContent = {
+                                            text(context.getString(R.string.label_nav_weathernow).layoutString)
+                                        }
+                                    )
+                                }
+                            }
+                        )
+                    }
+
+                    3, 4 -> {
+                        Column.Builder()
+                            .setHeight(wrap())
+                            .setWidth(wrap())
+                            .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
+                            .setModifiers(
+                                Modifiers.Builder()
+                                    .setPadding(
+                                        Padding.Builder()
+                                            .setStart(dp(4f))
+                                            .setEnd(dp(4f))
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .apply {
+                                detailItems.chunked(2)
+                                    .forEachIndexed { index, list ->
+                                        addContent(
+                                            Row.Builder()
+                                                .setWidth(wrap())
+                                                .setHeight(wrap())
+                                                .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
+                                                .apply {
+                                                    list.forEachIndexed { index, (type, model) ->
+                                                        addContent(
+                                                            Column.Builder()
+                                                                .setWidth(dp(66f))
+                                                                .setHeight(dp(66f))
+                                                                .setHorizontalAlignment(
+                                                                    HORIZONTAL_ALIGN_CENTER
+                                                                )
+                                                                .addContent(
+                                                                    detailButtonItem(
+                                                                        context,
+                                                                        deviceParameters,
+                                                                        weather,
+                                                                        type,
+                                                                        model,
+                                                                        buttonSize = dp(66f),
+                                                                        imageSize = dp(24f),
+                                                                        spacerSize = dp(10f),
+                                                                        typography = Typography.TYPOGRAPHY_CAPTION2
+                                                                    )
+                                                                )
+                                                                .build()
+                                                        )
+                                                        if (index != list.size - 1) {
+                                                            addContent(
+                                                                Spacer.Builder().setWidth(dp(4f))
+                                                                    .build()
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                                .build()
                                         )
+
                                         if (index != detailItems.size - 1) {
                                             addContent(Spacer.Builder().setHeight(dp(4f)).build())
                                         }
                                     }
-                                }
-                                .build()
-                        )
-                        .apply {
-                            if (deviceParameters.screenWidthDp >= 225) {
-                                weather?.location?.name?.let {
-                                    setPrimaryLabelTextContent(detailLocation(context, it))
+                            }
+                            .build()
+                    }
+
+                    else -> {
+                        MultiButtonLayout.Builder()
+                            .apply {
+                                detailItems.forEach { (type, model) ->
+                                    addButtonContent(
+                                        detailButtonItem(
+                                            context,
+                                            deviceParameters,
+                                            weather,
+                                            type,
+                                            model
+                                        )
+                                    )
                                 }
                             }
-                        }
-                        .build()
+                            .build()
+                    }
                 }
-
-                3, 4 -> {
-                    Column.Builder()
-                        .setHeight(wrap())
-                        .setWidth(wrap())
-                        .setHorizontalAlignment(HORIZONTAL_ALIGN_CENTER)
-                        .setModifiers(
-                            Modifiers.Builder()
-                                .setPadding(
-                                    Padding.Builder()
-                                        .setStart(dp(4f))
-                                        .setEnd(dp(4f))
-                                        .build()
-                                )
-                                .build()
-                        )
-                        .apply {
-                            detailItems.chunked(2)
-                                .forEachIndexed { index, list ->
-                                    addContent(
-                                        Row.Builder()
-                                            .setWidth(wrap())
-                                            .setHeight(wrap())
-                                            .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
-                                            .apply {
-                                                list.forEachIndexed { index, (type, model) ->
-                                                    addContent(
-                                                        Column.Builder()
-                                                            .setWidth(dp(66f))
-                                                            .setHeight(dp(66f))
-                                                            .setHorizontalAlignment(
-                                                                HORIZONTAL_ALIGN_CENTER
-                                                            )
-                                                            .addContent(
-                                                                detailButtonItem(
-                                                                    context,
-                                                                    deviceParameters,
-                                                                    weather,
-                                                                    type,
-                                                                    model,
-                                                                    buttonSize = dp(66f),
-                                                                    imageSize = dp(24f),
-                                                                    spacerSize = dp(10f),
-                                                                    typography = Typography.TYPOGRAPHY_CAPTION2
-                                                                )
-                                                            )
-                                                            .build()
-                                                    )
-                                                    if (index != list.size - 1) {
-                                                        addContent(
-                                                            Spacer.Builder().setWidth(dp(4f))
-                                                                .build()
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                            .build()
-                                    )
-
-                                    if (index != detailItems.size - 1) {
-                                        addContent(Spacer.Builder().setHeight(dp(4f)).build())
-                                    }
-                                }
-                        }
-                        .build()
-                }
-
-                else -> {
-                    MultiButtonLayout.Builder()
-                        .apply {
-                            detailItems.forEach { (type, model) ->
-                                addButtonContent(
-                                    detailButtonItem(
-                                        context,
-                                        deviceParameters,
-                                        weather,
-                                        type,
-                                        model
-                                    )
-                                )
-                            }
-                        }
-                        .build()
-                }
-            }
-        )
-        .build()
+            )
+            .build()
+    }
 }
 
 @OptIn(ProtoLayoutExperimental::class)
@@ -290,7 +308,14 @@ internal fun detailLocation(
         .build()
 }
 
-internal fun detailButtonItem(
+@OptIn(ProtoLayoutExperimental::class)
+internal fun MaterialScope.detailLocation(
+    location: String
+): LayoutElement {
+    return text(text = (location.split(',').firstOrNull() ?: location).layoutString)
+}
+
+internal fun MaterialScope.detailButtonItem(
     context: Context,
     deviceParameters: DeviceParameters,
     weather: Weather?,
@@ -320,7 +345,12 @@ internal fun detailButtonItem(
                                         .build()
                                 )
                                 .setColor(
-                                    ColorProp.Builder(0xFF1B1B1B.toInt())
+                                    ColorProp.Builder(colorScheme.surfaceContainerLow.staticArgb)
+                                        .apply {
+                                            colorScheme.surfaceContainer.dynamicArgb?.let {
+                                                setDynamicValue(it)
+                                            }
+                                        }
                                         .build()
                                 )
                                 .build()
@@ -377,7 +407,15 @@ internal fun detailButtonItem(
                             }
                         )
                         .setWeight(FONT_WEIGHT_NORMAL)
-                        .setColor(ColorProp.Builder(Colors.WHITE).build())
+                        .setColor(
+                            ColorProp.Builder(colorScheme.onSurface.staticArgb)
+                                .apply {
+                                    colorScheme.onSurface.dynamicArgb?.let {
+                                        setDynamicValue(it)
+                                    }
+                                }
+                                .build()
+                        )
                         .setMaxLines(1)
                         .setScalable(false)
                         .setModifiers(
@@ -426,7 +464,7 @@ internal fun detailButtonItem(
                                         uvModel.progressColor,
                                         ColorUtils.blendARGB(
                                             uvModel.progressColor,
-                                            0xFF1B1B1B.toInt(),
+                                            colorScheme.surfaceContainerLow.staticArgb,
                                             0.95f
                                         )
                                     )
@@ -453,7 +491,7 @@ internal fun detailButtonItem(
                                         aqiModel.progressColor,
                                         ColorUtils.blendARGB(
                                             aqiModel.progressColor,
-                                            0xFF1B1B1B.toInt(),
+                                            colorScheme.surfaceContainerLow.staticArgb,
                                             0.95f
                                         )
                                     )
@@ -480,7 +518,7 @@ internal fun detailButtonItem(
                                         beaufortModel.progressColor,
                                         ColorUtils.blendARGB(
                                             beaufortModel.progressColor,
-                                            0xFF1B1B1B.toInt(),
+                                            colorScheme.surfaceContainerLow.staticArgb,
                                             0.95f
                                         )
                                     )
@@ -555,7 +593,7 @@ internal fun detailButtonItem(
                                         pollenModel.treePollenProgressColor,
                                         ColorUtils.blendARGB(
                                             pollenModel.treePollenProgressColor,
-                                            0xFF1B1B1B.toInt(),
+                                            colorScheme.surfaceContainerLow.staticArgb,
                                             0.95f
                                         )
                                     )
@@ -582,7 +620,7 @@ internal fun detailButtonItem(
                                         pollenModel.grassPollenProgressColor,
                                         ColorUtils.blendARGB(
                                             pollenModel.grassPollenProgressColor,
-                                            0xFF1B1B1B.toInt(),
+                                            colorScheme.surfaceContainerLow.staticArgb,
                                             0.95f
                                         )
                                     )
@@ -609,7 +647,7 @@ internal fun detailButtonItem(
                                         pollenModel.ragweedPollenProgressColor,
                                         ColorUtils.blendARGB(
                                             pollenModel.ragweedPollenProgressColor,
-                                            0xFF1B1B1B.toInt(),
+                                            colorScheme.surfaceContainerLow.staticArgb,
                                             0.95f
                                         )
                                     )
@@ -623,28 +661,36 @@ internal fun detailButtonItem(
         .build()
 }
 
-internal fun detailChipItem(
-    context: Context,
+internal fun MaterialScope.detailChipItem(
     deviceParameters: DeviceParameters,
     weather: Weather?,
     detailsType: WeatherDetailsType,
     model: DetailItemViewModel
 ): LayoutElement {
-    return Chip.Builder(context, Clickable.Builder().build(), deviceParameters)
-        .setWidth(expand())
-        .setIconContent(
-            if (appLib.isInEditMode() || deviceParameters.supportsTransformation() || model.iconRotation == 0) {
-                "${ID_WEATHER_ICON_PREFIX}${model.icon}"
-            } else {
-                "${ID_ROTATION_PREFIX}${model.iconRotation}:${ID_WEATHER_ICON_PREFIX}${model.icon}"
-            }
-        )
-        .setPrimaryLabelContent(model.label.toString())
-        .setSecondaryLabelContent(model.value.toString())
-        .setChipColors(
-            ChipColors.secondaryChipColors(androidx.wear.protolayout.material.Colors.DEFAULT)
-        )
-        .build()
+    return button(
+        width = expand(),
+        onClick = Clickable.Builder().build(),
+        iconContent = {
+            icon(
+                if (appLib.isInEditMode() || deviceParameters.supportsTransformation() || model.iconRotation == 0) {
+                    "${ID_WEATHER_ICON_PREFIX}${model.icon}"
+                } else {
+                    "${ID_ROTATION_PREFIX}${model.iconRotation}:${ID_WEATHER_ICON_PREFIX}${model.icon}"
+                }
+            )
+        },
+        labelContent = {
+            text(
+                text = model.label.toString().layoutString
+            )
+        },
+        secondaryLabelContent = {
+            text(
+                text = model.value.toString().layoutString
+            )
+        },
+        colors = filledTonalButtonColors()
+    )
 }
 
 private fun getLaunchAction(context: Context): ActionBuilders.Action {

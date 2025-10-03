@@ -45,6 +45,7 @@ import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.roundToInt
 
 internal fun hourlyForecastWeatherTileLayout(
     weather: Weather?,
@@ -68,7 +69,7 @@ internal fun hourlyForecastWeatherTileLayout(
     )
 }
 
-internal fun hourlyForecastWeatherTileLayout(
+private fun hourlyForecastWeatherTileLayout(
     context: Context,
     deviceParameters: DeviceParameters,
     location: String,
@@ -115,7 +116,7 @@ internal fun hourlyForecastWeatherTileLayout(
     )
     .build()
 
-internal fun hourlyForecastItemLayout(
+private fun hourlyForecastItemLayout(
     context: Context,
     forecast: HourlyForecastTileModel
 ): LayoutElement = Column.Builder()
@@ -170,11 +171,12 @@ internal class HourlyForecastTileModel(context: Context, locale: Locale, forecas
         }
     val icon: String = forecast.icon
     val temp: String = runCatching {
-        val value = if (isFahrenheit) Math.round(forecast.highF) else Math.round(forecast.highC)
+        val value = if (isFahrenheit) forecast.highF.roundToInt() else forecast.highC.roundToInt()
         String.format(locale, "%d°", value)
     }.getOrElse {
         WeatherIcons.PLACEHOLDER
     }
+    val condition: String = forecast.condition
 }
 
 @WearPreviewDevices
@@ -185,6 +187,7 @@ private fun hourlyForecastWeatherTilePreview(context: Context): TilePreviewData 
             highF = 70f
             highC = ConversionMethods.FtoC(70f)
             icon = WeatherIcons.CLOUDY
+            condition = "Cloudy"
         })
     }
 

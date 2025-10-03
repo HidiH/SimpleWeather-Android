@@ -46,6 +46,7 @@ import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.roundToInt
 
 const val ID_WEATHER_CHANCE_ICON = "chance_icon"
 const val ID_WEATHER_CLOUDINESS_ICON = "cloudiness_icon"
@@ -241,13 +242,13 @@ internal class ForecastTileModel(context: Context, locale: Locale, forecast: For
     )
     val icon: String = forecast.icon
     val hiTemp: String = runCatching {
-        val value = if (isFahrenheit) Math.round(forecast.highF) else Math.round(forecast.highC)
+        val value = if (isFahrenheit) forecast.highF.roundToInt() else forecast.highC.roundToInt()
         String.format(locale, "%d°", value)
     }.getOrElse {
         WeatherIcons.PLACEHOLDER
     }
     val loTemp: String = runCatching {
-        val value = if (isFahrenheit) Math.round(forecast.lowF) else Math.round(forecast.lowC)
+        val value = if (isFahrenheit) forecast.lowF.roundToInt() else forecast.lowC.roundToInt()
         String.format(locale, "%d°", value)
     }.getOrElse {
         WeatherIcons.PLACEHOLDER
