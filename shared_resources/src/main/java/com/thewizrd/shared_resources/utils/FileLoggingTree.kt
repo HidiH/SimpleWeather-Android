@@ -4,23 +4,37 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.thewizrd.shared_resources.BuildConfig
-import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.utils.Logger.DEBUG_MODE_ENABLED
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.concurrent.Executors
 
 @SuppressLint("LogNotTimber")
-class FileLoggingTree(private val context: Context) : Timber.Tree() {
+class FileLoggingTree(context: Context) : Timber.Tree() {
+    private val scope =
+        CoroutineScope(Job() + Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+    private val logDirectory = File(context.getExternalFilesDir(null).toString() + "/logs")
+
     companion object {
         private val TAG = FileLoggingTree::class.java.simpleName
-        private var ranCleanup = false
+        private const val DAYS_TO_KEEP = 7
+    }
+
+    init {
+        if (!logDirectory.exists()) {
+            logDirectory.mkdir()
+        }
     }
 
     override fun isLoggable(tag: String?, priority: Int): Boolean {
@@ -32,11 +46,15 @@ class FileLoggingTree(private val context: Context) : Timber.Tree() {
     }
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        try {
-            val directory = File(context.getExternalFilesDir(null).toString() + "/logs")
+        scope.launch {
+            logEntry(priority, tag, message, t)
+        }
+    }
 
-            if (!directory.exists()) {
-                directory.mkdir()
+    private fun logEntry(priority: Int, tag: String?, message: String, t: Throwable?) {
+        try {
+            if (!logDirectory.exists()) {
+                logDirectory.mkdir()
             }
 
             val today = LocalDateTime.now(ZoneOffset.UTC)
@@ -47,13 +65,13 @@ class FileLoggingTree(private val context: Context) : Timber.Tree() {
             val logNameFormat = "Logger.%s.log"
             val fileName = String.format(Locale.ROOT, logNameFormat, dateTimeStamp)
 
-            val file = File(directory.path + File.separator + fileName)
+            val file = File(logDirectory.path + File.separator + fileName)
 
             if (!file.exists())
                 file.createNewFile()
 
             if (file.exists()) {
-                val fileOutputStream = FileOutputStream(file, true)
+                val fileWriter = BufferedWriter(OutputStreamWriter(FileOutputStream(file, true)))
 
                 val priorityTAG = when (priority) {
                     Log.VERBOSE -> "VERBOSE"
@@ -65,44 +83,39 @@ class FileLoggingTree(private val context: Context) : Timber.Tree() {
                     else -> "DEBUG"
                 }
 
-                fileOutputStream.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n".toByteArray())
-
-                fileOutputStream.close()
+                fileWriter.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n")
+                fileWriter.flush()
+                fileWriter.close()
             }
 
+            val existingFiles = logDirectory.listFiles { dir, name ->
+                name.startsWith("Logger")
+            } ?: emptyArray<File>()
+
             // Cleanup old logs if they exist
-            if (!ranCleanup) {
-                appLib.appScope.launch(Dispatchers.IO) {
-                    try {
-                        // Only keep a weeks worth of logs
-                        val daysToKeep = 7
+            if (existingFiles.size > DAYS_TO_KEEP) {
+                runCatching {
+                    // Get todays date
+                    val todayLocal = today.toLocalDate()
 
-                        // Get todays date
-                        val todayLocal = today.toLocalDate()
+                    // Create a list of the last 7 day's dates
+                    val dateStampsToKeep = mutableListOf<String>()
+                    for (i in 0 until DAYS_TO_KEEP) {
+                        val date = todayLocal.minusDays(i.toLong())
+                        val dateStamp =
+                            date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT))
 
-                        // Create a list of the last 7 day's dates
-                        val dateStampsToKeep: MutableList<String> = ArrayList()
-                        for (i in 0 until daysToKeep) {
-                            val date = todayLocal.minusDays(i.toLong())
-                            val dateStamp = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT))
+                        dateStampsToKeep.add(String.format(Locale.ROOT, logNameFormat, dateStamp))
+                    }
 
-                            dateStampsToKeep.add(String.format(Locale.ROOT, logNameFormat, dateStamp))
-                        }
+                    // List all log files not in the above list
+                    val logs = existingFiles.filterNot { f -> dateStampsToKeep.contains(f.name) }
 
-                        // List all log files not in the above list
-                        val logs = directory.listFiles { dir, name ->
-                            name.startsWith("Logger") && !dateStampsToKeep.contains(name)
-                        }
-
-                        // Delete all log files in the array above
-                        for (logToDel in logs) {
-                            logToDel.delete()
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Error cleaning up log files : $e")
+                    // Delete all log files in the array above
+                    for (logToDel in logs) {
+                        logToDel.delete()
                     }
                 }
-                ranCleanup = true
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error while logging into file : $e")
