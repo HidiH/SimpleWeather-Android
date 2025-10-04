@@ -218,14 +218,17 @@ class WeatherListFragment : CollapsingToolbarFragment() {
                 runCatching {
                     delay(5000)
 
-                    if (isActive && isVisible && isViewAlive && inAppReviewManager.shouldShowReviewFlow()) {
+                    val paneIsOpened = twoPaneStateViewModel.twoPaneState.value.isOpened
+                    if (isActive && isVisible && paneIsOpened && isViewAlive && inAppReviewManager.shouldShowReviewFlow()) {
                         // Wait for no movement
                         while (isActive && binding.recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
-                            delay(1500)
+                            delay(2500)
                         }
 
-                        activity?.run {
-                            inAppReviewManager.showReviewFlow(this)
+                        if (isActive) {
+                            activity?.run {
+                                inAppReviewManager.showReviewFlow(this)
+                            }
                         }
                     }
                 }
@@ -287,7 +290,11 @@ class WeatherListFragment : CollapsingToolbarFragment() {
             WeatherListType.ALERTS -> {
                 val alertAdapter =
                     adapter.adapters.find { it is WeatherAlertPanelAdapter } as? WeatherAlertPanelAdapter
-                    ?: WeatherAlertPanelAdapter()
+                        ?: WeatherAlertPanelAdapter().apply {
+                            setOnItemClickListener {
+                                inAppReviewManager.incrementCounter()
+                            }
+                        }
                 if (!adapter.containsAdapter(alertAdapter)) {
                     val innerAdapters = adapter.adapters.filterNot { it is SpacerAdapter }
                     innerAdapters.forEach { adapter.removeAdapter(it) }
@@ -299,7 +306,6 @@ class WeatherListFragment : CollapsingToolbarFragment() {
                     override fun onChanged() {
                         alertAdapter.unregisterAdapterDataObserver(this)
                         binding.progressBar.hide()
-                        inAppReviewManager.incrementCounter()
                     }
                 })
 
@@ -320,7 +326,11 @@ class WeatherListFragment : CollapsingToolbarFragment() {
         @Suppress("UNCHECKED_CAST")
         val detailsAdapter: WeatherDetailsAdapter<T> =
             adapter.adapters.find { it is WeatherDetailsAdapter<*> } as? WeatherDetailsAdapter<T>?
-                ?: WeatherDetailsAdapter()
+                ?: WeatherDetailsAdapter<T>().apply {
+                    setOnItemClickListener {
+                        inAppReviewManager.incrementCounter()
+                    }
+                }
         if (!adapter.containsAdapter(detailsAdapter)) {
             val innerAdapters = adapter.adapters.filterNot { it is SpacerAdapter }
             innerAdapters.forEach { adapter.removeAdapter(it) }
@@ -341,7 +351,6 @@ class WeatherListFragment : CollapsingToolbarFragment() {
                         }
                     })
                     binding.progressBar.hide()
-                    inAppReviewManager.incrementCounter()
                 }
             }
         })

@@ -886,6 +886,18 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         updateViewOrder()
 
         slidingPaneLayout.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
+        slidingPaneLayout.addPanelSlideListener(object :
+            SlidingPaneLayout.SimplePanelSlideListener() {
+            override fun onPanelOpened(panel: View) {
+                super.onPanelOpened(panel)
+                twoPaneStateViewModel.updateIsOpened(true)
+            }
+
+            override fun onPanelClosed(panel: View) {
+                super.onPanelClosed(panel)
+                twoPaneStateViewModel.updateIsOpened(false)
+            }
+        })
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             if (detailPaneNavHostFragment.arguments == null) {

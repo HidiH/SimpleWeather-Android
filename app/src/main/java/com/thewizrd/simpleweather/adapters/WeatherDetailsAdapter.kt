@@ -1,6 +1,7 @@
 package com.thewizrd.simpleweather.adapters
 
 import android.annotation.SuppressLint
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IntDef
 import androidx.core.util.ObjectsCompat
@@ -54,8 +55,15 @@ class WeatherDetailsAdapter<T : BaseForecastItemViewModel> :
                 detailPanel.postOnAnimation {
                     notifyItemChanged(bindingAdapterPosition, "animation")
                 }
+                onItemClickListener?.onClick(it)
             }
         }
+    }
+
+    private var onItemClickListener: View.OnClickListener? = null
+
+    fun setOnItemClickListener(listener: View.OnClickListener?) {
+        onItemClickListener = listener
     }
 
     @SuppressLint("NewApi")  // Create new views (invoked by the layout manager)
