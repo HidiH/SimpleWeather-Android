@@ -57,9 +57,10 @@
             <com.thewizrd.simpleweather.controls.ForecastRangeBarGraphView
                 android:id="@+id/rangebar_graph_panel"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/forecast_panel_height"
+                android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:layout_marginBottom="4dp"
+                app:graphHeight="@dimen/forecast_panel_height"
                 app:forecastData="@{forecastsView.forecastData}"
                 app:showIfTrue="@{FeatureSettings.forecastEnabled &amp;&amp; forecastsView.forecastData != null}" />
 

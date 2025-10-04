@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
+import androidx.core.content.res.use
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isGone
@@ -28,6 +29,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs) {
     private val binding: LayoutBarViewBinding
 
+    private val graphHeight: Int
     private val zeroValueItemHeight: Int
     private var bottomTextHeights: Int = 0
 
@@ -51,6 +53,13 @@ class ForecastBarGraphView @JvmOverloads constructor(
 
         val inflater = LayoutInflater.from(context)
         binding = LayoutBarViewBinding.inflate(inflater, this)
+
+        graphHeight = context.obtainStyledAttributes(attrs, R.styleable.ForecastBarGraphView).use {
+            it.getDimensionPixelSize(
+                R.styleable.ForecastBarGraphView_graphHeight,
+                context.resources.getDimensionPixelSize(R.dimen.bargraph_panel_height)
+            )
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -161,6 +170,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
                 }
 
                 removeViews(itemCount, childCount - itemCount)
+                this@ForecastBarGraphView.requestLayout()
             }
         } else {
             binding.innerLayout.removeAllViews()
@@ -194,7 +204,7 @@ class ForecastBarGraphView @JvmOverloads constructor(
                 }
             }
             val newHeight =
-                zeroValueItemHeight + (normalizedValue * (this@ForecastBarGraphView.measuredHeight - bottomTextHeights)).toInt()
+                zeroValueItemHeight + (normalizedValue * (graphHeight - bottomTextHeights)).toInt()
 
             if (height != newHeight) {
                 height = newHeight

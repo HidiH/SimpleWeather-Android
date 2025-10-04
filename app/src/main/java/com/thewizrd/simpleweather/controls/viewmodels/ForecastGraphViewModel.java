@@ -98,30 +98,6 @@ public class ForecastGraphViewModel {
                 addEntryData(forecast, dataSet, forecastType);
             }
 
-            if (forecastType == ForecastType.RAIN || forecastType == ForecastType.SNOW) {
-                final String unit = settingsMgr.getPrecipitationUnit();
-
-                // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-                // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
-                switch (unit) {
-                    default:
-                    case Units.INCHES:
-                        if (forecastType == ForecastType.SNOW) {
-                            dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.5f));
-                        } else {
-                            dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.3f));
-                        }
-                        break;
-                    case Units.MILLIMETERS:
-                        if (forecastType == ForecastType.SNOW) {
-                            dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 12.7f));
-                        } else {
-                            dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 7.6f));
-                        }
-                        break;
-                }
-            }
-
             this.graphData = createGraphData(dataSet, forecastType);
         } else {
             LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), forecastType);
@@ -130,35 +106,12 @@ public class ForecastGraphViewModel {
                 addEntryData(forecast, series, forecastType);
             }
 
-            if (forecastType == ForecastType.RAIN || forecastType == ForecastType.SNOW) {
-                final String unit = settingsMgr.getPrecipitationUnit();
-
-                // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-                // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
-                switch (unit) {
-                    default:
-                    case Units.INCHES:
-                        if (forecastType == ForecastType.SNOW) {
-                            series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.5f));
-                        } else {
-                            series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
-                        }
-                        break;
-                    case Units.MILLIMETERS:
-                        if (forecastType == ForecastType.SNOW) {
-                            series.setSeriesMinMax(0f, Math.max(series.getYMax(), 12.7f));
-                        } else {
-                            series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
-                        }
-                        break;
-                }
-            }
-
             this.graphData = createGraphData(Collections.singletonList(series), forecastType);
         }
 
         this.forecastType = forecastType;
         this.graphType = graphType;
+        updateDataSetMinMax();
     }
 
     public void setMinutelyForecastData(@NonNull List<MinutelyForecast> forecasts, GraphType graphType) {
@@ -169,18 +122,6 @@ public class ForecastGraphViewModel {
                 addMinutelyEntryData(forecast, dataSet);
             }
 
-            // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-            final String unit = settingsMgr.getPrecipitationUnit();
-            switch (unit) {
-                default:
-                case Units.INCHES:
-                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.3f));
-                    break;
-                case Units.MILLIMETERS:
-                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 7.6f));
-                    break;
-            }
-
             this.graphData = createGraphData(dataSet, ForecastType.MINUTELY);
         } else {
             LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), ForecastType.MINUTELY);
@@ -189,23 +130,12 @@ public class ForecastGraphViewModel {
                 addMinutelyEntryData(forecast, series);
             }
 
-            // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-            final String unit = settingsMgr.getPrecipitationUnit();
-            switch (unit) {
-                default:
-                case Units.INCHES:
-                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
-                    break;
-                case Units.MILLIMETERS:
-                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
-                    break;
-            }
-
             this.graphData = createGraphData(Collections.singletonList(series), ForecastType.MINUTELY);
         }
 
         this.forecastType = ForecastType.MINUTELY;
         this.graphType = graphType;
+        updateDataSetMinMax();
     }
 
     private void addEntryData(BaseForecast forecast, LineDataSeries series, @NonNull ForecastType forecastType) {
@@ -406,17 +336,13 @@ public class ForecastGraphViewModel {
         final BarGraphDataSet dataSet = new BarGraphDataSet(entryData);
 
         switch (forecastType) {
-            case PRECIPITATION:
-            case HUMIDITY:
-                dataSet.setMinMax(0f, 100f);
-                break;
-            case UVINDEX:
-                dataSet.setMinMax(0f, 12f);
-                break;
-            case TEMPERATURE:
-                break;
-            case WIND: {
+            case PRECIPITATION, HUMIDITY -> dataSet.setMinMax(0f, 100f);
+            case UVINDEX -> dataSet.setMinMax(0f, 12f);
+            case TEMPERATURE -> {
+            }
+            case WIND -> {
                 final String unit = settingsMgr.getSpeedUnit();
+                // Max: 75mph
                 Float maxValue = switch (unit) {
                     case Units.MILES_PER_HOUR -> 75f;
                     case Units.KILOMETERS_PER_HOUR -> 121f;
@@ -427,12 +353,7 @@ public class ForecastGraphViewModel {
 
                 dataSet.setMinMax(0f, maxValue);
             }
-            break;
-            case SNOW:
-            case MINUTELY:
-            case RAIN:
-                dataSet.setMinMax(0f);
-                break;
+            case SNOW, MINUTELY, RAIN -> dataSet.setMinMax(0f);
         }
 
         switch (forecastType) {
@@ -638,5 +559,97 @@ public class ForecastGraphViewModel {
         }
 
         return date;
+    }
+
+    public void updateDataSetMinMax() {
+        GraphData<?> graphData = this.graphData;
+
+        if (graphData instanceof BarGraphData barGraphData) {
+            for (BarGraphDataSet dataSet : barGraphData.getDataSets()) {
+                switch (forecastType) {
+                    case RAIN, SNOW -> {
+                        final String unit = settingsMgr.getPrecipitationUnit();
+
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                if (forecastType == ForecastType.SNOW) {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.5f));
+                                } else {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.3f));
+                                }
+                                break;
+                            case Units.MILLIMETERS:
+                                if (forecastType == ForecastType.SNOW) {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 12.7f));
+                                } else {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 7.6f));
+                                }
+                                break;
+                        }
+                    }
+                    case MINUTELY -> {
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        final String unit = settingsMgr.getPrecipitationUnit();
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.3f));
+                                break;
+                            case Units.MILLIMETERS:
+                                dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 7.6f));
+                                break;
+                        }
+                    }
+                }
+            }
+        } else if (graphData instanceof LineViewData lineViewData) {
+            for (LineDataSeries series : lineViewData.getDataSets()) {
+                switch (forecastType) {
+                    case RAIN, SNOW -> {
+                        final String unit = settingsMgr.getPrecipitationUnit();
+
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                if (forecastType == ForecastType.SNOW) {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.5f));
+                                } else {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
+                                }
+                                break;
+                            case Units.MILLIMETERS:
+                                if (forecastType == ForecastType.SNOW) {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 12.7f));
+                                } else {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
+                                }
+                                break;
+                        }
+                    }
+                    case MINUTELY -> {
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        final String unit = settingsMgr.getPrecipitationUnit();
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
+                                break;
+                            case Units.MILLIMETERS:
+                                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (graphData != null) {
+            graphData.notifyDataChanged();
+        }
     }
 }

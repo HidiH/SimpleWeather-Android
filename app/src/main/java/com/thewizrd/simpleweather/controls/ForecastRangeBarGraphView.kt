@@ -8,11 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.content.res.use
 import androidx.core.view.forEachIndexed
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import com.thewizrd.shared_resources.helpers.RecyclerOnClickListenerInterface
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
+import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.graphs.ForecastRangeBarEntry
 import com.thewizrd.simpleweather.controls.graphs.ForecastRangeBarGraphData
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
@@ -29,6 +31,7 @@ class ForecastRangeBarGraphView @JvmOverloads constructor(
 
     private var maxItemCount: Int = 7
 
+    private val graphHeight: Int
     private var bottomTextHeights: Int = 0
     private var scale: Float = 1f
 
@@ -47,38 +50,64 @@ class ForecastRangeBarGraphView @JvmOverloads constructor(
 
         val inflater = LayoutInflater.from(context)
         binding = LayoutBarViewBinding.inflate(inflater, this)
+
+        graphHeight =
+            context.obtainStyledAttributes(attrs, R.styleable.ForecastRangeBarGraphView).use {
+                it.getDimensionPixelSize(
+                    R.styleable.ForecastRangeBarGraphView_graphHeight,
+                    context.resources.getDimensionPixelSize(R.dimen.bargraph_panel_height)
+                )
+            }
+
+        binding.innerLayout.updateLayoutParams {
+            height = graphHeight
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        val measuredHeight = this.measuredHeight
+        var measuredBottomTextHeights = Int.MIN_VALUE
+        var newScale = 0f
 
         binding.innerLayout.forEachIndexed { idx, bar ->
             val barBinding = DataBindingUtil.getBinding<LayoutRangebarBinding>(bar)
             if (barBinding != null) {
-                if (idx == 0) {
-                    val measuredBottomTextHeights =
-                        barBinding.barPop.measuredHeight + barBinding.barIcon.measuredHeight + barBinding.barDate.measuredHeight
-                    if (measuredBottomTextHeights != bottomTextHeights) {
-                        bottomTextHeights = measuredBottomTextHeights
-                    }
-
-                    graphData?.let {
-                        val dataBarHeight = it.yMax - it.yMin
-
-                        val newScale = if (dataBarHeight == 0f) {
-                            1f
-                        } else {
-                            min(measuredHeight / dataBarHeight, 1f)
-                        } * context.dpToPx(1f)
-
-                        if (newScale != scale) {
-                            scale = newScale
-                        }
-                    }
+                measuredBottomTextHeights = max(
+                    measuredBottomTextHeights,
+                    barBinding.barPop.measuredHeight +
+                            barBinding.barIcon.measuredHeight +
+                            barBinding.barDate.measuredHeight
+                )
+                if (measuredBottomTextHeights != bottomTextHeights) {
+                    bottomTextHeights = measuredBottomTextHeights
                 }
 
+                graphData?.let {
+                    val dataBarHeight = it.yMax - it.yMin
+
+                    newScale = max(
+                        if (dataBarHeight == 0f) {
+                            1f
+                        } else {
+                            min(
+                                (graphHeight - bottomTextHeights - (barBinding.barHi.measuredHeight + barBinding.barLo.measuredHeight)) / dataBarHeight,
+                                1f
+                            )
+                        } * context.dpToPx(.9f),
+                        newScale
+                    )
+                }
+            }
+        }
+
+        if (newScale != scale && newScale != 0f) {
+            scale = newScale
+        }
+
+        binding.innerLayout.forEachIndexed { idx, bar ->
+            val barBinding = DataBindingUtil.getBinding<LayoutRangebarBinding>(bar)
+            if (barBinding != null) {
                 // Update bar measurement
                 graphData?.getDataSet()?.getEntryForIndex(idx)?.let { data ->
                     val max = graphData?.yMax
@@ -164,6 +193,7 @@ class ForecastRangeBarGraphView @JvmOverloads constructor(
                 }
 
                 removeViews(itemCount, childCount - itemCount)
+                this@ForecastRangeBarGraphView.requestLayout()
             }
         } else {
             binding.innerLayout.removeAllViews()

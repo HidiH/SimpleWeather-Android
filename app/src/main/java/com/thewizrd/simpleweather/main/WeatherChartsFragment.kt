@@ -24,14 +24,12 @@ import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrResourceId
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.shared_resources.utils.JSONParser
-import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.adapters.ChartsItemAdapter
 import com.thewizrd.simpleweather.adapters.SpacerAdapter
-import com.thewizrd.simpleweather.controls.graphs.LineDataSeries
 import com.thewizrd.simpleweather.controls.viewmodels.ChartsViewModel
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel.GraphType
@@ -45,7 +43,6 @@ import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import de.twoid.ui.decoration.InsetItemDecoration
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 class WeatherChartsFragment : CollapsingToolbarFragment() {
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
@@ -358,31 +355,11 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                 data.add(uviData!!)
             }
             if ((rainData?.graphData?.dataCount ?: 0) > 0) {
-                rainData?.graphData?.dataSets?.forEach {
-                    if (it is LineDataSeries) {
-                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-                        when (settingsManager.getPrecipitationUnit()) {
-                            Units.INCHES -> it.setSeriesMinMax(0f, max(it.yMax, 0.3f))
-                            Units.MILLIMETERS -> it.setSeriesMinMax(0f, max(it.yMax, 7.6f))
-                            else -> it.setSeriesMinMax(0f, max(it.yMax, 0.3f))
-                        }
-                    }
-                }
-                rainData?.graphData?.notifyDataChanged()
+                rainData?.updateDataSetMinMax()
                 data.add(rainData!!)
             }
             if ((snowData?.graphData?.dataCount ?: 0) > 0) {
-                snowData?.graphData?.dataSets?.forEach {
-                    if (it is LineDataSeries) {
-                        // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
-                        when (settingsManager.getPrecipitationUnit()) {
-                            Units.INCHES -> it.setSeriesMinMax(0f, max(it.yMax, 0.5f))
-                            Units.MILLIMETERS -> it.setSeriesMinMax(0f, max(it.yMax, 12.7f))
-                            else -> it.setSeriesMinMax(0f, max(it.yMax, 0.3f))
-                        }
-                    }
-                }
-                snowData?.graphData?.notifyDataChanged()
+                snowData?.updateDataSetMinMax()
                 data.add(snowData!!)
             }
         }

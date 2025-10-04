@@ -436,7 +436,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
         // SwipeRefresh
         binding.refreshLayout.setContainerColor(requireContext().getAttrColor(R.attr.colorPrimaryContainer))
-        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorOnPrimaryContainer))
+        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorPrimary))
         binding.refreshLayout.setOnRefreshListener {
             AnalyticsLogger.logEvent("WeatherNowFragment: onRefresh")
             wNowViewModel.refreshWeather(true)
