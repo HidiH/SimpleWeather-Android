@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:singleLine="true"
-            android:textAppearance="?textAppearanceLabelMedium" />
+            android:textAppearance="@style/TextAppearance.WearPreference.PrimaryText" />
 
         <TextView
             android:id="@android:id/summary"
@@ -79,7 +79,7 @@
             android:layout_gravity="start"
             android:maxLines="10"
             android:textAlignment="viewStart"
-            android:textAppearance="?textAppearanceLabelSmall" />
+            android:textAppearance="@style/TextAppearance.WearPreference.SecondaryText" />
 
     </RelativeLayout>
 

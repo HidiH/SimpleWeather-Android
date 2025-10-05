@@ -81,14 +81,14 @@
         tools:visibility="visible"
         tools:text="Launch settings app"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@id/wear_chip_content"
+        app:layout_constraintBottom_toTopOf="@android:id/widget_frame"
         app:layout_constraintEnd_toStartOf="@id/end_barrier"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/wear_chip_icon"
         app:layout_constraintTop_toBottomOf="@id/wear_chip_primary_text" />
 
     <FrameLayout
-        android:id="@+id/wear_chip_content"
+        android:id="@android:id/widget_frame"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="7dp"

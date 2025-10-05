@@ -675,7 +675,7 @@ class SettingsActivity : UserLocaleActivity() {
         }
 
         override fun onDisplayPreferenceDialog(preference: Preference) {
-            if (preference is WearEditTextPreference && (SettingsManager.KEY_APIKEY == preference.getKey())) {
+            if (preference is WearEditTextPreference && (SettingsManager.KEY_APIKEY == preference.key)) {
                 val TAG = KeyEntryPreferenceDialogFragment::class.java.name
 
                 if (parentFragmentManager.findFragmentByTag(TAG) != null) {

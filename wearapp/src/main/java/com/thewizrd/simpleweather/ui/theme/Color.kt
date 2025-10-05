@@ -34,8 +34,8 @@ internal val wearColorScheme: ColorScheme = ColorScheme(
     onError = Color(0xFF690005),
     onErrorContainer = Color(0xFFFFDAD6),
 
-    background = Color(0xFF111418),
-    onBackground = Color(0xFFE1E2E8),
+    //background = Color(0xFF111418),
+    //onBackground = Color(0xFFE1E2E8),
 
     outline = Color(0xFF8D9199),
     outlineVariant = Color(0xFF43474E),

@@ -159,7 +159,11 @@ abstract class SwipeDismissPreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
         return ConcatAdapter(
-            PreferenceListHeaderAdapter(requireContext().getString(titleResId)),
+            PreferenceListHeaderAdapter(
+                preferenceScreen.title ?: requireContext().getString(
+                    titleResId
+                )
+            ),
             super.onCreateAdapter(preferenceScreen),
             SpacerAdapter(requireContext().dpToPx(48f).toInt())
         )
