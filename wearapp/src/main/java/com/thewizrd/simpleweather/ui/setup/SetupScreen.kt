@@ -158,7 +158,7 @@ private fun SetupScreen(
                             .fillMaxWidth()
                             .transformedHeight(this, transformationSpec),
                         transformation = SurfaceTransformation(transformationSpec),
-                        colors = ButtonDefaults.buttonColors(),
+                        colors = ButtonDefaults.filledTonalButtonColors(),
                         onClick = {
                             navController.navigate(Screen.SetupLocationSearch.route)
                         },
@@ -182,7 +182,7 @@ private fun SetupScreen(
                             .fillMaxWidth()
                             .transformedHeight(this, transformationSpec),
                         transformation = SurfaceTransformation(transformationSpec),
-                        colors = ButtonDefaults.buttonColors(),
+                        colors = ButtonDefaults.filledTonalButtonColors(),
                         onClick = {
                             fetchGeoLocation()
                         },
@@ -204,7 +204,7 @@ private fun SetupScreen(
                                 .fillMaxWidth()
                                 .transformedHeight(this, transformationSpec),
                             transformation = SurfaceTransformation(transformationSpec),
-                            colors = ButtonDefaults.buttonColors(),
+                            colors = ButtonDefaults.filledTonalButtonColors(),
                             onClick = {
                                 showSetupSyncDialog = true
                             },

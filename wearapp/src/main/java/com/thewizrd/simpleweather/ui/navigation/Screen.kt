@@ -20,6 +20,7 @@ sealed class Screen(
     // Setup
     object Setup : Screen("setup")
     object SetupLocationSearch : Screen("setup_locationSearch")
+    object SetupLocationList : Screen("setup_locationList")
     object SetupSync : Screen("setup_sync")
 
     // Settings
