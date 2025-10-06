@@ -1,6 +1,10 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package com.thewizrd.simpleweather.ui.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -8,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.wear.compose.material3.CircularProgressIndicator
-import androidx.wear.compose.material3.ProgressIndicatorDefaults
 import com.google.android.horologist.compose.layout.fillMaxRectangle
 
 @Composable
@@ -26,8 +28,8 @@ fun <T : Any> LoadingPagingContent(
             modifier = Modifier.fillMaxRectangle(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(
-                colors = ProgressIndicatorDefaults.colors(trackColor = Color.Transparent)
+            CircularWavyProgressIndicator(
+                trackColor = Color.Transparent
             )
         }
     } else {
