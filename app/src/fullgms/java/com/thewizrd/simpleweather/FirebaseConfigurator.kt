@@ -5,7 +5,11 @@ import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.remoteconfig.ConfigUpdate
+import com.google.firebase.remoteconfig.ConfigUpdateListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
+import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
@@ -46,6 +50,25 @@ object FirebaseConfigurator {
             if (BuildConfig.DEBUG) {
                 FirebaseMessaging.getInstance().subscribeToTopic("debug_all")
             }
+        }
+
+        // Add Firebase RemoteConfig real-time listener
+        FirebaseRemoteConfig.getInstance().run {
+            addOnConfigUpdateListener(object : ConfigUpdateListener {
+                override fun onUpdate(configUpdate: ConfigUpdate) {
+                    Logger.verbose("FirebaseConfigurator", "Remote update received")
+
+                    remoteConfigService.checkConfig()
+                }
+
+                override fun onError(error: FirebaseRemoteConfigException) {
+                    Logger.error(
+                        "FirebaseConfigurator",
+                        message = "Error on real-time update",
+                        t = error
+                    )
+                }
+            })
         }
     }
 }

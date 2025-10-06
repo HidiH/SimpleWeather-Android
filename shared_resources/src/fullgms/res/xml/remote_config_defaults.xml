@@ -4,9 +4,9 @@
         <key>Here</key>
         <value>
             {
-            "enabled": true,
+            "enabled": false,
             "locSource": "google",
-            "newWeatherSource": ""
+            "newWeatherSource": "apple"
             }
         </value>
     </entry>
@@ -166,6 +166,16 @@
             {
             "enabled": true,
             "locSource": "LocIQ",
+            "newWeatherSource": ""
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>google_pollen</key>
+        <value>
+            {
+            "enabled": true,
+            "locSource": "google",
             "newWeatherSource": ""
             }
         </value>
