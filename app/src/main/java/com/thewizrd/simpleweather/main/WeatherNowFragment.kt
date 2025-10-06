@@ -1142,7 +1142,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         super.onConfigurationChanged(newConfig)
 
         binding.refreshLayout.setContainerColor(requireContext().getAttrColor(R.attr.colorPrimaryContainer))
-        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorOnPrimaryContainer))
+        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorPrimary))
 
         // Resize necessary views
         adjustConditionPanelLayout()

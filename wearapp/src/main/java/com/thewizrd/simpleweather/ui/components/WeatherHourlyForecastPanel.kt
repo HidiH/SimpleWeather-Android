@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -43,7 +44,6 @@ import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.shared_resources.DateTimeConstants
 import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
-import com.thewizrd.shared_resources.utils.ContextUtils.isLargeWatch
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.StringUtils
 import com.thewizrd.simpleweather.R
@@ -55,7 +55,8 @@ fun WeatherHourlyForecastPanel(
     model: HourlyForecastItemViewModel
 ) {
     val ctx = LocalContext.current
-    val isLargeWatch = remember(ctx) { ctx.isLargeWatch() }
+    val isLargeHeight = LocalConfiguration.current.screenHeightDp >= 225
+    val isLargeWidth = LocalConfiguration.current.screenWidthDp >= 225
 
     val popData = remember(model.extras) {
         model.extras?.get(WeatherDetailsType.POPCHANCE)
@@ -169,10 +170,10 @@ fun WeatherHourlyForecastPanel(
             }
             if (windData != null) {
                 val windSpeed = remember(windData.value) {
-                    if (!windData.value.isNullOrEmpty()) {
-                        windData.value.split(",")[0]
+                    if (isLargeWidth) {
+                        windData.value
                     } else {
-                        ""
+                        windData.value.split(",")[0]
                     }
                 }
 

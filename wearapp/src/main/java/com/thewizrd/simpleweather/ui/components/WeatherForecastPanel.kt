@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -34,7 +35,6 @@ import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
-import com.thewizrd.shared_resources.utils.ContextUtils.isLargeWatch
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 
@@ -43,7 +43,8 @@ fun WeatherForecastPanel(
     model: ForecastItemViewModel
 ) {
     val context = LocalContext.current
-    val isLargeWatch = remember(context) { context.isLargeWatch() }
+    val isLargeHeight = LocalConfiguration.current.screenHeightDp >= 225
+    val isLargeWidth = LocalConfiguration.current.screenWidthDp >= 225
 
     val popData = remember(model.extras) {
         model.extras?.get(WeatherDetailsType.POPCHANCE)
@@ -152,18 +153,28 @@ fun WeatherForecastPanel(
                 Spacer(modifier = Modifier.width(4.dp))
             }
             if (windData != null) {
+                val windSpeed = remember(windData.value) {
+                    if (isLargeWidth) {
+                        windData.value
+                    } else {
+                        windData.value.split(",")[0]
+                    }
+                }
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         modifier = Modifier
                             .size(20.dp)
                             .padding(end = 2.dp)
-                            .rotate(windData.iconRotation.toFloat()),
+                            .rotate(windData.iconRotation.toFloat())
+                            .align(Alignment.CenterVertically),
                         painter = painterResource(R.drawable.wi_wind_direction),
                         tint = Color(0xFF20B2AA),
                         contentDescription = null
                     )
                     Text(
-                        text = spannableStringToAnnotatedString(if (isLargeWatch) windData.value else windData.shortValue),
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = spannableStringToAnnotatedString(windSpeed),
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                         textAlign = TextAlign.End,
                         maxLines = 1,
