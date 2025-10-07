@@ -31,7 +31,6 @@ import androidx.wear.protolayout.material3.materialScope
 import androidx.wear.protolayout.material3.primaryLayout
 import androidx.wear.protolayout.material3.text
 import androidx.wear.protolayout.modifiers.LayoutModifier
-import androidx.wear.protolayout.modifiers.clickable
 import androidx.wear.protolayout.modifiers.padding
 import androidx.wear.protolayout.types.layoutString
 import androidx.wear.tiles.RequestBuilders
@@ -131,8 +130,7 @@ private fun m3ForecastWeatherTileLayout(
                                 )
                                 .addContent(
                                     text(
-                                        text = currentTemperature.replace("°", "")
-                                            .plus("°").layoutString,
+                                        text = currentTemperature.layoutString,
                                         typography = if (deviceParameters.isLargeWidth()) {
                                             Typography.NUMERAL_LARGE
                                         } else {
@@ -165,219 +163,213 @@ private fun m3ForecastWeatherTileLayout(
                             }
                         }
                     })
-                //.addContent(DEFAULT_SPACER_BETWEEN_BUTTON_GROUPS)
-                .addContent(
-                    buttonGroup(
-                        width = if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND) {
-                            dp(deviceParameters.screenWidthDp / 1.4f)
-                        } else {
-                            expand()
-                        },
-                        height = if (deviceParameters.isSmallHeight()) {
-                            weight(1f)
-                        } else {
-                            weight(1.5f)
-                        }
-                    ) {
-                        buttonGroupItem {
-                            Row.Builder()
-                                .setModifiers(
-                                    Modifiers.Builder()
-                                        .setBackground(
-                                            Background.Builder()
-                                                .setColor(
-                                                    ColorProp.Builder(filledTonalCardColors().backgroundColor.staticArgb)
-                                                        .apply {
-                                                            filledTonalCardColors().backgroundColor.dynamicArgb?.let {
-                                                                setDynamicValue(it)
+                .apply {
+                    if (forecasts.isNullOrEmpty()) {
+                        addContent(
+                            text(
+                                text = context.getString(R.string.label_nodata).layoutString,
+                                alignment = TEXT_ALIGN_CENTER
+                            )
+                        )
+                    } else {
+                        addContent(
+                            buttonGroup(
+                                width = if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND) {
+                                    dp(deviceParameters.screenWidthDp / 1.4f)
+                                } else {
+                                    expand()
+                                },
+                                height = if (deviceParameters.isSmallHeight()) {
+                                    weight(1.15f)
+                                } else {
+                                    weight(1.55f)
+                                }
+                            ) {
+                                buttonGroupItem {
+                                    Row.Builder()
+                                        .setModifiers(
+                                            Modifiers.Builder()
+                                                .setBackground(
+                                                    Background.Builder()
+                                                        .setColor(
+                                                            ColorProp.Builder(filledTonalCardColors().backgroundColor.staticArgb)
+                                                                .apply {
+                                                                    filledTonalCardColors().backgroundColor.dynamicArgb?.let {
+                                                                        setDynamicValue(it)
+                                                                    }
+                                                                }
+                                                                .build()
+                                                        )
+                                                        .setCorner(
+                                                            if (deviceParameters.isSmallHeight()) {
+                                                                shapes.full
+                                                            } else {
+                                                                shapes.large
                                                             }
-                                                        }
+                                                        )
                                                         .build()
                                                 )
-                                                .setCorner(
-                                                    if (deviceParameters.isSmallHeight()) {
-                                                        shapes.full
-                                                    } else {
-                                                        shapes.large
-                                                    }
-                                                )
+                                                .setPadding(padding(6f))
                                                 .build()
                                         )
-                                        .setPadding(padding(6f))
-                                        .build()
-                                )
-                                .setHeight(expand())
-                                .setWidth(expand())
-                                .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
-                                .addContent(
-                                    if (forecasts.isNullOrEmpty()) {
-                                        text(
-                                            text = context.getString(R.string.label_nodata).layoutString,
-                                            alignment = TEXT_ALIGN_CENTER
-                                        )
-                                    } else {
-                                        Column.Builder()
-                                            .setWidth(expand())
-                                            .setHeight(expand())
-                                            .addContent(
-                                                buttonGroup(
-                                                    width = weight(1f),
-                                                    height = weight(1f),
-                                                    spacing = 0f
-                                                ) {
-                                                    forecasts.take(3)
-                                                        .forEachIndexed { index, model ->
-                                                            buttonGroupItem {
-                                                                Box.Builder()
-                                                                    .setHeight(expand())
-                                                                    .setWidth(weight(1f))
-                                                                    .setVerticalAlignment(
-                                                                        VERTICAL_ALIGN_CENTER
-                                                                    )
-                                                                    .setHorizontalAlignment(
-                                                                        HORIZONTAL_ALIGN_CENTER
-                                                                    )
-                                                                    .setModifiers(
-                                                                        Modifiers.Builder()
-                                                                            .setClickable(
-                                                                                clickable(id = index.toString())
-                                                                            )
-                                                                            .setBackground(
-                                                                                Background.Builder()
-                                                                                    .setColor(
-                                                                                        filledTonalCardColors().let {
-                                                                                            if (index == 0) {
-                                                                                                it.copy(
-                                                                                                    backgroundColor = this.colorScheme.surfaceContainerHigh
+                                        .setHeight(expand())
+                                        .setWidth(expand())
+                                        .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
+                                        .addContent(
+                                            Column.Builder()
+                                                .setWidth(expand())
+                                                .setHeight(expand())
+                                                .addContent(
+                                                    buttonGroup(
+                                                        width = weight(1f),
+                                                        height = weight(1f),
+                                                        spacing = 0f
+                                                    ) {
+                                                        forecasts.take(3)
+                                                            .forEachIndexed { index, model ->
+                                                                buttonGroupItem {
+                                                                    Box.Builder()
+                                                                        .setHeight(expand())
+                                                                        .setWidth(weight(1f))
+                                                                        .setVerticalAlignment(
+                                                                            VERTICAL_ALIGN_CENTER
+                                                                        )
+                                                                        .setHorizontalAlignment(
+                                                                            HORIZONTAL_ALIGN_CENTER
+                                                                        )
+                                                                        .setModifiers(
+                                                                            Modifiers.Builder()
+                                                                                .setBackground(
+                                                                                    Background.Builder()
+                                                                                        .setColor(
+                                                                                            filledTonalCardColors().backgroundColor.prop
+                                                                                        )
+                                                                                        .setCorner(
+                                                                                            if (deviceParameters.isSmallHeight()) {
+                                                                                                shapes.large
+                                                                                            } else {
+                                                                                                shapes.medium
+                                                                                            }
+                                                                                        )
+                                                                                        .build()
+                                                                                )
+                                                                                .build()
+                                                                        )
+                                                                        .addContent(
+                                                                            Column.Builder()
+                                                                                .setHeight(expand())
+                                                                                .setWidth(expand())
+                                                                                .setModifiers(
+                                                                                    Modifiers.Builder()
+                                                                                        .setPadding(
+                                                                                            padding(
+                                                                                                start = 4f,
+                                                                                                top = 4f,
+                                                                                                end = 4f,
+                                                                                                bottom = 8f
+                                                                                            )
+                                                                                        )
+                                                                                        .build()
+                                                                                )
+                                                                                .addContent(
+                                                                                    Box.Builder()
+                                                                                        .setHeight(
+                                                                                            expand()
+                                                                                        )
+                                                                                        .setWidth(
+                                                                                            wrap()
+                                                                                        )
+                                                                                        .setVerticalAlignment(
+                                                                                            VERTICAL_ALIGN_CENTER
+                                                                                        )
+                                                                                        .setHorizontalAlignment(
+                                                                                            HORIZONTAL_ALIGN_CENTER
+                                                                                        )
+                                                                                        .addContent(
+                                                                                            icon(
+                                                                                                "${ID_WEATHER_ICON_PREFIX}${model.icon ?: WeatherIcons.NA}",
+                                                                                            )
+                                                                                        )
+                                                                                        .build()
+                                                                                )
+                                                                                .addContent(
+                                                                                    text(
+                                                                                        text = if (deviceParameters.isSmallHeight()) {
+                                                                                            model.date.layoutString
+                                                                                        } else {
+                                                                                            if (model.hiTemp == WeatherIcons.PLACEHOLDER) {
+                                                                                                model.loTemp.removeSuffix(
+                                                                                                    "°"
                                                                                                 )
                                                                                             } else {
-                                                                                                it
-                                                                                            }
-                                                                                        }.backgroundColor.prop
-                                                                                    )
-                                                                                    .setCorner(
-                                                                                        if (deviceParameters.isSmallHeight()) {
-                                                                                            shapes.large
+                                                                                                model.hiTemp.removeSuffix(
+                                                                                                    "°"
+                                                                                                )
+                                                                                            }.layoutString
+                                                                                        },
+                                                                                        alignment = TEXT_ALIGN_CENTER,
+                                                                                        maxLines = 1,
+                                                                                        typography = if (deviceParameters.isSmallHeight()) {
+                                                                                            Typography.BODY_EXTRA_SMALL
                                                                                         } else {
-                                                                                            shapes.medium
-                                                                                        }
-                                                                                    )
-                                                                                    .build()
-                                                                            )
-                                                                            .build()
-                                                                    )
-                                                                    .addContent(
-                                                                        Column.Builder()
-                                                                            .setHeight(expand())
-                                                                            .setWidth(expand())
-                                                                            .setModifiers(
-                                                                                Modifiers.Builder()
-                                                                                    .setPadding(
-                                                                                        padding(
-                                                                                            start = 4f,
-                                                                                            top = 4f,
-                                                                                            end = 4f,
-                                                                                            bottom = 8f
-                                                                                        )
-                                                                                    )
-                                                                                    .build()
-                                                                            )
-                                                                            .addContent(
-                                                                                Box.Builder()
-                                                                                    .setHeight(
-                                                                                        expand()
-                                                                                    )
-                                                                                    .setWidth(wrap())
-                                                                                    .setVerticalAlignment(
-                                                                                        VERTICAL_ALIGN_CENTER
-                                                                                    )
-                                                                                    .setHorizontalAlignment(
-                                                                                        HORIZONTAL_ALIGN_CENTER
-                                                                                    )
-                                                                                    .addContent(
-                                                                                        icon(
-                                                                                            "${ID_WEATHER_ICON_PREFIX}${model.icon ?: WeatherIcons.NA}",
-                                                                                        )
-                                                                                    )
-                                                                                    .build()
-                                                                            )
-                                                                            .addContent(
-                                                                                text(
-                                                                                    text = if (deviceParameters.isSmallHeight()) {
-                                                                                        model.date.layoutString
-                                                                                    } else {
-                                                                                        if (model.hiTemp == WeatherIcons.PLACEHOLDER) {
-                                                                                            model.loTemp.removeSuffix(
-                                                                                                "°"
-                                                                                            )
+                                                                                            Typography.TITLE_MEDIUM
+                                                                                        },
+                                                                                        color = if (deviceParameters.isSmallHeight()) {
+                                                                                            colorScheme.onSurface
                                                                                         } else {
-                                                                                            model.hiTemp.removeSuffix(
-                                                                                                "°"
-                                                                                            )
-                                                                                        }.layoutString
-                                                                                    },
-                                                                                    alignment = TEXT_ALIGN_CENTER,
-                                                                                    maxLines = 1,
-                                                                                    typography = if (deviceParameters.isSmallHeight()) {
-                                                                                        Typography.BODY_EXTRA_SMALL
-                                                                                    } else {
-                                                                                        Typography.TITLE_MEDIUM
-                                                                                    },
-                                                                                    color = if (deviceParameters.isSmallHeight()) {
-                                                                                        colorScheme.onSurface
-                                                                                    } else {
-                                                                                        colorScheme.onBackground
-                                                                                    },
-                                                                                    settings = if (deviceParameters.isSmallHeight()) {
-                                                                                        listOf(
-                                                                                            FontSetting.weight(
-                                                                                                FONT_WEIGHT_NORMAL
-                                                                                            )
-                                                                                        )
-                                                                                    } else {
-                                                                                        emptyList()
-                                                                                    }
-                                                                                )
-                                                                            )
-                                                                            .apply {
-                                                                                if (!deviceParameters.isSmallHeight()) {
-                                                                                    addContent(
-                                                                                        Spacer.Builder()
-                                                                                            .setHeight(
-                                                                                                dp(2f)
-                                                                                            )
-                                                                                            .build()
-                                                                                    )
-                                                                                    addContent(
-                                                                                        text(
-                                                                                            text = model.date.layoutString,
-                                                                                            alignment = TEXT_ALIGN_CENTER,
-                                                                                            maxLines = 1,
-                                                                                            color = colorScheme.primary,
-                                                                                            typography = Typography.BODY_EXTRA_SMALL,
-                                                                                            settings = listOf(
+                                                                                            colorScheme.onBackground
+                                                                                        },
+                                                                                        settings = if (deviceParameters.isSmallHeight()) {
+                                                                                            listOf(
                                                                                                 FontSetting.weight(
                                                                                                     FONT_WEIGHT_NORMAL
                                                                                                 )
                                                                                             )
-                                                                                        )
+                                                                                        } else {
+                                                                                            emptyList()
+                                                                                        }
                                                                                     )
+                                                                                )
+                                                                                .apply {
+                                                                                    if (!deviceParameters.isSmallHeight()) {
+                                                                                        addContent(
+                                                                                            Spacer.Builder()
+                                                                                                .setHeight(
+                                                                                                    dp(2f)
+                                                                                                )
+                                                                                                .build()
+                                                                                        )
+                                                                                        addContent(
+                                                                                            text(
+                                                                                                text = model.date.layoutString,
+                                                                                                alignment = TEXT_ALIGN_CENTER,
+                                                                                                maxLines = 1,
+                                                                                                color = colorScheme.primary,
+                                                                                                typography = Typography.BODY_EXTRA_SMALL,
+                                                                                                settings = listOf(
+                                                                                                    FontSetting.weight(
+                                                                                                        FONT_WEIGHT_NORMAL
+                                                                                                    )
+                                                                                                )
+                                                                                            )
+                                                                                        )
+                                                                                    }
                                                                                 }
-                                                                            }
-                                                                            .build()
-                                                                    )
-                                                                    .build()
+                                                                                .build()
+                                                                        )
+                                                                        .build()
+                                                                }
                                                             }
-                                                        }
-                                                }
-                                            )
-                                            .build()
-                                    }
-                                )
-                                .build()
-                        }
+                                                    }
+                                                )
+                                                .build()
+                                        )
+                                        .build()
+                                }
+                            }
+                        )
                     }
-                )
+                }
                 .build()
         }
     )

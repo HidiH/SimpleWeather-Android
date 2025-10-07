@@ -103,35 +103,35 @@ internal fun hourlyForecastCardTileLayout(
                 )
             },
             mainSlot = {
-                Row.Builder()
-                    .setModifiers(
-                        Modifiers.Builder()
-                            .setBackground(
-                                Background.Builder()
-                                    .setColor(
-                                        ColorBuilders.ColorProp.Builder(filledTonalCardColors().backgroundColor.staticArgb)
-                                            .apply {
-                                                filledTonalCardColors().backgroundColor.dynamicArgb?.let {
-                                                    setDynamicValue(it)
-                                                }
-                                            }
-                                            .build()
-                                    )
-                                    .setCorner(shapes.large)
-                                    .build()
-                            )
-                            .setPadding(padding(8f))
-                            .build()
+                if (forecasts.isNullOrEmpty()) {
+                    text(
+                        text = context.getString(R.string.label_nodata).layoutString,
+                        alignment = TEXT_ALIGN_CENTER
                     )
-                    .setHeight(expand())
-                    .setWidth(expand())
-                    .addContent(
-                        if (forecasts.isNullOrEmpty()) {
-                            text(
-                                text = context.getString(R.string.label_nodata).layoutString,
-                                alignment = TEXT_ALIGN_CENTER
-                            )
-                        } else {
+                } else {
+                    Row.Builder()
+                        .setModifiers(
+                            Modifiers.Builder()
+                                .setBackground(
+                                    Background.Builder()
+                                        .setColor(
+                                            ColorBuilders.ColorProp.Builder(filledTonalCardColors().backgroundColor.staticArgb)
+                                                .apply {
+                                                    filledTonalCardColors().backgroundColor.dynamicArgb?.let {
+                                                        setDynamicValue(it)
+                                                    }
+                                                }
+                                                .build()
+                                        )
+                                        .setCorner(shapes.large)
+                                        .build()
+                                )
+                                .setPadding(padding(8f))
+                                .build()
+                        )
+                        .setHeight(expand())
+                        .setWidth(expand())
+                        .addContent(
                             Column.Builder()
                                 .setWidth(expand())
                                 .setHeight(expand())
@@ -251,9 +251,9 @@ internal fun hourlyForecastCardTileLayout(
                                     }
                                 )
                                 .build()
-                        }
-                    )
-                    .build()
+                        )
+                        .build()
+                }
             },
             bottomSlot = forecasts?.getOrNull(lastClickedId)?.let { model ->
                 {
