@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package com.thewizrd.simpleweather.ui.setup
 
 import androidx.compose.foundation.layout.Arrangement
@@ -8,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,6 +43,7 @@ import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.locationdata.LocationQuery
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.compose.CircularWavyProgressIndicator
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.theme.activityViewModel
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package com.thewizrd.simpleweather.ui.weather
 
 import android.app.Activity
@@ -29,8 +27,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -109,6 +105,7 @@ import com.thewizrd.simpleweather.ui.components.IconAlignment
 import com.thewizrd.simpleweather.ui.components.LoadingContent
 import com.thewizrd.simpleweather.ui.components.WearDivider
 import com.thewizrd.simpleweather.ui.components.WeatherIcon
+import com.thewizrd.simpleweather.ui.compose.CircularWavyProgressIndicator
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString

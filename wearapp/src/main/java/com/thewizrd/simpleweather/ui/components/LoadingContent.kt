@@ -11,6 +11,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.wear.compose.material3.MaterialTheme
 
 @Composable
 fun LoadingContent(
@@ -34,7 +35,9 @@ fun LoadingContent(
                 PullToRefreshDefaults.LoadingIndicator(
                     modifier = Modifier.align(Alignment.TopCenter),
                     isRefreshing = loading,
-                    state = state
+                    state = state,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         )
