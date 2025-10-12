@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -392,15 +393,18 @@ private fun AlertsBox(navController: NavHostController) {
         contentAlignment = Alignment.Center,
     ) {
         IconButton(
+            modifier = Modifier.requiredSize(IconButtonDefaults.ExtraSmallButtonSize),
             onClick = {
                 navController.navigate(Screen.Alerts.route)
             },
-            colors = IconButtonDefaults.filledTonalIconButtonColors(
-                containerColor = Color(0xFFFF4500)
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer
             )
         ) {
             Icon(
+                modifier = Modifier.size(IconButtonDefaults.SmallIconSize),
                 painter = painterResource(id = R.drawable.ic_error_white),
+                tint = MaterialTheme.colorScheme.onErrorContainer,
                 contentDescription = null
             )
         }
