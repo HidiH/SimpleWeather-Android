@@ -23,6 +23,7 @@ import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.simpleweather.widgets.remoteviews.AbstractWidgetRemoteViewCreator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget1x1Creator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget2x2Creator
+import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget2x2M3Creator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget2x2MaterialYouCreator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget2x2PillMaterialYouCreator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget3x1MaterialYouCreator
@@ -33,9 +34,11 @@ import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x2ClockCreat
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x2Creator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x2GraphCreator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x2HuaweiCreator
+import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x2M3Creator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x2MaterialYouCreator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x2TomorrowCreator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x3LocationsCreator
+import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x4M3Creator
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x4MaterialYouCreator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -300,6 +303,17 @@ object WidgetUtils {
             WidgetType.Widget4x2Tomorrow -> mAppWidgetManager.getAppWidgetIds(
                 WeatherWidgetProvider4x2Tomorrow.Info.getInstance().componentName
             )
+            WidgetType.Widget2x2M3 -> mAppWidgetManager.getAppWidgetIds(
+                WeatherWidgetProvider2x2M3.Info.getInstance().componentName
+            )
+
+            WidgetType.Widget4x4M3 -> mAppWidgetManager.getAppWidgetIds(
+                WeatherWidgetProvider4x4M3.Info.getInstance().componentName
+            )
+
+            WidgetType.Widget4x2M3 -> mAppWidgetManager.getAppWidgetIds(
+                WeatherWidgetProvider4x2M3.Info.getInstance().componentName
+            )
         }
     }
 
@@ -322,6 +336,9 @@ object WidgetUtils {
             WidgetType.Widget3x1MaterialYou -> WeatherWidgetProvider3x1MaterialYou.Info.getInstance()
             WidgetType.Widget4x2Graph -> WeatherWidgetProvider4x2ForecastGraph.Info.getInstance()
             WidgetType.Widget4x2Tomorrow -> WeatherWidgetProvider4x2Tomorrow.Info.getInstance()
+            WidgetType.Widget2x2M3 -> WeatherWidgetProvider2x2M3.Info.getInstance()
+            WidgetType.Widget4x4M3 -> WeatherWidgetProvider4x4M3.Info.getInstance()
+            WidgetType.Widget4x2M3 -> WeatherWidgetProvider4x2M3.Info.getInstance()
         }
     }
 
@@ -616,6 +633,16 @@ object WidgetUtils {
         return (size + 30) / 70
     }
 
+    /**
+     * Returns the minimum size needed for given cell size of the widget.
+     *
+     * @param cells Size in number of cells.
+     * @return size Minimum widget size in dp.
+     */
+    fun getMinSizeForCell(cells: Int): Int {
+        return (cells * 70) - 30
+    }
+
     fun Context.getMaxBitmapSize(): Float {
         /*
          * The total Bitmap memory used by the RemoteViews object cannot exceed
@@ -633,55 +660,61 @@ object WidgetUtils {
 
         val widgetType = getWidgetTypeFromID(appwidgetId)
 
-        val widgetWidth = when (widgetType) {
-            WidgetType.Unknown -> 0
-            WidgetType.Widget1x1 -> 96 * 1
-            WidgetType.Widget2x2 -> 96 * 2
-            WidgetType.Widget4x1 -> 96 * 4
-            WidgetType.Widget4x2 -> 96 * 4
-            WidgetType.Widget4x1Google -> 96 * 4
-            WidgetType.Widget4x1Notification -> 96 * 4
-            WidgetType.Widget4x2Clock -> 96 * 4
-            WidgetType.Widget4x2Huawei -> 96 * 4
-            WidgetType.Widget2x2MaterialYou -> 96 * 2
-            WidgetType.Widget4x2MaterialYou -> 96 * 4
-            WidgetType.Widget4x4MaterialYou -> 96 * 4
-            WidgetType.Widget2x2PillMaterialYou -> 96 * 2
-            WidgetType.Widget4x3Locations -> 96 * 4
-            WidgetType.Widget3x1MaterialYou -> 96 * 3
-            WidgetType.Widget4x2Graph -> 96 * 4
-            WidgetType.Widget4x2Tomorrow -> 96 * 4
-        }
+        val widgetWidth = getMinSizeForCell(
+            when (widgetType) {
+                WidgetType.Unknown -> 0
+                WidgetType.Widget1x1 -> 1
+                WidgetType.Widget2x2 -> 2
+                WidgetType.Widget4x1 -> 4
+                WidgetType.Widget4x2 -> 4
+                WidgetType.Widget4x1Google -> 4
+                WidgetType.Widget4x1Notification -> 4
+                WidgetType.Widget4x2Clock -> 4
+                WidgetType.Widget4x2Huawei -> 4
+                WidgetType.Widget2x2MaterialYou -> 2
+                WidgetType.Widget4x2MaterialYou -> 4
+                WidgetType.Widget4x4MaterialYou -> 4
+                WidgetType.Widget2x2PillMaterialYou -> 2
+                WidgetType.Widget4x3Locations -> 4
+                WidgetType.Widget3x1MaterialYou -> 3
+                WidgetType.Widget4x2Graph -> 4
+                WidgetType.Widget4x2Tomorrow -> 4
+                WidgetType.Widget2x2M3 -> 2
+                WidgetType.Widget4x4M3 -> 4
+                WidgetType.Widget4x2M3 -> 4
+            }
+        )
 
-        val widgetHeight = when (widgetType) {
-            WidgetType.Unknown -> 0
-            WidgetType.Widget1x1 -> 96 * 1
-            WidgetType.Widget2x2 -> 96 * 2
-            WidgetType.Widget4x1 -> 96 * 1
-            WidgetType.Widget4x2 -> 96 * 2
-            WidgetType.Widget4x1Google -> 96 * 1
-            WidgetType.Widget4x1Notification -> 96 * 1
-            WidgetType.Widget4x2Clock -> 96 * 2
-            WidgetType.Widget4x2Huawei -> 96 * 2
-            WidgetType.Widget2x2MaterialYou -> 96 * 2
-            WidgetType.Widget4x2MaterialYou -> 96 * 2
-            WidgetType.Widget4x4MaterialYou -> 96 * 4
-            WidgetType.Widget2x2PillMaterialYou -> 96 * 2
-            WidgetType.Widget4x3Locations -> 96 * 3
-            WidgetType.Widget3x1MaterialYou -> 96 * 1
-            WidgetType.Widget4x2Graph -> 96 * 2
-            WidgetType.Widget4x2Tomorrow -> 96 * 2
-        }
+        val widgetHeight = getMinSizeForCell(
+            when (widgetType) {
+                WidgetType.Unknown -> 0
+                WidgetType.Widget1x1 -> 1
+                WidgetType.Widget2x2 -> 2
+                WidgetType.Widget4x1 -> 1
+                WidgetType.Widget4x2 -> 2
+                WidgetType.Widget4x1Google -> 1
+                WidgetType.Widget4x1Notification -> 1
+                WidgetType.Widget4x2Clock -> 2
+                WidgetType.Widget4x2Huawei -> 2
+                WidgetType.Widget2x2MaterialYou -> 2
+                WidgetType.Widget4x2MaterialYou -> 2
+                WidgetType.Widget4x4MaterialYou -> 4
+                WidgetType.Widget2x2PillMaterialYou -> 2
+                WidgetType.Widget4x3Locations -> 3
+                WidgetType.Widget3x1MaterialYou -> 1
+                WidgetType.Widget4x2Graph -> 2
+                WidgetType.Widget4x2Tomorrow -> 2
+                WidgetType.Widget2x2M3 -> 2
+                WidgetType.Widget4x4M3 -> 4
+                WidgetType.Widget4x2M3 -> 2
+            }
+        )
 
-        if (!options.containsKey(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)) {
-            options.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widgetWidth)
-            options.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widgetWidth)
-        }
+        options.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widgetWidth)
+        options.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widgetWidth)
 
-        if (!options.containsKey(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)) {
-            options.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, widgetHeight)
-            options.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, widgetHeight)
-        }
+        options.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, widgetHeight)
+        options.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, widgetHeight)
 
         return options
     }
@@ -690,7 +723,7 @@ object WidgetUtils {
         if (!isForecastWidget(widgetType)) return 0
 
         return when {
-            widgetType == WidgetType.Widget4x2MaterialYou || widgetType == WidgetType.Widget4x4MaterialYou -> {
+            widgetType == WidgetType.Widget4x2MaterialYou || widgetType == WidgetType.Widget4x4MaterialYou || widgetType == WidgetType.Widget4x4M3 -> {
                 WIDE_FORECAST_LENGTH + 1
             }
             cellWidth >= 5 -> {
@@ -781,6 +814,17 @@ object WidgetUtils {
                 WeatherWidgetProvider4x2Tomorrow.Info.getInstance().widgetLayoutId -> {
                     return WidgetType.Widget4x2Tomorrow
                 }
+                WeatherWidgetProvider4x4M3.Info.getInstance().widgetLayoutId -> {
+                    return WidgetType.Widget4x4M3
+                }
+
+                WeatherWidgetProvider2x2M3.Info.getInstance().widgetLayoutId -> {
+                    return WidgetType.Widget2x2M3
+                }
+
+                WeatherWidgetProvider4x2M3.Info.getInstance().widgetLayoutId -> {
+                    return WidgetType.Widget4x2M3
+                }
             }
         }
 
@@ -806,6 +850,9 @@ object WidgetUtils {
             WidgetType.Widget3x1MaterialYou -> WeatherWidget3x1MaterialYouCreator(context)
             WidgetType.Widget4x2Graph -> WeatherWidget4x2GraphCreator(context)
             WidgetType.Widget4x2Tomorrow -> WeatherWidget4x2TomorrowCreator(context)
+            WidgetType.Widget2x2M3 -> WeatherWidget2x2M3Creator(context)
+            WidgetType.Widget4x4M3 -> WeatherWidget4x4M3Creator(context)
+            WidgetType.Widget4x2M3 -> WeatherWidget4x2M3Creator(context)
         }
     }
 
@@ -857,7 +904,9 @@ object WidgetUtils {
     }
 
     fun isForecastWidget(widgetType: WidgetType): Boolean {
-        return widgetType == WidgetType.Widget4x1 || widgetType == WidgetType.Widget4x2 || widgetType == WidgetType.Widget4x2MaterialYou || widgetType == WidgetType.Widget4x4MaterialYou
+        return widgetType == WidgetType.Widget4x1 || widgetType == WidgetType.Widget4x2 || isMaterialForecastWidget(
+            widgetType
+        )
     }
 
     fun isBackgroundOptionalWidget(widgetType: WidgetType): Boolean {
@@ -886,7 +935,22 @@ object WidgetUtils {
             WidgetType.Widget4x2MaterialYou,
             WidgetType.Widget4x4MaterialYou,
             WidgetType.Widget2x2PillMaterialYou,
-            WidgetType.Widget3x1MaterialYou -> true
+            WidgetType.Widget3x1MaterialYou,
+            WidgetType.Widget4x4M3,
+            WidgetType.Widget2x2M3,
+            WidgetType.Widget4x2M3 -> true
+
+            else -> false
+        }
+    }
+
+    fun isMaterialForecastWidget(widgetType: WidgetType): Boolean {
+        return when (widgetType) {
+            WidgetType.Widget4x2MaterialYou,
+            WidgetType.Widget4x4MaterialYou,
+            WidgetType.Widget4x4M3,
+            WidgetType.Widget2x2M3,
+            WidgetType.Widget4x2M3 -> true
             else -> false
         }
     }

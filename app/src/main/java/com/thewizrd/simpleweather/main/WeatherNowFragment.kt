@@ -5,10 +5,8 @@ import android.app.Activity
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.hardware.SensorManager
-import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
@@ -453,15 +451,6 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             conditionPanelBinding.bgAttribution.movementMethod = LinkMovementMethod.getInstance()
 
             // Alerts
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                conditionPanelBinding.alertButton.backgroundTintList =
-                    ColorStateList.valueOf(Colors.ORANGERED)
-            } else {
-                val drawable = conditionPanelBinding.alertButton.background.mutate()
-                drawable.setColorFilter(Colors.ORANGERED, PorterDuff.Mode.SRC_IN)
-                conditionPanelBinding.alertButton.background = drawable
-            }
-
             conditionPanelBinding.alertButton.setOnClickListener {
                 openDetails(
                     TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()

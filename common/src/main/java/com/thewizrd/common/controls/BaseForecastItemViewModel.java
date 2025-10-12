@@ -7,6 +7,7 @@ import java.util.Objects;
 public abstract class BaseForecastItemViewModel {
     protected String weatherIcon;
     protected String date;
+    protected String narrowDate;
     protected String shortDate;
     protected String longDate;
     protected String condition;
@@ -35,6 +36,14 @@ public abstract class BaseForecastItemViewModel {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getNarrowDate() {
+        return narrowDate;
+    }
+
+    public void setNarrowDate(String narrowDate) {
+        this.narrowDate = narrowDate;
     }
 
     public String getShortDate() {
@@ -109,18 +118,14 @@ public abstract class BaseForecastItemViewModel {
         BaseForecastItemViewModel that = (BaseForecastItemViewModel) o;
 
         if (windDirection != that.windDirection) return false;
-        if (!Objects.equals(weatherIcon, that.weatherIcon))
-            return false;
+        if (!Objects.equals(weatherIcon, that.weatherIcon)) return false;
         if (!Objects.equals(date, that.date)) return false;
-        if (!Objects.equals(shortDate, that.shortDate))
-            return false;
-        if (!Objects.equals(longDate, that.longDate))
-            return false;
-        if (!Objects.equals(condition, that.condition))
-            return false;
+        if (!Objects.equals(narrowDate, that.narrowDate)) return false;
+        if (!Objects.equals(shortDate, that.shortDate)) return false;
+        if (!Objects.equals(longDate, that.longDate)) return false;
+        if (!Objects.equals(condition, that.condition)) return false;
         if (!Objects.equals(hiTemp, that.hiTemp)) return false;
-        if (!Objects.equals(windSpeed, that.windSpeed))
-            return false;
+        if (!Objects.equals(windSpeed, that.windSpeed)) return false;
         if (!Objects.equals(windDir, that.windDir)) return false;
         return Objects.equals(detailExtras, that.detailExtras);
     }
@@ -129,6 +134,7 @@ public abstract class BaseForecastItemViewModel {
     public int hashCode() {
         int result = weatherIcon != null ? weatherIcon.hashCode() : 0;
         result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (narrowDate != null ? narrowDate.hashCode() : 0);
         result = 31 * result + (shortDate != null ? shortDate.hashCode() : 0);
         result = 31 * result + (longDate != null ? longDate.hashCode() : 0);
         result = 31 * result + (condition != null ? condition.hashCode() : 0);

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:theme="@style/AppWidgetTheme.AppWidgetContainer"
+    tools:ignore="ContentDescription,UseAppTint"
+    tools:viewBindingIgnore="true">
+
+    <LinearLayout
+        android:id="@+id/forecast1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_widget_m3_inner_view_corner_top"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginBottom="2dp">
+
+        <TextView
+            android:id="@+id/forecast1_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="Tuesday" />
+
+        <TextView
+            android:id="@+id/forecast1_hi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="15°" />
+
+        <TextView
+            android:id="@+id/forecast1_lo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:alpha="0.5"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="11°" />
+
+        <ImageView
+            android:id="@+id/forecast1_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="0dp"
+            android:tint="@color/widget_innerview_foreground_color"
+            android:tintMode="src_in"
+            tools:src="@drawable/wi_day_sunny" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/forecast2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_widget_m3_inner_view_corner_center"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginBottom="2dp">
+
+        <TextView
+            android:id="@+id/forecast2_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="Tuesday" />
+
+        <TextView
+            android:id="@+id/forecast2_hi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="717°" />
+
+        <TextView
+            android:id="@+id/forecast2_lo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:alpha="0.5"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="11°" />
+
+        <ImageView
+            android:id="@+id/forecast2_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="0dp"
+            android:tint="@color/widget_innerview_foreground_color"
+            android:tintMode="src_in"
+            tools:src="@drawable/wi_day_sunny" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/forecast3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_widget_m3_inner_view_corner_center"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginBottom="2dp">
+
+        <TextView
+            android:id="@+id/forecast3_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="Tuesday" />
+
+        <TextView
+            android:id="@+id/forecast3_hi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="15°" />
+
+        <TextView
+            android:id="@+id/forecast3_lo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:alpha="0.5"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="11°" />
+
+        <ImageView
+            android:id="@+id/forecast3_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="0dp"
+            android:tint="@color/widget_innerview_foreground_color"
+            android:tintMode="src_in"
+            tools:src="@drawable/wi_day_sunny" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/forecast4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_widget_m3_inner_view_corner_center"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginBottom="2dp">
+
+        <TextView
+            android:id="@+id/forecast4_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="Tuesday" />
+
+        <TextView
+            android:id="@+id/forecast4_hi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="15°" />
+
+        <TextView
+            android:id="@+id/forecast4_lo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:alpha="0.5"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="11°" />
+
+        <ImageView
+            android:id="@+id/forecast4_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="0dp"
+            android:tint="@color/widget_innerview_foreground_color"
+            android:tintMode="src_in"
+            tools:src="@drawable/wi_day_sunny" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/forecast5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_widget_m3_inner_view_corner_center"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginBottom="2dp">
+
+        <TextView
+            android:id="@+id/forecast5_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="Tuesday" />
+
+        <TextView
+            android:id="@+id/forecast5_hi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="15°" />
+
+        <TextView
+            android:id="@+id/forecast5_lo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:alpha="0.5"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="11°" />
+
+        <ImageView
+            android:id="@+id/forecast5_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="0dp"
+            android:tint="@color/widget_innerview_foreground_color"
+            android:tintMode="src_in"
+            tools:src="@drawable/wi_day_sunny" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/forecast6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_widget_m3_inner_view_corner_bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginBottom="2dp">
+
+        <TextView
+            android:id="@+id/forecast6_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="Tuesday" />
+
+        <TextView
+            android:id="@+id/forecast6_hi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="15°" />
+
+        <TextView
+            android:id="@+id/forecast6_lo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:alpha="0.5"
+            android:gravity="center_horizontal"
+            android:textAppearance="?textAppearanceBodyLarge"
+            android:textColor="@color/widget_innerview_foreground_color"
+            tools:text="11°" />
+
+        <ImageView
+            android:id="@+id/forecast6_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="0dp"
+            android:tint="@color/widget_innerview_foreground_color"
+            android:tintMode="src_in"
+            tools:src="@drawable/wi_day_sunny" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -54,9 +54,14 @@ public class HourlyForecastItemViewModel extends BaseForecastItemViewModel {
         if (DateFormat.is24HourFormat(context)) {
             date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_DAYOFWEEK_AND_24HR)));
             shortDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_24HR)));
+            narrowDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_24HR_SHORT)));
         } else {
             date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAYOFWEEK_AND_12HR_AMPM));
             shortDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_12HR_AMPM_SHORT));
+            narrowDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_12HR_AMPM_SHORT))
+                    .toUpperCase()
+                    .replace("AM", "A")
+                    .replace("PM", "P");
         }
         longDate = date;
 

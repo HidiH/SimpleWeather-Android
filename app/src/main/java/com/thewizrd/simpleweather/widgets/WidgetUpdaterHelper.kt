@@ -9,8 +9,10 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.text.style.TextAppearanceSpan
 import android.util.Log
+import android.util.SizeF
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.RemoteViews
 import com.thewizrd.common.controls.BaseForecastItemViewModel
 import com.thewizrd.common.controls.ForecastItemViewModel
@@ -231,7 +233,7 @@ object WidgetUpdaterHelper {
         if (info.widgetType != WidgetType.Widget4x2MaterialYou) {
             updateViews.removeAllViews(R.id.forecast_layout)
         }
-        if (info.widgetType == WidgetType.Widget4x2MaterialYou || info.widgetType == WidgetType.Widget4x4MaterialYou) {
+        if (WidgetUtils.isMaterialForecastWidget(info.widgetType)) {
             updateViews.removeAllViews(R.id.hrforecast_layout)
         }
 
@@ -284,7 +286,10 @@ object WidgetUpdaterHelper {
 
             val forecastLayoutId: Int
             val hrForecastLayoutId: Int
-            if (info.widgetType == WidgetType.Widget4x4MaterialYou) {
+            if (info.widgetType == WidgetType.Widget4x4M3 || info.widgetType == WidgetType.Widget4x2M3 || info.widgetType == WidgetType.Widget2x2M3) {
+                forecastLayoutId = R.layout.app_widget_forecast_layout_container_m3
+                hrForecastLayoutId = R.layout.app_widget_hrforecast_layout_container_m3
+            } else if (info.widgetType == WidgetType.Widget4x4MaterialYou) {
                 forecastLayoutId = R.layout.app_widget_forecast_layout_container_material
                 hrForecastLayoutId = R.layout.app_widget_hrforecast_layout_container_material
             } else if (info.widgetType == WidgetType.Widget4x2MaterialYou) {
@@ -380,7 +385,7 @@ object WidgetUpdaterHelper {
                 updateViews.addView(R.id.forecast_layout, forecastPanel)
             }
             if (hrForecastPanel != null) {
-                if (info.widgetType == WidgetType.Widget4x2MaterialYou || info.widgetType == WidgetType.Widget4x4MaterialYou) {
+                if (WidgetUtils.isMaterialForecastWidget(info.widgetType)) {
                     updateViews.addView(R.id.hrforecast_layout, hrForecastPanel)
                 } else {
                     updateViews.addView(R.id.forecast_layout, hrForecastPanel)
@@ -389,7 +394,7 @@ object WidgetUpdaterHelper {
 
             updateForecastSizes(context, info, appWidgetId, updateViews, newOptions)
 
-            if (info.widgetType != WidgetType.Widget4x2MaterialYou && info.widgetType != WidgetType.Widget4x4MaterialYou) {
+            if (!WidgetUtils.isMaterialForecastWidget(info.widgetType)) {
                 if (forecastPanel != null && hrForecastPanel != null && WidgetUtils.isTap2Switch(
                         appWidgetId
                     )
@@ -439,10 +444,24 @@ object WidgetUpdaterHelper {
             null
         }
 
+        // Widget dimensions
+        val minHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+        val minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+        val maxHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
+        val maxWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
+        val maxCellWidth = WidgetUtils.getCellsForSize(maxWidth)
+        val maxCellHeight = WidgetUtils.getCellsForSize(maxHeight)
+        val cellHeight = WidgetUtils.getCellsForSize(minHeight)
+        val cellWidth = WidgetUtils.getCellsForSize(minWidth)
+        val hasExtraWidth = (maxCellWidth - cellWidth) > 0
+        val hasExtraHeight = (maxCellHeight - cellHeight) > 0
+
         forecastPanel.setTextViewText(
             dateId,
-            if (info.widgetType == WidgetType.Widget4x4MaterialYou && forecast is ForecastItemViewModel) {
+            if ((info.widgetType == WidgetType.Widget4x4MaterialYou || info.widgetType == WidgetType.Widget4x4M3) && forecast is ForecastItemViewModel) {
                 forecast.longDate
+            } else if (info.widgetType == WidgetType.Widget2x2M3) {
+                forecast.narrowDate
             } else {
                 forecast.shortDate
             }?.run {
@@ -477,7 +496,7 @@ object WidgetUpdaterHelper {
             })
         }
 
-        if (info.widgetType != WidgetType.Widget4x2MaterialYou && info.widgetType != WidgetType.Widget4x4MaterialYou && (background != WidgetUtils.WidgetBackground.CURRENT_CONDITIONS || style != WidgetUtils.WidgetBackgroundStyle.PANDA)) {
+        if (!WidgetUtils.isMaterialForecastWidget(info.widgetType) && (background != WidgetUtils.WidgetBackground.CURRENT_CONDITIONS || style != WidgetUtils.WidgetBackgroundStyle.PANDA)) {
             forecastPanel.setTextColor(dateId, textColor)
             forecastPanel.setTextColor(hiId, textColor)
             if (forecast is ForecastItemViewModel) {
@@ -489,11 +508,39 @@ object WidgetUpdaterHelper {
         // WeatherIcon
         val wim = sharedDeps.weatherIconsManager
         val weatherIconResId = wim.getWeatherIconResource(forecast.weatherIcon)
-        if (info.widgetType == WidgetType.Widget4x2MaterialYou || info.widgetType == WidgetType.Widget4x4MaterialYou) {
+        if (WidgetUtils.isMaterialForecastWidget(info.widgetType)) {
             forecastPanel.setImageViewResource(iconId, weatherIconResId)
             if (!wim.isFontIcon) {
                 // Remove tint
                 forecastPanel.setInt(iconId, "setColorFilter", 0x0)
+            }
+            if (forecast is ForecastItemViewModel && info.widgetType == WidgetType.Widget2x2M3) {
+                val minWidth = context.dpToPx(36f).toInt()
+
+                forecastPanel.setViewVisibility(
+                    iconId,
+                    if (cellWidth > 2) View.VISIBLE else View.GONE
+                )
+
+                forecastPanel.setTextViewTextSize(
+                    dateId,
+                    TypedValue.COMPLEX_UNIT_SP,
+                    if (cellWidth > 2) 16f else 14f
+                )
+
+                forecastPanel.setInt(hiId, "setMinWidth", if (cellWidth > 3) minWidth else 0)
+                forecastPanel.setTextViewTextSize(
+                    hiId,
+                    TypedValue.COMPLEX_UNIT_SP,
+                    if (cellWidth > 2) 16f else 14f
+                )
+
+                forecastPanel.setInt(loId, "setMinWidth", if (cellWidth > 3) minWidth else 0)
+                forecastPanel.setTextViewTextSize(
+                    loId,
+                    TypedValue.COMPLEX_UNIT_SP,
+                    if (cellWidth > 2) 16f else 14f
+                )
             }
         } else if (!WidgetUtils.isBackgroundOptionalWidget(info.widgetType) || background == WidgetUtils.WidgetBackground.TRANSPARENT) {
             forecastPanel.setImageViewBitmap(
@@ -531,7 +578,7 @@ object WidgetUpdaterHelper {
             }
         }
 
-        if (forecast is HourlyForecastItemViewModel && info.widgetType != WidgetType.Widget4x2MaterialYou && info.widgetType != WidgetType.Widget4x4MaterialYou) {
+        if (forecast is HourlyForecastItemViewModel && !WidgetUtils.isMaterialForecastWidget(info.widgetType)) {
             forecastPanel.setViewVisibility(dividerId, View.GONE)
             forecastPanel.setViewVisibility(loId, View.GONE)
         }
@@ -550,9 +597,11 @@ object WidgetUpdaterHelper {
         val maxHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
         val maxWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
         val maxCellWidth = WidgetUtils.getCellsForSize(maxWidth)
+        val maxCellHeight = WidgetUtils.getCellsForSize(maxHeight)
         val cellHeight = WidgetUtils.getCellsForSize(minHeight)
         val cellWidth = WidgetUtils.getCellsForSize(minWidth)
         val hasExtraWidth = (maxCellWidth - cellWidth) > 0
+        val hasExtraHeight = (maxCellHeight - cellHeight) > 0
 
         val txtSizeMultiplier: Float =
             newOptions.get(KEY_TEXTSIZE) as? Float ?: WidgetUtils.getCustomTextSizeMultiplier(
@@ -563,14 +612,45 @@ object WidgetUpdaterHelper {
                 appWidgetId
             )
 
-        if (info.widgetType == WidgetType.Widget4x2MaterialYou || info.widgetType == WidgetType.Widget4x4MaterialYou) {
-            val topHeight = 170 // dp
+        if (WidgetUtils.isMaterialForecastWidget(info.widgetType)) {
+            val topHeight =
+                if (info.widgetType == WidgetType.Widget4x4M3 || info.widgetType == WidgetType.Widget2x2M3) {
+                    230 // dp
+                } else {
+                    170 // dp
+                }
             val remainingCellHeight = WidgetUtils.getCellsForSize(maxHeight - topHeight)
 
-            views.setViewVisibility(
-                R.id.hrforecast_layout,
-                if (cellWidth > 3) View.VISIBLE else View.GONE
-            )
+            when (info.widgetType) {
+                WidgetType.Widget4x2M3, WidgetType.Widget4x4M3 -> {
+                    views.setViewVisibility(
+                        R.id.hrforecast_layout,
+                        if (cellWidth > 2 || cellHeight > 2) View.VISIBLE else View.GONE
+                    )
+                    views.setViewVisibility(
+                        R.id.forecast_layout,
+                        if (cellHeight > 3 || (cellHeight == 3 && hasExtraHeight)) View.VISIBLE else View.GONE
+                    )
+                }
+
+                WidgetType.Widget2x2M3 -> {
+                    views.setViewVisibility(
+                        R.id.hrforecast_layout,
+                        if (cellHeight > 2) View.VISIBLE else View.GONE
+                    )
+                    views.setViewVisibility(
+                        R.id.forecast_layout,
+                        if (cellHeight > 3 || (cellHeight == 3 && hasExtraHeight)) View.VISIBLE else View.GONE
+                    )
+                }
+
+                else -> {
+                    views.setViewVisibility(
+                        R.id.hrforecast_layout,
+                        if (cellWidth > 3) View.VISIBLE else View.GONE
+                    )
+                }
+            }
 
             val forecastLength = if (cellHeight >= 2) {
                 minOf(
@@ -581,7 +661,19 @@ object WidgetUpdaterHelper {
             } else {
                 0
             }
-            val hrForecastLength = if (cellWidth > 2) {
+            val hrForecastLength = if (info.widgetType == WidgetType.Widget4x2M3 && cellWidth > 3) {
+                minOf(
+                    cellWidth - 2,
+                    WidgetUtils.getMaxHrForecastLength(appWidgetId),
+                    MAX_FORECASTS - 1
+                )
+            } else if ((info.widgetType == WidgetType.Widget4x4M3 || info.widgetType == WidgetType.Widget4x2M3 || info.widgetType == WidgetType.Widget2x2M3) && cellWidth >= 2) {
+                minOf(
+                    if (cellWidth > 2 && hasExtraWidth) cellWidth + 1 else cellWidth,
+                    WidgetUtils.getMaxHrForecastLength(appWidgetId),
+                    if (hasExtraWidth) MAX_FORECASTS else MAX_FORECASTS - 1
+                )
+            } else if (cellWidth > 2) {
                 minOf(cellWidth, WidgetUtils.getMaxHrForecastLength(appWidgetId), MAX_FORECASTS - 1)
             } else {
                 0
@@ -591,11 +683,36 @@ object WidgetUpdaterHelper {
                 val fcastViewId = getResIdentifier(R.id::class.java, "forecast${i + 1}") ?: 0
                 val hrfcastViewId = getResIdentifier(R.id::class.java, "hrforecast${i + 1}") ?: 0
 
-                if (fcastViewId != 0 && info.widgetType == WidgetType.Widget4x4MaterialYou) {
+                if (fcastViewId != 0 && (info.widgetType == WidgetType.Widget4x4MaterialYou || info.widgetType == WidgetType.Widget4x4M3 || info.widgetType == WidgetType.Widget2x2M3)) {
                     views.setViewVisibility(
                         fcastViewId,
                         if (i < forecastLength) View.VISIBLE else View.GONE
                     )
+
+                    // Update corners
+                    if (info.widgetType == WidgetType.Widget4x4M3 || info.widgetType == WidgetType.Widget2x2M3) {
+                        views.setInt(
+                            fcastViewId,
+                            "setBackgroundResource",
+                            when {
+                                forecastLength <= 1 -> {
+                                    R.drawable.app_widget_m3_inner_view_corner_full
+                                }
+
+                                i == 0 -> {
+                                    R.drawable.app_widget_m3_inner_view_corner_top
+                                }
+
+                                i == forecastLength - 1 -> {
+                                    R.drawable.app_widget_m3_inner_view_corner_bottom
+                                }
+
+                                else -> {
+                                    R.drawable.app_widget_m3_inner_view_corner_center
+                                }
+                            }
+                        )
+                    }
                 }
                 if (hrfcastViewId != 0) {
                     views.setViewVisibility(
@@ -790,7 +907,10 @@ object WidgetUpdaterHelper {
         val isS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         if (isS && (info.widgetType == WidgetType.Widget2x2PillMaterialYou ||
                     info.widgetType == WidgetType.Widget4x2MaterialYou ||
-                    info.widgetType == WidgetType.Widget4x4MaterialYou)
+                    info.widgetType == WidgetType.Widget4x4MaterialYou ||
+                    info.widgetType == WidgetType.Widget4x4M3 ||
+                    info.widgetType == WidgetType.Widget2x2M3 ||
+                    info.widgetType == WidgetType.Widget4x2M3)
         ) return
 
         if (!settingsManager.useFollowGPS() && WidgetUtils.isGPS(appWidgetId)) return
@@ -841,6 +961,28 @@ object WidgetUpdaterHelper {
             resId
         } catch (e: Exception) {
             null
+        }
+    }
+
+    fun RemoteViews.apply(context: Context, parent: ViewGroup, size: SizeF?): View {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            runCatching {
+                val cls = RemoteViews::class.java
+                val interactionHandlerCls =
+                    cls.declaredClasses.first { c -> c.name.endsWith("RemoteViews\$InteractionHandler") }
+                val method = cls.getMethod(
+                    "apply",
+                    Context::class.java,
+                    ViewGroup::class.java,
+                    interactionHandlerCls,
+                    SizeF::class.java
+                )
+                method.invoke(this, context, parent, null, size) as View
+            }.getOrElse {
+                this.apply(context, parent)
+            }
+        } else {
+            this.apply(context, parent)
         }
     }
 }

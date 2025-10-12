@@ -397,9 +397,9 @@ class WeatherUiModel() {
                 String.format(
                     LocaleUtils.getLocale(), "%d°",
                     if (isFahrenheit) {
-                        Math.round(weatherData!!.atmosphere!!.dewpointF)
+                        weatherData!!.atmosphere!!.dewpointF.roundToInt()
                     } else {
-                        Math.round(weatherData!!.atmosphere!!.dewpointC)
+                        weatherData!!.atmosphere!!.dewpointC.roundToInt()
                     }
                 )
             )
@@ -412,15 +412,15 @@ class WeatherUiModel() {
 
             when (unit) {
                 Units.MILES -> {
-                    visibilityVal = Math.round(weatherData!!.atmosphere!!.visibilityMi)
+                    visibilityVal = weatherData!!.atmosphere!!.visibilityMi.roundToInt()
                     visibilityUnit = context.getString(R.string.unit_miles)
                 }
                 Units.KILOMETERS -> {
-                    visibilityVal = Math.round(weatherData!!.atmosphere!!.visibilityKm)
+                    visibilityVal = weatherData!!.atmosphere!!.visibilityKm.roundToInt()
                     visibilityUnit = context.getString(R.string.unit_kilometers)
                 }
                 else -> {
-                    visibilityVal = Math.round(weatherData!!.atmosphere!!.visibilityMi)
+                    visibilityVal = weatherData!!.atmosphere!!.visibilityMi.roundToInt()
                     visibilityUnit = context.getString(R.string.unit_miles)
                 }
             }
@@ -458,9 +458,7 @@ class WeatherUiModel() {
             weatherData!!.condition!!.feelslikeF != weatherData!!.condition!!.feelslikeC
         ) {
             val value =
-                if (isFahrenheit) Math.round(weatherData!!.condition!!.feelslikeF) else Math.round(
-                    weatherData!!.condition!!.feelslikeC
-                )
+                if (isFahrenheit) weatherData!!.condition!!.feelslikeF.roundToInt() else weatherData!!.condition!!.feelslikeC.roundToInt()
 
             weatherDetailsMap[WeatherDetailsType.FEELSLIKE] = DetailItemViewModel(
                 WeatherDetailsType.FEELSLIKE,

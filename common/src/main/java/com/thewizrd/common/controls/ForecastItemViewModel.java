@@ -47,7 +47,7 @@ public class ForecastItemViewModel extends BaseForecastItemViewModel {
 
         weatherIcon = forecast.getIcon();
         date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(context.getString(R.string.forecast_date_format)));
-        shortDate = date;
+        narrowDate = shortDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK));
         longDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.DAY_OF_THE_WEEK));
         condition = wm.supportsWeatherLocale() ? forecast.getCondition() : wm.getWeatherCondition(forecast.getIcon());
         try {
