@@ -212,7 +212,7 @@ class WeatherListFragment : CollapsingToolbarFragment() {
             }
         }
 
-        //
+        // Show review prompt when applicable
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 runCatching {
@@ -291,23 +291,13 @@ class WeatherListFragment : CollapsingToolbarFragment() {
                 val alertAdapter =
                     adapter.adapters.find { it is WeatherAlertPanelAdapter } as? WeatherAlertPanelAdapter
                         ?: WeatherAlertPanelAdapter().apply {
-                            setOnItemClickListener {
-                                inAppReviewManager.incrementCounter()
-                            }
+                            registerAdapterDataObserver(WeatherListAdapterObserver(this))
                         }
                 if (!adapter.containsAdapter(alertAdapter)) {
                     val innerAdapters = adapter.adapters.filterNot { it is SpacerAdapter }
                     innerAdapters.forEach { adapter.removeAdapter(it) }
                     adapter.addAdapter(1, alertAdapter)
                 }
-
-                alertAdapter.registerAdapterDataObserver(object :
-                    SimpleRecyclerViewAdapterObserver() {
-                    override fun onChanged() {
-                        alertAdapter.unregisterAdapterDataObserver(this)
-                        binding.progressBar.hide()
-                    }
-                })
 
                 dataJob = runWithView {
                     alertsView.getAlerts().collect {
@@ -327,33 +317,13 @@ class WeatherListFragment : CollapsingToolbarFragment() {
         val detailsAdapter: WeatherDetailsAdapter<T> =
             adapter.adapters.find { it is WeatherDetailsAdapter<*> } as? WeatherDetailsAdapter<T>?
                 ?: WeatherDetailsAdapter<T>().apply {
-                    setOnItemClickListener {
-                        inAppReviewManager.incrementCounter()
-                    }
+                    registerAdapterDataObserver(WeatherListAdapterObserver(this))
                 }
         if (!adapter.containsAdapter(detailsAdapter)) {
             val innerAdapters = adapter.adapters.filterNot { it is SpacerAdapter }
             innerAdapters.forEach { adapter.removeAdapter(it) }
             adapter.addAdapter(1, detailsAdapter)
         }
-
-        detailsAdapter.registerAdapterDataObserver(object : SimpleRecyclerViewAdapterObserver() {
-            override fun onChanged() {
-                if (detailsAdapter.itemCount > args.position) {
-                    detailsAdapter.unregisterAdapterDataObserver(this)
-                    binding.recyclerView.viewTreeObserver.addOnGlobalLayoutListener(object :
-                        OnGlobalLayoutListener {
-                        override fun onGlobalLayout() {
-                            binding.recyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                            runWithView {
-                                layoutManager!!.scrollToPositionWithOffset(args.position, 0)
-                            }
-                        }
-                    })
-                    binding.progressBar.hide()
-                }
-            }
-        })
 
         return detailsAdapter
     }
@@ -389,6 +359,32 @@ class WeatherListFragment : CollapsingToolbarFragment() {
         return SnackbarManager(binding.root).apply {
             setSwipeDismissEnabled(true)
             setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
+        }
+    }
+
+    private inner class WeatherListAdapterObserver(private val adapter: RecyclerView.Adapter<*>) :
+        SimpleRecyclerViewAdapterObserver() {
+        override fun onChanged() {
+            if (adapter is WeatherDetailsAdapter<*>) {
+                if (adapter.itemCount > args.position) {
+                    adapter.unregisterAdapterDataObserver(this)
+                    binding.recyclerView.viewTreeObserver.addOnGlobalLayoutListener(object :
+                        OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            binding.recyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            runWithView {
+                                layoutManager!!.scrollToPositionWithOffset(args.position, 0)
+                                inAppReviewManager.incrementCounter()
+                            }
+                        }
+                    })
+                    binding.progressBar.hide()
+                }
+            } else if (adapter is WeatherAlertPanelAdapter) {
+                adapter.unregisterAdapterDataObserver(this)
+                binding.progressBar.hide()
+                inAppReviewManager.incrementCounter()
+            }
         }
     }
 }

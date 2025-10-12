@@ -13,7 +13,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.thewizrd.common.helpers.SimpleRecyclerViewAdapterObserver
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.locationdata.LocationData
@@ -36,12 +38,15 @@ import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel.Gra
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
 import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
+import com.thewizrd.simpleweather.review.InAppReviewManager
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.navControllerViewModels
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import de.twoid.ui.decoration.InsetItemDecoration
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class WeatherChartsFragment : CollapsingToolbarFragment() {
@@ -55,6 +60,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
     private lateinit var adapter: ChartsItemAdapter
 
     private val args: WeatherChartsFragmentArgs by navArgs()
+
+    private lateinit var inAppReviewManager: InAppReviewManager
 
     init {
         arguments = Bundle()
@@ -87,6 +94,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
                 locationData = JSONParser.deserializer(args.data, LocationData::class.java)
             }
         }
+
+        inAppReviewManager = InAppReviewManager.create(requireContext())
     }
 
     override val scrollTargetViewId: Int
@@ -131,7 +140,14 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.show()
+
+        adapter.registerAdapterDataObserver(object : SimpleRecyclerViewAdapterObserver() {
+            override fun onChanged() {
+                adapter.unregisterAdapterDataObserver(this)
+                inAppReviewManager.incrementCounter()
+            }
+        })
 
         viewLifecycleOwner.lifecycleScope.launch {
             twoPaneStateViewModel.twoPaneState.collectLatest { state ->
@@ -165,6 +181,29 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 initialize()
+            }
+        }
+
+        // Show review prompt when applicable
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                runCatching {
+                    delay(5000)
+
+                    val paneIsOpened = twoPaneStateViewModel.twoPaneState.value.isOpened
+                    if (isActive && isVisible && paneIsOpened && isViewAlive && inAppReviewManager.shouldShowReviewFlow()) {
+                        // Wait for no movement
+                        while (isActive && binding.recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+                            delay(2500)
+                        }
+
+                        if (isActive) {
+                            activity?.run {
+                                inAppReviewManager.showReviewFlow(this)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
