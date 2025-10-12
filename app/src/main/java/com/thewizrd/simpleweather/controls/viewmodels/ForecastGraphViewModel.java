@@ -534,7 +534,9 @@ public class ForecastGraphViewModel {
                     break;
             }
 
-            dataSet.addEntry(new BarGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue)))));
+            final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue))));
+            entry.setFillColor(Colors.DEEPSKYBLUE);
+            dataSet.addEntry(entry);
         }
     }
 
