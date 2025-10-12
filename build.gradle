@@ -12,7 +12,7 @@ buildscript {
 
         desugar_version = '2.1.5'
 
-        firebase_version = '34.3.0'
+        firebase_version = '34.4.0'
         gms_location_version = '21.3.0'
         gms_base_version = '18.9.0'
         gms_basement_version = '18.9.0'
@@ -31,7 +31,7 @@ buildscript {
         paging_version = '3.3.6'
         preference_version = '1.2.1'
         recyclerview_version = '1.4.0'
-        room_version = '2.8.1'
+        room_version = '2.8.2'
         coresplash_version = '1.0.1'
         vectordrawable_version = '1.2.0'
         work_version = '2.10.5'
@@ -44,11 +44,11 @@ buildscript {
         google_truth_version = '1.4.5'
 
         material_version = '1.14.0-alpha05'
-        material_compose_version = '1.5.0-alpha04'
+        material_compose_version = '1.5.0-alpha06'
 
         compose_compiler_version = '1.5.15'
-        compose_bom_version = '2025.09.01'
-        wear_compose_version = '1.5.2'
+        compose_bom_version = '2025.10.00'
+        wear_compose_version = '1.5.3'
         wear_tiles_version = '1.5.0'
         wear_watchface_version = '1.2.1'
         horologist_version = '0.7.15'
@@ -58,7 +58,7 @@ buildscript {
         icu4j_version = '77.1'
         jjwt_version = '0.13.0'
         moshi_version = '1.15.2'
-        okhttp_version = '5.1.0'
+        okhttp_version = '5.2.1'
         timber_version = '5.0.1'
     }
 
@@ -71,7 +71,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.0'
         classpath "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:$ksp_version"
-        classpath 'com.google.gms:google-services:4.4.3'
+        classpath 'com.google.gms:google-services:4.4.4'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.6'
         classpath 'com.google.firebase:perf-plugin:2.0.1'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
