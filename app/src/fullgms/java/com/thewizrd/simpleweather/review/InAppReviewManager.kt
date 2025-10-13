@@ -11,7 +11,6 @@ import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.review.testing.FakeReviewManager
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
-import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.simpleweather.BuildConfig
 import kotlinx.coroutines.isActive
 import java.time.Clock
@@ -81,11 +80,12 @@ class InAppReviewManager private constructor(context: Context) {
                     putLong(KEY_LAST_PROMPT_DATE, prefs.getLong(KEY_NEXT_PROMPT_DATE, 0))
                 })
 
-                manager.launchReview(activity, reviewInfo)
+                runCatching {
+                    manager.launchReview(activity, reviewInfo)
+                }
+
                 resetReviewPrompt()
             }
-        }.onFailure {
-            Logger.error(TAG, it, "Error showing review flow")
         }
     }
 
