@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk rootProject.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toInteger()
 
     defaultConfig {
-        minSdk rootProject.minSdkVersion
-        targetSdk rootProject.targetSdkVersion
+        minSdk libs.versions.minSdkVersion.get().toInteger()
+        targetSdk libs.versions.targetSdkVersion.get().toInteger()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -92,51 +92,50 @@ dependencies {
     implementation project(":shared_resources")
     fullgmsImplementation project(":extras")
 
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
+    coreLibraryDesugaring libs.desugar.jdk.libs
 
     // Unit Testing
-    androidTestImplementation "androidx.test:core:$test_core_version"
+    androidTestImplementation libs.test.core
 
     // AndroidJUnitRunner and JUnit Rules
-    androidTestImplementation "androidx.test:runner:$test_runner_version"
-    androidTestImplementation "androidx.test:rules:$test_rules_version"
+    androidTestImplementation libs.test.runner
+    androidTestImplementation libs.test.rules
 
     // Assertions
-    androidTestImplementation "androidx.test.ext:junit:$junit_version"
-    androidTestImplementation "androidx.test.ext:truth:$androidx_truth_version"
-    androidTestImplementation "com.google.truth:truth:$google_truth_version"
+    androidTestImplementation libs.test.ext.junit
+    androidTestImplementation libs.test.ext.truth
+    androidTestImplementation libs.google.truth
 
     // Kotlin
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_version"
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
 
-    implementation "androidx.preference:preference-ktx:$preference_version"
+    implementation libs.preference.ktx
 
-    implementation "androidx.room:room-runtime:$room_version"
-    ksp "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
+    implementation libs.room.runtime
+    ksp libs.room.compiler
+    implementation libs.room.ktx
     // Room migration testing
-    androidTestImplementation "androidx.room:room-testing:$room_version"
+    androidTestImplementation libs.room.testing
 
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
-    implementation "com.ibm.icu:icu4j:$icu4j_version"
+    implementation libs.okhttp
+    implementation libs.icu4j
 
     // JWT
-    api "io.jsonwebtoken:jjwt-api:$jjwt_version"
-    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jjwt_version"
-    runtimeOnly("io.jsonwebtoken:jjwt-orgjson:$jjwt_version") {
+    api libs.jjwt.api
+    runtimeOnly libs.jjwt.impl
+    runtimeOnly(libs.jjwt.orgjson) {
         exclude group: 'org.json', module: 'json' //provided by Android natively
     }
 
-    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
-    ksp "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
-    implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
-    kapt "com.github.nename0:moshi-java-codegen:1.1.1"
+    implementation libs.moshi.kotlin
+    ksp libs.moshi.kotlin.codegen
+    implementation libs.moshi.adapters
+    kapt libs.moshi.java.codegen
 
-    //noinspection GradleDependency
-    fullgmsImplementation 'com.google.android.libraries.places:places:4.4.1'
-    fullgmsImplementation 'com.android.volley:volley:1.2.1' // Required by Places API ^^^
-    fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
+    fullgmsImplementation libs.places
+    fullgmsImplementation libs.volley // Required by Places API ^^^
+    fullgmsImplementation libs.kotlinx.coroutines.play.services
 }
 
 tasks.register('keyCheck', Exec) {

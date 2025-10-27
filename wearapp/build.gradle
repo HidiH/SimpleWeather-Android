@@ -1,11 +1,13 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.devtools.ksp'
-apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
+    id 'org.jetbrains.kotlin.plugin.compose'
+}
 
 android {
-    compileSdk rootProject.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toInteger()
 
     defaultConfig {
         applicationId "com.thewizrd.simpleweather"
@@ -13,7 +15,7 @@ android {
         // Specifies the fully-qualified class name of the test instrumentation runner.
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         minSdkVersion 26
-        targetSdkVersion rootProject.targetSdkVersion
+        targetSdkVersion libs.versions.targetSdkVersion.get()
         // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code [Android: 0, WearOS: 1])
         // ex) 345100131 = (34, 5.10, 013, 1)
         versionCode 355130031
@@ -67,7 +69,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion compose_compiler_version
+        kotlinCompilerExtensionVersion libs.versions.compose.compiler.version.get()
     }
 
     kotlin {
@@ -109,111 +111,111 @@ dependencies {
     fullgmsImplementation project(":extras")
 
     // Core library
-    androidTestImplementation "androidx.test:core:$test_core_version"
+    androidTestImplementation libs.test.core
 
     // AndroidJUnitRunner and JUnit Rules
-    androidTestImplementation "androidx.test:runner:$test_runner_version"
-    androidTestImplementation "androidx.test:rules:$test_rules_version"
+    androidTestImplementation libs.test.runner
+    androidTestImplementation libs.test.rules
 
     // Assertions
-    androidTestImplementation "androidx.test.ext:junit:$junit_version"
-    androidTestImplementation "androidx.test.ext:truth:$androidx_truth_version"
-    androidTestImplementation "com.google.truth:truth:$google_truth_version"
+    androidTestImplementation libs.test.ext.junit
+    androidTestImplementation libs.test.ext.truth
+    androidTestImplementation libs.google.truth
 
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
+    coreLibraryDesugaring libs.desugar.jdk.libs
 
     // Kotlin
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
-    nongmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$kotlinx_version"
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.play.services
+    nongmsImplementation libs.kotlinx.coroutines.guava
 
-    implementation "androidx.core:core-ktx:$core_version"
-    implementation "androidx.core:core-splashscreen:$coresplash_version"
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation "androidx.fragment:fragment-ktx:$fragment_version"
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    implementation "androidx.preference:preference-ktx:$preference_version"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "androidx.annotation:annotation:$annotation_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
-    implementation "androidx.vectordrawable:vectordrawable:$vectordrawable_version"
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    implementation libs.core.ktx
+    implementation libs.core.splashscreen
+    implementation libs.appcompat
+    implementation libs.fragment.ktx
+    implementation libs.cardview
+    implementation libs.recyclerview
+    implementation libs.preference.ktx
+    implementation libs.legacy.support.v4
+    implementation libs.annotation
+    implementation libs.constraintlayout
+    implementation libs.vectordrawable
+    implementation libs.swiperefreshlayout
+    implementation libs.paging.runtime.ktx
 
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.runtime.ktx
 
-    implementation "androidx.arch.core:core-runtime:$arch_core_runtime_version"
-    implementation "androidx.room:room-runtime:$room_version"
-    ksp "androidx.room:room-compiler:$room_version"
-    implementation "androidx.work:work-runtime-ktx:$work_version"
+    implementation libs.arch.core.runtime
+    implementation libs.room.runtime
+    ksp libs.room.compiler
+    implementation libs.work.runtime.ktx
 
-    implementation "com.google.android.material:material:$material_version"
+    implementation libs.material
 
-    implementation 'androidx.wear:wear:1.3.0'
-    implementation 'androidx.wear:wear-input:1.2.0'
-    debugImplementation 'androidx.wear:wear-input-testing:1.2.0'
-    implementation 'androidx.wear:wear-phone-interactions:1.1.0'
-    implementation 'androidx.wear:wear-remote-interactions:1.1.0'
-    implementation "androidx.wear.watchface:watchface-complications-data:$wear_watchface_version"
-    implementation "androidx.wear.watchface:watchface-complications-data-source-ktx:$wear_watchface_version"
+    implementation libs.wear
+    implementation libs.wear.input
+    debugImplementation libs.wear.input.testing
+    implementation libs.wear.phone.interactions
+    implementation libs.wear.remote.interactions
+    implementation libs.wear.watchface.complications.data
+    implementation libs.wear.watchface.complications.data.source.ktx
 
     // WearOS Tiles
-    implementation "androidx.wear.tiles:tiles:$wear_tiles_version"
-    debugImplementation "androidx.wear.tiles:tiles-renderer:$wear_tiles_version"
-    testImplementation "androidx.wear.tiles:tiles-testing:$wear_tiles_version"
-    implementation "androidx.wear.tiles:tiles-tooling:$wear_tiles_version"
-    implementation "androidx.wear.tiles:tiles-tooling-preview:$wear_tiles_version"
-    implementation 'androidx.wear.protolayout:protolayout-material:1.3.0'
-    implementation 'androidx.wear.protolayout:protolayout-material3:1.3.0'
-    implementation "com.google.android.horologist:horologist-tiles:$horologist_version"
+    implementation libs.wear.tiles
+    debugImplementation libs.wear.tiles.renderer
+    testImplementation libs.wear.tiles.testing
+    implementation libs.wear.tiles.tooling
+    implementation libs.wear.tiles.tooling.preview
+    implementation libs.wear.protolayout.material
+    implementation libs.wear.protolayout.material3
+    implementation libs.horologist.tiles
 
     // WearOS Compose
-    implementation "androidx.activity:activity-compose:$activity_version"
-    implementation "androidx.compose.compiler:compiler:$compose_compiler_version"
-    implementation platform("androidx.compose:compose-bom:$compose_bom_version")
-    implementation "androidx.compose.ui:ui"
-    implementation "androidx.compose.ui:ui-tooling-preview"
-    implementation "androidx.compose.animation:animation-graphics"
-    implementation "androidx.compose.runtime:runtime-livedata"
-    implementation "androidx.compose.material3:material3:$material_compose_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
-    implementation "androidx.paging:paging-compose:$paging_version"
-    implementation "androidx.wear.compose:compose-foundation:$wear_compose_version"
-    implementation "androidx.wear.compose:compose-material3:$wear_compose_version"
-    implementation "androidx.wear.compose:compose-navigation:$wear_compose_version"
-    implementation "androidx.wear:wear-tooling-preview:1.0.0"
+    implementation libs.activity.compose
+    implementation libs.compose.compiler
+    implementation platform(libs.compose.bom)
+    implementation libs.compose.ui
+    implementation libs.compose.ui.tooling.preview
+    implementation libs.compose.animation.graphics
+    implementation libs.compose.runtime.livedata
+    implementation libs.compose.material3
+    implementation libs.lifecycle.viewmodel.compose
+    implementation libs.paging.compose
+    implementation libs.wear.compose.foundation
+    implementation libs.wear.compose.material3
+    implementation libs.wear.compose.navigation
+    implementation libs.wear.tooling.preview
 
-    implementation "com.google.accompanist:accompanist-drawablepainter:$accompanist_version"
-    implementation "com.google.android.horologist:horologist-compose-layout:$horologist_version"
-    implementation "com.google.android.horologist:horologist-compose-tools:$horologist_version"
+    implementation libs.accompanist.drawablepainter
+    implementation libs.horologist.compose.layout
+    implementation libs.horologist.compose.tools
 
-    implementation 'sh.calvin.reorderable:reorderable:3.0.0'
+    implementation libs.reorderable
 
-    androidTestImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
-    debugImplementation "androidx.compose.ui:ui-tooling"
+    androidTestImplementation platform(libs.compose.bom)
+    androidTestImplementation libs.compose.ui.test.junit4
+    debugImplementation libs.compose.ui.tooling
 
-    implementation "com.jakewharton.timber:timber:$timber_version"
-    implementation "com.ibm.icu:icu4j:$icu4j_version"
+    implementation libs.timber
+    implementation libs.icu4j
 
-    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
-    ksp "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
-    implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
+    implementation libs.moshi.kotlin
+    ksp libs.moshi.kotlin.codegen
+    implementation libs.moshi.adapters
 
     // Firebase
-    fullgmsImplementation platform("com.google.firebase:firebase-bom:$firebase_version")
-    fullgmsImplementation 'com.google.firebase:firebase-analytics'
-    fullgmsImplementation 'com.google.firebase:firebase-crashlytics'
-    fullgmsImplementation 'com.google.firebase:firebase-config'
-    fullgmsImplementation 'com.google.firebase:firebase-perf'
+    fullgmsImplementation platform(libs.firebase.bom)
+    fullgmsImplementation libs.firebase.analytics
+    fullgmsImplementation libs.firebase.crashlytics
+    fullgmsImplementation libs.firebase.config
+    fullgmsImplementation libs.firebase.perf
 
-    fullgmsImplementation "com.google.android.gms:play-services-base:$gms_base_version"
-    fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
-    fullgmsCompileOnly 'com.google.android.wearable:wearable:2.9.0'
+    fullgmsImplementation libs.gms.play.services.base
+    fullgmsImplementation libs.gms.play.services.location
+    fullgmsImplementation libs.gms.play.services.wearable
+    fullgmsCompileOnly libs.wearable
 }
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Fullgms")) {
