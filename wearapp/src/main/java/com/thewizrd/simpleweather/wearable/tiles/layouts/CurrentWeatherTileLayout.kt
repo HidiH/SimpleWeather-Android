@@ -33,6 +33,7 @@ import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.getColorFromTempF
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.theme.wearTileColorScheme
 import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 
@@ -74,7 +75,8 @@ internal fun currentWeatherTileLayout(
     highTemperature: String,
     showHiLo: Boolean = true,
     weatherCondition: String
-): LayoutElement = materialScope(context, deviceParameters) {
+): LayoutElement =
+    materialScope(context, deviceParameters, defaultColorScheme = wearTileColorScheme) {
     val iconSize = if (deviceParameters.isLargeWidth()) {
         dp(48f)
     } else {

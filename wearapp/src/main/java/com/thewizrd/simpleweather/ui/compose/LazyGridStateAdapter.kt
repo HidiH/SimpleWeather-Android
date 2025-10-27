@@ -6,12 +6,12 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.wear.compose.foundation.ScrollInfoProvider
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.jvm.isAccessible
+import com.thewizrd.shared_resources.utils.Logger
 
 internal class LazyGridScrollInfoProvider(val state: LazyGridState) : ScrollInfoProvider {
     override val isScrollAwayValid: Boolean
@@ -70,17 +70,35 @@ fun rememberLazyGridScrollState(lazyGridState: LazyGridState): ScrollState {
                     layoutInfo.viewportSize.width
                 }
 
+                val sizeFraction = lazyGridState.sizeFraction(viewportSize.toFloat())
+
+                @Suppress("UNCHECKED_CAST")
                 runCatching {
-                    (ScrollState::maxValue as? KMutableProperty1<ScrollState, Int>)
-                        ?.apply { isAccessible = true }
-                        ?.apply { set(scrollState, 100) }
-                    (ScrollState::value as? KMutableProperty1<ScrollState, Int>)
-                        ?.apply { isAccessible = true }
-                        ?.apply { set(scrollState, (positionFraction * 100f).toInt()) }
-                    (ScrollState::viewportSize as? KMutableProperty1<ScrollState, Int>)
-                        ?.apply { isAccessible = true }
-                        ?.apply { set(scrollState, viewportSize) }
+                    ScrollState::class.java.getDeclaredField("_maxValueState").run {
+                        isAccessible = true
+                        (get(scrollState) as MutableState<Int>).run {
+                            value = (100 / sizeFraction).toInt()
+                        }
+                    }
+
+                    ScrollState::class.java.getDeclaredField("value\$delegate").run {
+                        isAccessible = true
+                        (get(scrollState) as MutableState<Int>).run {
+                            value = (positionFraction * 100f / sizeFraction).toInt()
+                        }
+                    }
+
+                    ScrollState::class.java.getDeclaredField("viewportSize\$delegate").run {
+                        isAccessible = true
+                        (get(scrollState) as MutableState<Int>).run {
+                            value = (viewportSize * sizeFraction).toInt()
+                        }
+                    }
+                }.onFailure {
+                    Logger.debug("LazyGridScrollState", it)
                 }
+
+                scrollState.scrollTo(scrollState.value)
             }
     }
 

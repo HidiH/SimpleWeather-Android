@@ -87,6 +87,7 @@ import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.LaunchActivity
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.DetailsWeatherTileUtils
+import com.thewizrd.simpleweather.ui.theme.wearTileColorScheme
 import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 import java.time.LocalDate
@@ -141,7 +142,7 @@ internal fun detailsWeatherTileLayout(
 ): LayoutElement {
     val detailItems = filteredTileConfig.take(DetailsWeatherTileUtils.MAX_BUTTONS)
 
-    return materialScope(context, deviceParameters) {
+    return materialScope(context, deviceParameters, defaultColorScheme = wearTileColorScheme) {
         Box.Builder()
             .setHeight(expand())
             .setWidth(expand())
@@ -158,7 +159,7 @@ internal fun detailsWeatherTileLayout(
 
                     1, 2 -> {
                         primaryLayout(
-                            titleSlot = if (deviceParameters.isLargeHeight()) {
+                            titleSlot = if (deviceConfiguration.isLargeHeight()) {
                                 weather?.location?.name?.let {
                                     {
                                         detailLocation(it)
@@ -174,7 +175,7 @@ internal fun detailsWeatherTileLayout(
                                         detailItems.forEachIndexed { index, (type, model) ->
                                             addContent(
                                                 detailChipItem(
-                                                    deviceParameters, weather, type, model
+                                                    weather, type, model
                                                 )
                                             )
                                             if (index != detailItems.size - 1) {
@@ -187,7 +188,7 @@ internal fun detailsWeatherTileLayout(
                                     .build()
                             },
                             bottomSlot = {
-                                if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND) {
+                                if (deviceConfiguration.screenShape == SCREEN_SHAPE_ROUND || deviceConfiguration.squareNotSupported()) {
                                     textEdgeButton(
                                         onClick = clickable(getLaunchAction(context)),
                                         labelContent = {
@@ -241,7 +242,6 @@ internal fun detailsWeatherTileLayout(
                                                                 .addContent(
                                                                     detailButtonItem(
                                                                         context,
-                                                                        deviceParameters,
                                                                         weather,
                                                                         type,
                                                                         model,
@@ -279,7 +279,6 @@ internal fun detailsWeatherTileLayout(
                                     addButtonContent(
                                         detailButtonItem(
                                             context,
-                                            deviceParameters,
                                             weather,
                                             type,
                                             model
@@ -317,7 +316,6 @@ internal fun MaterialScope.detailLocation(
 
 internal fun MaterialScope.detailButtonItem(
     context: Context,
-    deviceParameters: DeviceParameters,
     weather: Weather?,
     detailsType: WeatherDetailsType,
     model: DetailItemViewModel,
@@ -367,7 +365,7 @@ internal fun MaterialScope.detailButtonItem(
                         .setModifiers(
                             Modifiers.Builder()
                                 .apply {
-                                    if (deviceParameters.supportsTransformation()) {
+                                    if (deviceConfiguration.supportsTransformation()) {
                                         setTransformation(
                                             Transformation.Builder()
                                                 .setRotation(degrees(model.iconRotation.toFloat()))
@@ -379,7 +377,7 @@ internal fun MaterialScope.detailButtonItem(
                         )
                         .setContentScaleMode(CONTENT_SCALE_MODE_FIT)
                         .setResourceId(
-                            if (!deviceParameters.supportsTransformation() && model.iconRotation != 0) {
+                            if (!deviceConfiguration.supportsTransformation() && model.iconRotation != 0) {
                                 "${ID_ROTATION_PREFIX}${model.iconRotation}:${ID_WEATHER_ICON_PREFIX}${model.icon}"
                             } else {
                                 "${ID_WEATHER_ICON_PREFIX}${model.icon}"
@@ -662,7 +660,6 @@ internal fun MaterialScope.detailButtonItem(
 }
 
 internal fun MaterialScope.detailChipItem(
-    deviceParameters: DeviceParameters,
     weather: Weather?,
     detailsType: WeatherDetailsType,
     model: DetailItemViewModel
@@ -672,7 +669,7 @@ internal fun MaterialScope.detailChipItem(
         onClick = Clickable.Builder().build(),
         iconContent = {
             icon(
-                if (appLib.isInEditMode() || deviceParameters.supportsTransformation() || model.iconRotation == 0) {
+                if (appLib.isInEditMode() || deviceConfiguration.supportsTransformation() || model.iconRotation == 0) {
                     "${ID_WEATHER_ICON_PREFIX}${model.icon}"
                 } else {
                     "${ID_ROTATION_PREFIX}${model.iconRotation}:${ID_WEATHER_ICON_PREFIX}${model.icon}"

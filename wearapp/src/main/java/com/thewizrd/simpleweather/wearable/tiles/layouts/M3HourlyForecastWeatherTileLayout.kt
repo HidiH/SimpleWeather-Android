@@ -46,6 +46,7 @@ import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.theme.wearTileColorScheme
 import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 import java.time.ZonedDateTime
@@ -84,7 +85,8 @@ private fun m3HourlyForecastWeatherTileLayout(
     tempHi: String? = null,
     tempLo: String? = null,
     forecasts: List<HourlyForecastTileModel>?
-): LayoutElement = materialScope(context, deviceParameters) {
+): LayoutElement =
+    materialScope(context, deviceParameters, defaultColorScheme = wearTileColorScheme) {
     primaryLayout(
         margins = PrimaryLayoutMargins.customizedPrimaryLayoutMargin(
             start = 3f / 100,
@@ -131,7 +133,7 @@ private fun m3HourlyForecastWeatherTileLayout(
                                 .addContent(
                                     text(
                                         text = currentTemperature.layoutString,
-                                        typography = if (deviceParameters.isLargeWidth()) {
+                                        typography = if (deviceConfiguration.isLargeWidth()) {
                                             Typography.NUMERAL_LARGE
                                         } else {
                                             Typography.NUMERAL_MEDIUM
@@ -174,12 +176,12 @@ private fun m3HourlyForecastWeatherTileLayout(
                     } else {
                         addContent(
                             buttonGroup(
-                                width = if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND) {
-                                    dp(deviceParameters.screenWidthDp / 1.4f)
+                                width = if (deviceConfiguration.screenShape == SCREEN_SHAPE_ROUND || deviceConfiguration.squareNotSupported()) {
+                                    dp(deviceConfiguration.screenWidthDp / 1.4f)
                                 } else {
                                     expand()
                                 },
-                                height = if (deviceParameters.isSmallHeight()) {
+                                height = if (deviceConfiguration.isSmallHeight()) {
                                     weight(1.15f)
                                 } else {
                                     weight(1.55f)
@@ -201,7 +203,7 @@ private fun m3HourlyForecastWeatherTileLayout(
                                                                 .build()
                                                         )
                                                         .setCorner(
-                                                            if (deviceParameters.isSmallHeight()) {
+                                                            if (deviceConfiguration.isSmallHeight()) {
                                                                 shapes.full
                                                             } else {
                                                                 shapes.large
@@ -245,7 +247,7 @@ private fun m3HourlyForecastWeatherTileLayout(
                                                                                             filledTonalCardColors().backgroundColor.prop
                                                                                         )
                                                                                         .setCorner(
-                                                                                            if (deviceParameters.isSmallHeight()) {
+                                                                                            if (deviceConfiguration.isSmallHeight()) {
                                                                                                 shapes.large
                                                                                             } else {
                                                                                                 shapes.medium
@@ -294,7 +296,7 @@ private fun m3HourlyForecastWeatherTileLayout(
                                                                                 )
                                                                                 .addContent(
                                                                                     text(
-                                                                                        text = if (deviceParameters.isSmallHeight()) {
+                                                                                        text = if (deviceConfiguration.isSmallHeight()) {
                                                                                             model.date.layoutString
                                                                                         } else {
                                                                                             model.temp.removeSuffix(
@@ -303,17 +305,17 @@ private fun m3HourlyForecastWeatherTileLayout(
                                                                                         },
                                                                                         alignment = TEXT_ALIGN_CENTER,
                                                                                         maxLines = 1,
-                                                                                        typography = if (deviceParameters.isSmallHeight()) {
+                                                                                        typography = if (deviceConfiguration.isSmallHeight()) {
                                                                                             Typography.BODY_EXTRA_SMALL
                                                                                         } else {
                                                                                             Typography.TITLE_MEDIUM
                                                                                         },
-                                                                                        color = if (deviceParameters.isSmallHeight()) {
+                                                                                        color = if (deviceConfiguration.isSmallHeight()) {
                                                                                             colorScheme.onSurface
                                                                                         } else {
                                                                                             colorScheme.onBackground
                                                                                         },
-                                                                                        settings = if (deviceParameters.isSmallHeight()) {
+                                                                                        settings = if (deviceConfiguration.isSmallHeight()) {
                                                                                             listOf(
                                                                                                 FontSetting.weight(
                                                                                                     FONT_WEIGHT_NORMAL
@@ -325,7 +327,7 @@ private fun m3HourlyForecastWeatherTileLayout(
                                                                                     )
                                                                                 )
                                                                                 .apply {
-                                                                                    if (!deviceParameters.isSmallHeight()) {
+                                                                                    if (!deviceConfiguration.isSmallHeight()) {
                                                                                         addContent(
                                                                                             Spacer.Builder()
                                                                                                 .setHeight(

@@ -13,6 +13,15 @@ fun DeviceParameters.supportsTransformation(): Boolean {
     return this.rendererSchemaVersion >= supportedVersion
 }
 
+fun DeviceParameters.squareNotSupported(): Boolean {
+    // @RequiresSchemaVersion(major = 1, minor = 400)
+    val supportedVersion = VersionInfo.Builder()
+        .setMajor(1).setMinor(400)
+        .build()
+
+    return this.rendererSchemaVersion >= supportedVersion
+}
+
 fun DeviceParameters.isSmallWatch(): Boolean {
     return max(screenHeightDp, screenWidthDp) < 225
 }

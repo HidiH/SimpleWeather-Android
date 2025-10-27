@@ -38,6 +38,7 @@ import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.theme.wearTileColorScheme
 import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 import java.time.ZonedDateTime
@@ -75,7 +76,7 @@ internal fun hourlyForecastPillsTileLayout(
         dp(26f)
     }
 
-    return materialScope(context, deviceParameters) {
+    return materialScope(context, deviceParameters, defaultColorScheme = wearTileColorScheme) {
         primaryLayout(
             margins = PrimaryLayoutMargins.customizedPrimaryLayoutMargin(
                 start = 3f / 100,
@@ -96,8 +97,8 @@ internal fun hourlyForecastPillsTileLayout(
                     )
                 } else {
                     buttonGroup(
-                        height = if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND) {
-                            dp(deviceParameters.screenHeightDp * 0.49f)
+                        height = if (deviceConfiguration.screenShape == SCREEN_SHAPE_ROUND || deviceConfiguration.squareNotSupported()) {
+                            dp(deviceConfiguration.screenHeightDp * 0.49f)
                         } else {
                             expand()
                         }
@@ -131,7 +132,7 @@ internal fun hourlyForecastPillsTileLayout(
                                         )
                                     },
                                     shape = shapes.full,
-                                    style = if (deviceParameters.isSmallWatch()) {
+                                    style = if (deviceConfiguration.isSmallWatch()) {
                                         DataCardStyle.defaultDataCardStyle()
                                     } else {
                                         DataCardStyle.largeDataCardStyle()
@@ -151,19 +152,19 @@ internal fun hourlyForecastPillsTileLayout(
                 {
                     text(
                         modifier = LayoutModifier.padding(
-                            horizontal = if (deviceParameters.screenShape != SCREEN_SHAPE_ROUND) {
-                                0f
-                            } else {
+                            horizontal = if (deviceConfiguration.screenShape == SCREEN_SHAPE_ROUND || deviceConfiguration.squareNotSupported()) {
                                 4f
+                            } else {
+                                0f
                             },
-                            vertical = if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND && deviceParameters.isLargeHeight()) {
+                            vertical = if ((deviceConfiguration.screenShape == SCREEN_SHAPE_ROUND || deviceConfiguration.squareNotSupported()) && deviceConfiguration.isLargeHeight()) {
                                 4f
                             } else {
                                 0f
                             }
                         ),
                         text = model.condition.layoutString,
-                        maxLines = if (deviceParameters.isLargeHeight()) {
+                        maxLines = if (deviceConfiguration.isLargeHeight()) {
                             2
                         } else {
                             1

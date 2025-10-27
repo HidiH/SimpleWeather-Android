@@ -220,6 +220,7 @@ private fun DetailsWeatherTileConfigScreen(
     val reorderableGridState = rememberReorderableLazyGridState(
         lazyGridState = lazyGridState
     ) { from, to ->
+        // Offset index by 1 to account for header
         Collections.swap(userTileConfigList, from.index - 1, to.index - 1)
         haptic.performHapticFeedback(ReorderHapticFeedbackType.MOVE)
     }
@@ -457,7 +458,7 @@ private fun DetailsWeatherTileConfigScreen(
             modifier = Modifier.fillMaxSize(),
             visible = showAddTileDialog,
             onDismissRequest = { showAddTileDialog = false },
-            title = { Text(text = "") },
+            title = { Text(text = stringResource(id = R.string.label_details)) },
             edgeButton = {
                 EdgeButton(
                     onClick = { showAddTileDialog = false }
@@ -495,6 +496,15 @@ private fun DetailsWeatherTileConfigScreen(
                     }
                 )
             }
+        }
+    }
+
+    LaunchedEffect(tileConfig) {
+        if (userTileConfigList.size < DetailsWeatherTileUtils.MAX_BUTTONS && !userTileConfigList.contains(
+                ""
+            )
+        ) {
+            userTileConfigList.add("")
         }
     }
 }

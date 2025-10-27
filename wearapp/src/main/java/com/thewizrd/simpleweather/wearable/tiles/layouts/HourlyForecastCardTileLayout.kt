@@ -47,6 +47,7 @@ import com.thewizrd.shared_resources.utils.StringUtils
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.ui.theme.wearTileColorScheme
 import com.thewizrd.simpleweather.ui.tiles.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.wearable.tiles.ID_WEATHER_ICON_PREFIX
 import java.time.ZonedDateTime
@@ -85,10 +86,10 @@ internal fun hourlyForecastCardTileLayout(
         dp(26f)
     }
 
-    return materialScope(context, deviceParameters) {
+    return materialScope(context, deviceParameters, defaultColorScheme = wearTileColorScheme) {
         primaryLayout(
-            margins = if (deviceParameters.screenShape == SCREEN_SHAPE_ROUND) {
-                if (deviceParameters.isLargeWidth()) {
+            margins = if (deviceConfiguration.screenShape == SCREEN_SHAPE_ROUND || deviceConfiguration.squareNotSupported()) {
+                if (deviceConfiguration.isLargeWidth()) {
                     PrimaryLayoutMargins.customizedPrimaryLayoutMargin(0.075f, 0.075f)
                 } else {
                     PrimaryLayoutMargins.MID_PRIMARY_LAYOUT_MARGIN
@@ -259,14 +260,14 @@ internal fun hourlyForecastCardTileLayout(
                 {
                     text(
                         modifier = LayoutModifier.padding(
-                            horizontal = if (deviceParameters.screenShape != SCREEN_SHAPE_ROUND) {
-                                0f
-                            } else {
+                            horizontal = if (deviceConfiguration.screenShape == SCREEN_SHAPE_ROUND || deviceConfiguration.squareNotSupported()) {
                                 4f
+                            } else {
+                                0f
                             },
                             vertical = 0f
                         ),
-                        text = if (deviceParameters.isLargeHeight()) {
+                        text = if (deviceConfiguration.isLargeHeight()) {
                             if (model.condition.contains(" "))
                                 model.condition.replaceFirst(" ", StringUtils.lineSeparator())
                             else
@@ -274,7 +275,7 @@ internal fun hourlyForecastCardTileLayout(
                         } else {
                             model.condition
                         }.layoutString,
-                        maxLines = if (deviceParameters.isLargeHeight()) {
+                        maxLines = if (deviceConfiguration.isLargeHeight()) {
                             2
                         } else {
                             1
