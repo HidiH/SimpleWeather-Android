@@ -230,16 +230,16 @@ class WidgetUpdaterWorker(context: Context, workerParams: WorkerParameters) : Co
                             }
                         )
                     }
+                }
 
-                    result = when (weatherResult) {
-                        is WeatherResult.Success -> Result.success()
-                        is WeatherResult.NoWeather -> Result.failure()
-                        is WeatherResult.Error -> Result.retry()
-                        is WeatherResult.WeatherWithError -> if (action == ACTION_UPDATENOTIFICATION || action == ACTION_UPDATEPOPNOTIFICATION) {
-                            Result.success()
-                        } else {
-                            Result.retry()
-                        }
+                result = when (weatherResult) {
+                    is WeatherResult.Success -> Result.success()
+                    is WeatherResult.NoWeather -> Result.failure()
+                    is WeatherResult.Error -> Result.retry()
+                    is WeatherResult.WeatherWithError -> if (action == ACTION_UPDATENOTIFICATION || action == ACTION_UPDATEPOPNOTIFICATION) {
+                        Result.success()
+                    } else {
+                        Result.retry()
                     }
                 }
 
