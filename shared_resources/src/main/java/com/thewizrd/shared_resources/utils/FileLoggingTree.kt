@@ -10,10 +10,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.BufferedWriter
+import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStreamWriter
+import java.io.FileWriter
+import java.io.Writer
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -21,20 +22,27 @@ import java.util.Locale
 import java.util.concurrent.Executors
 
 @SuppressLint("LogNotTimber")
-class FileLoggingTree(context: Context) : Timber.Tree() {
+class FileLoggingTree(context: Context) : Timber.Tree(), Closeable {
+    companion object {
+        private val TAG = FileLoggingTree::class.java.simpleName
+        private const val DAYS_TO_KEEP = 7
+        private const val LOG_NAME_FORMAT = "Logger.%s.log"
+    }
+
     private val scope =
         CoroutineScope(Job() + Executors.newSingleThreadExecutor().asCoroutineDispatcher())
     private val logDirectory = File(context.getExternalFilesDir(null).toString() + "/logs")
 
-    companion object {
-        private val TAG = FileLoggingTree::class.java.simpleName
-        private const val DAYS_TO_KEEP = 7
-    }
+    private var logFile: File
+    private var fileWriter: Writer
 
     init {
         if (!logDirectory.exists()) {
             logDirectory.mkdir()
         }
+
+        logFile = createLogFile(LocalDateTime.now(ZoneOffset.UTC))
+        fileWriter = FileWriter(logFile, true)
     }
 
     override fun isLoggable(tag: String?, priority: Int): Boolean {
@@ -59,34 +67,10 @@ class FileLoggingTree(context: Context) : Timber.Tree() {
 
             val today = LocalDateTime.now(ZoneOffset.UTC)
 
-            val dateTimeStamp = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT))
-            val logTimeStamp = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS", Locale.ROOT))
-
-            val logNameFormat = "Logger.%s.log"
-            val fileName = String.format(Locale.ROOT, logNameFormat, dateTimeStamp)
-
-            val file = File(logDirectory.path + File.separator + fileName)
-
-            if (!file.exists())
-                file.createNewFile()
-
-            if (file.exists()) {
-                val fileWriter = BufferedWriter(OutputStreamWriter(FileOutputStream(file, true)))
-
-                val priorityTAG = when (priority) {
-                    Log.VERBOSE -> "VERBOSE"
-                    Log.DEBUG -> "DEBUG"
-                    Log.INFO -> "INFO"
-                    Log.WARN -> "WARN"
-                    Log.ERROR -> "ERROR"
-                    Log.ASSERT -> "ASSERT"
-                    else -> "DEBUG"
-                }
-
-                fileWriter.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n")
-                fileWriter.flush()
-                fileWriter.close()
-            }
+            // Rotate log file if needed
+            rotateLogFileIfNeeded(today)
+            // Write to logs
+            writeLogMessage(today, priority, tag, message)
 
             val existingFiles = logDirectory.listFiles { dir, name ->
                 name.startsWith("Logger")
@@ -95,7 +79,7 @@ class FileLoggingTree(context: Context) : Timber.Tree() {
             // Cleanup old logs if they exist
             if (existingFiles.size > DAYS_TO_KEEP) {
                 runCatching {
-                    // Get todays date
+                    // Get today's date
                     val todayLocal = today.toLocalDate()
 
                     // Create a list of the last 7 day's dates
@@ -105,7 +89,7 @@ class FileLoggingTree(context: Context) : Timber.Tree() {
                         val dateStamp =
                             date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT))
 
-                        dateStampsToKeep.add(String.format(Locale.ROOT, logNameFormat, dateStamp))
+                        dateStampsToKeep.add(String.format(Locale.ROOT, LOG_NAME_FORMAT, dateStamp))
                     }
 
                     // List all log files not in the above list
@@ -118,7 +102,64 @@ class FileLoggingTree(context: Context) : Timber.Tree() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error while logging into file : $e")
+            Log.e(TAG, "Error while logging into file", e)
+        }
+    }
+
+    private fun writeLogMessage(
+        date: LocalDateTime,
+        priority: Int,
+        tag: String? = null,
+        message: String
+    ) {
+        val priorityTAG = when (priority) {
+            Log.VERBOSE -> "VERBOSE"
+            Log.DEBUG -> "DEBUG"
+            Log.INFO -> "INFO"
+            Log.WARN -> "WARN"
+            Log.ERROR -> "ERROR"
+            Log.ASSERT -> "ASSERT"
+            else -> "DEBUG"
+        }
+
+        val logTimeStamp =
+            date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS", Locale.ROOT))
+        fileWriter.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n")
+        fileWriter.flush()
+    }
+
+    private fun rotateLogFileIfNeeded(date: LocalDateTime) {
+        val logFileName = getLogFileName(date)
+
+        if (logFile.name != logFileName) {
+            close()
+            logFile = createLogFile(LocalDateTime.now(ZoneOffset.UTC))
+            fileWriter = FileOutputStream(logFile, true).writer()
+        }
+    }
+
+    private fun createLogFile(date: LocalDateTime): File = createLogFile(getLogFileName(date))
+
+    private fun createLogFile(logFileName: String): File {
+        val file = File(logDirectory.path + File.separator + logFileName)
+
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+
+        return file
+    }
+
+    private fun getLogFileName(date: LocalDateTime): String {
+        val dateStamp = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT))
+        val fileName = String.format(Locale.ROOT, LOG_NAME_FORMAT, dateStamp)
+
+        return fileName
+    }
+
+    override fun close() {
+        runCatching {
+            fileWriter.close()
         }
     }
 }

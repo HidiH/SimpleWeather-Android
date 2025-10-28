@@ -8,6 +8,7 @@ import com.thewizrd.shared_resources.di.settingsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.Closeable
 
 object Logger {
     @JvmStatic
@@ -51,6 +52,10 @@ object Logger {
             Timber.forest().forEach {
                 if (it is FileLoggingTree || it is AndroidLoggingTree) {
                     Timber.uproot(it)
+
+                    if (it is Closeable) {
+                        runCatching { it.close() }
+                    }
                 }
             }
         }
