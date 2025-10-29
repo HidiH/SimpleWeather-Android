@@ -3,10 +3,7 @@ package com.thewizrd.shared_resources.utils
 import android.content.Context
 import android.util.Log
 import com.thewizrd.shared_resources.BuildConfig
-import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.Closeable
 
@@ -28,8 +25,6 @@ object Logger {
             Timber.plant(AndroidLoggingTree())
             Timber.plant(FileLoggingTree(context.applicationContext))
         } else {
-            cleanupLogs(context.applicationContext)
-
             enableDebugLogger(context, DEBUG_MODE_ENABLED)
         }
     }
@@ -154,11 +149,5 @@ object Logger {
         vararg args: Any?
     ) {
         Timber.tag(tag).log(priority, t, message, *args)
-    }
-
-    private fun cleanupLogs(context: Context) {
-        appLib.appScope.launch(Dispatchers.IO) {
-            FileUtils.deleteDirectory(context.getExternalFilesDir(null).toString() + "/logs")
-        }
     }
 }

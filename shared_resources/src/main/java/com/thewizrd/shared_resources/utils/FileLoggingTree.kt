@@ -15,6 +15,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
 import java.io.Writer
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -71,36 +72,8 @@ class FileLoggingTree(context: Context) : Timber.Tree(), Closeable {
             rotateLogFileIfNeeded(today)
             // Write to logs
             writeLogMessage(today, priority, tag, message)
-
-            val existingFiles = logDirectory.listFiles { dir, name ->
-                name.startsWith("Logger")
-            } ?: emptyArray<File>()
-
-            // Cleanup old logs if they exist
-            if (existingFiles.size > DAYS_TO_KEEP) {
-                runCatching {
-                    // Get today's date
-                    val todayLocal = today.toLocalDate()
-
-                    // Create a list of the last 7 day's dates
-                    val dateStampsToKeep = mutableListOf<String>()
-                    for (i in 0 until DAYS_TO_KEEP) {
-                        val date = todayLocal.minusDays(i.toLong())
-                        val dateStamp =
-                            date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT))
-
-                        dateStampsToKeep.add(String.format(Locale.ROOT, LOG_NAME_FORMAT, dateStamp))
-                    }
-
-                    // List all log files not in the above list
-                    val logs = existingFiles.filterNot { f -> dateStampsToKeep.contains(f.name) }
-
-                    // Delete all log files in the array above
-                    for (logToDel in logs) {
-                        logToDel.delete()
-                    }
-                }
-            }
+            // Cleanup logs
+            cleanupLogs()
         } catch (e: Exception) {
             Log.e(TAG, "Error while logging into file", e)
         }
@@ -124,8 +97,44 @@ class FileLoggingTree(context: Context) : Timber.Tree(), Closeable {
 
         val logTimeStamp =
             date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS", Locale.ROOT))
-        fileWriter.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message\n")
-        fileWriter.flush()
+        fileWriter.write("$logTimeStamp|$priorityTAG|${if (tag == null) "" else "$tag|"}$message")
+        fileWriter.write(StringUtils.lineSeparator())
+
+        if (priority == Log.ERROR) {
+            fileWriter.flush()
+        }
+    }
+
+    private fun cleanupLogs() {
+        val existingFiles = logDirectory.listFiles { dir, name ->
+            name.startsWith("Logger")
+        } ?: emptyArray<File>()
+
+        // Cleanup old logs if they exist
+        if (existingFiles.size > DAYS_TO_KEEP) {
+            runCatching {
+                // Get today's date
+                val todayLocal = LocalDate.now(ZoneOffset.UTC)
+
+                // Create a list of the last 7 day's dates
+                val dateStampsToKeep = mutableListOf<String>()
+                for (i in 0 until DAYS_TO_KEEP) {
+                    val date = todayLocal.minusDays(i.toLong())
+                    val dateStamp =
+                        date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT))
+
+                    dateStampsToKeep.add(String.format(Locale.ROOT, LOG_NAME_FORMAT, dateStamp))
+                }
+
+                // List all log files not in the above list
+                val logs = existingFiles.filterNot { f -> dateStampsToKeep.contains(f.name) }
+
+                // Delete all log files in the array above
+                for (logToDel in logs) {
+                    logToDel.delete()
+                }
+            }
+        }
     }
 
     private fun rotateLogFileIfNeeded(date: LocalDateTime) {
