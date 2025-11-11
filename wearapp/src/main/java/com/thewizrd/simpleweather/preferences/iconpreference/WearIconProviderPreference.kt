@@ -29,7 +29,7 @@ class WearIconProviderPreference @JvmOverloads constructor(
 
             chipButton.isChecked = isChecked
 
-            if (chipButton.getContentView() == null) {
+            if (chipButton.getContentView()?.id != R.id.icons_container) {
                 chipButton.setContentView(
                     LinearLayout(chipButton.context).apply {
                         id = R.id.icons_container
