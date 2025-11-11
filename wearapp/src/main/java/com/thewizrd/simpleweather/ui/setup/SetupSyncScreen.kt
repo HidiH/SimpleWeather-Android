@@ -122,8 +122,7 @@ fun SetupSyncScreen(
                     }
 
                     ACTION_SHOWSTORELISTING -> {
-                        setupSyncViewModel.openPlayStore(activity, showAnimation = false)
-                        confirmationViewModel.showOpenOnPhone()
+                        setupSyncViewModel.openPlayStore(showAnimation = true)
                     }
                 }
             }

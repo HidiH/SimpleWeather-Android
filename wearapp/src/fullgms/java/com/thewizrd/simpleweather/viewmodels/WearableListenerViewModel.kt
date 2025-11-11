@@ -27,10 +27,10 @@ import com.thewizrd.common.wearable.WearConnectionStatus
 import com.thewizrd.common.wearable.WearableHelper
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.store.PlayStoreUtils
+import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.simpleweather.R
-import com.thewizrd.simpleweather.helpers.showConfirmationOverlay
 import com.thewizrd.simpleweather.wearable.WearableListener
 import com.thewizrd.simpleweather.wearable.WearableListenerActions
 import kotlinx.coroutines.CancellationException
@@ -93,19 +93,19 @@ abstract class WearableListenerViewModel(private val app: Application) : Android
         activityContext = null
     }
 
-    override fun openAppOnPhone(activity: Activity, showAnimation: Boolean) {
+    override fun openAppOnPhone(showAnimation: Boolean) {
         viewModelScope.launch {
             connect()
 
             if (mPhoneNodeWithApp == null) {
                 _errorMessagesFlow.tryEmit(ErrorMessage.Resource(R.string.status_node_unavailable))
 
-                when (PhoneTypeHelper.Companion.getPhoneDeviceType(appContext)) {
-                    PhoneTypeHelper.Companion.DEVICE_TYPE_ANDROID -> {
-                        openPlayStore(activity, showAnimation)
+                when (PhoneTypeHelper.getPhoneDeviceType(appContext)) {
+                    PhoneTypeHelper.DEVICE_TYPE_ANDROID -> {
+                        openPlayStore(showAnimation)
                     }
 
-                    PhoneTypeHelper.Companion.DEVICE_TYPE_IOS -> {
+                    PhoneTypeHelper.DEVICE_TYPE_IOS -> {
                         _errorMessagesFlow.tryEmit(ErrorMessage.Resource(R.string.status_node_notsupported))
                     }
 
@@ -115,29 +115,22 @@ abstract class WearableListenerViewModel(private val app: Application) : Android
                 }
             } else {
                 // Send message to device to start activity
-                val result = sendMessage(
-                    mPhoneNodeWithApp!!.id,
-                    WearableHelper.StartActivityPath,
-                    ByteArray(0)
-                )
+                val success = runCatching {
+                    val intent = WearableHelper.createRemoteActivityIntent(
+                        WearableHelper.getPackageName(),
+                        "${WearableHelper.PACKAGE_NAME}.LaunchActivity"
+                    )
+                    startRemoteActivity(intent)
+                }.getOrDefault(false)
 
                 if (showAnimation) {
-                    activity.showConfirmationOverlay(result != -1)
+                    sendConfirmationEvent(success)
                 }
-
-                _eventsFlow.tryEmit(
-                    WearableEvent(
-                        WearableListenerActions.ACTION_OPENONPHONE,
-                        Bundle().apply {
-                            putBoolean(WearableListenerActions.EXTRA_SUCCESS, result != -1)
-                            putBoolean(WearableListenerActions.EXTRA_SHOWANIMATION, showAnimation)
-                        })
-                )
             }
         }
     }
 
-    override suspend fun openPlayStore(activity: Activity, showAnimation: Boolean) {
+    override suspend fun openPlayStore(showAnimation: Boolean) {
         // Open store on remote device
         val intentAndroid = Intent(Intent.ACTION_VIEW)
             .addCategory(Intent.CATEGORY_BROWSABLE)
@@ -148,13 +141,39 @@ abstract class WearableListenerViewModel(private val app: Application) : Android
                 .await()
 
             if (showAnimation) {
-                activity.showConfirmationOverlay(true)
+                sendConfirmationEvent(true)
             }
         }.onFailure {
             if (it !is CancellationException && showAnimation) {
-                activity.showConfirmationOverlay(false)
+                sendConfirmationEvent(false)
             }
         }
+    }
+
+    protected fun sendConfirmationEvent(success: Boolean) {
+        if (success) {
+            sendConfirmationEvent(ConfirmationType.OpenOnPhone)
+        } else {
+            sendConfirmationEvent(ConfirmationType.Failure)
+        }
+    }
+
+    protected fun sendConfirmationEvent(confirmationType: ConfirmationType) {
+        _eventsFlow.tryEmit(
+            WearableEvent(
+                WearableListenerActions.ACTION_SHOWCONFIRMATION,
+                Bundle().apply {
+                    putString(
+                        WearableListenerActions.EXTRA_EVENTDATA,
+                        JSONParser.serializer(
+                            ConfirmationData(
+                                confirmationType = confirmationType
+                            ), ConfirmationData::class.java
+                        )
+                    )
+                }
+            )
+        )
     }
 
     override suspend fun startRemoteActivity(targetIntent: Intent, targetNodeId: String?): Boolean {
@@ -408,10 +427,10 @@ abstract class WearableListenerViewModel(private val app: Application) : Android
             return
         }
 
-        Timber.Forest.e(e)
+        Timber.e(e)
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.Companion.PACKAGE_PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
     @RestrictTo(RestrictTo.Scope.SUBCLASSES)
     protected fun setConnectionStatus(status: WearConnectionStatus) {
         mConnectionStatus = status

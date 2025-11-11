@@ -7,8 +7,8 @@ import com.thewizrd.common.wearable.WearConnectionStatus
 interface WearableListener {
     fun initActivityContext(activity: Activity)
 
-    fun openAppOnPhone(activity: Activity, showAnimation: Boolean = true)
-    suspend fun openPlayStore(activity: Activity, showAnimation: Boolean = true)
+    fun openAppOnPhone(showAnimation: Boolean = true)
+    suspend fun openPlayStore(showAnimation: Boolean = true)
     suspend fun startRemoteActivity(targetIntent: Intent, targetNodeId: String? = null): Boolean
 
     suspend fun sendSetupStatusRequest()

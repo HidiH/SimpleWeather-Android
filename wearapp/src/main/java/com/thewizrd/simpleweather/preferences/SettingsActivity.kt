@@ -15,10 +15,16 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.arch.core.util.Function
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.location.LocationManagerCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
@@ -30,7 +36,6 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.RecyclerView
 import androidx.wear.remote.interactions.RemoteActivityHelper
-import androidx.wear.widget.ConfirmationOverlay
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
@@ -51,6 +56,7 @@ import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
+import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.Units
@@ -65,18 +71,21 @@ import com.thewizrd.simpleweather.extras.navigateUnsupportedIconPack
 import com.thewizrd.simpleweather.fragments.WearDialogFragment
 import com.thewizrd.simpleweather.fragments.WearDialogParams
 import com.thewizrd.simpleweather.helpers.AcceptDenyDialog
-import com.thewizrd.simpleweather.helpers.showConfirmationOverlay
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.preferences.iconpreference.WearIconProviderPickerFragment
 import com.thewizrd.simpleweather.preferences.radiopreference.CandidateInfo
 import com.thewizrd.simpleweather.preferences.radiopreference.RadioButtonPreference
+import com.thewizrd.simpleweather.ui.components.ConfirmationOverlay
+import com.thewizrd.simpleweather.ui.theme.WearAppTheme
+import com.thewizrd.simpleweather.viewmodels.ConfirmationData
+import com.thewizrd.simpleweather.viewmodels.ConfirmationViewModel
 import com.thewizrd.simpleweather.viewmodels.SettingsViewModel
+import com.thewizrd.simpleweather.wearable.WearableListenerActions
 import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS
 import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_CONNECTIONSTATUS
 import com.thewizrd.simpleweather.wearable.complications.WeatherComplicationHelper
 import com.thewizrd.simpleweather.wearable.tiles.WeatherTileHelper
 import com.thewizrd.weather_api.weatherModule
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -160,6 +169,7 @@ class SettingsActivity : UserLocaleActivity() {
 
         // Wearable status
         private val settingsViewModel: SettingsViewModel by viewModels()
+        private val confirmationViewModel: ConfirmationViewModel by viewModels()
 
         private lateinit var locationPermissionLauncher: LocationPermissionLauncher
 
@@ -199,6 +209,37 @@ class SettingsActivity : UserLocaleActivity() {
             }
 
             requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        }
+
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+            val root = super.onCreateView(inflater, container, savedInstanceState)
+
+            if (root is ViewGroup) {
+                root.addView(
+                    ComposeView(root.context).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        setContent {
+                            val confirmationData by confirmationViewModel.confirmationEventsFlow.collectAsState()
+
+                            WearAppTheme {
+                                ConfirmationOverlay(
+                                    confirmationData = confirmationData,
+                                    onTimeout = { confirmationViewModel.clearFlow() },
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+
+            return root
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -253,6 +294,18 @@ class SettingsActivity : UserLocaleActivity() {
                                     )
                                 )
                                 updateConnectionPref(status)
+                            }
+
+                            WearableListenerActions.ACTION_SHOWCONFIRMATION -> {
+                                val jsonData =
+                                    data.getString(WearableListenerActions.EXTRA_EVENTDATA)
+
+                                JSONParser.deserializer<ConfirmationData>(
+                                    jsonData,
+                                    ConfirmationData::class.java
+                                )?.let {
+                                    confirmationViewModel.showConfirmation(it)
+                                }
                             }
                         }
                     }
@@ -740,7 +793,7 @@ class SettingsActivity : UserLocaleActivity() {
 
         private val connStatusPrefClickListener = Preference.OnPreferenceClickListener {
             lifecycleScope.launch {
-                settingsViewModel.openPlayStore(requireActivity(), true)
+                settingsViewModel.openPlayStore(showAnimation = true)
             }
             true
         }
@@ -750,13 +803,14 @@ class SettingsActivity : UserLocaleActivity() {
                 .addCategory(Intent.CATEGORY_BROWSABLE)
 
             lifecycleScope.launch {
-                runCatching {
+                val success = runCatching {
                     settingsViewModel.startRemoteActivity(intentAndroid)
-                    showConfirmationOverlay(true)
-                }.onFailure {
-                    if (it !is CancellationException) {
-                        showConfirmationOverlay(false)
-                    }
+                }.getOrDefault(false)
+
+                if (success) {
+                    confirmationViewModel.showOpenOnPhone()
+                } else {
+                    confirmationViewModel.showFailure()
                 }
             }
 
@@ -982,6 +1036,7 @@ class SettingsActivity : UserLocaleActivity() {
 
     class CreditsFragment : SwipeDismissPreferenceFragment() {
         private lateinit var remoteActivityHelper: RemoteActivityHelper
+        private val confirmationViewModel: ConfirmationViewModel by viewModels()
 
         override val titleResId: Int
             get() = R.string.pref_title_credits
@@ -991,6 +1046,37 @@ class SettingsActivity : UserLocaleActivity() {
             remoteActivityHelper = RemoteActivityHelper(requireContext())
         }
 
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+            val root = super.onCreateView(inflater, container, savedInstanceState)
+
+            if (root is ViewGroup) {
+                root.addView(
+                    ComposeView(root.context).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        setContent {
+                            val confirmationData by confirmationViewModel.confirmationEventsFlow.collectAsState()
+
+                            WearAppTheme {
+                                ConfirmationOverlay(
+                                    confirmationData = confirmationData,
+                                    onTimeout = { confirmationViewModel.clearFlow() },
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+
+            return root
+        }
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_credits, rootKey)
         }
@@ -998,18 +1084,19 @@ class SettingsActivity : UserLocaleActivity() {
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
             if (preference.intent != null && !BuildConfig.IS_NONGMS) {
                 runWithView {
-                    runCatching {
+                    val success = runCatching {
                         remoteActivityHelper.startRemoteActivity(
                             preference.intent!!
                                 .setAction(Intent.ACTION_VIEW)
                                 .addCategory(Intent.CATEGORY_BROWSABLE)
                         )
+                        true
+                    }.getOrDefault(false)
 
-                        // Show open on phone animation
-                        ConfirmationOverlay()
-                            .setType(ConfirmationOverlay.OPEN_ON_PHONE_ANIMATION)
-                            .setMessage(preference.context.getString(R.string.message_openedonphone))
-                            .showAbove(requireView())
+                    if (success) {
+                        confirmationViewModel.showOpenOnPhone()
+                    } else {
+                        confirmationViewModel.showFailure()
                     }
                 }
 

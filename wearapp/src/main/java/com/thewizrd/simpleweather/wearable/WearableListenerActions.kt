@@ -11,6 +11,7 @@ object WearableListenerActions {
     const val ACTION_UPDATECONNECTIONSTATUS =
         "SimpleWeather.Droid.Wear.action.UPDATE_CONNECTION_STATUS"
     const val ACTION_REQUESTSETUPSTATUS = "SimpleWeather.Droid.Wear.action.REQUEST_SETUP_STATUS"
+    const val ACTION_SHOWCONFIRMATION = "SimpleWeather.Droid.Wear.action.SHOW_CONFIRMATION"
 
     const val ACTION_REQUESTSYNCWEATHER = "SimpleWeather.Droid.Wear.action.REQUEST_SYNC_WEATHER"
     const val ACTION_UPDATESYNCSTATUS = "SimpleWeather.Droid.Wear.action.UPDATE_SYNC_STATUS"
@@ -43,4 +44,11 @@ object WearableListenerActions {
      */
     const val EXTRA_CONNECTIONSTATUS = "SimpleWeather.Droid.Wear.extra.CONNECTION_STATUS"
     const val EXTRA_DEVICESETUPSTATUS = "SimpleWeather.Droid.Wear.extra.DEVICE_SETUP_STATUS"
+
+    /**
+     * Extra contains Action data (serialized class in JSON) to be passed to BroadcastReceiver or Activity
+     *
+     * @see com.thewizrd.simpleweather.viewmodels.WearableEvent
+     */
+    const val EXTRA_EVENTDATA = "SimpleWeather.Droid.Wear.extra.EVENT_DATA"
 }

@@ -89,6 +89,7 @@ import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeWatch
 import com.thewizrd.shared_resources.utils.ConversionMethods
+import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.StringUtils.removeNonDigitChars
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.utils.getColorFromTempF
@@ -112,12 +113,14 @@ import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
+import com.thewizrd.simpleweather.viewmodels.ConfirmationData
 import com.thewizrd.simpleweather.viewmodels.ConfirmationViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncState
 import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.viewmodels.WeatherNowStateModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
+import com.thewizrd.simpleweather.wearable.WearableListenerActions
 import kotlinx.coroutines.launch
 
 @Composable
@@ -273,8 +276,7 @@ fun WeatherNowScreen(
                     if (!BuildConfig.IS_NONGMS) {
                         OpenOnPhoneButton(
                             onOpenOnPhone = {
-                                dataSyncViewModel.openAppOnPhone(activity, showAnimation = false)
-                                confirmationViewModel.showOpenOnPhone()
+                                dataSyncViewModel.openAppOnPhone(showAnimation = true)
                             }
                         )
                     }
@@ -315,6 +317,32 @@ fun WeatherNowScreen(
 
         onPauseOrDispose {
             job.cancel()
+        }
+    }
+
+    if (!BuildConfig.IS_NONGMS) {
+        LifecycleResumeEffect(activity) {
+            val job = lifecycleOwner.lifecycleScope.launch {
+                dataSyncViewModel.eventFlow.collect { event ->
+                    when (event.eventType) {
+                        WearableListenerActions.ACTION_SHOWCONFIRMATION -> {
+                            val jsonData =
+                                event.data.getString(WearableListenerActions.EXTRA_EVENTDATA)
+
+                            JSONParser.deserializer<ConfirmationData>(
+                                jsonData,
+                                ConfirmationData::class.java
+                            )?.let {
+                                confirmationViewModel.showConfirmation(it)
+                            }
+                        }
+                    }
+                }
+            }
+
+            onPauseOrDispose {
+                job.cancel()
+            }
         }
     }
 

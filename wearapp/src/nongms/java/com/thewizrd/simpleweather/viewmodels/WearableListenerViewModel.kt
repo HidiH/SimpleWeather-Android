@@ -34,11 +34,11 @@ abstract class WearableListenerViewModel(private val app: Application) : Android
         // no-op
     }
 
-    override fun openAppOnPhone(activity: Activity, showAnimation: Boolean) {
+    override fun openAppOnPhone(showAnimation: Boolean) {
         // no-op
     }
 
-    override suspend fun openPlayStore(activity: Activity, showAnimation: Boolean) {
+    override suspend fun openPlayStore(showAnimation: Boolean) {
         // no-op
     }
 
