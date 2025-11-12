@@ -11,19 +11,24 @@ import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.DateTimeUtils
+import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.LocaleUtils
+import com.thewizrd.shared_resources.utils.LocationUtils
+import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.auth.AuthType
+import com.thewizrd.shared_resources.weatherdata.auth.ProviderAppKey
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.shared_resources.weatherdata.model.isNullOrInvalid
 import com.thewizrd.weather_api.extras.cacheRequestIfNeeded
-import com.thewizrd.weather_api.google.location.getGoogleLocationProvider
 import com.thewizrd.weather_api.here.auth.hereOAuthService
 import com.thewizrd.weather_api.smc.SunMoonCalcProvider
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkRateLimit
 import com.thewizrd.weather_api.utils.logMissingIcon
 import com.thewizrd.weather_api.weatherModule
+import com.thewizrd.weather_api.weatherapi.location.WeatherApiLocationProvider
 import com.thewizrd.weather_api.weatherdata.WeatherProviderImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,7 +37,7 @@ import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import java.io.IOException
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class HEREWeatherProvider : WeatherProviderImpl() {
@@ -48,7 +53,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
                 )
             )
         }.getOrElse {
-            getGoogleLocationProvider()
+            WeatherApiLocationProvider()
         }
     }
 
@@ -61,7 +66,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
     }
 
     override fun isKeyRequired(): Boolean {
-        return false
+        return true
     }
 
     override fun needsExternalAlertData(): Boolean {
@@ -69,7 +74,19 @@ class HEREWeatherProvider : WeatherProviderImpl() {
     }
 
     override suspend fun isKeyValid(key: String?): Boolean {
-        return false
+        val key = getProviderKey()
+
+        val providerKey = ProviderAppKey().apply {
+            fromString(key ?: "")
+        }
+
+        if (providerKey.appId.isBlank() || providerKey.appCode.isBlank()) {
+            throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+        }
+
+        val token = hereOAuthService.getBearerToken(providerKey.appId, providerKey.appCode, true)
+
+        return !token.isNullOrBlank()
     }
 
     override fun getAPIKey(): String? {
@@ -77,7 +94,7 @@ class HEREWeatherProvider : WeatherProviderImpl() {
     }
 
     override fun getAuthType(): AuthType {
-        return AuthType.INTERNAL // or AppID/AppCode
+        return AuthType.APPID_APPCODE
     }
 
     @Throws(WeatherException::class)

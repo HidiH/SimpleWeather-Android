@@ -104,9 +104,9 @@
         <key>accuweather</key>
         <value>
             {
-            "enabled": true,
+            "enabled": false,
             "locSource": "accuweather",
-            "newWeatherSource": ""
+            "newWeatherSource": "Metno"
             }
         </value>
     </entry>

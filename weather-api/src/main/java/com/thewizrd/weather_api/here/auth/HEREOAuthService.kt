@@ -8,4 +8,9 @@ interface HEREOAuthService {
     }
 
     suspend fun getBearerToken(forceRefresh: Boolean): String?
+    suspend fun getBearerToken(
+        clientId: String?,
+        clientSecret: String?,
+        forceRefresh: Boolean = false
+    ): String?
 }
