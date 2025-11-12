@@ -36,6 +36,7 @@ import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.simpleweather.extras.attachToBaseContext
 import com.thewizrd.simpleweather.extras.initializeExtras
 import com.thewizrd.simpleweather.extras.initializeFirebase
+import com.thewizrd.simpleweather.images.imageDataService
 import com.thewizrd.simpleweather.receivers.CommonActionsBroadcastReceiver
 import com.thewizrd.simpleweather.theming.DynamicColorsHelper
 import com.thewizrd.simpleweather.theming.dynamicColorsHelper
@@ -98,6 +99,9 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
             }
 
             initializeFirebase(applicationContext)
+
+            // Run app-specific migrations
+            startMigration()
 
             // Initialize CommonModule: Version migrations (depends on SharedModule, Firebase)
             commonModule = object : CommonModule() {
@@ -248,6 +252,13 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
         }
         appLib.appScope.cancel()
         super.onTerminate()
+    }
+
+    private fun startMigration() {
+        if (appLib.settingsManager.getVersionCode() < 365130100) {
+            // Image DB
+            imageDataService.setImageDBVersionTimestamp(imageDataService.getImageDBUpdateTime())
+        }
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

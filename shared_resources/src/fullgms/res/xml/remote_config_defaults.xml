@@ -4,9 +4,9 @@
         <key>Here</key>
         <value>
             {
-            "enabled": false,
-            "locSource": "google",
-            "newWeatherSource": "apple"
+            "enabled": true,
+            "locSource": "android",
+            "newWeatherSource": ""
             }
         </value>
     </entry>
@@ -183,5 +183,9 @@
     <entry>
         <key>default_weather_provider</key>
         <value>weatherapi</value>
+    </entry>
+    <entry>
+        <key>key_imagedb_valid_days</key>
+        <value>30</value>
     </entry>
 </defaultsMap>

@@ -1,11 +1,21 @@
 package com.thewizrd.simpleweather.services
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.thewizrd.common.utils.LiveDataUtils.awaitWithTimeout
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.preferences.UpdateSettings
+import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.simpleweather.images.ImageDatabase
@@ -17,6 +27,7 @@ import com.thewizrd.simpleweather.services.ImageDatabaseWorkerActions.ACTION_UPD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 class ImageDatabaseWorker(context: Context, workerParams: WorkerParameters) :
         CoroutineWorker(context, workerParams) {
@@ -106,19 +117,33 @@ class ImageDatabaseWorker(context: Context, workerParams: WorkerParameters) :
 
         // Check if cache is populated
         if (!imageDataService.isEmpty && !UpdateSettings.isUpdateAvailable) {
-            // If so, check if we need to invalidate
-            val updateTime = try {
-                ImageDatabase.getLastUpdateTime()
+            // If so, check the last time the Image Database (Firestore) was updated
+            val remoteDBVersionTimestamp = try {
+                ImageDatabase.getVersionTimestamp()
             } catch (e: Exception) {
                 Logger.writeLine(Log.ERROR, e)
                 0L
             }
 
-            if (updateTime > imageDataService.getImageDBUpdateTime()) {
-                AnalyticsLogger.logEvent("ImgDBWorker: clearing image cache")
+            val localDBVersionTimestamp = imageDataService.getImageDBVersionTimestamp()
+            val localDBUpdateTime = imageDataService.getImageDBUpdateTime()
+            val localCachedDays =
+                TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - localDBUpdateTime)
+            val validDays =
+                (remoteConfigService.getLong("key_imagedb_valid_days").takeIf { it != 0L }
+                    ?: 30) + Random.nextLong(0, 8)
+
+            // Check if a new image db version is available or local image db cache time has expired
+            if (remoteDBVersionTimestamp > localDBVersionTimestamp || localCachedDays > validDays) {
+                AnalyticsLogger.logEvent("ImgDBWorker: clearing image cache", Bundle().apply {
+                    putLong("remoteDBVersionTimestamp", remoteDBVersionTimestamp)
+                    putLong("localDBVersionTimestamp", localDBVersionTimestamp)
+                    putLong("localCachedDays", localCachedDays)
+                })
 
                 // if so, invalidate
-                imageDataService.setImageDBUpdateTime(updateTime)
+                imageDataService.setImageDBVersionTimestamp(remoteDBVersionTimestamp)
+                imageDataService.setImageDBUpdateTime(System.currentTimeMillis())
                 imageDataService.clearCachedImageData()
                 imageDataService.invalidateCache(true)
             }

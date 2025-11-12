@@ -1,8 +1,14 @@
 package com.thewizrd.simpleweather.services
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.thewizrd.shared_resources.preferences.UpdateSettings
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.Logger
@@ -49,18 +55,26 @@ class FCMWorker(context: Context, workerParams: WorkerParameters) :
         // Check if cache is populated
         if (!imageDataService.isEmpty && !UpdateSettings.isUpdateAvailable) {
             // If so, check if we need to invalidate
-            val updateTime = try {
-                ImageDatabase.getLastUpdateTime()
+            val remoteDBVersionTimestamp = try {
+                ImageDatabase.getVersionTimestamp()
             } catch (e: Exception) {
                 Logger.writeLine(Log.ERROR, e)
                 0L
             }
 
-            if (updateTime > imageDataService.getImageDBUpdateTime()) {
-                AnalyticsLogger.logEvent("$TAG: clearing image cache")
+            val localDBVersionTimestamp = imageDataService.getImageDBVersionTimestamp()
+            val localDBUpdateTime = imageDataService.getImageDBUpdateTime()
+
+            if (remoteDBVersionTimestamp > localDBVersionTimestamp) {
+                AnalyticsLogger.logEvent("$TAG: clearing image cache", Bundle().apply {
+                    putLong("remoteDBVersionTimestamp", remoteDBVersionTimestamp)
+                    putLong("localDBVersionTimestamp", localDBVersionTimestamp)
+                    putLong("localDBUpdateTime", localDBUpdateTime)
+                })
 
                 // if so, invalidate
-                imageDataService.setImageDBUpdateTime(updateTime)
+                imageDataService.setImageDBVersionTimestamp(remoteDBVersionTimestamp)
+                imageDataService.setImageDBUpdateTime(System.currentTimeMillis())
                 imageDataService.clearCachedImageData()
                 imageDataService.invalidateCache(true)
             }
