@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="beaufort_0">"Штиль"</string>
+    <string name="beaufort_1">"Легкий ветерок"</string>
+    <string name="beaufort_2">"Слабый бриз"</string>
+    <string name="beaufort_3">"Легкий бриз"</string>
+    <string name="beaufort_4">"Умеренный бриз"</string>
+    <string name="beaufort_5">"Свежий бриз"</string>
+    <string name="beaufort_6">"Сильный бриз"</string>
+    <string name="beaufort_7">"Близкий к шторму"</string>
+    <string name="beaufort_8">"Шторм"</string>
+    <string name="beaufort_9">"Сильный шторм"</string>
+    <string name="beaufort_10">"Шторм"</string>
+    <string name="beaufort_11">"Сильный шторм"</string>
+    <string name="beaufort_12">"Ураган"</string>
+</resources>

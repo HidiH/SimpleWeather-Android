@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- https://aqicn.org/scale -->
+    <string name="aqi_level_0_50">"Tốt"</string>
+    <string name="aqi_level_51_100">"Trung bình"</string>
+    <string name="aqi_level_101_150">"Không tốt cho sức khỏe của các nhóm nhạy cảm"</string>
+    <string name="aqi_level_151_200">"Không tốt cho sức khỏe"</string>
+    <string name="aqi_level_201_300">"Rất không tốt cho sức khỏe"</string>
+    <string name="aqi_level_300">"Nguy hiểm"</string>
+    <string name="aqi_desc_0_50">"Chất lượng không khí được coi là đạt yêu cầu và ô nhiễm không khí gây ra ít hoặc không có rủi ro"</string>
+    <string name="aqi_desc_51_100">"Chất lượng không khí chấp nhận được"</string>
+    <string name="aqi_desc_101_150">"Các thành viên của các nhóm nhạy cảm có thể gặp các vấn đề về sức khỏe. Công chúng nói chung có thể không bị ảnh hưởng."</string>
+    <string name="aqi_desc_151_200">"Mọi người có thể bắt đầu gặp các vấn đề về sức khỏe; các thành viên của các nhóm nhạy cảm có thể gặp các vấn đề sức khỏe nghiêm trọng hơn"</string>
+    <string name="aqi_desc_201_300">"Cảnh báo sức khỏe về các tình trạng khẩn cấp. Toàn bộ dân số có nhiều khả năng bị ảnh hưởng."</string>
+    <string name="aqi_desc_300">"Cảnh báo sức khỏe: mọi người có thể gặp các vấn đề sức khỏe nghiêm trọng hơn"</string>
+</resources>

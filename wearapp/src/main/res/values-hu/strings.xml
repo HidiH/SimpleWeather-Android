@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"Beállítás telefonról"</string>
+    <string name="action_changelocation">"Hely megváltoztatása"</string>
+    <string name="action_openonphone">"Megnyitás a telefonon"</string>
+    <string name="message_openedonphone">"Megnyitva a telefonon…"</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"Eszköz nincs csatlakoztatva"</string>
+    <string name="status_connecting">"Csatlakozás…"</string>
+    <string name="status_notinstalled">"Az alkalmazás nincs telepítve az eszközön"</string>
+    <string name="status_connected">"Csatlakoztatva"</string>
+    <string name="status_node_unavailable">"Az eszköz nincs csatlakoztatva, vagy az alkalmazás nincs telepítve az eszközön…"</string>
+    <string name="status_node_notsupported">"A csatlakoztatott eszköz nem támogatott"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"Szeretné beállítani és szinkronizálni az adatokat a telefonjáról/csatlakoztatott eszközéről?"</string>
+    <string name="message_gettingstatus">"Kapcsolat állapotának lekérése…"</string>
+    <string name="error_notinstalled">"Telepítse az alkalmazást az eszközre, és próbálja újra"</string>
+    <string name="message_continueondevice">"Folytassa a beállítást a csatlakoztatott eszközön"</string>
+    <string name="message_retrievingdata">"Adatok lekérése a csatlakoztatott eszközről…"</string>
+    <string name="error_syncing">"Nem sikerült szinkronizálni az adatokat"</string>
+    <string name="message_settingsretrieved">"Beállítási adatok fogadva…"</string>
+    <string name="message_locationretrieved">"Helyadatok fogadva…"</string>
+    <string name="message_weatherretrieved">"Időjárási adatok fogadva…"</string>
+    <string name="message_synccompleted">"Adatszinkronizálás sikeres"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"Ki"</string>
+    <string name="pref_sync_deviceonly">"Szinkronizálás csak eszközről"</string>
+    <string name="pref_sync_whenavailable">"Szinkronizálás eszközről (ha elérhető)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"Szinkronizálás"</string>
+    <string name="pref_sync_title">"Adatszinkronizálás"</string>
+    <string name="pref_connectionstatus_title">"Kapcsolat állapota"</string>
+    <string name="message_disconnected">"Kapcsolat bontva"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"Jelenlegi időjárás"</string>
+    <string name="tile_label_weather_forecast">"Időjárás + Előrejelzés"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"Időjárás (Max / Min)"</string>
+    <string name="complication_label_weather_currentlocation">"Időjárás (jelenlegi hely)"</string>
+    <string name="tile_label_weather_hrforecast">"Időjárás + Óránkénti előrejelzés"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Időjárás (Aktuális hely + Érzetre)"</string>
+    <string name="title_tile_config">"Kártya konfigurálása"</string>
+    <string name="message_reset_to_default">"Visszaállítja az alapértelmezettre?"</string>
+    <string name="pref_title_detailstileeditor">"Kártyaszerkesztő"</string>
+</resources>

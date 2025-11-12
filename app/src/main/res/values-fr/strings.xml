@@ -112,8 +112,6 @@
     <!-- Fuzzy -->
     <string name="pref_title_feature_summary">"Aperçu de la météo"</string>
     <string name="prompt_max_locations_allowed">"Maximum de cinq emplacements autorisés"</string>
-
-    <!-- Forecast Graphs -->
     <string name="pref_title_widgetgraphtype">"Type de prévision"</string>
 
     <!-- Widget Labels -->

@@ -227,6 +227,9 @@
     <string name="wear_bg_location_permission_rationale_settings">"Para actualizar la ubicación en segundo plano para los mosaicos y las complicaciones, establezca el permiso de ubicación en '%1$s'"</string>
     <string name="time_current">"Actual"</string>
 
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"SIN DATOS"</string>
+
     <!-- Fuzzy -->
     <string name="label_minutelyforecast">"Previsión de minutos"</string>
     <string name="hint_username">"Nombre de usuario"</string>
@@ -242,5 +245,4 @@
     <string name="werror_ratelimited">"Demasiadas solicitudes. Vuelva a intentarlo pasados unos minutos"</string>
     <string name="werror_locationnotsupported">"Esta ubicación no es compatible con este proveedor meteorológico"</string>
     <string name="notification_perm_denied">"Permiso de notificación denegado"</string>
-    <string name="label_nodata">SIN DATOS</string>
 </resources>

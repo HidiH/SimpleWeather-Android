@@ -206,6 +206,9 @@
     <string name="wear_bg_location_permission_rationale_settings">"Um den Standort im Hintergrund für Kacheln und Komplikationen zu aktualisieren, setzen Sie bitte die Standortberechtigung auf '%1$s'"</string>
     <string name="time_current">"Aktuell"</string>
 
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"KEINE DATEN"</string>
+
     <!-- Fuzzy -->
     <string name="label_minutelyforecast">"Vorhersage im Minutentakt"</string>
     <string name="hint_username">"Nutzername"</string>
@@ -221,5 +224,4 @@
     <string name="werror_ratelimited">"Zu viele Anfragen. Bitte versuchen Sie es nach ein paar Minuten erneut"</string>
     <string name="werror_locationnotsupported">"Dieser Standort wird von diesem Wetteranbieter nicht unterstützt"</string>
     <string name="notification_perm_denied">"Benachrichtigungserlaubnis verweigert"</string>
-    <string name="label_nodata">KEINE DATEN</string>
 </resources>

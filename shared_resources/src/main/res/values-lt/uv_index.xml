@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="uv_0">"Žemas"</string>
+    <string name="uv_3">"Vidutinis"</string>
+    <string name="uv_6">"Aukštas"</string>
+    <string name="uv_8">"Labai aukštas"</string>
+    <string name="uv_11">"Ekstremalus"</string>
+</resources>

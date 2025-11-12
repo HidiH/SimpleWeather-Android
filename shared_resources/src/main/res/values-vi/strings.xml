@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Nhập Địa Điểm"</string>
+    <string name="api_label">"Nhà Cung Cấp Thời Tiết"</string>
+    <string name="key_hint">"Khóa Cung Cấp"</string>
+    <string name="label_gpsfollow">"Vị Trí Hiện Tại"</string>
+    <string name="label_getstarted">"Bắt Đầu"</string>
+    <string name="setup_welcome_prompt">"Chào mừng đến với SimpleWeather"</string>
+    <string name="setup_welcome_tagline_prompt">"Một ứng dụng thời tiết đơn giản"</string>
+    <string name="setup_location_prompt">"Thêm một địa điểm để bắt đầu"</string>
+    <string name="setup_preferences_prompt">"Tùy chỉnh cài đặt của bạn bên dưới"</string>
+    <string name="label_next">"Tiếp"</string>
+    <string name="label_back">"Quay lại"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Thời tiết"</string>
+    <string name="action_settings">"Cài đặt"</string>
+    <string name="action_retry">"Thử lại"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Chi tiết"</string>
+    <string name="label_humidity">"Độ ẩm"</string>
+    <string name="label_pressure">"Áp suất"</string>
+    <string name="label_visibility">"Tầm nhìn"</string>
+    <string name="label_feelslike">"Cảm giác như"</string>
+    <string name="label_wind">"Gió"</string>
+    <string name="label_forecast">"Dự báo"</string>
+    <string name="label_condition">"Điều kiện"</string>
+    <string name="label_sunriseset">"Bình minh / Hoàng hôn"</string>
+    <string name="label_sunrise">"Bình minh"</string>
+    <string name="label_sunset">"Hoàng hôn"</string>
+    <string name="label_hourlyforecast">"Hàng giờ"</string>
+    <string name="label_precipitation">"Lượng mưa"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"Cơ hội"</string>
+    <string name="label_cloudiness">"Độ che phủ của mây"</string>
+    <string name="label_qpf_rain">"Mưa"</string>
+    <string name="label_qpf_snow">"Tuyết"</string>
+    <string name="credit_prefix">"Dữ liệu từ"</string>
+    <string name="attrib_prefix">"Ảnh của"</string>
+    <string name="label_high">"Cao"</string>
+    <string name="label_low">"Thấp"</string>
+    <string name="label_dewpoint">"Điểm sương"</string>
+    <string name="label_moonrise">"Mặt trăng mọc"</string>
+    <string name="label_moonset">"Mặt trăng lặn"</string>
+    <string name="label_moonphase">"Pha Mặt Trăng"</string>
+    <string name="label_beaufort">"Beaufort"</string>
+    <string name="label_uv">"Chỉ số UV"</string>
+    <string name="label_airquality">"Chỉ số Chất lượng Không khí"</string>
+    <string name="label_airquality_short">"Chất lượng Không khí"</string>
+    <string name="label_radar">"Radar"</string>
+    <string name="label_afternoon">"Buổi chiều"</string>
+    <string name="label_eve">"Buổi tối"</string>
+    <string name="label_morning">"Buổi sáng"</string>
+    <string name="label_night">"Đêm"</string>
+    <string name="label_temp">"Nhiệt độ"</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Thời tiết"</string>
+    <string name="label_nav_alerts">"Cảnh báo"</string>
+    <string name="label_nav_locations">"Địa điểm"</string>
+    <string name="title_activity_settings">"Cài đặt"</string>
+    <string name="title_fragment_alerts">"Cảnh báo Thời tiết Khắc nghiệt"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"Chung"</string>
+    <string name="pref_category_version">"Phiên bản"</string>
+    <string name="pref_title_units">"Đơn vị"</string>
+    <string name="pref_summary_fahrenheit">"Hiển thị đơn vị theo độ Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Hiển thị đơn vị theo độ Celsius (°C)"</string>
+    <string name="pref_title_about">"Giới thiệu"</string>
+    <string name="pref_title_about_app">"Giới thiệu SimpleWeather"</string>
+    <string name="pref_title_credits">"Ghi nhận"</string>
+    <string name="pref_title_oslibs">"Thư viện Mã nguồn Mở"</string>
+    <string name="pref_category_providers">"Nhà Cung Cấp Dữ Liệu"</string>
+    <string name="pref_summary_currentlocation">"Cho phép truy cập vị trí hiện tại qua GPS"</string>
+    <string name="pref_summary_apikey">"Nhập Khóa Cung Cấp bắt buộc cho %1$s"</string>
+    <string name="message_enter_apikey">"Vui lòng nhập Khóa Cung Cấp"</string>
+    <string name="message_keyverified">"Đã xác minh khóa"</string>
+    <string name="message_keyinvalid">"Khóa không hợp lệ"</string>
+    <string name="pref_title_onnotification">"Thông báo Thời tiết"</string>
+    <string name="pref_summary_notification">"Hiển thị thông báo liên tục hiển thị điều kiện thời tiết hiện tại"</string>
+    <string name="pref_title_api">"Nhà Cung Cấp Thời Tiết"</string>
+    <string name="pref_category_notification">"Thông báo"</string>
+    <string name="pref_title_notificationicon">"Biểu tượng Thông báo"</string>
+    <string name="pref_title_alerts">"Cảnh Báo Thời Tiết"</string>
+    <string name="pref_summary_alerts">"Hiển thị thông báo cho cảnh báo thời tiết"</string>
+    <string name="pref_summary_alerts_disabled">"Cảnh báo thời tiết không được hỗ trợ bởi nhà cung cấp thời tiết này"</string>
+    <string name="pref_title_apiregister">"Tạo một tài khoản"</string>
+    <string name="pref_summary_apiregister">"Tạo một tài khoản để đăng ký khóa nhà cung cấp"</string>
+    <string name="error_message_weather_region_unsupported">"Quốc gia không được hỗ trợ bởi nhà cung cấp thời tiết này"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Thêm vị trí"</string>
+    <string name="action_editmode">"Sửa"</string>
+    <string name="label_currentlocation">"Vị trí hiện tại"</string>
+    <string name="label_favoritelocations">"Vị trí yêu thích"</string>
+    <string name="error_location_denied">"Quyền truy cập vị trí bị từ chối"</string>
+    <string name="error_retrieve_location">"Không thể lấy vị trí"</string>
+    <string name="error_enable_location_services">"Dịch vụ vị trí bị tắt. Vui lòng bật trong Cài đặt"</string>
+    <string name="error_noresults">"Không tìm thấy kết quả"</string>
+    <string name="label_fab_add_location">"Thêm một vị trí"</string>
+    <string name="message_locationremoved">"Vị trí đã bị xóa"</string>
+    <string name="message_needfavorite">"Phải có ít nhất một vị trí yêu thích"</string>
+    <string name="undo">"Hoàn tác"</string>
+    <string name="delete">"Xóa"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Cho phép truy cập để cập nhật vị trí trong nền cho thông báo và tiện ích"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Không thể tải dữ liệu thời tiết"</string>
+    <string name="werror_networkerror">"Lỗi kết nối mạng"</string>
+    <string name="werror_invalidkey">"Khóa nhà cung cấp không hợp lệ"</string>
+    <string name="werror_querynotfound">"Không có thành phố nào phù hợp với truy vấn tìm kiếm của bạn"</string>
+    <string name="werror_unknown">"Đã xảy ra lỗi không xác định"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Khoảng thời gian cập nhật"</string>
+    <string name="refresh_60min">"1 giờ"</string>
+    <string name="refresh_2hrs">"2 giờ"</string>
+    <string name="refresh_3hrs">"3 giờ"</string>
+    <string name="refresh_6hrs">"6 giờ"</string>
+    <string name="refresh_12hrs">"12 giờ"</string>
+    <string name="update_prefix">"Đã cập nhật vào"</string>
+    <string name="update_prefix_day">"Đã cập nhật lúc"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Nhiệt độ"</string>
+    <string name="notificationicon_condition">"Điều kiện thời tiết"</string>
+    <string name="not_channel_name_weather">"Thông báo thời tiết"</string>
+    <string name="not_channel_desc_weather">"Thông báo thời tiết"</string>
+    <string name="not_channel_name_alerts">"Cảnh báo thời tiết"</string>
+    <string name="not_channel_desc_alerts">"Thông báo cho cảnh báo thời tiết"</string>
+    <string name="not_channel_name_general">"Thông báo dịch vụ"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"%1$d ngày trước"</string>
+    <string name="datetime_hr_ago">"%1$d giờ trước"</string>
+    <string name="datetime_min_ago">"%1$d phút trước"</string>
+    <string name="datetime_sec_ago">"%1$d giây trước"</string>
+    <string name="datetime_validuntil">"Có hiệu lực đến"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Khóa nhà cung cấp cá nhân"</string>
+    <string name="pref_summary_personalkey">"Sử dụng khóa nhà cung cấp thời tiết cá nhân"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Giao diện"</string>
+    <string name="userthememode_default">"Mặc định hệ thống"</string>
+    <string name="userthememode_dark">"Tối"</string>
+    <string name="userthememode_black">"Tối (AMOLED)"</string>
+    <string name="userthememode_light">"Sáng"</string>
+    <string name="summary_default">"Mặc định"</string>
+    <string name="action_refresh">"Làm mới"</string>
+    <string name="label_windgust">"Gió giật"</string>
+    <string name="pref_title_language">"Ngôn ngữ"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Nhiệt độ"</string>
+    <string name="label_speed">"Tốc độ"</string>
+    <string name="label_distance">"Khoảng cách"</string>
+    <string name="pref_title_resetunits">"Đặt lại đơn vị về giá trị mặc định"</string>
+    <string name="not_title_weather_update">"Đang cập nhật thời tiết…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Biểu tượng"</string>
+    <string name="refresh_30min">"30 phút"</string>
+    <string name="label_day">"Ngày"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Số lượng phấn hoa"</string>
+    <string name="label_pollen_tree">"Cây"</string>
+    <string name="label_tree_pollen">"Phấn hoa cây"</string>
+    <string name="label_pollen_grass">"Cỏ"</string>
+    <string name="label_grass_pollen">"Phấn hoa cỏ"</string>
+    <string name="label_pollen_ragweed">"Cỏ phấn hương"</string>
+    <string name="label_ragweed_pollen">"Phấn hoa cỏ phấn hương"</string>
+    <string name="label_count_low">"Một chút"</string>
+    <string name="label_count_moderate">"Vừa phải"</string>
+    <string name="label_count_high">"Cao"</string>
+    <string name="label_count_veryhigh">"Rất cao"</string>
+    <string name="bg_location_permission_rationale_settings">"Để cập nhật vị trí trong nền cho thông báo và tiện ích, vui lòng đặt quyền vị trí thành '%1$s'"</string>
+    <string name="prompt_location_not_set">"Vị trí chưa được đặt. Vui lòng thêm vị trí"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Truy cập vị trí trong nền"</string>
+    <string name="wear_bg_location_permission_rationale">"Cho phép truy cập để cập nhật vị trí trong nền cho ô và tiện ích con"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"Để cập nhật vị trí trong nền cho ô và tiện ích con, vui lòng đặt quyền vị trí thành '%1$s'"</string>
+    <string name="time_current">"Hiện tại"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"KHÔNG CÓ DỮ LIỆU"</string>
+    <string name="label_minutelyforecast">"Từng phút"</string>
+    <string name="hint_username">"Tên người dùng"</string>
+    <string name="hint_password">"Mật khẩu"</string>
+    <string name="pref_title_privacypolicy">"Chính sách bảo mật"</string>
+    <string name="pref_title_termsofservice">"Điều khoản dịch vụ"</string>
+    <string name="label_moreinfo">"Thêm thông tin"</string>
+    <string name="action_reset">"Đặt lại"</string>
+    <string name="label_count_low_short">"Một chút"</string>
+    <string name="label_count_moderate_short">"Vừa phải"</string>
+    <string name="label_count_high_short">"Cao"</string>
+    <string name="label_count_veryhigh_short">"Cao"</string>
+    <string name="werror_ratelimited">"Quá nhiều yêu cầu. Vui lòng thử lại sau vài phút"</string>
+    <string name="werror_locationnotsupported">"Vị trí này không được nhà cung cấp thời tiết này hỗ trợ"</string>
+    <string name="notification_perm_denied">"Quyền thông báo bị từ chối"</string>
+</resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- North -->
+    <string name="wind_dir_n">"U"</string>
+
+    <!-- North-North East -->
+    <string name="wind_dir_nne">"UTL"</string>
+
+    <!-- North-East -->
+    <string name="wind_dir_ne">"TL"</string>
+
+    <!-- East North-East -->
+    <string name="wind_dir_ene">"TTL"</string>
+
+    <!-- East -->
+    <string name="wind_dir_e">"T"</string>
+
+    <!-- East South-East -->
+    <string name="wind_dir_ese">"TGL"</string>
+
+    <!-- South-East -->
+    <string name="wind_dir_se">"TG"</string>
+
+    <!-- South South-East -->
+    <string name="wind_dir_sse">"TSG"</string>
+
+    <!-- South -->
+    <string name="wind_dir_s">"S"</string>
+
+    <!-- South South-West -->
+    <string name="wind_dir_ssw">"BSB"</string>
+
+    <!-- South-West -->
+    <string name="wind_dir_sw">"SB"</string>
+
+    <!-- West South-West -->
+    <string name="wind_dir_wsw">"BSB"</string>
+
+    <!-- West -->
+    <string name="wind_dir_w">"B"</string>
+
+    <!-- West North-West -->
+    <string name="wind_dir_wnw">"BBL"</string>
+
+    <!-- North-West -->
+    <string name="wind_dir_nw">"BL"</string>
+
+    <!-- North North-West -->
+    <string name="wind_dir_nnw">"UBL"</string>
+</resources>

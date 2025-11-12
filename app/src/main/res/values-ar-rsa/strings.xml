@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Feature Settings -->
+    <string name="pref_title_features">"الميزات"</string>
+    <string name="pref_summary_features">"حدد الميزات لتمكين/تعطيل"</string>
+    <string name="pref_title_feature_bgimage">"صورة الخلفية"</string>
+    <string name="pref_title_feature_forecast">"التوقعات"</string>
+    <string name="pref_title_feature_hrforecast">"توقعات كل ساعة"</string>
+    <string name="pref_title_feature_details">"تفاصيل الطقس"</string>
+    <string name="pref_title_feature_uv">"الأشعة فوق البنفسجية"</string>
+    <string name="pref_title_feature_beaufort">"مقياس بوفورت"</string>
+    <string name="pref_title_feature_aqindex">"مؤشر جودة الهواء"</string>
+    <string name="pref_title_feature_moonphase">"طور القمر"</string>
+    <string name="pref_title_feature_sunphase">"طور الشمس"</string>
+    <string name="pref_title_feature_radar">"رادار الطقس"</string>
+    <string name="pref_title_feature_locpanelimg">"صورة لوحة الموقع"</string>
+
+    <!-- Widget -->
+    <string name="widget_configure_prompt">"تكوين الودجة"</string>
+    <string name="title_activity_widget_config">"تفضيلات الودجة"</string>
+    <string name="pref_title_bgcolor">"الخلفية"</string>
+    <string name="label_color_transparent">"شفاف"</string>
+    <string name="pref_title_bgstyle">"نمط الخلفية"</string>
+    <string name="label_style_fullbg">"خلفية كاملة"</string>
+    <string name="label_style_panda">"افتراضي"</string>
+
+    <!-- Can be shortened to 'Color' -->
+    <string name="label_style_pendingcolor">"لون الطقس"</string>
+    <string name="label_style_light">"فاتح"</string>
+    <string name="label_style_dark">"داكن"</string>
+    <string name="locname_pref_title">"اسم الموقع"</string>
+    <string name="locname_pref_summary">"إخفاء اسم الموقع من الودجة"</string>
+    <string name="settingsbtn_pref_title">"زر الإعدادات"</string>
+    <string name="settingsbtn_pref_summary">"إخفاء زر الإعدادات من الودجة"</string>
+    <string name="clock_pref_title">"الساعة"</string>
+    <string name="calendar_pref_title">"التقويم"</string>
+    <string name="pref_title_fcastoption">"توقعات"</string>
+    <string name="label_fcast_full">"توقعات يومية وتوقعات كل ساعة (إذا كانت متاحة)"</string>
+    <string name="label_fcast_daily">"توقعات يومية"</string>
+    <string name="label_fcast_hourly">"توقعات كل ساعة (إذا كانت متاحة)"</string>
+    <string name="pref_category_timeanddate">"الوقت والتاريخ"</string>
+    <string name="pref_title_timezone">"المنطقة الزمنية"</string>
+    <string name="pref_timezone_summaryoff">"استخدام المنطقة الزمنية للنظام للوقت والتاريخ"</string>
+    <string name="pref_timezone_summaryon">"استخدام المنطقة الزمنية للموقع للوقت والتاريخ"</string>
+    <string name="pref_location">"الموقع"</string>
+    <string name="pref_item_gpslocation">"موقع GPS الحالي"</string>
+    <string name="prompt_setup_app_first">"يرجى إعداد التطبيق أولاً"</string>
+
+    <!-- LineView -->
+    <string name="label_series">"سلسلة"</string>
+
+    <!-- In-App Updates -->
+    <string name="not_channel_update_title">"تحديثات التطبيق"</string>
+    <string name="prompt_update_title">"تحديث SimpleWeather"</string>
+    <string name="prompt_update_available">"تحديث متاح. انقر للتثبيت"</string>
+
+    <!-- Support -->
+    <string name="pref_category_support">"الدعم"</string>
+
+    <!-- Feedback -->
+    <string name="pref_title_feedback">"ملاحظات"</string>
+    <string name="pref_summary_feedback">"أبلغ عن أي أخطاء أو اقتراحات لتحسين التطبيق"</string>
+
+    <!-- Rate / Review -->
+    <string name="pref_title_rateandreview">"قيم وراجع"</string>
+    <string name="pref_summary_rateandreview">"هل أعجبك التطبيق؟ ساعد في الدعم من خلال تقديم مراجعة"</string>
+
+    <!-- Translate -->
+    <string name="pref_title_translate">"ترجمة"</string>
+    <string name="pref_summary_translate">"ساعد في ترجمة التطبيق"</string>
+
+    <!-- Custom Color -->
+    <string name="label_color_custom">"مخصص"</string>
+    <string name="pref_title_bgcolorcode">"لون الخلفية"</string>
+    <string name="pref_title_txtcolorcode">"لون النص"</string>
+
+    <!-- SplitInstall Prompts -->
+    <string name="splitlang_start_install">"بدء تثبيت حزمة اللغة..."</string>
+    <string name="splitlang_installing">"جاري تثبيت حزمة اللغة..."</string>
+    <string name="splitlang_downloading">"جاري تنزيل حزمة اللغة..."</string>
+    <string name="splitlang_failure">"فشل تثبيت حزمة اللغة"</string>
+    <string name="pref_title_feature_charts">"الرسوم البيانية"</string>
+
+    <!-- Widget Service -->
+    <string name="message_widgetservice_running">"خدمة تحديث الأدوات قيد التشغيل"</string>
+    <string name="pref_title_foreground_service">"خدمة تحديث الأدوات"</string>
+    <string name="pref_summary_foreground_service">"تمكين الخدمة لتحديث أدوات الطقس والإشعارات"</string>
+    <string name="pref_title_ignore_batt_opts">"تجاهل تحسين البطارية"</string>
+    <string name="pref_summary_ignore_batt_opts">"تعطيل تقييد خدمة الخلفية إذا لم يتم تحديث الأدوات والإشعارات"</string>
+    <string name="pref_title_tap2switch">"إجراء النقر"</string>
+    <string name="pref_tap2switch_summaryOn">"انقر للتبديل بين التوقعات"</string>
+    <string name="pref_tap2switch_summaryOff">"فتح التطبيق"</string>
+
+    <!-- Daily Notification -->
+    <string name="not_channel_name_dailynotification">"إشعار يومي"</string>
+    <string name="pref_title_time">"الوقت"</string>
+    <string name="pref_summary_off">"إيقاف"</string>
+    <string name="pref_summary_on">"تشغيل"</string>
+
+    <!-- Precipitation Notification -->
+    <string name="not_channel_name_precipnotification">"إشعار هطول الأمطار"</string>
+
+    <!-- Example: 80% chance of rain in 2 hours
+(%1$d) -> Percentage | (%2$s) -> Time in minutes or hours -->
+    <string name="precipitation_text_format">"%1$d%% فرصة هطول أمطار في %2$s"</string>
+    <string name="precipitation_nexthour_text_format">"%1$d%% فرصة هطول أمطار في الساعة القادمة"</string>
+
+    <!-- Weather Summary or Weather Overview -->
+    <string name="pref_title_feature_summary">"ملخص الطقس"</string>
+    <string name="prompt_max_locations_allowed">"الحد الأقصى المسموح به هو خمسة مواقع"</string>
+    <string name="pref_title_widgetgraphtype">"نوع التوقع"</string>
+
+    <!-- Widget Labels -->
+    <string name="label_widget_weather_1x1">"الطقس (1x1)"</string>
+    <string name="label_widget_weather_clock_2x2">"الطقس + الساعة (2x2)"</string>
+    <string name="label_widget_weather_4x1">"الطقس (4x1)"</string>
+    <string name="label_widget_weather_clock_4x2">"الطقس + الساعة (4x2)"</string>
+    <string name="label_widget_weather_date_4x1">"الطقس + التاريخ (4x1)"</string>
+    <string name="label_widget_weather_2x2">"الطقس (2x2)"</string>
+    <string name="label_widget_weather_4x2">"الطقس (4x2)"</string>
+    <string name="label_widget_weather_4x4">"الطقس (4x4)"</string>
+    <string name="label_widget_weather_clock_4x3">"الطقس + الساعة (4x3)"</string>
+    <string name="label_widget_weather_3x1">"الطقس (3x1)"</string>
+    <string name="label_widget_weather_forecast_4x2">"توقعات الطقس (4x2)"</string>
+    <string name="widget_loading_prompt">"جارٍ التحميل..."</string>
+    <string name="refreshbtn_pref_title">"زر التحديث"</string>
+    <string name="refreshbtn_pref_summary">"إخفاء زر التحديث من الودجة"</string>
+    <string name="pref_category_customsize">"حجم الرمز والنص"</string>
+    <string name="pref_title_textsize">"حجم النص"</string>
+    <string name="pref_title_iconsize">"حجم الرمز"</string>
+    <string name="precipitation_minutely_starting_text_format">"سيبدأ المطر في حوالي %1$s"</string>
+    <string name="precipitation_minutely_stopping_text_format">"سيتوقف المطر في حوالي %1$s"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"الحد الأدنى لخطورة التنبيه"</string>
+    <string name="alertsev_all">"بلا (عرض جميع التنبيهات)"</string>
+    <string name="alertsev_moderate">"معتدل"</string>
+    <string name="alertsev_severe">"شديد"</string>
+    <string name="alertsev_extreme">"بالغ"</string>
+    <string name="pref_title_txtshadow">"ظل النص"</string>
+    <string name="pref_summary_txtshadow">"إضافة طبقة الظل إلى النص"</string>
+    <string name="precipitation_likely_text_format">"من المحتمل هطول الأمطار حوالي %1$s (احتمال %2$d٪)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"من المتوقع أن يبدأ المطر حوالي %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"من المتوقع أن يتوقف المطر حوالي %1$s"</string>
+</resources>

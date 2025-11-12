@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Feature Settings -->
+    <string name="pref_title_features">"Tính năng"</string>
+    <string name="pref_summary_features">"Chọn các tính năng để bật/tắt"</string>
+    <string name="pref_title_feature_bgimage">"Hình nền"</string>
+    <string name="pref_title_feature_forecast">"Dự báo"</string>
+    <string name="pref_title_feature_hrforecast">"Dự báo theo giờ"</string>
+    <string name="pref_title_feature_details">"Chi tiết thời tiết"</string>
+    <string name="pref_title_feature_uv">"UV"</string>
+    <string name="pref_title_feature_beaufort">"Beaufort"</string>
+    <string name="pref_title_feature_aqindex">"Chỉ số chất lượng không khí"</string>
+    <string name="pref_title_feature_moonphase">"Pha Mặt Trăng"</string>
+    <string name="pref_title_feature_sunphase">"Pha Mặt Trời"</string>
+    <string name="pref_title_feature_radar">"Radar thời tiết"</string>
+    <string name="pref_title_feature_locpanelimg">"Ảnh bảng vị trí"</string>
+
+    <!-- Widget -->
+    <string name="widget_configure_prompt">"Cấu hình tiện ích"</string>
+    <string name="title_activity_widget_config">"Tùy chọn tiện ích"</string>
+    <string name="pref_title_bgcolor">"Nền"</string>
+    <string name="label_color_transparent">"Trong suốt"</string>
+    <string name="pref_title_bgstyle">"Kiểu nền"</string>
+    <string name="label_style_fullbg">"Nền đầy đủ"</string>
+    <string name="label_style_panda">"Mặc định"</string>
+
+    <!-- Can be shortened to 'Color' -->
+    <string name="label_style_pendingcolor">"Màu thời tiết"</string>
+    <string name="label_style_light">"Sáng"</string>
+    <string name="label_style_dark">"Tối"</string>
+    <string name="locname_pref_title">"Tên địa điểm"</string>
+    <string name="locname_pref_summary">"Ẩn tên vị trí khỏi tiện ích"</string>
+    <string name="settingsbtn_pref_title">"Nút cài đặt"</string>
+    <string name="settingsbtn_pref_summary">"Ẩn nút cài đặt khỏi tiện ích"</string>
+    <string name="clock_pref_title">"Đồng hồ"</string>
+    <string name="calendar_pref_title">"Lịch"</string>
+    <string name="pref_title_fcastoption">"Dự báo"</string>
+    <string name="label_fcast_full">"Dự báo hàng ngày và Dự báo theo giờ (nếu có)"</string>
+    <string name="label_fcast_daily">"Dự báo hàng ngày"</string>
+    <string name="label_fcast_hourly">"Dự báo theo giờ (nếu có)"</string>
+    <string name="pref_category_timeanddate">"Thời gian và ngày tháng"</string>
+    <string name="pref_title_timezone">"Múi giờ"</string>
+    <string name="pref_timezone_summaryoff">"Sử dụng múi giờ hệ thống cho thời gian và ngày tháng"</string>
+    <string name="pref_timezone_summaryon">"Sử dụng múi giờ vị trí cho thời gian và ngày tháng"</string>
+    <string name="pref_location">"Vị trí"</string>
+    <string name="pref_item_gpslocation">"Vị trí GPS hiện tại"</string>
+    <string name="prompt_setup_app_first">"Vui lòng thiết lập ứng dụng trước"</string>
+
+    <!-- LineView -->
+    <string name="label_series">"Chuỗi"</string>
+
+    <!-- In-App Updates -->
+    <string name="not_channel_update_title">"Cập nhật ứng dụng"</string>
+    <string name="prompt_update_title">"Cập nhật SimpleWeather"</string>
+    <string name="prompt_update_available">"Có bản cập nhật. Nhấn để cài đặt"</string>
+
+    <!-- Support -->
+    <string name="pref_category_support">"Hỗ trợ"</string>
+
+    <!-- Feedback -->
+    <string name="pref_title_feedback">"Phản hồi"</string>
+    <string name="pref_summary_feedback">"Báo cáo bất kỳ lỗi hoặc đề xuất nào để cải thiện ứng dụng"</string>
+
+    <!-- Rate / Review -->
+    <string name="pref_title_rateandreview">"Đánh giá và Nhận xét"</string>
+    <string name="pref_summary_rateandreview">"Bạn thích ứng dụng này? Hãy giúp hỗ trợ bằng cách đưa ra đánh giá"</string>
+
+    <!-- Translate -->
+    <string name="pref_title_translate">"Dịch"</string>
+    <string name="pref_summary_translate">"Giúp dịch ứng dụng"</string>
+
+    <!-- Custom Color -->
+    <string name="label_color_custom">"Tùy chỉnh"</string>
+    <string name="pref_title_bgcolorcode">"Màu nền"</string>
+    <string name="pref_title_txtcolorcode">"Màu chữ"</string>
+
+    <!-- SplitInstall Prompts -->
+    <string name="splitlang_start_install">"Bắt đầu cài đặt gói ngôn ngữ…"</string>
+    <string name="splitlang_installing">"Đang cài đặt gói ngôn ngữ…"</string>
+    <string name="splitlang_downloading">"Đang tải xuống gói ngôn ngữ…"</string>
+    <string name="splitlang_failure">"Không cài đặt được gói ngôn ngữ"</string>
+    <string name="pref_title_feature_charts">"Biểu đồ"</string>
+
+    <!-- Widget Service -->
+    <string name="message_widgetservice_running">"Dịch vụ cập nhật widget đang chạy"</string>
+    <string name="pref_title_foreground_service">"Dịch vụ cập nhật Widget"</string>
+    <string name="pref_summary_foreground_service">"Bật dịch vụ để cập nhật các widget và thông báo thời tiết"</string>
+    <string name="pref_title_ignore_batt_opts">"Bỏ qua Tối ưu hóa Pin"</string>
+    <string name="pref_summary_ignore_batt_opts">"Tắt hạn chế dịch vụ nền nếu các widget và thông báo không cập nhật"</string>
+    <string name="pref_title_tap2switch">"Hành động chạm"</string>
+    <string name="pref_tap2switch_summaryOn">"Chạm để chuyển đổi dự báo"</string>
+    <string name="pref_tap2switch_summaryOff">"Mở ứng dụng"</string>
+
+    <!-- Daily Notification -->
+    <string name="not_channel_name_dailynotification">"Thông báo hàng ngày"</string>
+    <string name="pref_title_time">"Thời gian"</string>
+    <string name="pref_summary_off">"Tắt"</string>
+    <string name="pref_summary_on">"Bật"</string>
+
+    <!-- Precipitation Notification -->
+    <string name="not_channel_name_precipnotification">"Thông báo lượng mưa"</string>
+
+    <!-- Example: 80% chance of rain in 2 hours
+(%1$d) -> Percentage | (%2$s) -> Time in minutes or hours -->
+    <string name="precipitation_text_format">"%1$d%% khả năng có mưa ở %2$s"</string>
+    <string name="precipitation_nexthour_text_format">"%1$d%% khả năng có mưa trong giờ tới"</string>
+
+    <!-- Weather Summary or Weather Overview -->
+    <string name="pref_title_feature_summary">"Tóm tắt thời tiết"</string>
+    <string name="prompt_max_locations_allowed">"Tối đa năm vị trí được phép"</string>
+    <string name="pref_title_widgetgraphtype">"Loại dự báo"</string>
+
+    <!-- Widget Labels -->
+    <string name="label_widget_weather_1x1">"Thời tiết (1x1)"</string>
+    <string name="label_widget_weather_clock_2x2">"Thời tiết + Đồng hồ (2x2)"</string>
+    <string name="label_widget_weather_4x1">"Thời tiết (4x1)"</string>
+    <string name="label_widget_weather_clock_4x2">"Thời tiết + Đồng hồ (4x2)"</string>
+    <string name="label_widget_weather_date_4x1">"Thời tiết + Ngày (4x1)"</string>
+    <string name="label_widget_weather_2x2">"Thời tiết (2x2)"</string>
+    <string name="label_widget_weather_4x2">"Thời tiết (4x2)"</string>
+    <string name="label_widget_weather_4x4">"Thời tiết (4x4)"</string>
+    <string name="label_widget_weather_clock_4x3">"Thời tiết + Đồng hồ (4x3)"</string>
+    <string name="label_widget_weather_3x1">"Thời tiết (3x1)"</string>
+    <string name="label_widget_weather_forecast_4x2">"Dự báo thời tiết (4x2)"</string>
+    <string name="widget_loading_prompt">"Đang tải..."</string>
+    <string name="refreshbtn_pref_title">"Nút làm mới"</string>
+    <string name="refreshbtn_pref_summary">"Ẩn nút làm mới khỏi tiện ích"</string>
+    <string name="pref_category_customsize">"Kích thước biểu tượng và văn bản"</string>
+    <string name="pref_title_textsize">"Kích thước văn bản"</string>
+    <string name="pref_title_iconsize">"Kích thước biểu tượng"</string>
+    <string name="precipitation_minutely_starting_text_format">"Trời sẽ bắt đầu mưa trong khoảng %1$s"</string>
+    <string name="precipitation_minutely_stopping_text_format">"Trời sẽ tạnh mưa trong khoảng %1$s"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Mức độ nghiêm trọng cảnh báo tối thiểu"</string>
+    <string name="alertsev_all">"Không có (Hiển thị tất cả cảnh báo)"</string>
+    <string name="alertsev_moderate">"Vừa phải"</string>
+    <string name="alertsev_severe">"Nghiêm trọng"</string>
+    <string name="alertsev_extreme">"Cực đoan"</string>
+    <string name="pref_title_txtshadow">"Bóng đổ văn bản"</string>
+    <string name="pref_summary_txtshadow">"Thêm lớp bóng vào văn bản"</string>
+    <string name="precipitation_likely_text_format">"Có khả năng mưa vào khoảng %1$s (cơ hội %2$d%%)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Dự kiến trời sẽ bắt đầu mưa vào khoảng %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Dự kiến trời sẽ tạnh mưa vào khoảng %1$s"</string>
+</resources>

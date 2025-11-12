@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Masukkan Lokasi"</string>
+    <string name="api_label">"Penyedia Cuaca"</string>
+    <string name="key_hint">"Kunci Penyedia"</string>
+    <string name="label_gpsfollow">"Lokasi saat ini"</string>
+    <string name="label_getstarted">"Mulai"</string>
+    <string name="setup_welcome_prompt">"Selamat Datang di SimpleWeather"</string>
+    <string name="setup_welcome_tagline_prompt">"Hanya aplikasi cuaca sederhana"</string>
+    <string name="setup_location_prompt">"Tambahkan lokasi untuk memulai"</string>
+    <string name="setup_preferences_prompt">"Sesuaikan pengaturan Anda di bawah ini"</string>
+    <string name="label_next">"Selanjutnya"</string>
+    <string name="label_back">"Kembali"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Cuaca"</string>
+    <string name="action_settings">"Pengaturan"</string>
+    <string name="action_retry">"Coba Lagi"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Detail"</string>
+    <string name="label_humidity">"Kelembaban"</string>
+    <string name="label_pressure">"Tekanan"</string>
+    <string name="label_visibility">"Visibilitas"</string>
+    <string name="label_feelslike">"Terasa Seperti"</string>
+    <string name="label_wind">"Angin"</string>
+    <string name="label_forecast">"Prakiraan"</string>
+    <string name="label_condition">"Kondisi"</string>
+    <string name="label_sunriseset">"Matahari Terbit / Terbenam"</string>
+    <string name="label_sunrise">"Matahari Terbit"</string>
+    <string name="label_sunset">"Matahari Terbenam"</string>
+    <string name="label_hourlyforecast">"Per Jam"</string>
+    <string name="label_precipitation">"Presipitasi"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"Kemungkinan"</string>
+    <string name="label_cloudiness">"Kekeruhan"</string>
+    <string name="label_qpf_rain">"Hujan"</string>
+    <string name="label_qpf_snow">"Salju"</string>
+    <string name="credit_prefix">"Data dari"</string>
+    <string name="attrib_prefix">"Foto oleh"</string>
+    <string name="label_high">"Tertinggi"</string>
+    <string name="label_low">"Terendah"</string>
+    <string name="label_dewpoint">"Titik Embun"</string>
+    <string name="label_moonrise">"Terbit Bulan"</string>
+    <string name="label_moonset">"Terbenam Bulan"</string>
+    <string name="label_moonphase">"Fase Bulan"</string>
+    <string name="label_beaufort">"Beaufort"</string>
+    <string name="label_uv">"Indeks UV"</string>
+    <string name="label_airquality">"Indeks Kualitas Udara"</string>
+    <string name="label_airquality_short">"Kualitas Udara"</string>
+    <string name="label_radar">"Radar"</string>
+    <string name="label_afternoon">"Siang"</string>
+    <string name="label_eve">"Malam"</string>
+    <string name="label_morning">"Pagi"</string>
+    <string name="label_night">"Malam"</string>
+    <string name="label_temp">"Suhu"</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Cuaca"</string>
+    <string name="label_nav_alerts">"Peringatan"</string>
+    <string name="label_nav_locations">"Lokasi"</string>
+    <string name="title_activity_settings">"Pengaturan"</string>
+    <string name="title_fragment_alerts">"Peringatan Cuaca Ekstrem"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"Umum"</string>
+    <string name="pref_category_version">"Versi"</string>
+    <string name="pref_title_units">"Satuan"</string>
+    <string name="pref_summary_fahrenheit">"Tampilkan satuan dalam Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Tampilkan satuan dalam Celsius (°C)"</string>
+    <string name="pref_title_about">"Tentang"</string>
+    <string name="pref_title_about_app">"Tentang SimpleWeather"</string>
+    <string name="pref_title_credits">"Kredit"</string>
+    <string name="pref_title_oslibs">"Pustaka Sumber Terbuka"</string>
+    <string name="pref_category_providers">"Penyedia Data"</string>
+    <string name="pref_summary_currentlocation">"Izinkan akses ke lokasi saat ini melalui GPS"</string>
+    <string name="pref_summary_apikey">"Masukkan Kunci Penyedia yang diperlukan untuk %1$s"</string>
+    <string name="message_enter_apikey">"Silakan masukkan Kunci Penyedia"</string>
+    <string name="message_keyverified">"Kunci Terverifikasi"</string>
+    <string name="message_keyinvalid">"Kunci Tidak Valid"</string>
+    <string name="pref_title_onnotification">"Notifikasi Cuaca"</string>
+    <string name="pref_summary_notification">"Tampilkan notifikasi persisten yang menampilkan kondisi cuaca saat ini"</string>
+    <string name="pref_title_api">"Penyedia Cuaca"</string>
+    <string name="pref_category_notification">"Notifikasi"</string>
+    <string name="pref_title_notificationicon">"Ikon Notifikasi"</string>
+    <string name="pref_title_alerts">"Peringatan Cuaca"</string>
+    <string name="pref_summary_alerts">"Tampilkan notifikasi untuk peringatan cuaca"</string>
+    <string name="pref_summary_alerts_disabled">"Peringatan cuaca tidak didukung oleh penyedia cuaca ini"</string>
+    <string name="pref_title_apiregister">"Buat akun"</string>
+    <string name="pref_summary_apiregister">"Buat akun untuk mendaftar kunci Penyedia"</string>
+    <string name="error_message_weather_region_unsupported">"Negara tidak didukung oleh penyedia cuaca ini"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Tambahkan Lokasi"</string>
+    <string name="action_editmode">"Edit"</string>
+    <string name="label_currentlocation">"Lokasi Saat Ini"</string>
+    <string name="label_favoritelocations">"Lokasi Favorit"</string>
+    <string name="error_location_denied">"Akses lokasi ditolak"</string>
+    <string name="error_retrieve_location">"Tidak dapat memperoleh lokasi"</string>
+    <string name="error_enable_location_services">"Layanan Lokasi dinonaktifkan. Harap aktifkan di Pengaturan"</string>
+    <string name="error_noresults">"Tidak ada hasil yang ditemukan"</string>
+    <string name="label_fab_add_location">"Tambahkan lokasi"</string>
+    <string name="message_locationremoved">"Lokasi dihapus"</string>
+    <string name="message_needfavorite">"Harus memiliki setidaknya satu lokasi favorit"</string>
+    <string name="undo">"Urungkan"</string>
+    <string name="delete">"Hapus"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Izinkan akses untuk memperbarui lokasi di latar belakang untuk notifikasi dan widget"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Tidak dapat memuat data cuaca"</string>
+    <string name="werror_networkerror">"Kesalahan Koneksi Jaringan"</string>
+    <string name="werror_invalidkey">"Kunci Penyedia Tidak Valid"</string>
+    <string name="werror_querynotfound">"Tidak ada kota yang cocok dengan kueri pencarian Anda"</string>
+    <string name="werror_unknown">"Terjadi kesalahan yang tidak diketahui"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Interval Pembaruan"</string>
+    <string name="refresh_60min">"1 jam"</string>
+    <string name="refresh_2hrs">"2 jam"</string>
+    <string name="refresh_3hrs">"3 jam"</string>
+    <string name="refresh_6hrs">"6 jam"</string>
+    <string name="refresh_12hrs">"12 jam"</string>
+    <string name="update_prefix">"Diperbarui pada"</string>
+    <string name="update_prefix_day">"Diperbarui pukul"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Suhu"</string>
+    <string name="notificationicon_condition">"Kondisi Cuaca"</string>
+    <string name="not_channel_name_weather">"Notifikasi Cuaca"</string>
+    <string name="not_channel_desc_weather">"Notifikasi cuaca"</string>
+    <string name="not_channel_name_alerts">"Peringatan Cuaca"</string>
+    <string name="not_channel_desc_alerts">"Notifikasi untuk peringatan cuaca"</string>
+    <string name="not_channel_name_general">"Notifikasi layanan"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"%1$dd yang lalu"</string>
+    <string name="datetime_hr_ago">"%1$dh yang lalu"</string>
+    <string name="datetime_min_ago">"%1$dm yang lalu"</string>
+    <string name="datetime_sec_ago">"%1$ds yang lalu"</string>
+    <string name="datetime_validuntil">"Berlaku hingga"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Kunci Penyedia Pribadi"</string>
+    <string name="pref_summary_personalkey">"Gunakan kunci penyedia cuaca pribadi"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Tema"</string>
+    <string name="userthememode_default">"Default Sistem"</string>
+    <string name="userthememode_dark">"Gelap"</string>
+    <string name="userthememode_black">"Gelap (AMOLED)"</string>
+    <string name="userthememode_light">"Terang"</string>
+    <string name="summary_default">"Bawaan"</string>
+    <string name="action_refresh">"Segarkan"</string>
+    <string name="label_windgust">"Hembusan Angin"</string>
+    <string name="pref_title_language">"Bahasa"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Suhu"</string>
+    <string name="label_speed">"Kecepatan"</string>
+    <string name="label_distance">"Jarak"</string>
+    <string name="pref_title_resetunits">"Atur ulang satuan ke nilai default"</string>
+    <string name="not_title_weather_update">"Memperbarui cuaca…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Ikon"</string>
+    <string name="refresh_30min">"30 menit"</string>
+    <string name="label_day">"Hari"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Jumlah Serbuk Sari"</string>
+    <string name="label_pollen_tree">"Pohon"</string>
+    <string name="label_tree_pollen">"Serbuk Sari Pohon"</string>
+    <string name="label_pollen_grass">"Rumput"</string>
+    <string name="label_grass_pollen">"Serbuk Sari Rumput"</string>
+    <string name="label_pollen_ragweed">"Ragweed"</string>
+    <string name="label_ragweed_pollen">"Serbuk Sari Ragweed"</string>
+    <string name="label_count_low">"Rendah"</string>
+    <string name="label_count_moderate">"Sedang"</string>
+    <string name="label_count_high">"Tinggi"</string>
+    <string name="label_count_veryhigh">"Sangat tinggi"</string>
+    <string name="bg_location_permission_rationale_settings">"Untuk memperbarui lokasi di latar belakang untuk notifikasi dan widget, harap atur izin lokasi ke '%1$s'"</string>
+    <string name="prompt_location_not_set">"Lokasi belum diatur. Silakan tambahkan lokasi"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Akses Lokasi Latar Belakang"</string>
+    <string name="wear_bg_location_permission_rationale">"Izinkan akses untuk memperbarui lokasi di latar belakang untuk petak dan komplikasi"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"Untuk memperbarui lokasi di latar belakang untuk petak dan komplikasi, silakan atur izin lokasi ke '%1$s'"</string>
+    <string name="time_current">"Saat ini"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"TIDAK ADA DATA"</string>
+    <string name="label_minutelyforecast">"Per Menit"</string>
+    <string name="hint_username">"Nama Pengguna"</string>
+    <string name="hint_password">"Kata Sandi"</string>
+    <string name="pref_title_privacypolicy">"Kebijakan pribadi"</string>
+    <string name="pref_title_termsofservice">"Ketentuan Layanan"</string>
+    <string name="label_moreinfo">"Info Lebih Lanjut"</string>
+    <string name="action_reset">"Atur Ulang"</string>
+    <string name="label_count_low_short">"Rendah"</string>
+    <string name="label_count_moderate_short">"Sedang"</string>
+    <string name="label_count_high_short">"Tinggi"</string>
+    <string name="label_count_veryhigh_short">"Tinggi"</string>
+    <string name="werror_ratelimited">"Terlalu banyak permintaan. Silakan coba lagi setelah beberapa menit"</string>
+    <string name="werror_locationnotsupported">"Lokasi ini tidak didukung oleh penyedia cuaca ini"</string>
+    <string name="notification_perm_denied">"Izin pemberitahuan ditolak"</string>
+</resources>

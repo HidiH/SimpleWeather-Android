@@ -109,8 +109,6 @@
     <!-- Weather Summary or Weather Overview -->
     <string name="pref_title_feature_summary">"Weather Summary"</string>
     <string name="prompt_max_locations_allowed">"Maximum of five locations allowed"</string>
-
-    <!-- Forecast Graphs -->
     <string name="pref_title_widgetgraphtype">"Forecast Type"</string>
 
     <!-- Widget Labels -->

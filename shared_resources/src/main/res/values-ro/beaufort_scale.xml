@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="beaufort_0">"Calm"</string>
+    <string name="beaufort_1">"Adiere slabă"</string>
+    <string name="beaufort_2">"Briză ușoară"</string>
+    <string name="beaufort_3">"Briză blândă"</string>
+    <string name="beaufort_4">"Briză moderată"</string>
+    <string name="beaufort_5">"Briză proaspătă"</string>
+    <string name="beaufort_6">"Briză puternică"</string>
+    <string name="beaufort_7">"Aproape furtună"</string>
+    <string name="beaufort_8">"Furtună"</string>
+    <string name="beaufort_9">"Furtună puternică"</string>
+    <string name="beaufort_10">"Furtună"</string>
+    <string name="beaufort_11">"Furtună violentă"</string>
+    <string name="beaufort_12">"Uragan"</string>
+</resources>

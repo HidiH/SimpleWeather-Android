@@ -193,6 +193,9 @@
     <string name="wear_bg_location_permission_rationale">"Allow access to update location in the background for tiles and complications"</string>
     <string name="wear_bg_location_permission_rationale_settings">"To update location in the background for tiles and complications, please set location permission to '%1$s'"</string>
     <string name="time_current">"Current"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"NO DATA"</string>
     <string name="label_minutelyforecast">"Minutely"</string>
     <string name="hint_username">"Username"</string>
     <string name="hint_password">"Password"</string>
@@ -207,5 +210,4 @@
     <string name="werror_ratelimited">"Too many requests. Please try again after a few minutes"</string>
     <string name="werror_locationnotsupported">"Location not supported by this weather provider"</string>
     <string name="notification_perm_denied">"Notification permission denied"</string>
-    <string name="label_nodata">NO DATA</string>
 </resources>

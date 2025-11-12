@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moonphase_new">"Bulan Baru"</string>
+    <string name="moonphase_waxcrescent">"Bulan sabit muda"</string>
+    <string name="moonphase_firstqtr">"Kuartal pertama"</string>
+    <string name="moonphase_waxgibbous">"Bulan hampir penuh"</string>
+    <string name="moonphase_full">"Bulan purnama"</string>
+    <string name="moonphase_wangibbous">"Bulan hampir penuh"</string>
+    <string name="moonphase_lastqtr">"Kuartal terakhir"</string>
+    <string name="moonphase_wancrescent">"Bulan sabit tua"</string>
+    <string name="moonphase_new_short">"Baru"</string>
+    <string name="moonphase_waxcrescent_short">"Muda"</string>
+    <string name="moonphase_firstqtr_short">"K pertama"</string>
+    <string name="moonphase_waxgibbous_short">"Muda"</string>
+    <string name="moonphase_full_short">"Penuh"</string>
+    <string name="moonphase_wangibbous_short">"Tua"</string>
+    <string name="moonphase_lastqtr_short">"K akhir"</string>
+    <string name="moonphase_wancrescent_short">"Tua"</string>
+</resources>

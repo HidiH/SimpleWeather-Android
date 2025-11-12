@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"Telefondan Kur"</string>
+    <string name="action_changelocation">"Konumu Değiştir"</string>
+    <string name="action_openonphone">"Telefonda Aç"</string>
+    <string name="message_openedonphone">"Telefonda açıldı…"</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"Cihaz bağlı değil"</string>
+    <string name="status_connecting">"Bağlanıyor…"</string>
+    <string name="status_notinstalled">"Uygulama cihaza yüklü değil"</string>
+    <string name="status_connected">"Bağlandı"</string>
+    <string name="status_node_unavailable">"Cihaz bağlı değil veya uygulama cihaza yüklü değil…"</string>
+    <string name="status_node_notsupported">"Bağlı cihaz desteklenmiyor"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"Telefonunuzdan/bağlı cihazınızdan veri kurmak ve senkronize etmek istiyor musunuz?"</string>
+    <string name="message_gettingstatus">"Bağlantı durumu alınıyor…"</string>
+    <string name="error_notinstalled">"Uygulamayı cihaza yükleyin ve tekrar deneyin"</string>
+    <string name="message_continueondevice">"Bağlı cihazda kurulum işlemine devam et"</string>
+    <string name="message_retrievingdata">"Bağlı cihazdan veri alınıyor…"</string>
+    <string name="error_syncing">"Veri senkronize edilemedi"</string>
+    <string name="message_settingsretrieved">"Ayarlar verileri alındı…"</string>
+    <string name="message_locationretrieved">"Konum verileri alındı…"</string>
+    <string name="message_weatherretrieved">"Hava durumu verileri alındı…"</string>
+    <string name="message_synccompleted">"Veri senkronizasyonu başarılı"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"Kapalı"</string>
+    <string name="pref_sync_deviceonly">"Yalnızca cihazdan senkronize et"</string>
+    <string name="pref_sync_whenavailable">"Cihazdan senkronize et (mümkün olduğunda)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"Senkronize et"</string>
+    <string name="pref_sync_title">"Veri Senkronizasyonu"</string>
+    <string name="pref_connectionstatus_title">"Bağlantı Durumu"</string>
+    <string name="message_disconnected">"Bağlantı Kesildi"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"Şu Anki Hava Durumu"</string>
+    <string name="tile_label_weather_forecast">"Hava Durumu + Tahmin"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"Hava Durumu (En Yüksek / En Düşük)"</string>
+    <string name="complication_label_weather_currentlocation">"Hava durumu (geçerli konum)"</string>
+    <string name="tile_label_weather_hrforecast">"Hava Durumu + Saatlik Tahmin"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Hava Durumu (Şu Anki Konum + Hissedilen)"</string>
+    <string name="title_tile_config">"Kartı yapılandırma"</string>
+    <string name="message_reset_to_default">"Varsayılana sıfırlayalım mı?"</string>
+    <string name="pref_title_detailstileeditor">"Kart editörü"</string>
+</resources>

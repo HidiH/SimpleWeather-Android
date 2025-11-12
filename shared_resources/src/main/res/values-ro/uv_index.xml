@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="uv_0">"Scăzut"</string>
+    <string name="uv_3">"Moderat"</string>
+    <string name="uv_6">"Ridicat"</string>
+    <string name="uv_8">"Foarte ridicat"</string>
+    <string name="uv_11">"Extrem"</string>
+</resources>

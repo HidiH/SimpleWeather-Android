@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"Nustatyti iš telefono"</string>
+    <string name="action_changelocation">"Pakeisti vietą"</string>
+    <string name="action_openonphone">"Atidaryti telefone"</string>
+    <string name="message_openedonphone">"Atidaryta telefone…"</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"Įrenginys neprijungtas"</string>
+    <string name="status_connecting">"Jungiamasi…"</string>
+    <string name="status_notinstalled">"Programa neįdiegta įrenginyje"</string>
+    <string name="status_connected">"Prisijungta"</string>
+    <string name="status_node_unavailable">"Įrenginys neprijungtas arba programa neįdiegta įrenginyje…"</string>
+    <string name="status_node_notsupported">"Prijungtas įrenginys nepalaikomas"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"Ar norite nustatyti ir sinchronizuoti duomenis iš savo telefono/prijungto įrenginio?"</string>
+    <string name="message_gettingstatus">"Gaunama prisijungimo būsena…"</string>
+    <string name="error_notinstalled">"Įdiekite programą į įrenginį ir bandykite dar kartą"</string>
+    <string name="message_continueondevice">"Tęsti nustatymą prijungtame įrenginyje"</string>
+    <string name="message_retrievingdata">"Gaunami duomenys iš prijungto įrenginio…"</string>
+    <string name="error_syncing">"Nepavyko sinchronizuoti duomenų"</string>
+    <string name="message_settingsretrieved">"Gauti nustatymų duomenys…"</string>
+    <string name="message_locationretrieved">"Gauti vietos duomenys…"</string>
+    <string name="message_weatherretrieved">"Gauti orų duomenys…"</string>
+    <string name="message_synccompleted">"Duomenų sinchronizavimas sėkmingas"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"Išjungta"</string>
+    <string name="pref_sync_deviceonly">"Sinchronizuoti tik iš įrenginio"</string>
+    <string name="pref_sync_whenavailable">"Sinchronizuoti iš įrenginio (kai yra)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"Sinchronizuoti"</string>
+    <string name="pref_sync_title">"Duomenų sinchronizavimas"</string>
+    <string name="pref_connectionstatus_title">"Ryšio būsena"</string>
+    <string name="message_disconnected">"Atsijungęs"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"Dabartinis oras"</string>
+    <string name="tile_label_weather_forecast">"Oras + Prognozė"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"Oras (Aukščiausia / Žemiausia)"</string>
+    <string name="complication_label_weather_currentlocation">"Orai (dabartinė vieta)"</string>
+    <string name="tile_label_weather_hrforecast">"Orai + valandinė prognozė"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Oras (Dabartinė vietovė + Juntama kaip)"</string>
+    <string name="title_tile_config">"Konfigūruoti Išklotinė"</string>
+    <string name="message_reset_to_default">"Iš naujo nustatyti numatytuosius nustatymus?"</string>
+    <string name="pref_title_detailstileeditor">"Išklotinė redaktorius"</string>
+</resources>

@@ -152,9 +152,6 @@
     <!-- Fuzzy -->
     <string name="prompt_max_locations_allowed">"最多允许五个位置"</string>
 
-    <!-- Forecast Graphs -->
-    <!-- Fuzzy -->
-
     <!-- Fuzzy -->
     <string name="pref_title_widgetgraphtype">"预测类型"</string>
 

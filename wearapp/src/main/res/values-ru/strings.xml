@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"Настройка с телефона"</string>
+    <string name="action_changelocation">"Изменить местоположение"</string>
+    <string name="action_openonphone">"Открыть на телефоне"</string>
+    <string name="message_openedonphone">"Открыто на телефоне…"</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"Устройство не подключено"</string>
+    <string name="status_connecting">"Подключение…"</string>
+    <string name="status_notinstalled">"Приложение не установлено на устройстве"</string>
+    <string name="status_connected">"Подключено"</string>
+    <string name="status_node_unavailable">"Устройство не подключено или приложение не установлено на устройстве…"</string>
+    <string name="status_node_notsupported">"Подключенное устройство не поддерживается"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"Вы хотите настроить и синхронизировать данные с вашего телефона/подключенного устройства?"</string>
+    <string name="message_gettingstatus">"Получение статуса подключения…"</string>
+    <string name="error_notinstalled">"Установите приложение на устройство и попробуйте снова"</string>
+    <string name="message_continueondevice">"Продолжить настройку на подключенном устройстве"</string>
+    <string name="message_retrievingdata">"Получение данных с подключенного устройства…"</string>
+    <string name="error_syncing">"Не удалось синхронизировать данные"</string>
+    <string name="message_settingsretrieved">"Получены данные настроек…"</string>
+    <string name="message_locationretrieved">"Получены данные о местоположении…"</string>
+    <string name="message_weatherretrieved">"Получены данные о погоде…"</string>
+    <string name="message_synccompleted">"Синхронизация данных выполнена успешно"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"Выкл."</string>
+    <string name="pref_sync_deviceonly">"Синхронизация только с устройства"</string>
+    <string name="pref_sync_whenavailable">"Синхронизация с устройства (когда доступно)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"Синхронизация"</string>
+    <string name="pref_sync_title">"Синхронизация данных"</string>
+    <string name="pref_connectionstatus_title">"Статус соединения"</string>
+    <string name="message_disconnected">"Отключено"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"Текущая погода"</string>
+    <string name="tile_label_weather_forecast">"Погода + прогноз"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"Погода (Макс. / Мин.)"</string>
+    <string name="complication_label_weather_currentlocation">"Погода (текущее местоположение)"</string>
+    <string name="tile_label_weather_hrforecast">"Погода + почасовой прогноз"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Погода (Текущее местоположение + Ощущается как)"</string>
+    <string name="title_tile_config">"Настройте карту"</string>
+    <string name="message_reset_to_default">"Сбросить настройки до значений по умолчанию?"</string>
+    <string name="pref_title_detailstileeditor">"Редактор карт"</string>
+</resources>
