@@ -19,7 +19,6 @@ import androidx.core.os.LocaleListCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.work.Configuration
-import com.google.android.material.color.DynamicColors
 import com.thewizrd.common.CommonModule
 import com.thewizrd.common.commonModule
 import com.thewizrd.common.preferences.SettingsListener
@@ -29,6 +28,7 @@ import com.thewizrd.shared_resources.SharedModule
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.sharedDeps
+import com.thewizrd.shared_resources.utils.ColorMode
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
@@ -37,6 +37,8 @@ import com.thewizrd.simpleweather.extras.attachToBaseContext
 import com.thewizrd.simpleweather.extras.initializeExtras
 import com.thewizrd.simpleweather.extras.initializeFirebase
 import com.thewizrd.simpleweather.receivers.CommonActionsBroadcastReceiver
+import com.thewizrd.simpleweather.theming.DynamicColorsHelper
+import com.thewizrd.simpleweather.theming.dynamicColorsHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -101,6 +103,8 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
             commonModule = object : CommonModule() {
                 override val context = appLib.context // keep same context as applib
             }
+
+            dynamicColorsHelper = DynamicColorsHelper(this)
 
             registerCommonReceiver()
             initializeExtras()
@@ -179,7 +183,12 @@ class App : Application(), ActivityLifecycleCallbacks, Configuration.Provider {
 
             appLib.registerAppSharedPreferenceListener()
 
-            DynamicColors.applyToActivitiesIfAvailable(this)
+            val lastColor = dynamicColorsHelper.getLastColor()
+            if (dynamicColorsHelper.getColorMode() == ColorMode.IMAGE && lastColor != null) {
+                dynamicColorsHelper.applyToActivitiesIfAvailable(lastColor)
+            } else {
+                dynamicColorsHelper.applyToActivitiesIfAvailable()
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val localeMgr = getSystemService(LocaleManager::class.java)

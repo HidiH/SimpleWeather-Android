@@ -26,4 +26,5 @@
     android:focusable="false"
     android:clickable="false"
     android:background="@null"
-    app:thumbIcon="@drawable/switch_thumb_icon" />
+    app:thumbIcon="@drawable/switch_thumb_icon"
+    app:thumbIconTint="@color/abc_tint_btn_checkable" />

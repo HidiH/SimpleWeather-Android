@@ -27,7 +27,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.location.LocationManagerCompat
 import androidx.core.net.toUri
-import androidx.core.view.updatePaddingRelative
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.EditTextPreference
@@ -77,7 +76,6 @@ import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.adapters.ButtonAdapter
-import com.thewizrd.simpleweather.adapters.DividerAdapter
 import com.thewizrd.simpleweather.adapters.FeaturesAdapter
 import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.adapters.ViewHolderLongClickListener
@@ -92,9 +90,7 @@ import com.thewizrd.simpleweather.extras.isWeatherAPISupported
 import com.thewizrd.simpleweather.extras.navigateToPremiumFragment
 import com.thewizrd.simpleweather.extras.navigateUnsupportedIconPack
 import com.thewizrd.simpleweather.extras.setupReviewPreference
-import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
 import com.thewizrd.simpleweather.fragments.LargeCollapsingToolbarFragment
-import com.thewizrd.simpleweather.fragments.ToolbarFragment
 import com.thewizrd.simpleweather.locale.InstallRequest
 import com.thewizrd.simpleweather.locale.LocaleInstaller
 import com.thewizrd.simpleweather.notifications.NotificationUtils.Companion.openAppNotificationSettingsActivity
@@ -112,6 +108,8 @@ import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetWorker
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
+import com.thewizrd.simpleweather.theming.DynamicColorsHelper
+import com.thewizrd.simpleweather.theming.dynamicColorsHelper
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
 import com.thewizrd.simpleweather.utils.PowerUtils
 import com.thewizrd.simpleweather.wearable.WearableWorker
@@ -135,6 +133,7 @@ class SettingsFragment : BaseSettingsFragment(),
     private lateinit var keyEntry: EditTextPreference
     private lateinit var registerPref: Preference
     private lateinit var themePref: ListPreference
+    private lateinit var colorPref: ListPreference
     private lateinit var languagePref: ListPreference
 
     private var premiumPref: Preference? = null
@@ -506,6 +505,46 @@ class SettingsFragment : BaseSettingsFragment(),
                 dispatchThemeChanged(mode)
                 true
             }
+
+        colorPref = findPreference(DynamicColorsHelper.KEY_COLORTHEME)!!
+        colorPref.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                val args = Bundle()
+                args.putString("mode", newValue.toString())
+                AnalyticsLogger.logEvent("Settings: color changed", args)
+
+                when (newValue.toString()) {
+                    // IMAGE
+                    "1" -> {
+                        val lastColor = dynamicColorsHelper.getLastColor()
+                        if (lastColor != null) {
+                            activity?.run {
+                                dynamicColorsHelper.applyToActivityIfAvailable(this, lastColor)
+                            }
+                            dynamicColorsHelper.applyToActivitiesIfAvailable(lastColor)
+                        } else {
+                            activity?.run {
+                                dynamicColorsHelper.applyToActivityIfAvailable(this)
+                            }
+                            dynamicColorsHelper.applyToActivitiesIfAvailable()
+                        }
+
+                        activity?.recreate()
+                    }
+
+                    // DEFAULT
+                    else -> {
+                        activity?.run {
+                            dynamicColorsHelper.applyToActivityIfAvailable(this)
+                        }
+                        dynamicColorsHelper.applyToActivitiesIfAvailable()
+
+                        activity?.recreate()
+                    }
+                }
+                true
+            }
+        colorPref.isVisible = dynamicColorsHelper.isDynamicColorsAvailable()
 
         keyEntry = findPreference(SettingsManager.KEY_APIKEY)!!
         personalKeyPref = findPreference(SettingsManager.KEY_USEPERSONALKEY)!!

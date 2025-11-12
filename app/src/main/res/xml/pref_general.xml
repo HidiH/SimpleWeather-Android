@@ -52,6 +52,16 @@
             app:icon="@drawable/ic_baseline_color_lens_24" />
 
         <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/colortheme_entries"
+            android:entryValues="@array/colortheme_values"
+            android:key="key_colortheme"
+            android:summary="%s"
+            android:title="@string/pref_title_color"
+            app:icon="@drawable/ic_color_fill_24"
+            app:isPreferenceVisible="false" />
+
+        <ListPreference
             android:key="key_language"
             android:title="@string/pref_title_language"
             android:defaultValue=""

@@ -208,4 +208,5 @@
     <string name="werror_ratelimited">"طلبات كثيرة جداً. يرجى المحاولة مرة أخرى بعد بضع دقائق"</string>
     <string name="werror_locationnotsupported">"لا يدعم مزود الطقس هذا الموقع"</string>
     <string name="notification_perm_denied">"تم رفض إذن الإخطار"</string>
+    <string name="pref_title_color">اللون</string>
 </resources>

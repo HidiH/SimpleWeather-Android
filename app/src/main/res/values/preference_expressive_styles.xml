@@ -28,7 +28,7 @@
         <item name="dialogPreferenceStyle">@style/Preference.DialogPreference.Material.Expressive
         </item>
         <item name="editTextPreferenceStyle">
-            @style/Preference.DialogPreference.EditTextPreference.Material.Expressive
+            @style/Preference.EditTextPreference.Material.Expressive
         </item>
         <item name="preferenceCategoryStyle">@style/Preference.Category.Material.Expressive</item>
         <item name="preferenceScreenStyle">@style/Preference.PreferenceScreen.Material.Expressive
@@ -70,8 +70,9 @@
         <item name="iconSpaceReserved">false</item>
     </style>
 
-    <style name="Preference.DialogPreference.EditTextPreference.Material.Expressive" parent="Preference.DialogPreference.EditTextPreference.Material">
+    <style name="Preference.EditTextPreference.Material.Expressive" parent="Preference.EditTextPreference.Material">
         <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="android:dialogLayout">@layout/preference_dialog_edittext_material</item>
         <item name="iconSpaceReserved">false</item>
     </style>
 

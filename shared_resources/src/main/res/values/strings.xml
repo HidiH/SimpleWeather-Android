@@ -197,6 +197,7 @@
     <string name="userthememode_dark">Dark</string>
     <string name="userthememode_black">Dark (AMOLED)</string>
     <string name="userthememode_light">Light</string>
+    <string name="pref_title_color">Color</string>
 
     <!-- Date and Time Format -->
     <string name="clock_12_hours_ampm_format" translatable="false">h:mm<small>a</small></string>

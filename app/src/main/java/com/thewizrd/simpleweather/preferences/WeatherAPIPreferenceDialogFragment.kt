@@ -1,6 +1,7 @@
 package com.thewizrd.simpleweather.preferences
 
 import android.content.DialogInterface
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import android.widget.CheckedTextView
 import android.widget.ListAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceDialogFragmentCompat
 import com.thewizrd.simpleweather.R
@@ -108,22 +108,11 @@ class WeatherAPIPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
                 val view = super.getView(position, convertView, parent)
 
                 if (view is CheckedTextView) {
-                    val drawables = view.compoundDrawablesRelative
-                    view.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        drawables[0] /*Start*/,
-                        drawables[1] /*Top*/,
+                    view.checkMarkDrawable =
                         if (isPremiumWeatherAPI(mEntryValues!![position].toString())) {
                             ContextCompat.getDrawable(view.context, R.drawable.ic_star_24dp)
-                                ?.let {
-                                    DrawableCompat.setTint(
-                                        it,
-                                        0xFFFFD700.toInt()
-                                    )
-                                    it
-                                }
-                        } else null /*End*/,
-                        drawables[3] /*Bottom*/
-                    )
+                        } else null
+                    view.checkMarkTintList = ColorStateList.valueOf(0xFFFFD700.toInt())
                 }
 
                 return view

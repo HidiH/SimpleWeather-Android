@@ -208,4 +208,5 @@
     <string name="werror_ratelimited">"Çok fazla istek var. Lütfen birkaç dakika sonra tekrar deneyin"</string>
     <string name="werror_locationnotsupported">"Bu konum bu hava durumu sağlayıcısı tarafından desteklenmiyor"</string>
     <string name="notification_perm_denied">"Bildirim izni reddedildi"</string>
+    <string name="pref_title_color">Renk</string>
 </resources>

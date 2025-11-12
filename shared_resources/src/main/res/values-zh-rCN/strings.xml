@@ -237,4 +237,5 @@
     <string name="werror_ratelimited">"请求太多。请几分钟后再试一次"</string>
     <string name="werror_locationnotsupported">"此天气提供商不支持该位置"</string>
     <string name="notification_perm_denied">"拒绝通知许可"</string>
+    <string name="pref_title_color">颜色</string>
 </resources>

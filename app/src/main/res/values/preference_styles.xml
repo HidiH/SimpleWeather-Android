@@ -12,6 +12,7 @@
         <item name="iconProviderPreferenceStyle">@style/Preference.IconProviderPreference</item>
         <item name="preferenceCategoryTitleTextAppearance">?textAppearanceBodyMediumEmphasized
         </item>
+        <item name="editTextPreferenceStyle">@style/Preference.EditTextPreference.Material</item>
     </style>
 
     <style name="PreferenceSummaryTextStyle" tools:override="true">
@@ -49,6 +50,10 @@
     <style name="Preference.IconProviderPreference" parent="Preference.RadioButtonPreference">
         <item name="android:layout">@layout/preference_icon</item>
         <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.EditTextPreference.Material" parent="Preference.DialogPreference.EditTextPreference.Material">
+        <item name="android:dialogLayout">@layout/preference_dialog_edittext_material</item>
     </style>
 
     <style name="Preference_TextAppearanceMaterialBody2">

@@ -41,7 +41,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
-import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
@@ -55,6 +54,7 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -76,6 +76,7 @@ import com.thewizrd.shared_resources.helpers.RecyclerOnClickListenerInterface
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.ColorMode
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
@@ -122,6 +123,7 @@ import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetWorker
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
+import com.thewizrd.simpleweather.theming.dynamicColorsHelper
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowFragmentStateModel
@@ -1252,24 +1254,44 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                                 paletteJob = runWithView {
                                     withContext(Dispatchers.IO) {
                                         runCatching {
-                                            val palette = Palette.from(resource).generate()
+                                            val seedColor = DynamicColorsOptions.Builder()
+                                                .setContentBasedSource(resource)
+                                                .build()
+                                                .contentBasedSeedColor
+
+                                            val dominantColor = seedColor ?: imageView.context.run {
+                                                getColor(R.color.colorPrimary)
+                                            }
+
+                                            val bodyTextColor =
+                                                ColorsUtils.getTitleTextColor(dominantColor)
 
                                             if (isActive) {
-                                                if (ColorsUtils.isSuperLight(palette)) {
-                                                    conditionPanelBinding.bgAttribution.setTextColor(
-                                                        Colors.BLACK
+                                                conditionPanelBinding.bgAttribution.setTextColor(
+                                                    bodyTextColor
+                                                )
+                                                conditionPanelBinding.bgAttribution.setLinkTextColor(
+                                                    bodyTextColor
+                                                )
+
+                                                if (dynamicColorsHelper.getColorMode() == ColorMode.IMAGE) {
+                                                    activity?.run {
+                                                        dynamicColorsHelper.applyToActivityIfAvailable(
+                                                            this,
+                                                            dominantColor
+                                                        )
+                                                    }
+                                                    dynamicColorsHelper.applyToActivitiesIfAvailable(
+                                                        dominantColor
                                                     )
-                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
-                                                        Colors.BLACK
-                                                    )
-                                                } else {
-                                                    conditionPanelBinding.bgAttribution.setTextColor(
-                                                        Colors.WHITESMOKE
-                                                    )
-                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
-                                                        Colors.WHITESMOKE
-                                                    )
+
+                                                    if (dynamicColorsHelper.getLastColor() != dominantColor) {
+                                                        lifecycleScope.launch(Dispatchers.Main.immediate) {
+                                                            activity?.recreate()
+                                                        }
+                                                    }
                                                 }
+                                                dynamicColorsHelper.setLastColor(dominantColor)
                                             }
                                         }
                                     }
