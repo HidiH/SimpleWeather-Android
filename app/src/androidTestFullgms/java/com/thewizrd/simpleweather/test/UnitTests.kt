@@ -44,6 +44,7 @@ import com.thewizrd.weather_api.google.location.AndroidLocationProvider
 import com.thewizrd.weather_api.google.location.GoogleLocationProvider
 import com.thewizrd.weather_api.google.location.getFromLocationNameAsync
 import com.thewizrd.weather_api.google.location.isGeocoderAvailable
+import com.thewizrd.weather_api.google.pollen.GooglePollenProvider
 import com.thewizrd.weather_api.here.auth.hereOAuthService
 import com.thewizrd.weather_api.locationiq.LocationIQProvider
 import com.thewizrd.weather_api.nws.SolCalcAstroProvider
@@ -679,6 +680,29 @@ class UnitTests {
 
         settingsManager.setAPIKey(WeatherAPI.GOOGLE, originalKey)
         settingsManager.setPersonalKey(WeatherAPI.GOOGLE, false)
+    }
+
+    @Throws(WeatherException::class)
+    @Test
+    fun getGooglePollen() {
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.GOOGLE_POLLEN)
+
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE_POLLEN, true)
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE_POLLEN, "Google_REPLACE_VALUE")
+
+        runBlocking(Dispatchers.Default) {
+            val locationData = LocationData().apply {
+                latitude = 47.6721646
+                longitude = -122.1706614
+                tzLong = "America/Los_Angeles"
+            }
+
+            val pollen = GooglePollenProvider().getPollenData(locationData) // ~ Mountain View
+            assertNotNull(pollen)
+        }
+
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE_POLLEN, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE_POLLEN, false)
     }
 
     @Test
