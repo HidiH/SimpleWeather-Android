@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.annotation.MainThread
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.thewizrd.shared_resources.database.WeatherDatabase
 import com.thewizrd.shared_resources.locationdata.LocationData
@@ -18,6 +17,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
@@ -45,7 +45,8 @@ class AirQualityForecastViewModel(app: Application) : AndroidViewModel(app) {
 
                 flowScope?.cancel()
 
-                currentForecastsData = weatherDAO.getLiveForecastData(location.query).asFlow()
+                currentForecastsData =
+                    weatherDAO.getLiveForecastData(location.query).distinctUntilChanged()
 
                 flowScope = CoroutineScope(SupervisorJob())
                 flowScope?.launch {

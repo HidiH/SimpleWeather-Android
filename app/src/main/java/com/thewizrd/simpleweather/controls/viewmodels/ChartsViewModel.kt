@@ -5,7 +5,6 @@ import androidx.annotation.MainThread
 import androidx.arch.core.util.Function
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.thewizrd.shared_resources.database.WeatherDatabase
 import com.thewizrd.shared_resources.locationdata.LocationData
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import java.time.ZoneOffset
@@ -58,8 +58,9 @@ class ChartsViewModel(app: Application) : AndroidViewModel(app) {
                         location.query,
                         24,
                         ZonedDateTime.now(location.tzOffset).truncatedTo(ChronoUnit.HOURS)
-                    ).asFlow()
-                currentForecastsData = weatherDAO.getLiveForecastData(location.query).asFlow()
+                    ).distinctUntilChanged()
+                currentForecastsData =
+                    weatherDAO.getLiveForecastData(location.query).distinctUntilChanged()
 
                 flowScope = CoroutineScope(SupervisorJob())
                 flowScope?.launch {

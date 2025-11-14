@@ -5,7 +5,6 @@ import androidx.annotation.MainThread
 import androidx.arch.core.util.Function
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.thewizrd.shared_resources.database.WeatherDatabase
 import com.thewizrd.shared_resources.di.settingsManager
@@ -24,6 +23,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
@@ -80,7 +80,8 @@ class ForecastsNowViewModel(app: Application) : AndroidViewModel(app) {
                 localeCode = LocaleUtils.getLocaleCode()
                 iconProvider = settingsManager.getIconsProvider()
 
-                currentForecastsData = weatherDAO.getLiveForecastData(location.query).asFlow()
+                currentForecastsData =
+                    weatherDAO.getLiveForecastData(location.query).distinctUntilChanged()
 
                 flowScope?.launch {
                     currentForecastsData.collect {
@@ -96,7 +97,7 @@ class ForecastsNowViewModel(app: Application) : AndroidViewModel(app) {
                         24,
                         ZonedDateTime.now(location.tzOffset).minusHours((hrInterval * 0.5).toLong())
                             .truncatedTo(ChronoUnit.HOURS)
-                    ).asFlow()
+                    ).distinctUntilChanged()
 
                 flowScope?.launch {
                     currentHrForecastsData.collect {
