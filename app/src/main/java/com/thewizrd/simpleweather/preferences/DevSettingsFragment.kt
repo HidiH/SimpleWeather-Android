@@ -195,9 +195,10 @@ class DevSettingsFragment : ToolbarPreferenceFragmentCompat() {
                         return@runCatching
                     }
 
+                    logFiles.sortByDescending { it.name }
+
                     val logFileArr = logFiles
                         .map { it.name }
-                        .sortedByDescending { it }
                         .toTypedArray()
 
                     MaterialAlertDialogBuilder(it.context)
