@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.GridLayout
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.Insets
 import androidx.core.util.ObjectsCompat
 import androidx.core.view.ViewCompat
@@ -65,6 +66,7 @@ import com.thewizrd.common.helpers.ColorsUtils
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.location.LocationResult
+import com.thewizrd.common.utils.ActivityUtils.recreateCompat
 import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.utils.isTextTruncated
 import com.thewizrd.shared_resources.Constants
@@ -1264,34 +1266,52 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                                             }
 
                                             val bodyTextColor =
-                                                ColorsUtils.getTitleTextColor(dominantColor)
+                                                ColorsUtils.getBodyTextColor(dominantColor)
+
+                                            val backgroundColor =
+                                                if (ColorsUtils.isSuperDark(dominantColor)) {
+                                                    ColorUtils.setAlphaComponent(Colors.WHITE, 0x08)
+                                                } else if (ColorsUtils.isSuperLight(dominantColor)) {
+                                                    ColorUtils.setAlphaComponent(Colors.BLACK, 0x08)
+                                                } else {
+                                                    ColorUtils.setAlphaComponent(
+                                                        dominantColor,
+                                                        0x08
+                                                    )
+                                                }
 
                                             if (isActive) {
-                                                conditionPanelBinding.bgAttribution.setTextColor(
-                                                    bodyTextColor
-                                                )
-                                                conditionPanelBinding.bgAttribution.setLinkTextColor(
-                                                    bodyTextColor
-                                                )
+                                                val oldColor = dynamicColorsHelper.getLastColor()
 
-                                                if (dynamicColorsHelper.getColorMode() == ColorMode.IMAGE) {
-                                                    activity?.run {
-                                                        dynamicColorsHelper.applyToActivityIfAvailable(
-                                                            this,
-                                                            dominantColor
-                                                        )
-                                                    }
-                                                    dynamicColorsHelper.applyToActivitiesIfAvailable(
-                                                        dominantColor
+                                                lifecycleScope.launch(Dispatchers.Main) {
+                                                    dynamicColorsHelper.setLastColor(dominantColor)
+
+                                                    conditionPanelBinding.bgAttribution.backgroundTintList =
+                                                        ColorStateList.valueOf(backgroundColor)
+
+                                                    conditionPanelBinding.bgAttribution.setTextColor(
+                                                        bodyTextColor
+                                                    )
+                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
+                                                        bodyTextColor
                                                     )
 
-                                                    if (dynamicColorsHelper.getLastColor() != dominantColor) {
-                                                        lifecycleScope.launch(Dispatchers.Main.immediate) {
-                                                            activity?.recreate()
+                                                    if (dynamicColorsHelper.getColorMode() == ColorMode.IMAGE && oldColor != dominantColor) {
+                                                        lifecycleScope.launch(Dispatchers.Main) {
+                                                            dynamicColorsHelper.applyToActivitiesIfAvailable(
+                                                                dominantColor
+                                                            )
+                                                            activity?.run {
+                                                                dynamicColorsHelper.applyToActivityIfAvailable(
+                                                                    this,
+                                                                    dominantColor
+                                                                ) {
+                                                                    it.recreateCompat()
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
-                                                dynamicColorsHelper.setLastColor(dominantColor)
                                             }
                                         }
                                     }

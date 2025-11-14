@@ -50,6 +50,7 @@ import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.helpers.notificationPermissionEnabled
 import com.thewizrd.common.helpers.openAppSettingsActivity
 import com.thewizrd.common.preferences.KeyEntryPreferenceDialogFragment
+import com.thewizrd.common.utils.ActivityUtils.recreateCompat
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.controls.ProviderEntry
@@ -529,7 +530,7 @@ class SettingsFragment : BaseSettingsFragment(),
                             dynamicColorsHelper.applyToActivitiesIfAvailable()
                         }
 
-                        activity?.recreate()
+                        activity?.recreateCompat()
                     }
 
                     // DEFAULT
@@ -539,7 +540,7 @@ class SettingsFragment : BaseSettingsFragment(),
                         }
                         dynamicColorsHelper.applyToActivitiesIfAvailable()
 
-                        activity?.recreate()
+                        activity?.recreateCompat()
                     }
                 }
                 true

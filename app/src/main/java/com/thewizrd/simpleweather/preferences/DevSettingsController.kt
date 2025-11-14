@@ -6,6 +6,7 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import com.thewizrd.common.utils.ActivityUtils.recreateCompat
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
 
@@ -85,6 +86,6 @@ class DevSettingsController(private val prefFragment: PreferenceFragmentCompat, 
         mDevHitCountdown = 0
         settingsManager.setDevSettingsEnabled(true)
         // Refresh prefs
-        prefFragment.activity?.recreate()
+        prefFragment.activity?.recreateCompat()
     }
 }

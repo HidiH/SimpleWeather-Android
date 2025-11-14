@@ -43,15 +43,36 @@ class DynamicColorsHelper(private val app: Application) {
         )
     }
 
-    fun applyToActivityIfAvailable(activity: Activity) {
-        DynamicColors.applyToActivityIfAvailable(activity)
+    fun applyToActivityIfAvailable(
+        activity: Activity,
+        onAppliedCallback: DynamicColors.OnAppliedCallback? = null
+    ) {
+        DynamicColors.applyToActivityIfAvailable(
+            activity,
+            DynamicColorsOptions.Builder()
+                .apply {
+                    if (onAppliedCallback != null) {
+                        setOnAppliedCallback(onAppliedCallback)
+                    }
+                }
+                .build()
+        )
     }
 
-    fun applyToActivityIfAvailable(activity: Activity, @ColorInt color: Int) {
+    fun applyToActivityIfAvailable(
+        activity: Activity,
+        @ColorInt color: Int,
+        onAppliedCallback: DynamicColors.OnAppliedCallback? = null
+    ) {
         DynamicColors.applyToActivityIfAvailable(
             activity,
             DynamicColorsOptions.Builder()
                 .setContentBasedSource(color)
+                .apply {
+                    if (onAppliedCallback != null) {
+                        setOnAppliedCallback(onAppliedCallback)
+                    }
+                }
                 .build()
         )
     }

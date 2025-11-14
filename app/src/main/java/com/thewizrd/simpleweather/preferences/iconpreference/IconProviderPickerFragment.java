@@ -3,6 +3,7 @@ package com.thewizrd.simpleweather.preferences.iconpreference;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 
+import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.thewizrd.shared_resources.SharedModuleKt;
@@ -26,7 +27,7 @@ public abstract class IconProviderPickerFragment extends RadioButtonPickerFragme
 
         final Activity activity = getActivity();
         if (activity != null) {
-            activity.recreate();
+            ActivityCompat.recreate(activity);
         }
     }
 
