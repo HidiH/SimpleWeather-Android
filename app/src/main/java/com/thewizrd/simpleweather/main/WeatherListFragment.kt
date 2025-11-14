@@ -254,7 +254,7 @@ class WeatherListFragment : CollapsingToolbarFragment() {
             else -> R.string.label_nav_weathernow
         }
 
-    private suspend fun initialize() {
+    private fun initialize() {
         if (locationData == null) {
             locationData = wNowViewModel.uiState.value.locationData
         }

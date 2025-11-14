@@ -44,6 +44,7 @@ import com.thewizrd.simpleweather.utils.NavigationUtils.navControllerViewModels
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import de.twoid.ui.decoration.InsetItemDecoration
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
@@ -63,6 +64,8 @@ class WeatherAQIFragment : CollapsingToolbarFragment() {
     private lateinit var aqiForecastAdapter: ListAdapter<*, *>
 
     private val args: WeatherAQIFragmentArgs by navArgs()
+
+    private var dataJob: Job? = null
 
     private lateinit var inAppReviewManager: InAppReviewManager
 
@@ -183,6 +186,7 @@ class WeatherAQIFragment : CollapsingToolbarFragment() {
         if (args.data.isNullOrBlank() && savedInstanceState?.containsKey(Constants.KEY_DATA) != true) {
             viewLifecycleOwner.lifecycleScope.launch {
                 wNowViewModel.uiState.collect {
+                    val oldData = locationData
                     locationData = it.locationData
 
                     toolbar.subtitle = if (!twoPaneStateViewModel.twoPaneState.value.isSideBySide) {
@@ -190,7 +194,10 @@ class WeatherAQIFragment : CollapsingToolbarFragment() {
                     } else {
                         ""
                     }
-                    initialize()
+
+                    if (oldData != locationData) {
+                        initialize()
+                    }
                 }
             }
         }
@@ -233,6 +240,7 @@ class WeatherAQIFragment : CollapsingToolbarFragment() {
     }
 
     override fun onPause() {
+        dataJob?.cancel()
         AnalyticsLogger.logEvent("WeatherAQIFragment: onPause")
         super.onPause()
     }
@@ -249,22 +257,26 @@ class WeatherAQIFragment : CollapsingToolbarFragment() {
             aqiView.updateForecasts(it)
         }
 
-        aqiView.getAQIForecastData().observe(viewLifecycleOwner) {
-            val forecastList = it?.filterNot { item ->
-                item.date.isBefore(
-                    LocalDate.now(
-                        locationData?.tzOffset
-                            ?: ZoneOffset.systemDefault()
-                    )
-                )
-            }
+        dataJob?.cancel()
 
-            aqiForecastAdapter.let { adapter ->
-                if (adapter is AQIForecastAdapter) {
-                    adapter.submitList(forecastList?.filter { it.index != null }
-                        ?.map { item -> AirQualityViewModel(item) })
-                } else if (adapter is AQIForecastGraphAdapter) {
-                    adapter.submitList(forecastList?.createGraphData(requireContext()))
+        dataJob = runWithView {
+            aqiView.getAQIForecastData().collect {
+                val forecastList = it?.filterNot { item ->
+                    item.date.isBefore(
+                        LocalDate.now(
+                            locationData?.tzOffset
+                                ?: ZoneOffset.systemDefault()
+                        )
+                    )
+                }
+
+                aqiForecastAdapter.let { adapter ->
+                    if (adapter is AQIForecastAdapter) {
+                        adapter.submitList(forecastList?.filter { it.index != null }
+                            ?.map { item -> AirQualityViewModel(item) })
+                    } else if (adapter is AQIForecastGraphAdapter) {
+                        adapter.submitList(forecastList?.createGraphData(requireContext()))
+                    }
                 }
             }
         }

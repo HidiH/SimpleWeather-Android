@@ -44,6 +44,7 @@ import com.thewizrd.simpleweather.utils.NavigationUtils.navControllerViewModels
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import de.twoid.ui.decoration.InsetItemDecoration
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
@@ -60,6 +61,8 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
     private lateinit var adapter: ChartsItemAdapter
 
     private val args: WeatherChartsFragmentArgs by navArgs()
+
+    private var dataJob: Job? = null
 
     private lateinit var inAppReviewManager: InAppReviewManager
 
@@ -160,20 +163,21 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
             }
         }
 
-        chartsView.getForecastData().observe(viewLifecycleOwner) {
-            adapter.submitList(createGraphModelData(it?.first, it?.second))
-        }
-
         if (args.data.isNullOrBlank() && savedInstanceState?.containsKey(Constants.KEY_DATA) != true) {
             viewLifecycleOwner.lifecycleScope.launch {
                 wNowViewModel.uiState.collect {
+                    val oldData = locationData
                     locationData = it.locationData
+
                     toolbar.subtitle = if (!twoPaneStateViewModel.twoPaneState.value.isSideBySide) {
                         wNowViewModel.uiState.value.weather?.location
                     } else {
                         ""
                     }
-                    initialize()
+
+                    if (oldData != locationData) {
+                        initialize()
+                    }
                 }
             }
         }
@@ -214,6 +218,7 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
     }
 
     override fun onPause() {
+        dataJob?.cancel()
         AnalyticsLogger.logEvent("WeatherChartsFragment: onPause")
         super.onPause()
     }
@@ -228,6 +233,14 @@ class WeatherChartsFragment : CollapsingToolbarFragment() {
 
         locationData?.let {
             chartsView.updateForecasts(it)
+        }
+
+        dataJob?.cancel()
+
+        dataJob = runWithView {
+            chartsView.getForecastData().collect {
+                adapter.submitList(createGraphModelData(it?.first, it?.second))
+            }
         }
 
         binding.progressBar.hide()
