@@ -175,6 +175,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
     private lateinit var mGlide: RequestManager
     private var paletteJob: Job? = null
+    private var isRecreating = false
 
     // View Models
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
@@ -228,18 +229,22 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         enterTransition = MaterialFadeThrough()
         exitTransition = MaterialFadeThrough()
 
-        val locationData = if (savedInstanceState?.containsKey(Constants.KEY_DATA) == true) {
-            JSONParser.deserializer(
-                savedInstanceState.getString(Constants.KEY_DATA),
-                LocationData::class.java
-            )
-        } else if (args.data != null) {
-            JSONParser.deserializer(args.data, LocationData::class.java)
-        } else {
-            null
-        }
+        isRecreating = savedInstanceState?.getBoolean("isRecreating", false) ?: false
 
-        wNowViewModel.initialize(locationData)
+        if (!isRecreating) {
+            val locationData = if (savedInstanceState?.containsKey(Constants.KEY_DATA) == true) {
+                JSONParser.deserializer(
+                    savedInstanceState.getString(Constants.KEY_DATA),
+                    LocationData::class.java
+                )
+            } else if (args.data != null) {
+                JSONParser.deserializer(args.data, LocationData::class.java)
+            } else {
+                null
+            }
+
+            wNowViewModel.initialize(locationData)
+        }
 
         locationPermissionLauncher = LocationPermissionLauncher(
             this,
@@ -437,6 +442,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         })
 
         // SwipeRefresh
+        binding.refreshLayout.setRefreshingDelay(350)
         binding.refreshLayout.setContainerColor(requireContext().getAttrColor(R.attr.colorPrimaryContainer))
         binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorPrimary))
         binding.refreshLayout.setOnRefreshListener {
@@ -925,9 +931,10 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                if (wNowViewModel.isInitialized.value) {
+                if (!isRecreating && wNowViewModel.isInitialized.value) {
                     initializeState()
                 }
+                isRecreating = false
             }
         }
 
@@ -1112,6 +1119,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("isRecreating", isRecreating)
         radarViewProvider?.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
@@ -1306,6 +1314,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                                                                     this,
                                                                     dominantColor
                                                                 ) {
+                                                                    isRecreating = true
                                                                     it.recreateCompat()
                                                                 }
                                                             }

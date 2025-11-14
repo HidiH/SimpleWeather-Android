@@ -41,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -131,6 +132,9 @@ public class LoadingIndicatorRefreshLayout extends ViewGroup implements NestedSc
     private AnimationFrameLayout mCircleView;
     private LoadingIndicator mLoadingIndicator;
     private ImageView mStaticLoadingView;
+
+    private int mShowDelay = 0;
+    private int mHideDelay = 0;
 
     private int mCircleViewIndex = -1;
 
@@ -391,6 +395,20 @@ public class LoadingIndicatorRefreshLayout extends ViewGroup implements NestedSc
         mListener = listener;
     }
 
+    private Runnable mRefreshRunnable = null;
+
+    public void setShowDelay(@IntRange(from = 0, to = 1000) int delay) {
+        mShowDelay = Math.min(delay, 1000);
+    }
+
+    public void setHideDelay(@IntRange(from = 0, to = 1000) int delay) {
+        mHideDelay = Math.min(delay, 1000);
+    }
+
+    public void setRefreshingDelay(@IntRange(from = 0, to = 1000) int delay) {
+        mShowDelay = mHideDelay = Math.min(delay, 1000);
+    }
+
     /**
      * Notify the widget that refresh state has changed. Do not call this when
      * refresh is triggered by a swipe gesture.
@@ -398,15 +416,31 @@ public class LoadingIndicatorRefreshLayout extends ViewGroup implements NestedSc
      * @param refreshing Whether or not the view should show refresh progress.
      */
     public void setRefreshing(boolean refreshing) {
-        if (refreshing && mRefreshing != refreshing) {
-            // scale and show
-            mRefreshing = refreshing;
-            int endTarget = mSpinnerOffsetEnd + mOriginalOffsetTop;
-            setTargetOffsetTopAndBottom(endTarget - mCurrentTargetOffsetTop);
-            mNotify = false;
-            startScaleUpAnimation(mRefreshListener);
+        if (mRefreshRunnable != null) {
+            removeCallbacks(mRefreshRunnable);
+        }
+
+        int delay = refreshing ? mShowDelay : mHideDelay;
+
+        Runnable runnable = () -> {
+            if (refreshing && mRefreshing != refreshing) {
+                // scale and show
+                mRefreshing = refreshing;
+                int endTarget = mSpinnerOffsetEnd + mOriginalOffsetTop;
+                setTargetOffsetTopAndBottom(endTarget - mCurrentTargetOffsetTop);
+                mNotify = false;
+                startScaleUpAnimation(mRefreshListener);
+            } else {
+                setRefreshing(refreshing, false /* notify */);
+            }
+        };
+
+        if (delay > 0) {
+            postDelayed(runnable, delay);
+            mRefreshRunnable = runnable;
         } else {
-            setRefreshing(refreshing, false /* notify */);
+            runnable.run();
+            mRefreshRunnable = null;
         }
     }
 
