@@ -74,8 +74,6 @@ class HEREWeatherProvider : WeatherProviderImpl() {
     }
 
     override suspend fun isKeyValid(key: String?): Boolean {
-        val key = getProviderKey()
-
         val providerKey = ProviderAppKey().apply {
             fromString(key ?: "")
         }
