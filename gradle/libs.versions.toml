@@ -3,14 +3,14 @@ compileSdkVersion = "36"
 minSdkVersion = "23"
 targetSdkVersion = "36"
 
-gradleVersion = "8.13.1"
+gradleVersion = "8.13.2"
 kotlin_version = '2.1.20'
 kotlinx_version = '1.10.2'
 ksp_version = '2.1.20-2.0.1'
 
 desugar_version = '2.1.5'
 
-firebase_version = "34.5.0"
+firebase_version = "34.7.0"
 firebaseCrashlyticsGradleVersion = "3.0.6"
 firebasePerfPluginVersion = "2.0.2"
 gms_location_version = '21.3.0'
@@ -21,18 +21,18 @@ gms_wearable_version = '19.0.0'
 googleServicesVersion = "4.4.4"
 
 annotation_version = '1.9.1'
-activity_version = '1.11.0'
+activity_version = "1.12.1"
 appcompat_version = '1.7.1'
 constraintlayout_version = '2.2.1'
 core_version = '1.17.0'
 arch_core_runtime_version = '2.2.0'
 fragment_version = '1.8.9'
-lifecycle_version = '2.9.4'
+lifecycle_version = "2.10.0"
 nav_version = "2.9.6"
 paging_version = '3.3.6'
 preference_version = '1.2.1'
 recyclerview_version = '1.4.0'
-room_version = '2.8.3'
+room_version = "2.8.4"
 coresplash_version = "1.2.0"
 vectordrawable_version = '1.2.0'
 work_version = '2.11.0'
@@ -46,13 +46,13 @@ androidx_truth_version = '1.7.0'
 google_truth_version = '1.4.5'
 espresso_core_version = "3.7.0"
 
-material_version = '1.14.0-alpha06'
-material_compose_version = "1.5.0-alpha08"
+material_version = "1.14.0-alpha07"
+material_compose_version = "1.5.0-alpha10"
 
 compose_compiler_version = '1.5.15'
-compose_bom_version = "2025.11.00"
+compose_bom_version = "2025.12.00"
 wear_version = '1.3.0'
-wear_compose_version = "1.5.5"
+wear_compose_version = "1.5.6"
 wear_input_version = '1.2.0'
 wear_tiles_version = '1.5.0'
 wear_watchface_version = '1.2.1'
@@ -63,10 +63,10 @@ glide_version = '5.0.5'
 icu4j_version = "78.1"
 jjwt_version = '0.13.0'
 moshi_version = '1.15.2'
-okhttp_version = "5.3.0"
+okhttp_version = "5.3.2"
 timber_version = '5.0.1'
 
-revcat_version = "9.13.0"
+revcat_version = "9.15.4"
 
 [libraries]
 com-google-devtools-ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp_version" }
@@ -126,7 +126,7 @@ recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "r
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation_version" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout_version" }
 vectordrawable = { module = "androidx.vectordrawable:vectordrawable", version.ref = "vectordrawable_version" }
-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version = "1.1.0" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version = "1.2.0" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version = "2.2.0" }
 lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle_version" }
 arch-core-runtime = { module = "androidx.arch.core:core-runtime", version.ref = "arch_core_runtime_version" }
