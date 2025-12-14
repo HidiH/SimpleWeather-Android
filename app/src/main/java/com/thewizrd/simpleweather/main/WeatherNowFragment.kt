@@ -42,6 +42,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
@@ -1264,6 +1265,9 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                                 paletteJob = runWithView {
                                     withContext(Dispatchers.IO) {
                                         runCatching {
+                                            val palette = Palette.from(resource)
+                                                .maximumColorCount(128).generate()
+
                                             val seedColor = DynamicColorsOptions.Builder()
                                                 .setContentBasedSource(resource)
                                                 .build()
@@ -1273,19 +1277,25 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                                                 getColor(R.color.colorPrimary)
                                             }
 
-                                            val bodyTextColor =
-                                                ColorsUtils.getBodyTextColor(dominantColor)
-
                                             val backgroundColor =
-                                                if (ColorsUtils.isSuperDark(dominantColor)) {
+                                                if (ColorsUtils.isSuperDark(palette)) {
                                                     ColorUtils.setAlphaComponent(Colors.WHITE, 0x08)
-                                                } else if (ColorsUtils.isSuperLight(dominantColor)) {
+                                                } else if (ColorsUtils.isSuperLight(palette)) {
                                                     ColorUtils.setAlphaComponent(Colors.BLACK, 0x08)
                                                 } else {
                                                     ColorUtils.setAlphaComponent(
                                                         dominantColor,
                                                         0x08
                                                     )
+                                                }
+
+                                            val bodyTextColor =
+                                                if (ColorsUtils.isSuperLight(palette)) {
+                                                    Colors.BLACK
+                                                } else if (ColorsUtils.isSuperDark(palette)) {
+                                                    Colors.WHITE
+                                                } else {
+                                                    ColorsUtils.getBodyTextColor(dominantColor)
                                                 }
 
                                             if (isActive) {
