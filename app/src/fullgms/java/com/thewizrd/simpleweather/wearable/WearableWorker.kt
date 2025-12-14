@@ -2,9 +2,19 @@ package com.thewizrd.simpleweather.wearable
 
 import android.content.Context
 import android.util.Log
-import androidx.work.*
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.wearable.*
+import com.google.android.gms.wearable.Asset
+import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.DataMap
+import com.google.android.gms.wearable.Node
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
+import com.google.android.gms.wearable.WearableStatusCodes
 import com.thewizrd.common.wearable.WearableHelper
 import com.thewizrd.common.wearable.WearableSettings
 import com.thewizrd.shared_resources.preferences.SettingsManager
@@ -150,6 +160,10 @@ class WearableWorker(context: Context, workerParams: WorkerParameters) :
             mapRequest.dataMap.putBoolean(
                 WearableSettings.KEY_FOLLOWGPS,
                 settingsManager.useFollowGPS()
+            )
+            mapRequest.dataMap.putInt(
+                WearableSettings.KEY_REFRESHINTERVAL,
+                settingsManager.getRefreshInterval()
             )
             mapRequest.dataMap.putString(
                 WearableSettings.KEY_TEMPUNIT,

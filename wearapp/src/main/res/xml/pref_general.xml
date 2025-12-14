@@ -19,6 +19,14 @@
             android:dependency="key_followgps"
             app:isPreferenceVisible="false" />
 
+        <com.thewizrd.simpleweather.preferences.WearListPreference
+            android:defaultValue="180"
+            android:entries="@array/refreshinterval_entries"
+            android:entryValues="@array/refreshinterval_values"
+            android:key="key_refreshinterval"
+            android:summary="%s"
+            android:title="@string/pref_title_refreshinterval" />
+
         <com.thewizrd.simpleweather.preferences.WearPreference
             android:key="key_units"
             android:title="@string/pref_title_units" />

@@ -64,6 +64,7 @@ import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.extras.enableAdditionalRefreshIntervals
 import com.thewizrd.simpleweather.extras.isIconPackSupported
 import com.thewizrd.simpleweather.extras.isWeatherAPISupported
 import com.thewizrd.simpleweather.extras.navigateToPremiumFragment
@@ -150,6 +151,7 @@ class SettingsActivity : UserLocaleActivity() {
 
         // Preferences
         private lateinit var followGps: SwitchPreference
+        private lateinit var intervalPref: ListPreference
         private lateinit var bgLocationPref: Preference
         private lateinit var languagePref: ListPreference
         private lateinit var providerPref: ListPreference
@@ -453,6 +455,14 @@ class SettingsActivity : UserLocaleActivity() {
 
                     true
                 }
+            intervalPref = findPreference(SettingsManager.KEY_REFRESHINTERVAL)!!
+            if (enableAdditionalRefreshIntervals()) {
+                intervalPref.setEntries(R.array.premium_refreshinterval_entries)
+                intervalPref.setEntryValues(R.array.premium_refreshinterval_values)
+            } else {
+                intervalPref.setEntries(R.array.refreshinterval_entries)
+                intervalPref.setEntryValues(R.array.refreshinterval_values)
+            }
 
             bgLocationPref = findPreference(KEY_BGLOCATIONACCESS)!!
             bgLocationPref.setOnPreferenceClickListener {
