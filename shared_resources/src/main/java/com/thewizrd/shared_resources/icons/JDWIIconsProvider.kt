@@ -18,7 +18,7 @@ class JDWIIconsProvider : WeatherIconProvider() {
     }
 
     override fun getAttributionLink(): String {
-        return "https://github.com/MoRan1412/JDWI"
+        return "https://github.com/adriaanjelle/JDWI"
     }
 
     override fun isFontIcon(): Boolean {

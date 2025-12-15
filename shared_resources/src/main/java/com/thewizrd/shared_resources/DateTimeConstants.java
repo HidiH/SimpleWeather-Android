@@ -42,4 +42,8 @@ public final class DateTimeConstants {
      * Constant for date skeleton with hour and minute in 24-hour presentation.
      */
     public static final String SKELETON_24HR = "Hm";
+    /**
+     * Constant for date skeleton with hour in 24-hour presentation.
+     */
+    public static final String SKELETON_24HR_SHORT = "H";
 }

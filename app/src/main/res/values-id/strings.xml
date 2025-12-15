@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Feature Settings -->
+    <string name="pref_title_features">"Fitur"</string>
+    <string name="pref_summary_features">"Pilih fitur untuk diaktifkan/dinonaktifkan"</string>
+    <string name="pref_title_feature_bgimage">"Gambar Latar Belakang"</string>
+    <string name="pref_title_feature_forecast">"Prakiraan"</string>
+    <string name="pref_title_feature_hrforecast">"Prakiraan Per Jam"</string>
+    <string name="pref_title_feature_details">"Detail Cuaca"</string>
+    <string name="pref_title_feature_uv">"UV"</string>
+    <string name="pref_title_feature_beaufort">"Beaufort"</string>
+    <string name="pref_title_feature_aqindex">"Indeks Kualitas Udara"</string>
+    <string name="pref_title_feature_moonphase">"Fase Bulan"</string>
+    <string name="pref_title_feature_sunphase">"Fase Matahari"</string>
+    <string name="pref_title_feature_radar">"Radar Cuaca"</string>
+    <string name="pref_title_feature_locpanelimg">"Gambar Panel Lokasi"</string>
+
+    <!-- Widget -->
+    <string name="widget_configure_prompt">"Konfigurasi Widget"</string>
+    <string name="title_activity_widget_config">"Preferensi Widget"</string>
+    <string name="pref_title_bgcolor">"Latar Belakang"</string>
+    <string name="label_color_transparent">"Transparan"</string>
+    <string name="pref_title_bgstyle">"Gaya Latar Belakang"</string>
+    <string name="label_style_fullbg">"Latar Belakang Penuh"</string>
+    <string name="label_style_panda">"Default"</string>
+
+    <!-- Can be shortened to 'Color' -->
+    <string name="label_style_pendingcolor">"Warna Cuaca"</string>
+    <string name="label_style_light">"Terang"</string>
+    <string name="label_style_dark">"Gelap"</string>
+    <string name="locname_pref_title">"Nama Lokasi"</string>
+    <string name="locname_pref_summary">"Sembunyikan nama lokasi dari widget"</string>
+    <string name="settingsbtn_pref_title">"Tombol Pengaturan"</string>
+    <string name="settingsbtn_pref_summary">"Sembunyikan tombol pengaturan dari widget"</string>
+    <string name="clock_pref_title">"Jam"</string>
+    <string name="calendar_pref_title">"Kalender"</string>
+    <string name="pref_title_fcastoption">"Prakiraan"</string>
+    <string name="label_fcast_full">"Prakiraan Harian dan Prakiraan Per Jam (jika tersedia)"</string>
+    <string name="label_fcast_daily">"Prakiraan Harian"</string>
+    <string name="label_fcast_hourly">"Prakiraan Per Jam (jika tersedia)"</string>
+    <string name="pref_category_timeanddate">"Waktu dan Tanggal"</string>
+    <string name="pref_title_timezone">"Zona waktu"</string>
+    <string name="pref_timezone_summaryoff">"Gunakan zona waktu sistem untuk waktu dan tanggal"</string>
+    <string name="pref_timezone_summaryon">"Gunakan zona waktu lokasi untuk waktu dan tanggal"</string>
+    <string name="pref_location">"Lokasi"</string>
+    <string name="pref_item_gpslocation">"Lokasi GPS Saat Ini"</string>
+    <string name="prompt_setup_app_first">"Silakan atur aplikasi terlebih dahulu"</string>
+
+    <!-- LineView -->
+    <string name="label_series">"Seri"</string>
+
+    <!-- In-App Updates -->
+    <string name="not_channel_update_title">"Pembaruan Aplikasi"</string>
+    <string name="prompt_update_title">"Perbarui SimpleWeather"</string>
+    <string name="prompt_update_available">"Pembaruan tersedia. Klik untuk memasang"</string>
+
+    <!-- Support -->
+    <string name="pref_category_support">"Dukungan"</string>
+
+    <!-- Feedback -->
+    <string name="pref_title_feedback">"Umpan Balik"</string>
+    <string name="pref_summary_feedback">"Laporkan bug atau saran untuk meningkatkan aplikasi"</string>
+
+    <!-- Rate / Review -->
+    <string name="pref_title_rateandreview">"Nilai dan Ulas"</string>
+    <string name="pref_summary_rateandreview">"Suka aplikasinya? Bantu dukung dengan memberikan ulasan"</string>
+
+    <!-- Translate -->
+    <string name="pref_title_translate">"Terjemahkan"</string>
+    <string name="pref_summary_translate">"Bantu menerjemahkan aplikasi"</string>
+
+    <!-- Custom Color -->
+    <string name="label_color_custom">"Kustom"</string>
+    <string name="pref_title_bgcolorcode">"Warna Latar Belakang"</string>
+    <string name="pref_title_txtcolorcode">"Warna Teks"</string>
+
+    <!-- SplitInstall Prompts -->
+    <string name="splitlang_start_install">"Memulai pemasangan untuk paket bahasa…"</string>
+    <string name="splitlang_installing">"Memasang paket bahasa…"</string>
+    <string name="splitlang_downloading">"Mengunduh paket bahasa…"</string>
+    <string name="splitlang_failure">"Gagal memasang paket bahasa"</string>
+    <string name="pref_title_feature_charts">"Grafik"</string>
+
+    <!-- Widget Service -->
+    <string name="message_widgetservice_running">"Layanan pembaruan widget sedang berjalan"</string>
+    <string name="pref_title_foreground_service">"Layanan Pembaruan Widget"</string>
+    <string name="pref_summary_foreground_service">"Aktifkan layanan untuk memperbarui widget dan notifikasi cuaca"</string>
+    <string name="pref_title_ignore_batt_opts">"Abaikan Pengoptimalan Baterai"</string>
+    <string name="pref_summary_ignore_batt_opts">"Nonaktifkan batasan layanan latar belakang jika widget dan notifikasi tidak diperbarui"</string>
+    <string name="pref_title_tap2switch">"Tindakan Ketuk"</string>
+    <string name="pref_tap2switch_summaryOn">"Ketuk untuk beralih prakiraan"</string>
+    <string name="pref_tap2switch_summaryOff">"Buka aplikasi"</string>
+
+    <!-- Daily Notification -->
+    <string name="not_channel_name_dailynotification">"Notifikasi Harian"</string>
+    <string name="pref_title_time">"Waktu"</string>
+    <string name="pref_summary_off">"Mati"</string>
+    <string name="pref_summary_on">"Hidup"</string>
+
+    <!-- Precipitation Notification -->
+    <string name="not_channel_name_precipnotification">"Notifikasi Curah Hujan"</string>
+
+    <!-- Example: 80% chance of rain in 2 hours
+(%1$d) -> Percentage | (%2$s) -> Time in minutes or hours -->
+    <string name="precipitation_text_format">"%1$d%% kemungkinan hujan di %2$s"</string>
+    <string name="precipitation_nexthour_text_format">"%1$d%% kemungkinan hujan dalam satu jam berikutnya"</string>
+
+    <!-- Weather Summary or Weather Overview -->
+    <string name="pref_title_feature_summary">"Ringkasan Cuaca"</string>
+    <string name="prompt_max_locations_allowed">"Maksimum lima lokasi diizinkan"</string>
+    <string name="pref_title_widgetgraphtype">"Jenis Prakiraan"</string>
+
+    <!-- Widget Labels -->
+    <string name="label_widget_weather_1x1">"Cuaca (1x1)"</string>
+    <string name="label_widget_weather_clock_2x2">"Cuaca + Jam (2x2)"</string>
+    <string name="label_widget_weather_4x1">"Cuaca (4x1)"</string>
+    <string name="label_widget_weather_clock_4x2">"Cuaca + Jam (4x2)"</string>
+    <string name="label_widget_weather_date_4x1">"Cuaca + Tanggal (4x1)"</string>
+    <string name="label_widget_weather_2x2">"Cuaca (2x2)"</string>
+    <string name="label_widget_weather_4x2">"Cuaca (4x2)"</string>
+    <string name="label_widget_weather_4x4">"Cuaca (4x4)"</string>
+    <string name="label_widget_weather_clock_4x3">"Cuaca + Jam (4x3)"</string>
+    <string name="label_widget_weather_3x1">"Cuaca (3x1)"</string>
+    <string name="label_widget_weather_forecast_4x2">"Prakiraan Cuaca (4x2)"</string>
+    <string name="widget_loading_prompt">"Memuat…"</string>
+    <string name="refreshbtn_pref_title">"Tombol Segarkan"</string>
+    <string name="refreshbtn_pref_summary">"Sembunyikan tombol segarkan dari widget"</string>
+    <string name="pref_category_customsize">"Ukuran Ikon dan Teks"</string>
+    <string name="pref_title_textsize">"Ukuran Teks"</string>
+    <string name="pref_title_iconsize">"Ukuran Ikon"</string>
+    <string name="precipitation_minutely_starting_text_format">"Hujan akan mulai sekitar %1$s"</string>
+    <string name="precipitation_minutely_stopping_text_format">"Hujan akan berhenti sekitar %1$s"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Tingkat Keparahan Peringatan Minimum"</string>
+    <string name="alertsev_all">"Tidak Ada (Tampilkan semua peringatan)"</string>
+    <string name="alertsev_moderate">"Sedang"</string>
+    <string name="alertsev_severe">"Parah"</string>
+    <string name="alertsev_extreme">"Ekstrim"</string>
+    <string name="pref_title_txtshadow">"Bayangan Teks"</string>
+    <string name="pref_summary_txtshadow">"Tambahkan lapisan bayangan ke teks"</string>
+    <string name="precipitation_likely_text_format">"Hujan kemungkinan sekitar %1$s (peluang %2$d%%)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Hujan diperkirakan mulai sekitar %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Hujan diperkirakan berhenti sekitar %1$s"</string>
+</resources>

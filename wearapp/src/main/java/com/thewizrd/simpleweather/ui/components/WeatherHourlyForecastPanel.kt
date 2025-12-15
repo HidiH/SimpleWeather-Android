@@ -2,13 +2,16 @@
 
 package com.thewizrd.simpleweather.ui.components
 
+import android.content.res.Configuration
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -26,26 +30,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import androidx.wear.tooling.preview.devices.WearDevices
+import com.thewizrd.common.controls.DetailItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.StringUtils
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
+import java.time.ZonedDateTime
 
 @Composable
 fun WeatherHourlyForecastPanel(
     model: HourlyForecastItemViewModel
 ) {
     val ctx = LocalContext.current
+    val isLargeHeight = LocalConfiguration.current.screenHeightDp >= 225
+    val isLargeWidth = LocalConfiguration.current.screenWidthDp >= 225
 
     val popData = remember(model.extras) {
         model.extras?.get(WeatherDetailsType.POPCHANCE)
@@ -53,23 +64,23 @@ fun WeatherHourlyForecastPanel(
     val windData = remember(model.extras) {
         model.extras?.get(WeatherDetailsType.WINDSPEED)
     }
-    val annotatedDateStr = remember(ctx, model.forecast) {
+    val annotatedDateStr = remember(ctx, model.dateTime) {
         val is24hr = DateFormat.is24HourFormat(ctx)
         val dayOfWeek =
-            model.forecast.date.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
+            model.dateTime.format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAY_OF_THE_WEEK))
         val time: String
         val timeSuffix: String
 
         if (is24hr) {
-            time = model.forecast.date.format(
+            time = model.dateTime.format(
                 DateTimeUtils.ofPatternForUserLocale(
                     DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_24HR)
                 )
             )
             timeSuffix = ""
         } else {
-            time = model.forecast.date.format(DateTimeUtils.ofPatternForUserLocale("h"))
-            timeSuffix = model.forecast.date.format(DateTimeUtils.ofPatternForUserLocale("a"))
+            time = model.dateTime.format(DateTimeUtils.ofPatternForUserLocale("h"))
+            timeSuffix = model.dateTime.format(DateTimeUtils.ofPatternForUserLocale("a"))
         }
 
         buildAnnotatedString {
@@ -111,7 +122,7 @@ fun WeatherHourlyForecastPanel(
                     .padding(4.dp),
                 textAlign = TextAlign.Center,
                 text = annotatedDateStr,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyLarge
             )
             WeatherIcon(
                 modifier = Modifier.size(
@@ -123,7 +134,7 @@ fun WeatherHourlyForecastPanel(
             Text(
                 modifier = Modifier.weight(1f),
                 text = model.hiTemp ?: WeatherIcons.PLACEHOLDER,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 maxLines = 1
             )
@@ -134,7 +145,7 @@ fun WeatherHourlyForecastPanel(
             horizontalArrangement = Arrangement.Center
         ) {
             if (popData != null) {
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         modifier = Modifier
                             .size(20.dp)
@@ -147,7 +158,7 @@ fun WeatherHourlyForecastPanel(
                     Text(
                         modifier = Modifier.align(Alignment.CenterVertically),
                         text = spannableStringToAnnotatedString(popData.value),
-                        style = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                         textAlign = TextAlign.End,
                         maxLines = 1,
                         color = colorResource(R.color.colorPrimaryLight)
@@ -159,14 +170,14 @@ fun WeatherHourlyForecastPanel(
             }
             if (windData != null) {
                 val windSpeed = remember(windData.value) {
-                    if (!windData.value.isNullOrEmpty()) {
-                        windData.value.split(",")[0]
+                    if (isLargeWidth) {
+                        windData.value
                     } else {
-                        ""
+                        windData.value.split(",")[0]
                     }
                 }
 
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         modifier = Modifier
                             .size(20.dp)
@@ -180,7 +191,7 @@ fun WeatherHourlyForecastPanel(
                     Text(
                         modifier = Modifier.align(Alignment.CenterVertically),
                         text = spannableStringToAnnotatedString(windSpeed),
-                        style = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                         textAlign = TextAlign.End,
                         maxLines = 1,
                         color = Color(0xFF20B2AA)
@@ -188,5 +199,72 @@ fun WeatherHourlyForecastPanel(
                 }
             }
         }
+    }
+}
+
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.LARGE_ROUND,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.SQUARE,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.SMALL_ROUND,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.RECT,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Composable
+fun PreviewWeatherHourlyForecastPanel() {
+    val context = LocalContext.current.also {
+        it.initializeDependencies(isPhone = false)
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        WeatherHourlyForecastPanel(
+            model = HourlyForecastItemViewModel().apply {
+                dateTime = ZonedDateTime.now()
+                weatherIcon = WeatherIcons.DAY_SUNNY
+                date = "Mon 07"
+                shortDate = "Mon 07"
+                longDate = "Monday"
+                condition = "Sunny"
+                hiTemp = "70°"
+                windDirection = 180
+                windSpeed = "7 mph"
+                windDirLabel = "S"
+                extras.put(
+                    WeatherDetailsType.POPCHANCE,
+                    DetailItemViewModel(WeatherDetailsType.POPCHANCE, "70%")
+                )
+                extras.put(
+                    WeatherDetailsType.WINDSPEED,
+                    DetailItemViewModel(WeatherDetailsType.WINDSPEED, "7 mph, S")
+                )
+            }
+        )
     }
 }

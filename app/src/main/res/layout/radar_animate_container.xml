@@ -20,18 +20,17 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <androidx.appcompat.widget.AppCompatToggleButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/play_button"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/play_pause"
-            android:backgroundTint="?attr/colorAccent"
-            android:layout_margin="10dp"
-            android:textOn=""
-            android:textOff=""
+            style="@style/Widget.Material3Expressive.Button.IconButton.Tonal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:checkable="true"
-            android:checked="false" />
+            android:checked="false"
+            android:insetLeft="10dp"
+            android:insetRight="10dp"
+            app:icon="@drawable/play_pause" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/animation_seekbar"

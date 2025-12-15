@@ -4,4 +4,6 @@
     style="@style/Widget.Wear.WearChipButton.Checkable"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    app:primaryTextAppearance="@style/TextAppearance.WearPreference.PrimaryText"
+    app:secondaryTextAppearance="@style/TextAppearance.WearPreference.SecondaryText"
     app:controlType="toggle" />

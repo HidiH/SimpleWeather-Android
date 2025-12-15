@@ -1,9 +1,12 @@
 package com.thewizrd.simpleweather.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,17 +17,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import androidx.wear.tooling.preview.devices.WearDevices
+import com.thewizrd.common.controls.DetailItemViewModel
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
+import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
@@ -33,6 +42,10 @@ import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 fun WeatherForecastPanel(
     model: ForecastItemViewModel
 ) {
+    val context = LocalContext.current
+    val isLargeHeight = LocalConfiguration.current.screenHeightDp >= 225
+    val isLargeWidth = LocalConfiguration.current.screenWidthDp >= 225
+
     val popData = remember(model.extras) {
         model.extras?.get(WeatherDetailsType.POPCHANCE)
     }
@@ -61,7 +74,7 @@ fun WeatherForecastPanel(
                     .padding(4.dp),
                 textAlign = TextAlign.Center,
                 text = model.date ?: WeatherIcons.EM_DASH,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyLarge
             )
             WeatherIcon(
                 modifier = Modifier.size(
@@ -81,7 +94,7 @@ fun WeatherForecastPanel(
                     Text(
                         modifier = Modifier.weight(1f),
                         text = model.hiTemp ?: WeatherIcons.PLACEHOLDER,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.End,
                         maxLines = 1
                     )
@@ -99,7 +112,7 @@ fun WeatherForecastPanel(
                     Text(
                         modifier = Modifier.weight(1f),
                         text = model.loTemp ?: WeatherIcons.PLACEHOLDER,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.End,
                         maxLines = 1
                     )
@@ -118,7 +131,7 @@ fun WeatherForecastPanel(
             horizontalArrangement = Arrangement.Center
         ) {
             if (popData != null) {
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         modifier = Modifier
                             .size(20.dp)
@@ -129,7 +142,7 @@ fun WeatherForecastPanel(
                     )
                     Text(
                         text = spannableStringToAnnotatedString(popData.value),
-                        style = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                         textAlign = TextAlign.End,
                         maxLines = 1,
                         color = colorResource(R.color.colorPrimaryLight)
@@ -140,19 +153,29 @@ fun WeatherForecastPanel(
                 Spacer(modifier = Modifier.width(4.dp))
             }
             if (windData != null) {
-                Row {
+                val windSpeed = remember(windData.value) {
+                    if (isLargeWidth) {
+                        windData.value
+                    } else {
+                        windData.value.split(",")[0]
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         modifier = Modifier
                             .size(20.dp)
                             .padding(end = 2.dp)
-                            .rotate(windData.iconRotation.toFloat()),
+                            .rotate(windData.iconRotation.toFloat())
+                            .align(Alignment.CenterVertically),
                         painter = painterResource(R.drawable.wi_wind_direction),
                         tint = Color(0xFF20B2AA),
                         contentDescription = null
                     )
                     Text(
-                        text = spannableStringToAnnotatedString(windData.value),
-                        style = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = spannableStringToAnnotatedString(windSpeed),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                         textAlign = TextAlign.End,
                         maxLines = 1,
                         color = Color(0xFF20B2AA)
@@ -160,5 +183,72 @@ fun WeatherForecastPanel(
                 }
             }
         }
+    }
+}
+
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.LARGE_ROUND,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.SQUARE,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.SMALL_ROUND,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Preview(
+    apiLevel = 34,
+    uiMode = Configuration.UI_MODE_TYPE_WATCH,
+    showSystemUi = true,
+    device = WearDevices.RECT,
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Composable
+fun PreviewWeatherForecastPanel() {
+    val context = LocalContext.current.also {
+        it.initializeDependencies(isPhone = false)
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        WeatherForecastPanel(
+            model = ForecastItemViewModel().apply {
+                weatherIcon = WeatherIcons.DAY_SUNNY
+                date = "Mon 07"
+                shortDate = "Mon 07"
+                longDate = "Monday"
+                condition = "Sunny"
+                hiTemp = "70°"
+                loTemp = "65°"
+                windDirection = 180
+                windSpeed = "7 mph"
+                windDirLabel = "S"
+                extras.put(
+                    WeatherDetailsType.POPCHANCE,
+                    DetailItemViewModel(WeatherDetailsType.POPCHANCE, "70%")
+                )
+                extras.put(
+                    WeatherDetailsType.WINDSPEED,
+                    DetailItemViewModel(WeatherDetailsType.WINDSPEED, "7 mph, S")
+                )
+            }
+        )
     }
 }

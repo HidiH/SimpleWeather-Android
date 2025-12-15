@@ -26,11 +26,9 @@ class WearChipButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.wearChipButtonStyle,
-    defStyleRes: Int = DEF_STYLE_RES
+    defStyleRes: Int = R.style.Widget_Wear_WearChipButton
 ) : ConstraintLayout(context, attrs, defStyleAttr, defStyleRes), Checkable {
     companion object {
-        private const val DEF_STYLE_RES = R.style.Widget_Wear_WearChipButton
-
         private val ENABLED_STATE_SET = intArrayOf(android.R.attr.state_enabled)
         private val CHECKABLE_STATE_SET = intArrayOf(android.R.attr.state_checkable)
         private val CHECKED_STATE_SET = intArrayOf(android.R.attr.state_checked)
@@ -75,7 +73,7 @@ class WearChipButton @JvmOverloads constructor(
         mPrimaryTextView = findViewById(R.id.wear_chip_primary_text)
         mSecondaryTextView = findViewById(R.id.wear_chip_secondary_text)
         mSelectionControlContainer = findViewById(R.id.wear_chip_selection_control_container)
-        mContentContainer = findViewById(R.id.wear_chip_content)
+        mContentContainer = findViewById(android.R.id.widget_frame)
 
         mPrimaryTextView.maxLines = 2
         mSecondaryTextView.maxLines = 1
@@ -363,13 +361,8 @@ class WearChipButton @JvmOverloads constructor(
                 val layerCount = backgroundDrawable.numberOfLayers
                 for (i in 1 until layerCount) {
                     val layer = backgroundDrawable.getDrawable(i)
-                    val id = backgroundDrawable.getId(i)
-                    if (id == R.id.start_accent) {
-                        layer.alpha = 0xFF
-                        backgroundDrawable.setDrawable(i, layer.setButtonBackgroundDrawableTint())
-                    } else {
-                        layer.alpha = 0
-                    }
+                    layer.alpha = 0xFF
+                    backgroundDrawable.setDrawable(i, layer.setButtonBackgroundDrawableTint())
                 }
                 return
             }

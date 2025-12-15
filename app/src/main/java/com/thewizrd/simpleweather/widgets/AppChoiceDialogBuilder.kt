@@ -82,7 +82,7 @@ class AppChoiceDialogBuilder(private val context: Context) {
                 .create()
 
         dialog.setOnShowListener {
-            binding.progressBar.visibility = View.VISIBLE
+            binding.progressBar.show()
             updateAppsList()
         }
 
@@ -100,7 +100,7 @@ class AppChoiceDialogBuilder(private val context: Context) {
         mAdapter.registerAdapterDataObserver(object : SimpleRecyclerViewAdapterObserver() {
             override fun onChanged() {
                 super.onChanged()
-                binding.progressBar.visibility = View.GONE
+                binding.progressBar.hide()
                 mAdapter.unregisterAdapterDataObserver(this)
             }
         })

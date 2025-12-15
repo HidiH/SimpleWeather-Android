@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalLayoutApi::class, ExperimentalHorologistApi::class)
-
 package com.thewizrd.simpleweather.ui.weather
 
 import android.app.Activity
@@ -24,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -56,40 +55,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.CircularProgressIndicator
-import androidx.wear.compose.material.CompactButton
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.LocalContentColor
-import androidx.wear.compose.material.LocalTextStyle
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.dialog.Alert
-import androidx.wear.compose.material.dialog.Dialog
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButton
+import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.LocalContentColor
+import androidx.wear.compose.material3.LocalTextStyle
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.fillMaxRectangle
-import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
 import com.thewizrd.common.controls.WeatherAlertViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.controls.toUiModel
+import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.designer.initializeDependencies
-import com.thewizrd.shared_resources.di.localBroadcastManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.Colors
+import com.thewizrd.shared_resources.utils.ContextUtils.isLargeWatch
 import com.thewizrd.shared_resources.utils.ConversionMethods
+import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.StringUtils.removeNonDigitChars
 import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.shared_resources.utils.getColorFromTempF
@@ -100,22 +100,28 @@ import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.SettingsActivity
 import com.thewizrd.simpleweather.setup.SetupActivity
+import com.thewizrd.simpleweather.ui.components.ConfirmationOverlay
 import com.thewizrd.simpleweather.ui.components.ForecastItem
 import com.thewizrd.simpleweather.ui.components.HourlyForecastItem
 import com.thewizrd.simpleweather.ui.components.IconAlignment
 import com.thewizrd.simpleweather.ui.components.LoadingContent
 import com.thewizrd.simpleweather.ui.components.WearDivider
 import com.thewizrd.simpleweather.ui.components.WeatherIcon
+import com.thewizrd.simpleweather.ui.compose.CircularWavyProgressIndicator
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.navigation.Screen
 import com.thewizrd.simpleweather.ui.text.spannableStringToAnnotatedString
 import com.thewizrd.simpleweather.ui.theme.findActivity
 import com.thewizrd.simpleweather.ui.utils.LogCompositions
-import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
+import com.thewizrd.simpleweather.viewmodels.ConfirmationData
+import com.thewizrd.simpleweather.viewmodels.ConfirmationViewModel
+import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncState
+import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.viewmodels.WeatherNowStateModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import com.thewizrd.simpleweather.wearable.WearableListenerActions
+import kotlinx.coroutines.launch
 
 @Composable
 fun WeatherNowScreen(
@@ -123,7 +129,9 @@ fun WeatherNowScreen(
     scrollState: ScrollState,
     focusRequester: FocusRequester,
     wNowViewModel: WeatherNowViewModel,
+    dataSyncViewModel: WeatherDataSyncViewModel,
     uiState: WeatherNowState,
+    syncState: WeatherDataSyncState,
     weather: WeatherUiModel,
     alerts: List<WeatherAlertViewModel>,
     forecasts: List<ForecastItemViewModel>,
@@ -131,6 +139,8 @@ fun WeatherNowScreen(
     hasMinutely: Boolean
 ) {
     val stateModel = viewModel<WeatherNowStateModel>()
+    val confirmationViewModel = viewModel<ConfirmationViewModel>()
+    val confirmationData by confirmationViewModel.confirmationEventsFlow.collectAsState()
 
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
@@ -142,132 +152,196 @@ fun WeatherNowScreen(
         LogCompositions(tag = "WeatherNow", msg = "WeatherNowScreen")
     }
 
-    LoadingContent(
-        empty = uiState.isLoading && (uiState.noLocationAvailable || weather.location.isNullOrEmpty()) || scrollLoading,
-        emptyContent = {
-            Box(
-                modifier = Modifier.fillMaxRectangle(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    trackColor = Color.Transparent
-                )
+    ScreenScaffold(scrollState = scrollState) {
+        LoadingContent(
+            empty = (uiState.isLoading || syncState.isSyncInProgress) && (uiState.noLocationAvailable || weather.location.isNullOrEmpty()) || scrollLoading,
+            emptyContent = {
+                Box(
+                    modifier = Modifier.fillMaxRectangle(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularWavyProgressIndicator(
+                        trackColor = Color.Transparent
+                    )
+                }
+            },
+            loading = (uiState.isLoading || syncState.isSyncInProgress),
+            onRefresh = {
+                wNowViewModel.refreshWeather(true)
             }
-        },
-        loading = uiState.isLoading,
-        onRefresh = {
-            wNowViewModel.refreshWeather(true)
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .rotaryWithScroll(scrollState, focusRequester)
-                .verticalScroll(scrollState)
         ) {
-            Column(
-                modifier = Modifier.padding(top = 24.dp, bottom = 48.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .rotaryScrollable(
+                        RotaryScrollableDefaults.behavior(scrollState),
+                        focusRequester
+                    )
+                    .verticalScroll(scrollState)
             ) {
-                if (uiState.noLocationAvailable) {
-                    NoLocationsPrompt(activity)
-                }
-                if (uiState.showDisconnectedView) {
-                    DisconnectionAlert()
-                }
-                if (alerts.isNotEmpty()) {
-                    AlertsBox(navController)
-                }
-                if (!weather.location.isNullOrEmpty()) {
-                    WeatherLocation(
-                        locationName = weather.location,
-                        isGPSLocation = uiState.isGPSLocation
-                    )
-                    // Icon + Temp
-                    IconTempRow(
-                        weatherIcon = weather.weatherIcon,
-                        iconProvider = weather.iconProvider,
-                        curTemp = weather.curTemp,
-                        tempUnit = weather.tempUnit
-                    )
-                    // Condition
-                    weather.curCondition?.let { condition ->
-                        ConditionText(condition)
+                Column(
+                    modifier = Modifier.padding(top = 24.dp, bottom = 48.dp)
+                ) {
+                    if (uiState.noLocationAvailable) {
+                        NoLocationsPrompt(activity)
                     }
-
-                    // HiLo Layout
-                    if (weather.isShowHiLo) {
-                        HiLoLayout(
-                            hiTemp = weather.hiTemp,
-                            loTemp = weather.loTemp
+                    if (syncState.showDisconnectedView) {
+                        DisconnectionAlert()
+                    }
+                    if (alerts.isNotEmpty()) {
+                        AlertsBox(navController)
+                    }
+                    if (!weather.location.isNullOrEmpty()) {
+                        WeatherLocation(
+                            locationName = weather.location,
+                            isGPSLocation = uiState.isGPSLocation
                         )
-                    }
-
-                    // Condition Details
-                    ConditionDetails(
-                        weather = weather,
-                        navController = navController
-                    )
-
-                    weather.weatherSummary?.let { summary ->
-                        WeatherSummary(weatherSummary = summary)
-                    }
-
-                    WearDivider()
-                    if (forecasts.isNotEmpty()) {
-                        ForecastPanels(
-                            forecasts = forecasts,
+                        // Icon + Temp
+                        IconTempRow(
+                            weatherIcon = weather.weatherIcon,
                             iconProvider = weather.iconProvider,
+                            curTemp = weather.curTemp,
+                            tempUnit = weather.tempUnit
+                        )
+                        // Condition
+                        weather.curCondition?.let { condition ->
+                            ConditionText(condition)
+                        }
+
+                        // HiLo Layout
+                        if (weather.isShowHiLo) {
+                            HiLoLayout(
+                                hiTemp = weather.hiTemp,
+                                loTemp = weather.loTemp
+                            )
+                        }
+
+                        // Condition Details
+                        ConditionDetails(
+                            weather = weather,
                             navController = navController
                         )
+
+                        weather.weatherSummary?.let { summary ->
+                            WeatherSummary(weatherSummary = summary)
+                        }
+
+                        WearDivider()
+                        if (forecasts.isNotEmpty()) {
+                            ForecastPanels(
+                                forecasts = forecasts,
+                                iconProvider = weather.iconProvider,
+                                navController = navController
+                            )
+                        }
+                        if (hourlyForecasts.isNotEmpty()) {
+                            HourlyForecastPanels(
+                                hourlyForecasts = hourlyForecasts,
+                                iconProvider = weather.iconProvider,
+                                navController = navController
+                            )
+                        }
+                        weather.updateDate?.let { date ->
+                            UpdateDateText(date = date)
+                        }
+                        weather.weatherCredit?.let { credit ->
+                            WeatherCreditText(credit = credit)
+                        }
+                    }
+
+                    // Top divider
+                    if (forecasts.isNotEmpty() || hourlyForecasts.isNotEmpty() || hasMinutely || weather.weatherDetailsMap.isNotEmpty()) {
+                        WearDivider()
+                    }
+                    if (forecasts.isNotEmpty()) {
+                        ForecastsButton(navController = navController)
                     }
                     if (hourlyForecasts.isNotEmpty()) {
-                        HourlyForecastPanels(
-                            hourlyForecasts = hourlyForecasts,
-                            iconProvider = weather.iconProvider,
-                            navController = navController
+                        HourlyForecastsButton(navController = navController)
+                    }
+                    if (hasMinutely) {
+                        MinutelyForecastsButton(navController = navController)
+                    }
+                    if (weather.weatherDetailsMap.isNotEmpty()) {
+                        DetailsButton(navController = navController)
+                    }
+
+                    // Navigation divider
+                    WearDivider()
+                    DetailsTileEditorButton(navController = navController)
+                    WearDivider()
+
+                    ChangeLocationButton(activity = activity)
+                    SettingsButton(activity = activity)
+                    if (!BuildConfig.IS_NONGMS) {
+                        OpenOnPhoneButton(
+                            onOpenOnPhone = {
+                                dataSyncViewModel.openAppOnPhone(showAnimation = true)
+                            }
                         )
                     }
-                    weather.updateDate?.let { date ->
-                        UpdateDateText(date = date)
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                    focusRequester.requestFocus()
+                }
+            }
+        }
+    }
+
+    ConfirmationOverlay(
+        confirmationData = confirmationData,
+        onTimeout = { confirmationViewModel.clearFlow() }
+    )
+
+    LifecycleResumeEffect(activity) {
+        val job = lifecycleOwner.lifecycleScope.launch {
+            dataSyncViewModel.errorMessagesFlow.collect { error ->
+                when (error) {
+                    is ErrorMessage.Resource -> {
+                        confirmationViewModel.showFailure(context.getString(error.stringId))
                     }
-                    weather.weatherCredit?.let { credit ->
-                        WeatherCreditText(credit = credit)
+
+                    is ErrorMessage.String -> {
+                        confirmationViewModel.showFailure(error.message)
                     }
-                }
 
-                // Top divider
-                if (forecasts.isNotEmpty() || hourlyForecasts.isNotEmpty() || hasMinutely || weather.weatherDetailsMap.isNotEmpty()) {
-                    WearDivider()
-                }
-                if (forecasts.isNotEmpty()) {
-                    ForecastsButton(navController = navController)
-                }
-                if (hourlyForecasts.isNotEmpty()) {
-                    HourlyForecastsButton(navController = navController)
-                }
-                if (hasMinutely) {
-                    MinutelyForecastsButton(navController = navController)
-                }
-                if (weather.weatherDetailsMap.isNotEmpty()) {
-                    DetailsButton(navController = navController)
-                }
-
-                // Navigation divider
-                WearDivider()
-                DetailsTileEditorButton(navController = navController)
-                WearDivider()
-
-                ChangeLocationButton(activity = activity)
-                SettingsButton(activity = activity)
-                if (!BuildConfig.IS_NONGMS) {
-                    OpenOnPhoneButton()
+                    is ErrorMessage.WeatherError -> {
+                        confirmationViewModel.showFailure(error.exception.message)
+                    }
                 }
             }
         }
 
-        LaunchedEffect(Unit) {
-            lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-                focusRequester.requestFocus()
+        onPauseOrDispose {
+            job.cancel()
+        }
+    }
+
+    if (!BuildConfig.IS_NONGMS) {
+        LifecycleResumeEffect(activity) {
+            val job = lifecycleOwner.lifecycleScope.launch {
+                dataSyncViewModel.eventFlow.collect { event ->
+                    when (event.eventType) {
+                        WearableListenerActions.ACTION_SHOWCONFIRMATION -> {
+                            val jsonData =
+                                event.data.getString(WearableListenerActions.EXTRA_EVENTDATA)
+
+                            JSONParser.deserializer<ConfirmationData>(
+                                jsonData,
+                                ConfirmationData::class.java
+                            )?.let {
+                                confirmationViewModel.showConfirmation(it)
+                            }
+                        }
+                    }
+                }
+            }
+
+            onPauseOrDispose {
+                job.cancel()
             }
         }
     }
@@ -309,7 +383,7 @@ private fun NoLocationsPrompt(
         Text(
             text = stringResource(id = R.string.prompt_location_not_set),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -329,13 +403,13 @@ private fun DisconnectionAlert() {
         Icon(
             painter = painterResource(R.drawable.ic_baseline_cloud_off_24),
             contentDescription = null,
-            tint = MaterialTheme.colors.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = stringResource(id = R.string.message_disconnected),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.button,
-            color = MaterialTheme.colors.onSurfaceVariant
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -346,22 +420,26 @@ private fun AlertsBox(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
-        CompactButton(
+        IconButton(
+            modifier = Modifier.requiredSize(IconButtonDefaults.ExtraSmallButtonSize),
             onClick = {
                 navController.navigate(Screen.Alerts.route)
             },
-            colors = ButtonDefaults.primaryButtonColors(
-                backgroundColor = Color(0xFFFF4500)
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer
             )
         ) {
             Icon(
+                modifier = Modifier.size(IconButtonDefaults.SmallIconSize),
                 painter = painterResource(id = R.drawable.ic_error_white),
+                tint = MaterialTheme.colorScheme.onErrorContainer,
                 contentDescription = null
             )
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ColumnScope.WeatherLocation(
     locationName: String? = WeatherIcons.EM_DASH,
@@ -382,17 +460,21 @@ private fun ColumnScope.WeatherLocation(
     ) {
         if (isGPSLocation) {
             Icon(
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier
+                    .size(18.dp)
+                    .align(Alignment.CenterVertically),
                 painter = painterResource(id = R.drawable.ic_place_white_24dp),
                 contentDescription = null
             )
         }
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically),
             text = locationName ?: WeatherIcons.EM_DASH,
             textAlign = TextAlign.Center,
             fontSize = 16.sp,
-            style = MaterialTheme.typography.button,
+            style = MaterialTheme.typography.labelLarge,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -453,7 +535,7 @@ private fun ConditionText(
         overflow = TextOverflow.Ellipsis,
         letterSpacing = 0.sp,
         maxLines = 2,
-        style = MaterialTheme.typography.caption1,
+        style = MaterialTheme.typography.bodySmall,
         fontSize = 16.sp
     )
 }
@@ -478,7 +560,7 @@ private fun HiLoLayout(
             ) {
                 Text(
                     text = hiTemp ?: WeatherIcons.PLACEHOLDER,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.End,
                     maxLines = 1
                 )
@@ -504,7 +586,7 @@ private fun HiLoLayout(
             ) {
                 Text(
                     text = loTemp ?: WeatherIcons.PLACEHOLDER,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.End,
                     maxLines = 1
                 )
@@ -526,6 +608,9 @@ private fun ConditionDetails(
     weather: WeatherUiModel,
     navController: NavHostController
 ) {
+    val context = LocalContext.current
+    val isLargeWatch = remember(context) { context.isLargeWatch() }
+
     val popData = remember(weather) {
         weather.weatherDetailsMap[WeatherDetailsType.POPCHANCE]
     }
@@ -560,7 +645,7 @@ private fun ConditionDetails(
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = spannableStringToAnnotatedString(popData.value),
-                    style = MaterialTheme.typography.caption1,
+                    style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     color = colorResource(R.color.colorPrimaryLight)
@@ -586,8 +671,8 @@ private fun ConditionDetails(
                 )
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = spannableStringToAnnotatedString(windData.value),
-                    style = MaterialTheme.typography.caption1,
+                    text = spannableStringToAnnotatedString(if (isLargeWatch || popData == null) windData.value else windData.shortValue),
+                    style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     color = Color(0xFF20B2AA)
@@ -602,30 +687,19 @@ private fun WeatherSummary(
     weatherSummary: String
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    val dialogScrollState = rememberScalingLazyListState(
-        initialCenterItemIndex = 0,
-        initialCenterItemScrollOffset = 0
-    )
-    val focusRequester = rememberFocusRequester()
 
-    Dialog(
-        showDialog = showDialog,
+    AlertDialog(
+        visible = showDialog,
         onDismissRequest = { showDialog = false },
+        title = {
+            Text(
+                text = "",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
     ) {
-        Alert(
-            modifier = Modifier
-                .rotaryWithScroll(dialogScrollState, focusRequester),
-            title = {
-                Text(
-                    text = "",
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.onBackground
-                )
-            },
-            positiveButton = {},
-            negativeButton = {},
-            scrollState = dialogScrollState
-        ) {
+        item {
             Text(
                 modifier = Modifier.padding(
                     top = dimensionResource(id = R.dimen.header_top_padding),
@@ -633,15 +707,9 @@ private fun WeatherSummary(
                 ),
                 text = weatherSummary,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.caption1,
-                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground,
             )
-        }
-
-        PositionIndicator(scalingLazyListState = dialogScrollState)
-
-        LaunchedEffect(Unit) {
-            dialogScrollState.scrollToItem(0, 0)
         }
     }
     WearDivider()
@@ -658,8 +726,8 @@ private fun WeatherSummary(
         overflow = TextOverflow.Ellipsis,
         maxLines = 3,
         letterSpacing = 0.sp,
-        style = MaterialTheme.typography.caption1,
-        color = MaterialTheme.colors.onSurfaceVariant
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 
@@ -731,7 +799,7 @@ private fun UpdateDateText(
             .fillMaxWidth(),
         textAlign = TextAlign.Center,
         text = date,
-        style = MaterialTheme.typography.caption2
+        style = MaterialTheme.typography.bodyExtraSmall
     )
 }
 
@@ -748,7 +816,7 @@ private fun WeatherCreditText(
             ),
         textAlign = TextAlign.Center,
         text = credit,
-        style = MaterialTheme.typography.caption1
+        style = MaterialTheme.typography.bodySmall
     )
 }
 
@@ -837,16 +905,14 @@ private fun SettingsButton(
 }
 
 @Composable
-private fun OpenOnPhoneButton() {
+private fun OpenOnPhoneButton(
+    onOpenOnPhone: () -> Unit
+) {
     NavigationButton(
         label = stringResource(id = R.string.action_openonphone),
-        iconDrawableId = R.drawable.common_full_open_on_phone
-    ) {
-        localBroadcastManager.sendBroadcast(
-            Intent(WearableListenerActions.ACTION_OPENONPHONE)
-                .putExtra(WearableListenerActions.EXTRA_SHOWANIMATION, true)
-        )
-    }
+        iconDrawableId = R.drawable.common_full_open_on_phone,
+        onClick = onOpenOnPhone
+    )
 }
 
 @Composable
@@ -856,13 +922,13 @@ private fun NavigationButton(
     contentDescription: String? = null,
     onClick: () -> Unit,
 ) {
-    Chip(
+    Button(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(vertical = 2.dp, horizontal = 16.dp),
         onClick = onClick,
-        colors = ChipDefaults.secondaryChipColors(),
+        colors = ButtonDefaults.filledTonalButtonColors(),
         label = {
             Text(
                 modifier = Modifier
@@ -933,7 +999,7 @@ private fun PreviewWeatherNowScreen() {
 
     CompositionLocalProvider(
         LocalContentColor provides Color.White,
-        LocalTextStyle provides MaterialTheme.typography.button,
+        LocalTextStyle provides MaterialTheme.typography.labelLarge,
         LocalContext provides context
     ) {
         Box(

@@ -29,60 +29,124 @@
         <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
         <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_light_primaryInverse</item>
+
+        <item name="colorSurfaceDim">@color/md_theme_light_surfaceDim</item>
+        <item name="colorSurfaceBright">@color/md_theme_light_surfaceBright</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_light_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_theme_light_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/md_theme_light_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_light_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_light_surfaceContainerHighest
+        </item>
     </style>
 
-    <style name="Base.AppTheme.Bridge" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.AppTheme.Bridge" parent="Theme.Material3Expressive.DayNight.NoActionBar">
         <item name="actionButtonStyle">@style/ActionButton</item>
 
         <!-- Text styles -->
-        <item name="android:textAppearance">@style/TextAppearance.OpenSans</item>
-        <item name="android:textAppearanceInverse">@style/TextAppearance.OpenSans.Inverse</item>
-        <item name="android:textAppearanceLarge">@style/TextAppearance.OpenSans</item>
+        <item name="android:textAppearance">@style/TextAppearance.SimpleWeather</item>
+        <item name="android:textAppearanceInverse">@style/TextAppearance.SimpleWeather.Inverse
+        </item>
+        <item name="android:textAppearanceLarge">@style/TextAppearance.SimpleWeather</item>
         <item name="android:textAppearanceLargeInverse">
-            @style/TextAppearance.OpenSans.Large.Inverse
+            @style/TextAppearance.SimpleWeather.Large.Inverse
         </item>
-        <item name="android:textAppearanceMedium">@style/TextAppearance.OpenSans.Medium</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearance.SimpleWeather.Medium</item>
         <item name="android:textAppearanceMediumInverse">
-            @style/TextAppearance.OpenSans.Medium.Inverse
+            @style/TextAppearance.SimpleWeather.Medium.Inverse
         </item>
-        <item name="android:textAppearanceSmall">@style/TextAppearance.OpenSans.Small</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearance.SimpleWeather.Small</item>
         <item name="android:textAppearanceSmallInverse">
-            @style/TextAppearance.OpenSans.Small.Inverse
+            @style/TextAppearance.SimpleWeather.Small.Inverse
         </item>
 
-        <!-- Material Typography -->
-        <item name="textAppearanceDisplayLarge">@style/TextAppearance.OpenSans.DisplayLarge</item>
-        <item name="textAppearanceDisplayMedium">@style/TextAppearance.OpenSans.DisplayMedium</item>
-        <item name="textAppearanceDisplaySmall">@style/TextAppearance.OpenSans.DisplaySmall</item>
-        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.OpenSans.HeadlineLarge</item>
-        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.OpenSans.HeadlineMedium
+        <!-- Material 3 Typography -->
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.SimpleWeather.DisplayLarge
         </item>
-        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.OpenSans.HeadlineSmall</item>
-        <item name="textAppearanceTitleLarge">@style/TextAppearance.OpenSans.TitleLarge</item>
-        <item name="textAppearanceHeadline6">@style/TextAppearance.OpenSans.Headline6</item>
-        <item name="textAppearanceTitleMediumLarge">?textAppearanceHeadline6</item>
-        <item name="textAppearanceTitleMedium">@style/TextAppearance.OpenSans.TitleMedium</item>
-        <item name="textAppearanceTitleSmall">@style/TextAppearance.OpenSans.TitleSmall</item>
-        <item name="textAppearanceBodyLarge">@style/TextAppearance.OpenSans.BodyLarge</item>
-        <item name="textAppearanceBodyMedium">@style/TextAppearance.OpenSans.BodyMedium</item>
-        <item name="textAppearanceBodySmall">@style/TextAppearance.OpenSans.BodySmall</item>
-        <item name="textAppearanceLabelLarge">@style/TextAppearance.OpenSans.LabelLarge</item>
-        <item name="textAppearanceLabelMedium">@style/TextAppearance.OpenSans.LabelMedium</item>
-        <item name="textAppearanceLabelSmall">@style/TextAppearance.OpenSans.LabelSmall</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.SimpleWeather.DisplayMedium
+        </item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.SimpleWeather.DisplaySmall
+        </item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.SimpleWeather.HeadlineLarge
+        </item>
+        <item name="textAppearanceHeadlineMedium">
+            @style/TextAppearance.SimpleWeather.HeadlineMedium
+        </item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.SimpleWeather.HeadlineSmall
+        </item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.SimpleWeather.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.SimpleWeather.TitleMedium
+        </item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.SimpleWeather.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.SimpleWeather.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.SimpleWeather.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.SimpleWeather.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.SimpleWeather.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.SimpleWeather.LabelMedium
+        </item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.SimpleWeather.LabelSmall</item>
+        <!-- Material 3 Typography Emphasized -->
+        <item name="textAppearanceDisplayLargeEmphasized">
+            @style/TextAppearance.SimpleWeather.DisplayLarge.Emphasized
+        </item>
+        <item name="textAppearanceDisplayMediumEmphasized">
+            @style/TextAppearance.SimpleWeather.DisplayMedium.Emphasized
+        </item>
+        <item name="textAppearanceDisplaySmallEmphasized">
+            @style/TextAppearance.SimpleWeather.DisplaySmall.Emphasized
+        </item>
+        <item name="textAppearanceHeadlineLargeEmphasized">
+            @style/TextAppearance.SimpleWeather.HeadlineLarge.Emphasized
+        </item>
+        <item name="textAppearanceHeadlineMediumEmphasized">
+            @style/TextAppearance.SimpleWeather.HeadlineMedium.Emphasized
+        </item>
+        <item name="textAppearanceHeadlineSmallEmphasized">
+            @style/TextAppearance.SimpleWeather.HeadlineSmall.Emphasized
+        </item>
+        <item name="textAppearanceTitleLargeEmphasized">
+            @style/TextAppearance.SimpleWeather.TitleLarge.Emphasized
+        </item>
+        <item name="textAppearanceTitleMediumEmphasized">
+            @style/TextAppearance.SimpleWeather.TitleMedium.Emphasized
+        </item>
+        <item name="textAppearanceTitleSmallEmphasized">
+            @style/TextAppearance.SimpleWeather.TitleSmall.Emphasized
+        </item>
+        <item name="textAppearanceBodyLargeEmphasized">
+            @style/TextAppearance.SimpleWeather.BodyLarge.Emphasized
+        </item>
+        <item name="textAppearanceBodyMediumEmphasized">
+            @style/TextAppearance.SimpleWeather.BodyMedium.Emphasized
+        </item>
+        <item name="textAppearanceBodySmallEmphasized">
+            @style/TextAppearance.SimpleWeather.BodySmall.Emphasized
+        </item>
+        <item name="textAppearanceLabelLargeEmphasized">
+            @style/TextAppearance.SimpleWeather.LabelLarge.Emphasized
+        </item>
+        <item name="textAppearanceLabelMediumEmphasized">
+            @style/TextAppearance.SimpleWeather.LabelMedium.Emphasized
+        </item>
+        <item name="textAppearanceLabelSmallEmphasized">
+            @style/TextAppearance.SimpleWeather.LabelSmall.Emphasized
+        </item>
 
-        <item name="android:textAppearanceListItem">@style/TextAppearance.OpenSans.ListItem</item>
-        <item name="android:textAppearanceListItemSmall">@style/TextAppearance.OpenSans.ListItem
+        <!-- Material Compat Typography -->
+        <item name="textAppearanceHeadline6">@style/TextAppearance.SimpleWeather.Headline6</item>
+        <item name="android:textAppearanceListItem">@style/TextAppearance.SimpleWeather.ListItem
         </item>
-        <item name="android:textAppearanceListItemSecondary" tools:targetApi="lollipop">
-            @style/TextAppearance.OpenSans.ListItemSecondary
+        <item name="android:textAppearanceListItemSmall">
+            @style/TextAppearance.SimpleWeather.ListItem
         </item>
-        <item name="textAppearanceListItem">@style/TextAppearance.OpenSans.ListItem</item>
-        <item name="textAppearanceListItemSmall">@style/TextAppearance.OpenSans.ListItem</item>
+        <item name="android:textAppearanceListItemSecondary">
+            @style/TextAppearance.SimpleWeather.ListItemSecondary
+        </item>
+        <item name="textAppearanceListItem">@style/TextAppearance.SimpleWeather.ListItem</item>
+        <item name="textAppearanceListItemSmall">@style/TextAppearance.SimpleWeather.ListItem</item>
         <item name="textAppearanceListItemSecondary">
-            @style/TextAppearance.OpenSans.ListItemSecondary
+            @style/TextAppearance.SimpleWeather.ListItemSecondary
         </item>
-
-        <item name="titleTextAppearance">@style/TextAppearance.OpenSans.Title</item>
 
         <!-- AlertDialog attributes -->
         <item name="dialogCornerRadius">@dimen/dialog_corner_radius</item>
@@ -116,12 +180,12 @@
     </style>
 
     <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
-        <item name="titleTextStyle">@style/TextAppearance.OpenSans.ActionModeTitle</item>
+        <item name="titleTextStyle">@style/TextAppearance.SimpleWeather.ActionModeTitle</item>
         <item name="background">?android:attr/colorBackground</item>
         <item name="backgroundSplit">?android:attr/colorBackground</item>
     </style>
 
-    <style name="ToolbarSurfaceTheme" parent="@style/ThemeOverlay.Material3.Toolbar.Surface">
+    <style name="ToolbarSurfaceTheme" parent="@style/ThemeOverlay.Material3Expressive.Toolbar.Surface">
         <item name="toolbarNavigationButtonStyle">@style/ToolbarNavButtonStyle</item>
     </style>
 
@@ -129,21 +193,19 @@
         <item name="tint">?attr/colorControlNormal</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.ActionModeTitle" parent="@style/TextAppearance.MaterialComponents.Headline6">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-        <item name="android:textStyle">bold</item>
+    <style name="TextAppearance.SimpleWeather.ActionModeTitle" parent="@style/TextAppearance.Material3.TitleLarge.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.ActionModeTitleOnPrimary" parent="@style/TextAppearance.MaterialComponents.Headline6">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-        <item name="android:textStyle">bold</item>
+    <style name="TextAppearance.SimpleWeather.ActionModeTitleOnPrimary" parent="@style/TextAppearance.Material3.TitleLarge.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base">
-        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay.Expressive</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
@@ -159,29 +221,15 @@
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 
-    <style name="CustomPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
-        <item name="sliderPreferenceStyle">@style/Preference.SliderPreference.Material</item>
-        <item name="switchPreferenceCompatStyle">@style/Preference.MaterialSwitchCompat</item>
-        <item name="switchPreferenceStyle">@style/Preference.MaterialSwitch</item>
-    </style>
-
-    <style name="Preference.MaterialSwitch" parent="Preference.SwitchPreference.Material">
-        <item name="android:widgetLayout">@layout/preference_widget_materialswitch</item>
-    </style>
-
-    <style name="Preference.MaterialSwitchCompat" parent="Preference.SwitchPreference.Material">
-        <item name="android:widgetLayout">@layout/preference_widget_materialswitch_compat</item>
-    </style>
-
     <style name="SetupTheme" parent="AppTheme">
-        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay.Expressive</item>
     </style>
 
     <style name="ActionButton" parent="Widget.AppCompat.ActionButton">
         <item name="android:drawablePadding">8dp</item>
     </style>
 
-    <style name="WeatherDetails" parent="@style/TextAppearance.OpenSans.Medium.Inverse">
+    <style name="WeatherDetails" parent="@style/TextAppearance.SimpleWeather.Medium.Inverse">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">18sp</item>
         <item name="android:padding">8dp</item>
@@ -190,20 +238,19 @@
     </style>
 
     <style name="PagerTabTitleStyle" parent="ShadowText">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog">
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="@style/ThemeOverlay.Material3Expressive.MaterialAlertDialog">
         <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
         <item name="materialAlertDialogTitleTextStyle">@style/AlertTitleStyle</item>
     </style>
 
-    <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
-        <item name="shapeAppearance">@style/ShapeAppearance.Material.MediumComponent</item>
+    <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3Expressive">
         <item name="multiChoiceItemLayout">@layout/alertdialog_multichoice_material</item>
         <item name="singleChoiceItemLayout">@layout/alertdialog_singlechoice_material</item>
         <item name="listItemLayout">@layout/alertdialog_listitem_material</item>
@@ -215,7 +262,7 @@
         <item name="listItemLayout">@layout/alertdialog_listitem_material</item>
     </style>
 
-    <style name="AlertDialogTheme" parent="ThemeOverlay.Material3.Dialog.Alert">
+    <style name="AlertDialogTheme" parent="ThemeOverlay.Material3Expressive.Dialog.Alert">
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
         <item name="buttonBarButtonStyle">@style/PositiveButtonStyle</item>
@@ -235,180 +282,256 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="AlertTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
+    <style name="AlertTitleStyle" parent="@style/MaterialAlertDialog.Material3Expressive.Title.Text.CenterStacked">
+        <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
     </style>
 
-    <style name="Preference_TextAppearanceMaterialBody2">
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily" tools:ignore="NewApi">@font/open_sans_semibold</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textStyle">bold</item>
+    <style name="TextAppearance.SimpleWeather" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="Preference_TextAppearanceMaterialSubhead">
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily" tools:ignore="NewApi">@font/open_sans</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textStyle">normal</item>
+    <style name="TextAppearance.SimpleWeather.Inverse" parent="TextAppearance.AppCompat.Inverse">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans" parent="TextAppearance.AppCompat">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.Large" parent="TextAppearance.AppCompat.Large">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Inverse" parent="TextAppearance.AppCompat.Inverse">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.Large.Inverse" parent="TextAppearance.AppCompat.Large.Inverse">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Large" parent="TextAppearance.AppCompat.Large">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.Medium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Large.Inverse" parent="TextAppearance.AppCompat.Large.Inverse">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.Medium.Inverse" parent="TextAppearance.AppCompat.Medium.Inverse">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Medium" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.Small" parent="TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Medium.Inverse" parent="TextAppearance.AppCompat.Medium.Inverse">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.Small.Inverse" parent="TextAppearance.AppCompat.Small.Inverse">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Small" parent="TextAppearance.AppCompat.Small">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <!-- Material 3 Typography -->
+    <style name="TextAppearance.SimpleWeather.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:letterSpacing">-0.000438596</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Small.Inverse" parent="TextAppearance.AppCompat.Small.Inverse">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.0009375</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.000714286</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:letterSpacing">0.003125</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:letterSpacing">0.001785714</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:letterSpacing">0.003333333</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.000714286</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.004166667</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.004545455</item>
+    </style>
+
+    <!-- Material 3 Typography Emphasized -->
+    <style name="TextAppearance.SimpleWeather.DisplayLarge.Emphasized" parent="TextAppearance.Material3.DisplayLarge.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.DisplayMedium.Emphasized" parent="TextAppearance.Material3.DisplayMedium.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.DisplaySmall.Emphasized" parent="TextAppearance.Material3.DisplaySmall.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.HeadlineLarge.Emphasized" parent="TextAppearance.Material3.HeadlineLarge.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.HeadlineMedium.Emphasized" parent="TextAppearance.Material3.HeadlineMedium.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.HeadlineSmall.Emphasized" parent="TextAppearance.Material3.HeadlineSmall.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.TitleLarge.Emphasized" parent="TextAppearance.Material3.TitleLarge.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.TitleMedium.Emphasized" parent="TextAppearance.Material3.TitleMedium.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.0009375</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.TitleSmall.Emphasized" parent="TextAppearance.Material3.TitleSmall.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.000714286</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.BodyLarge.Emphasized" parent="TextAppearance.Material3.BodyLarge.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.0009375</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.BodyMedium.Emphasized" parent="TextAppearance.Material3.BodyMedium.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.001785714</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.BodySmall.Emphasized" parent="TextAppearance.Material3.BodySmall.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:letterSpacing">0.003333333</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.LabelLarge.Emphasized" parent="TextAppearance.Material3.LabelLarge.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:letterSpacing">0.000714286</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.LabelMedium.Emphasized" parent="TextAppearance.Material3.LabelMedium.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:letterSpacing">0.004166667</item>
+    </style>
+
+    <style name="TextAppearance.SimpleWeather.LabelSmall.Emphasized" parent="TextAppearance.Material3.LabelSmall.Emphasized">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
+        <item name="android:letterSpacing">0.004545455</item>
     </style>
 
     <!-- Deprecated -->
-    <style name="TextAppearance.OpenSans.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
+    <style name="TextAppearance.SimpleWeather.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
+    <style name="TextAppearance.SimpleWeather.Menu" parent="TextAppearance.AppCompat.Menu">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
+    <style name="TextAppearance.SimpleWeather.ListItem" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.BodySmall" parent="TextAppearance.Material3.BodySmall">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.Menu" parent="TextAppearance.AppCompat.Menu">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.ListItem" parent="TextAppearance.AppCompat.Subhead">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
-    </style>
-
-    <style name="TextAppearance.OpenSans.ListItemSecondary" parent="TextAppearance.AppCompat.Subhead">
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="fontFamily">@font/open_sans</item>
+    <style name="TextAppearance.SimpleWeather.ListItemSecondary" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="TextAppearance.OpenSans.Title" parent="TextAppearance.AppCompat.Title">
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
-    </style>
+    <style name="TextAppearance.SimpleWeather.ToolbarTitle" parent="TextAppearance.SimpleWeather.TitleLarge.Emphasized" />
 
     <style name="ShapeAppearance.Material.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/shape_corner_radius</item>
+        <!--        <item name="cornerSize">@dimen/shape_corner_radius</item>-->
     </style>
 
     <style name="ShapeAppearance.Material.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/shape_corner_radius</item>
+        <!--        <item name="cornerSize">@dimen/shape_corner_radius</item>-->
     </style>
 
     <style name="ShapeAppearance.Material.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/shape_corner_radius</item>
+        <!--        <item name="cornerSize">@dimen/shape_corner_radius</item>-->
     </style>
 
 </resources>

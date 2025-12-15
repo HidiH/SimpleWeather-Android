@@ -3,6 +3,8 @@ package com.thewizrd.weather_api.meteofrance.weather
 import android.annotation.SuppressLint
 import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.LocaleUtils
+import com.thewizrd.shared_resources.utils.calculateDewpointC
+import com.thewizrd.shared_resources.utils.calculateDewpointF
 import com.thewizrd.shared_resources.utils.getFeelsLikeTemp
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.model.Atmosphere
@@ -52,6 +54,10 @@ fun createWeatherData(currRoot: CurrentsResponse, foreRoot: ForecastResponse,
             atmosphere!!.humidity = firstHr.extras.humidity
             atmosphere!!.pressureMb = firstHr.extras.pressureMb
             atmosphere!!.pressureIn = firstHr.extras.pressureIn
+            atmosphere!!.dewpointC = firstHr.extras.dewpointC
+            atmosphere!!.dewpointF = firstHr.extras.dewpointF
+            atmosphere!!.visibilityKm = firstHr.extras.visibilityKm
+            atmosphere!!.visibilityMi = firstHr.extras.visibilityMi
 
             precipitation = Precipitation().apply {
                 cloudiness = firstHr.extras.cloudiness
@@ -222,6 +228,13 @@ fun createHourlyForecast(forecast: ForecastItem,
         }
 
         extras.cloudiness = forecast.clouds
+
+        if (highC != null && extras.humidity != null) {
+            extras.dewpointC = calculateDewpointC(highC, extras.humidity)
+        }
+        if (highF != null && extras.humidity != null) {
+            extras.dewpointF = calculateDewpointF(highF, extras.humidity)
+        }
 
         if (!probabilityForecasts.isNullOrEmpty()) {
             // Note: probability forecasts are given either every 3 or 6 hours

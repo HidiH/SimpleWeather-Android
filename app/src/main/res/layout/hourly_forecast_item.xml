@@ -18,7 +18,7 @@
         android:layout_width="@dimen/hr_forecast_item_width"
         android:layout_height="@dimen/hr_forecast_item_height"
         android:background="@drawable/rounded_item_background"
-        tools:theme="@style/Theme.Material3.DayNight">
+        tools:theme="@style/Theme.Material3Expressive.DayNight">
 
         <com.thewizrd.common.controls.TextViewWeatherIconDrawableCompat
             android:id="@+id/forecast_extra_pop"
@@ -43,7 +43,7 @@
             app:weatherIconStart="@{viewModel.popChanceIcon}"
             tools:drawableStart="@drawable/ic_settings_black_24dp"
             tools:drawableTint="#FF599EF3"
-            tools:text="45%" />
+            tools:text="100%" />
 
         <com.thewizrd.common.controls.IconControl
             android:id="@+id/forecast_icon"
@@ -116,7 +116,7 @@
             app:weatherIconStart="@{viewModel.windIcon}"
             tools:drawableStart="@drawable/ic_chevron_right"
             tools:drawableTint="#FF20B2AA"
-            tools:text="5 mph" />
+            tools:text="122 mph" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

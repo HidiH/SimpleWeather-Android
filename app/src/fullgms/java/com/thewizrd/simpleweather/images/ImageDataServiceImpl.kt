@@ -33,12 +33,13 @@ class ImageDataServiceImpl : BaseImageDataService() {
     // Shared Preferences
     private val imageDataPrefs = appLib.context.getSharedPreferences("images", Context.MODE_PRIVATE)
 
-    private val imageDataFolder: File
+    // App data files
+    private val cacheDataFolder = appLib.context.cacheDir
+    private val imageCacheDataFolder = File(cacheDataFolder, "image_cache")
+    private val imageDataFolder = File(cacheDataFolder, "images")
 
     init {
-        // App data files
-        val cacheDataFolder = appLib.context.cacheDir
-        imageDataFolder = File(cacheDataFolder, "images")
+        imageCacheDataFolder.mkdir()
         imageDataFolder.mkdir()
     }
 
@@ -97,18 +98,31 @@ class ImageDataServiceImpl : BaseImageDataService() {
                     if (imageUri.scheme == "gs" || imageUri.toString()
                             .contains("firebasestorage")
                     ) {
-                        val storage = FirebaseHelper.getFirebaseStorage()
-                        val storageRef = storage.getReferenceFromUrl(imageUri.toString())
+                        // Try to fetch from cache first
+                        val cachedFiled = imageUri.lastPathSegment?.let {
+                            File(imageCacheDataFolder, it)
+                        }
+                        val isCached =
+                            cachedFiled != null && cachedFiled.exists() && TimeUnit.MILLISECONDS.toDays(
+                                System.currentTimeMillis() - cachedFiled.lastModified()
+                            ) < 60
 
-                        withTimeoutOrNull(SettingsManager.CONNECTION_TIMEOUT.toLong()) {
-                            storageRef.getFile(imageFile).await()
+                        if (isCached) {
+                            cachedFiled.copyTo(imageFile, overwrite = true)
+                        } else {
+                            val storage = FirebaseHelper.getFirebaseStorage()
+                            val storageRef = storage.getReferenceFromUrl(imageUri.toString())
+
+                            withTimeoutOrNull(SettingsManager.CONNECTION_TIMEOUT.toLong()) {
+                                storageRef.getFile(imageFile).await()
+                            }
                         }
                     } else {
                         val client = sharedDeps.httpClient
                         val request = Request.Builder()
                             .cacheControl(
                                 CacheControl.Builder()
-                                    .maxAge(1, TimeUnit.DAYS)
+                                    .maxAge(60, TimeUnit.DAYS)
                                     .build()
                             )
                             .url(imageData.imageURL)
@@ -117,7 +131,7 @@ class ImageDataServiceImpl : BaseImageDataService() {
                         if (!response.isSuccessful) {
                             throw response.createThrowable()
                         } else {
-                            response.body!!.byteStream().use { inputStream ->
+                            response.body.byteStream().use { inputStream ->
                                 if (!imageFile.exists()) {
                                     imageFile.createNewFile()
                                 }

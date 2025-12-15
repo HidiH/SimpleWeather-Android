@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@id/weatherNowFragment"
-            android:icon="@drawable/ic_solar_stroke"
+            android:icon="@drawable/ic_full_sun_large"
             android:title="@string/label_nav_weathernow" />
         <item
             android:id="@id/weatherRadarFragment"

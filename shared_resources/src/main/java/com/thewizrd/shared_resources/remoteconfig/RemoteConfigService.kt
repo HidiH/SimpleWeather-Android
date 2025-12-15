@@ -25,4 +25,6 @@ interface RemoteConfigService {
     suspend fun checkConfigAsync(): Boolean
 
     fun getBoolean(key: String): Boolean
+    fun getLong(key: String): Long
+    fun getDouble(key: String): Double
 }

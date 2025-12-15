@@ -7,6 +7,7 @@
         <item name="android:foreground">@drawable/round_selectable_item</item>
         <item name="android:checkable">false</item>
         <item name="android:background">@drawable/button_background_solid</item>
+        <item name="backgroundTint">@color/button_background</item>
         <!--<item name="android:minWidth">172dp</item>-->
         <item name="minHeight">52dp</item>
         <item name="primaryTextAppearance">@style/TextAppearance.WearChipButton.PrimaryText</item>
@@ -14,40 +15,34 @@
         </item>
     </style>
 
-    <style name="TextAppearance.WearChipButton.PrimaryText" parent="TextAppearance.Roboto.Button">
+    <style name="TextAppearance.WearChipButton.PrimaryText" parent="TextAppearance.Roboto.LabelMedium">
         <item name="android:textColor">@color/wear_chip_primary_text_color</item>
     </style>
 
-    <style name="TextAppearance.WearChipButton.SecondaryText" parent="TextAppearance.Roboto.Caption2">
+    <style name="TextAppearance.WearChipButton.SecondaryText" parent="TextAppearance.Roboto.LabelSmall">
         <item name="android:textColor">@color/wear_chip_secondary_text_color</item>
     </style>
 
-    <style name="Widget.Wear.WearChipButton.Accent" parent="Widget.Wear.WearChipButton">
-        <item name="android:background">@drawable/button_background_accent</item>
-        <item name="backgroundTint">?colorPrimary</item>
+    <style name="TextAppearance.WearChipButton.Tonal.PrimaryText" parent="TextAppearance.WearChipButton.PrimaryText">
+        <item name="android:textColor">@color/wear_chip_tonal_primary_text_color</item>
     </style>
 
-    <style name="Widget.Wear.WearChipButton.Surface" parent="Widget.Wear.WearChipButton">
-        <item name="android:background">@drawable/button_background_onsurface</item>
+    <style name="TextAppearance.WearChipButton.Tonal.SecondaryText" parent="TextAppearance.WearChipButton.SecondaryText">
+        <item name="android:textColor">@color/wear_chip_tonal_secondary_text_color</item>
     </style>
 
-    <style name="Widget.Wear.WearChipButton.Surface.Accent" parent="Widget.Wear.WearChipButton">
-        <item name="android:background">@drawable/button_background_accent_onsurface</item>
-        <item name="backgroundTint">?colorPrimary</item>
+    <style name="Widget.Wear.WearChipButton.Tonal" parent="Widget.Wear.WearChipButton">
+        <item name="backgroundTint">?colorPrimaryContainer</item>
+        <item name="primaryTextAppearance">@style/TextAppearance.WearChipButton.Tonal.PrimaryText
+        </item>
+        <item name="secondaryTextAppearance">
+            @style/TextAppearance.WearChipButton.Tonal.SecondaryText
+        </item>
     </style>
 
     <style name="Widget.Wear.WearChipButton.Checkable" parent="Widget.Wear.WearChipButton">
-        <item name="android:background">@drawable/button_background_accent</item>
         <item name="android:checkable">true</item>
         <item name="backgroundTint">@color/button_background_checkable</item>
-        <item name="buttonTint">@color/button_checkable</item>
-    </style>
-
-    <style name="Widget.Wear.WearChipButton.Surface.Checkable" parent="Widget.Wear.WearChipButton">
-        <item name="android:background">@drawable/button_background_accent_onsurface</item>
-        <item name="android:checkable">true</item>
-        <item name="backgroundTint">@color/button_background_checkable</item>
-        <item name="buttonTint">@color/button_checkable</item>
     </style>
 
 </resources>

@@ -8,10 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 import androidx.core.util.ObjectsCompat;
 
+import com.thewizrd.shared_resources.ApplicationLibKt;
 import com.thewizrd.shared_resources.DateTimeConstants;
 import com.thewizrd.shared_resources.R;
 import com.thewizrd.shared_resources.SharedModuleKt;
 import com.thewizrd.shared_resources.icons.WeatherIcons;
+import com.thewizrd.shared_resources.preferences.SettingsManager;
 import com.thewizrd.shared_resources.utils.ConversionMethods;
 import com.thewizrd.shared_resources.utils.DateTimeUtils;
 import com.thewizrd.shared_resources.utils.LocaleUtils;
@@ -22,34 +24,44 @@ import com.thewizrd.shared_resources.utils.Units;
 import com.thewizrd.shared_resources.utils.WeatherUtils;
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast;
 import com.thewizrd.shared_resources.weatherdata.model.UV;
+import com.thewizrd.weather_api.WeatherModuleKt;
+import com.thewizrd.weather_api.weatherdata.WeatherProviderManager;
 
 import java.text.DecimalFormat;
+import java.time.ZonedDateTime;
+import java.util.Objects;
 
 public class HourlyForecastItemViewModel extends BaseForecastItemViewModel {
+    private ZonedDateTime dateTime;
 
-    private final HourlyForecast forecast;
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public HourlyForecast getForecast() {
-        return forecast;
+    @RestrictTo(RestrictTo.Scope.TESTS)
+    public HourlyForecastItemViewModel() {
     }
 
     public HourlyForecastItemViewModel(@NonNull HourlyForecast forecast) {
-        this.forecast = forecast;
-
         final Context context = SharedModuleKt.getSharedDeps().getContext();
+        final WeatherProviderManager wm = WeatherModuleKt.getWeatherModule().getWeatherManager();
+        final SettingsManager settingsMgr = ApplicationLibKt.getAppLib().getSettingsManager();
+
         final boolean isFahrenheit = Units.FAHRENHEIT.equals(settingsMgr.getTemperatureUnit());
         final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
         df.applyPattern("0.##");
+
+        dateTime = forecast.getDate();
 
         weatherIcon = forecast.getIcon();
 
         if (DateFormat.is24HourFormat(context)) {
             date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_DAYOFWEEK_AND_24HR)));
             shortDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_24HR)));
+            narrowDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_24HR_SHORT)));
         } else {
             date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_DAYOFWEEK_AND_12HR_AMPM));
             shortDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_12HR_AMPM_SHORT));
+            narrowDate = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.ABBREV_12HR_AMPM_SHORT))
+                    .toUpperCase()
+                    .replace("AM", "A")
+                    .replace("PM", "P");
         }
         longDate = date;
 
@@ -139,11 +151,11 @@ public class HourlyForecastItemViewModel extends BaseForecastItemViewModel {
                 switch (unit) {
                     case Units.INCHES:
                     default:
-                        precipValue = this.forecast.getExtras().getQpfSnowIn();
+                        precipValue = forecast.getExtras().getQpfSnowIn();
                         precipUnit = context.getString(R.string.unit_in);
                         break;
                     case Units.MILLIMETERS:
-                        precipValue = this.forecast.getExtras().getQpfSnowCm() * 10;
+                        precipValue = forecast.getExtras().getQpfSnowCm() * 10;
                         precipUnit = context.getString(R.string.unit_mm);
                         break;
                 }
@@ -255,5 +267,31 @@ public class HourlyForecastItemViewModel extends BaseForecastItemViewModel {
                         String.format(LocaleUtils.getLocale(), "%d %s", visibilityVal, visibilityUnit)));
             }
         }
+    }
+
+    public ZonedDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(ZonedDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        HourlyForecastItemViewModel that = (HourlyForecastItemViewModel) o;
+
+        return getDateTime() != null ? getDateTime().equals(that.getDateTime()) : that.getDateTime() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Objects.hashCode(dateTime);
+        return result;
     }
 }

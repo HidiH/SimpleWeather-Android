@@ -27,7 +27,6 @@ import com.thewizrd.simpleweather.databinding.RadarAnimateContainerBinding
 import com.thewizrd.simpleweather.extras.isRadarInteractionEnabled
 import com.thewizrd.simpleweather.radar.CachingUrlTileProvider
 import com.thewizrd.simpleweather.radar.MapTileRadarViewProvider
-import com.thewizrd.weather_api.extras.isPremiumEnabled
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.RateLimitedRequest
 import okhttp3.Call
@@ -66,7 +65,7 @@ class RainViewerViewProvider(context: Context, rootView: ViewGroup) : MapTileRad
         radarContainerBinding = RadarAnimateContainerBinding.inflate(LayoutInflater.from(context))
         viewContainer.addView(radarContainerBinding!!.root)
 
-        radarContainerBinding!!.playButton.setOnCheckedChangeListener { buttonView, isChecked ->
+        radarContainerBinding!!.playButton.addOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 mMainHandler.post(animationRunnable)
             } else {

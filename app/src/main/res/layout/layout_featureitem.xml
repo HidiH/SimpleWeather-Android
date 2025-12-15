@@ -7,6 +7,11 @@
     android:layout_height="wrap_content"
     android:minHeight="56dp"
     android:gravity="center_vertical"
+    android:paddingStart="@dimen/preference_expressive_space_small1"
+    android:paddingEnd="@dimen/preference_expressive_space_small1"
+    android:clipToPadding="false"
+    android:baselineAligned="false"
+    android:filterTouchesWhenObscured="false"
     tools:layout_height="wrap_content"
     tools:layout_width="match_parent"
     tools:parentTag="android.widget.LinearLayout"
@@ -16,32 +21,37 @@
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:clickable="false"
         android:longClickable="false"
         android:contextClickable="false"
-        android:duplicateParentState="true" />
+        android:duplicateParentState="true"
+        android:layout_marginEnd="@dimen/preference_expressive_space_extraSmall6" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:layout_gravity="start"
+        android:gravity="start|center_vertical"
+        android:ellipsize="marquee"
+        android:maxLines="2"
         android:paddingHorizontal="8dp"
-        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         tools:text="@string/pref_title_features" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/drag_handle"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:contentDescription="@null"
-        android:src="@drawable/ic_drag_handle_24"
         android:paddingHorizontal="16dp"
+        app:srcCompat="@drawable/ic_drag_handle_24"
         app:tint="?attr/colorOnSurface" />
 
 </merge>

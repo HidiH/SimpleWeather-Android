@@ -15,6 +15,7 @@ import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.ZoneIdCompat
 import com.thewizrd.shared_resources.utils.calculateDewpointC
+import com.thewizrd.shared_resources.utils.calculateDewpointF
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.utils.getFeelsLikeTemp
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
@@ -234,6 +235,13 @@ fun createAtmosphere(current: Current): Atmosphere {
 
         visibilityMi = current.visMiles
         visibilityKm = current.visKm
+
+        if (current.tempC != null && current.humidity != null) {
+            dewpointC = calculateDewpointC(current.tempC!!, current.humidity!!)
+        }
+        if (current.tempF != null && current.humidity != null) {
+            dewpointF = calculateDewpointF(current.tempF!!, current.humidity!!)
+        }
     }
 }
 

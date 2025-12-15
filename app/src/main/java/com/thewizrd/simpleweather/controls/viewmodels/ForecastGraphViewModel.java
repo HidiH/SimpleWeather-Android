@@ -34,15 +34,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ForecastGraphViewModel {
-    public enum ForecastGraphType {
-        TEMPERATURE,
-        MINUTELY,
-        PRECIPITATION,
-        WIND,
-        HUMIDITY,
-        UVINDEX,
-        RAIN,
-        SNOW
+    public enum GraphType {
+        Line, Bar
     }
 
     private final Context context;
@@ -51,13 +44,19 @@ public class ForecastGraphViewModel {
 
     private GraphData<?> graphData;
 
-    private ForecastGraphType graphType;
+    private ForecastType forecastType;
+
+    private GraphType graphType;
 
     public GraphData<?> getGraphData() {
         return graphData;
     }
 
-    public ForecastGraphType getGraphType() {
+    public ForecastType getForecastType() {
+        return forecastType;
+    }
+
+    public GraphType getGraphType() {
         return graphType;
     }
 
@@ -66,22 +65,24 @@ public class ForecastGraphViewModel {
         this.settingsMgr = new SettingsManager(context);
     }
 
-    public void addForecastData(BaseForecast forecast, ForecastGraphType graphType) {
-        if (graphType != ForecastGraphType.UVINDEX) {
+    public void addForecastData(BaseForecast forecast, ForecastType forecastType, GraphType graphType) {
+        if (graphType == GraphType.Bar) {
             if (graphData == null) {
-                LineDataSeries series = createSeriesData(new ArrayList<>(), graphType);
-                addEntryData(forecast, series, graphType);
-                this.graphData = createGraphData(Collections.singletonList(series), graphType);
+                BarGraphDataSet dataSet = createDataSet(new ArrayList<>(), forecastType);
+                addEntryData(forecast, dataSet, forecastType);
+                this.graphData = createGraphData(dataSet, forecastType);
+                this.graphType = graphType;
             } else {
-                addEntryData(forecast, (LineDataSeries) graphData.getDataSetByIndex(0), graphType);
+                addEntryData(forecast, (BarGraphDataSet) graphData.getDataSetByIndex(0), forecastType);
             }
         } else {
             if (graphData == null) {
-                BarGraphDataSet dataSet = createDataSet(new ArrayList<>(), graphType);
-                addEntryData(forecast, dataSet, graphType);
-                this.graphData = createGraphData(dataSet, graphType);
+                LineDataSeries series = createSeriesData(new ArrayList<>(), forecastType);
+                addEntryData(forecast, series, forecastType);
+                this.graphData = createGraphData(Collections.singletonList(series), forecastType);
+                this.graphType = graphType;
             } else {
-                addEntryData(forecast, (BarGraphDataSet) graphData.getDataSetByIndex(0), graphType);
+                addEntryData(forecast, (LineDataSeries) graphData.getDataSetByIndex(0), forecastType);
             }
         }
 
@@ -89,65 +90,55 @@ public class ForecastGraphViewModel {
         this.graphData.notifyDataChanged();
     }
 
-    public void setForecastData(@NonNull List<? extends BaseForecast> forecasts, ForecastGraphType graphType) {
-        LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), graphType);
+    public void setForecastData(@NonNull List<? extends BaseForecast> forecasts, ForecastType forecastType, GraphType graphType) {
+        if (graphType == GraphType.Bar) {
+            BarGraphDataSet dataSet = createDataSet(new ArrayList<>(forecasts.size()), forecastType);
 
-        for (BaseForecast forecast : forecasts) {
-            addEntryData(forecast, series, graphType);
-        }
-
-        if (graphType == ForecastGraphType.RAIN || graphType == ForecastGraphType.SNOW) {
-            final String unit = settingsMgr.getPrecipitationUnit();
-
-            // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-            // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
-            switch (unit) {
-                default:
-                case Units.INCHES:
-                    if (graphType == ForecastGraphType.SNOW) {
-                        series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.5f));
-                    } else {
-                        series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
-                    }
-                    break;
-                case Units.MILLIMETERS:
-                    if (graphType == ForecastGraphType.SNOW) {
-                        series.setSeriesMinMax(0f, Math.max(series.getYMax(), 12.7f));
-                    } else {
-                        series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
-                    }
-                    break;
+            for (BaseForecast forecast : forecasts) {
+                addEntryData(forecast, dataSet, forecastType);
             }
+
+            this.graphData = createGraphData(dataSet, forecastType);
+        } else {
+            LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), forecastType);
+
+            for (BaseForecast forecast : forecasts) {
+                addEntryData(forecast, series, forecastType);
+            }
+
+            this.graphData = createGraphData(Collections.singletonList(series), forecastType);
         }
 
-        this.graphData = createGraphData(Collections.singletonList(series), graphType);
+        this.forecastType = forecastType;
         this.graphType = graphType;
+        updateDataSetMinMax();
     }
 
-    public void setMinutelyForecastData(@NonNull List<MinutelyForecast> forecasts) {
-        LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), ForecastGraphType.MINUTELY);
+    public void setMinutelyForecastData(@NonNull List<MinutelyForecast> forecasts, GraphType graphType) {
+        if (graphType == GraphType.Bar) {
+            BarGraphDataSet dataSet = createDataSet(new ArrayList<>(forecasts.size()), ForecastType.MINUTELY);
 
-        for (MinutelyForecast forecast : forecasts) {
-            addMinutelyEntryData(forecast, series);
+            for (MinutelyForecast forecast : forecasts) {
+                addMinutelyEntryData(forecast, dataSet);
+            }
+
+            this.graphData = createGraphData(dataSet, ForecastType.MINUTELY);
+        } else {
+            LineDataSeries series = createSeriesData(new ArrayList<>(forecasts.size()), ForecastType.MINUTELY);
+
+            for (MinutelyForecast forecast : forecasts) {
+                addMinutelyEntryData(forecast, series);
+            }
+
+            this.graphData = createGraphData(Collections.singletonList(series), ForecastType.MINUTELY);
         }
 
-        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-        final String unit = settingsMgr.getPrecipitationUnit();
-        switch (unit) {
-            default:
-            case Units.INCHES:
-                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
-                break;
-            case Units.MILLIMETERS:
-                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
-                break;
-        }
-
-        this.graphData = createGraphData(Collections.singletonList(series), ForecastGraphType.MINUTELY);
-        this.graphType = ForecastGraphType.MINUTELY;
+        this.forecastType = ForecastType.MINUTELY;
+        this.graphType = graphType;
+        updateDataSetMinMax();
     }
 
-    private void addEntryData(BaseForecast forecast, LineDataSeries series, @NonNull ForecastGraphType graphType) {
+    private void addEntryData(BaseForecast forecast, LineDataSeries series, @NonNull ForecastType forecastType) {
         final boolean isFahrenheit = Units.FAHRENHEIT.equals(settingsMgr.getTemperatureUnit());
 
         final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
@@ -155,7 +146,7 @@ public class ForecastGraphViewModel {
 
         final String date = getDateFromForecast(forecast);
 
-        switch (graphType) {
+        switch (forecastType) {
             case TEMPERATURE:
                 if (forecast.getHighF() != null && forecast.getHighC() != null) {
                     int value = isFahrenheit ? Math.round(forecast.getHighF()) : Math.round(forecast.getHighC());
@@ -278,10 +269,10 @@ public class ForecastGraphViewModel {
     }
 
     @NonNull
-    private LineDataSeries createSeriesData(List<LineGraphEntry> entryData, @NonNull ForecastGraphType graphType) {
+    private LineDataSeries createSeriesData(List<LineGraphEntry> entryData, @NonNull ForecastType forecastType) {
         LineDataSeries series;
 
-        switch (graphType) {
+        switch (forecastType) {
             case TEMPERATURE:
                 series = new LineDataSeries(entryData);
                 series.setSeriesColors(Colors.ORANGERED);
@@ -317,7 +308,7 @@ public class ForecastGraphViewModel {
                 break;
         }
 
-        switch (graphType) {
+        switch (forecastType) {
             case TEMPERATURE, PRECIPITATION, HUMIDITY, UVINDEX -> {/* ignore */}
             case WIND -> {
                 final String unit = settingsMgr.getSpeedUnit();
@@ -333,46 +324,219 @@ public class ForecastGraphViewModel {
     }
 
     @NonNull
-    private LineViewData createGraphData(List<LineDataSeries> seriesData, @NonNull ForecastGraphType graphType) {
-        final String graphLabel = getLabelForGraphType(context, graphType);
-        this.graphType = graphType;
+    private LineViewData createGraphData(List<LineDataSeries> seriesData, @NonNull ForecastType forecastType) {
+        final String graphLabel = GraphModelUtils.getLabelForGraphType(context, forecastType);
+        this.forecastType = forecastType;
 
         return new LineViewData(graphLabel, seriesData);
     }
 
     @NonNull
-    private BarGraphDataSet createDataSet(List<BarGraphEntry> entryData, @NonNull ForecastGraphType graphType) {
+    private BarGraphDataSet createDataSet(List<BarGraphEntry> entryData, @NonNull ForecastType forecastType) {
         final BarGraphDataSet dataSet = new BarGraphDataSet(entryData);
 
-        switch (graphType) {
-            case UVINDEX:
-                dataSet.setMinMax(0f, 12f);
-                break;
+        switch (forecastType) {
+            case PRECIPITATION, HUMIDITY -> dataSet.setMinMax(0f, 100f);
+            case UVINDEX -> dataSet.setMinMax(0f, 12f);
+            case TEMPERATURE -> {
+            }
+            case WIND -> {
+                final String unit = settingsMgr.getSpeedUnit();
+                // Max: 75mph
+                Float maxValue = switch (unit) {
+                    case Units.MILES_PER_HOUR -> 75f;
+                    case Units.KILOMETERS_PER_HOUR -> 121f;
+                    case Units.METERS_PER_SECOND -> 34f;
+                    case Units.KNOTS -> 65f;
+                    default -> null;
+                };
+
+                dataSet.setMinMax(0f, maxValue);
+            }
+            case SNOW, MINUTELY, RAIN -> dataSet.setMinMax(0f);
+        }
+
+        switch (forecastType) {
+            case TEMPERATURE, PRECIPITATION, HUMIDITY, UVINDEX -> {/* ignore */}
+            case WIND -> {
+                final String unit = settingsMgr.getSpeedUnit();
+                dataSet.setLabel(Units.getUnitString(context, unit));
+            }
+            case RAIN, SNOW, MINUTELY -> {
+                final String unit = settingsMgr.getPrecipitationUnit();
+                dataSet.setLabel(Units.getUnitString(context, unit));
+            }
         }
 
         return dataSet;
     }
 
     @NonNull
-    private BarGraphData createGraphData(BarGraphDataSet dataSet, @NonNull ForecastGraphType graphType) {
-        final String graphLabel = getLabelForGraphType(context, graphType);
-        this.graphType = graphType;
+    private BarGraphData createGraphData(BarGraphDataSet dataSet, @NonNull ForecastType forecastType) {
+        final String graphLabel = GraphModelUtils.getLabelForGraphType(context, forecastType);
+        this.forecastType = forecastType;
 
         return new BarGraphData(graphLabel, dataSet);
     }
 
-    private void addEntryData(BaseForecast forecast, BarGraphDataSet dataSet, ForecastGraphType graphType) {
+    private void addEntryData(@NonNull BaseForecast forecast, @NonNull BarGraphDataSet dataSet, @NonNull ForecastType forecastType) {
+        final boolean isFahrenheit = Units.FAHRENHEIT.equals(settingsMgr.getTemperatureUnit());
+
         final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
         df.applyPattern("0.##");
 
         final String date = getDateFromForecast(forecast);
 
-        if (graphType == ForecastGraphType.UVINDEX) {
-            if (forecast.getExtras() != null && forecast.getExtras().getUvIndex() != null) {
-                final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(forecast.getExtras().getUvIndex(), df.format(forecast.getExtras().getUvIndex())));
-                entry.setFillColor(WeatherUtils.getColorFromUVIndex(forecast.getExtras().getUvIndex()));
+        switch (forecastType) {
+            case TEMPERATURE -> {
+                if (forecast.getHighF() != null && forecast.getHighC() != null) {
+                    int value = isFahrenheit ? Math.round(forecast.getHighF()) : Math.round(forecast.getHighC());
+                    String hiTemp = String.format(LocaleUtils.getLocale(), "%d°", value);
+
+                    final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(value, hiTemp));
+                    entry.setFillColor(WeatherUtils.getColorFromTempF(forecast.getHighF()));
+                    dataSet.addEntry(entry);
+                }
+            }
+            case PRECIPITATION -> {
+                final BarGraphEntry entry;
+
+                if (forecast.getExtras().getPop() != null && forecast.getExtras().getPop() >= 0) {
+                    entry = new BarGraphEntry(date, new YEntryData(forecast.getExtras().getPop(), forecast.getExtras().getPop() + "%"));
+                } else {
+                    entry = new BarGraphEntry(date, new YEntryData(0f, "0%"));
+                }
+
+                entry.setFillColor(ContextCompat.getColor(context, R.color.colorPrimary));
                 dataSet.addEntry(entry);
             }
+            case WIND -> {
+                if (forecast.getExtras() != null &&
+                        forecast.getExtras().getWindMph() != null && forecast.getExtras().getWindKph() != null && forecast.getExtras().getWindMph() >= 0) {
+                    final String unit = settingsMgr.getSpeedUnit();
+                    int speedVal;
+
+                    switch (unit) {
+                        case Units.MILES_PER_HOUR:
+                        default:
+                            speedVal = Math.round(forecast.getExtras().getWindMph());
+                            break;
+                        case Units.KILOMETERS_PER_HOUR:
+                            speedVal = Math.round(forecast.getExtras().getWindKph());
+                            break;
+                        case Units.METERS_PER_SECOND:
+                            speedVal = Math.round(ConversionMethods.kphToMsec(forecast.getExtras().getWindKph()));
+                            break;
+                        case Units.KNOTS:
+                            speedVal = Math.round(ConversionMethods.mphToKts(forecast.getExtras().getWindMph()));
+                            break;
+                    }
+
+                    String windSpeed = String.format(LocaleUtils.getLocale(), "%d", speedVal);
+//                    String windDirection = null;
+//
+//                    if (forecast.getExtras().getWindDegrees() != null && forecast.getExtras().getWindDegrees() >= 0) {
+//                        windDirection = WeatherUtils.getWindDirection(forecast.getExtras().getWindDegrees());
+//                    }
+//
+//                    if (windDirection != null) {
+//                        windSpeed = String.format("%s\n%s", windSpeed, windDirection);
+//                    }
+
+                    final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(speedVal, windSpeed));
+                    if (forecast.getExtras().getWindDegrees() != null) {
+                        entry.setXIconRotation(forecast.getExtras().getWindDegrees() + 180);
+                    }
+                    entry.setFillColor(Colors.SEAGREEN);
+                    dataSet.addEntry(entry);
+                }
+            }
+            case RAIN -> {
+                if (forecast.getExtras() != null && forecast.getExtras().getQpfRainIn() != null && forecast.getExtras().getQpfRainMm() != null) {
+                    final String unit = settingsMgr.getPrecipitationUnit();
+                    float precipValue;
+
+                    switch (unit) {
+                        case Units.INCHES:
+                        default:
+                            precipValue = forecast.getExtras().getQpfRainIn();
+                            break;
+                        case Units.MILLIMETERS:
+                            precipValue = forecast.getExtras().getQpfRainMm();
+                            break;
+                    }
+
+                    final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue))));
+                    entry.setFillColor(Colors.DEEPSKYBLUE);
+                    dataSet.addEntry(entry);
+                }
+            }
+            case SNOW -> {
+                if (forecast.getExtras() != null && forecast.getExtras().getQpfSnowIn() != null && forecast.getExtras().getQpfSnowCm() != null) {
+                    final String unit = settingsMgr.getPrecipitationUnit();
+                    float precipValue;
+
+                    switch (unit) {
+                        case Units.INCHES:
+                        default:
+                            precipValue = forecast.getExtras().getQpfSnowIn();
+                            break;
+                        case Units.MILLIMETERS:
+                            precipValue = forecast.getExtras().getQpfSnowCm() * 10;
+                            break;
+                    }
+
+                    final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue))));
+                    entry.setFillColor(Colors.SKYBLUE);
+                    dataSet.addEntry(entry);
+                }
+            }
+            case UVINDEX -> {
+                if (forecast.getExtras() != null && forecast.getExtras().getUvIndex() != null) {
+                    final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(forecast.getExtras().getUvIndex(), df.format(forecast.getExtras().getUvIndex())));
+                    entry.setFillColor(WeatherUtils.getColorFromUVIndex(forecast.getExtras().getUvIndex()));
+                    dataSet.addEntry(entry);
+                }
+            }
+            case HUMIDITY -> {
+                if (forecast.getExtras() != null && forecast.getExtras().getHumidity() != null) {
+                    final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(forecast.getExtras().getHumidity(), String.format(LocaleUtils.getLocale(), "%d%%", forecast.getExtras().getHumidity())));
+                    entry.setFillColor(Colors.MEDIUMPURPLE);
+                    dataSet.addEntry(entry);
+                }
+            }
+        }
+    }
+
+    private void addMinutelyEntryData(@NonNull MinutelyForecast forecast, BarGraphDataSet dataSet) {
+        if (forecast.getRainMm() != null && forecast.getRainMm() >= 0) {
+
+            final DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(LocaleUtils.getLocale());
+            df.applyPattern("0.##");
+
+            String date;
+            if (DateFormat.is24HourFormat(context)) {
+                date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeUtils.getBestPatternForSkeleton(DateTimeConstants.SKELETON_24HR)));
+            } else {
+                date = forecast.getDate().format(DateTimeUtils.ofPatternForUserLocale(DateTimeConstants.CLOCK_FORMAT_12HR_AMPM));
+            }
+
+            final String unit = settingsMgr.getPrecipitationUnit();
+            float precipValue;
+
+            switch (unit) {
+                case Units.INCHES:
+                default:
+                    precipValue = ConversionMethods.mmToIn(forecast.getRainMm());
+                    break;
+                case Units.MILLIMETERS:
+                    precipValue = forecast.getRainMm();
+                    break;
+            }
+
+            final BarGraphEntry entry = new BarGraphEntry(date, new YEntryData(precipValue, String.format(LocaleUtils.getLocale(), "%s", df.format(precipValue))));
+            entry.setFillColor(Colors.DEEPSKYBLUE);
+            dataSet.addEntry(entry);
         }
     }
 
@@ -399,35 +563,95 @@ public class ForecastGraphViewModel {
         return date;
     }
 
-    public static String getLabelForGraphType(@NonNull Context context, @NonNull ForecastGraphType graphType) {
-        String graphLabel;
+    public void updateDataSetMinMax() {
+        GraphData<?> graphData = this.graphData;
 
-        switch (graphType) {
-            case TEMPERATURE:
-                graphLabel = context.getString(R.string.label_temperature);
-                break;
-            default:
-            case MINUTELY:
-            case PRECIPITATION:
-                graphLabel = context.getString(R.string.label_precipitation);
-                break;
-            case WIND:
-                graphLabel = context.getString(R.string.label_wind);
-                break;
-            case RAIN:
-                graphLabel = context.getString(R.string.label_qpf_rain);
-                break;
-            case SNOW:
-                graphLabel = context.getString(R.string.label_qpf_snow);
-                break;
-            case UVINDEX:
-                graphLabel = context.getString(R.string.label_uv);
-                break;
-            case HUMIDITY:
-                graphLabel = context.getString(R.string.label_humidity);
-                break;
+        if (graphData instanceof BarGraphData barGraphData) {
+            for (BarGraphDataSet dataSet : barGraphData.getDataSets()) {
+                switch (forecastType) {
+                    case RAIN, SNOW -> {
+                        final String unit = settingsMgr.getPrecipitationUnit();
+
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                if (forecastType == ForecastType.SNOW) {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.5f));
+                                } else {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.3f));
+                                }
+                                break;
+                            case Units.MILLIMETERS:
+                                if (forecastType == ForecastType.SNOW) {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 12.7f));
+                                } else {
+                                    dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 7.6f));
+                                }
+                                break;
+                        }
+                    }
+                    case MINUTELY -> {
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        final String unit = settingsMgr.getPrecipitationUnit();
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 0.3f));
+                                break;
+                            case Units.MILLIMETERS:
+                                dataSet.setMinMax(0f, Math.max(dataSet.getYMax(), 7.6f));
+                                break;
+                        }
+                    }
+                }
+            }
+        } else if (graphData instanceof LineViewData lineViewData) {
+            for (LineDataSeries series : lineViewData.getDataSets()) {
+                switch (forecastType) {
+                    case RAIN, SNOW -> {
+                        final String unit = settingsMgr.getPrecipitationUnit();
+
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                if (forecastType == ForecastType.SNOW) {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.5f));
+                                } else {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
+                                }
+                                break;
+                            case Units.MILLIMETERS:
+                                if (forecastType == ForecastType.SNOW) {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 12.7f));
+                                } else {
+                                    series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
+                                }
+                                break;
+                        }
+                    }
+                    case MINUTELY -> {
+                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
+                        final String unit = settingsMgr.getPrecipitationUnit();
+                        switch (unit) {
+                            default:
+                            case Units.INCHES:
+                                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 0.3f));
+                                break;
+                            case Units.MILLIMETERS:
+                                series.setSeriesMinMax(0f, Math.max(series.getYMax(), 7.6f));
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
-        return graphLabel;
+        if (graphData != null) {
+            graphData.notifyDataChanged();
+        }
     }
 }

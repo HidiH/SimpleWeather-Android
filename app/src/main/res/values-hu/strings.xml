@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Feature Settings -->
+    <string name="pref_title_features">"Funkciók"</string>
+    <string name="pref_summary_features">"Válassza ki az engedélyezni/letiltani kívánt funkciókat"</string>
+    <string name="pref_title_feature_bgimage">"Háttérkép"</string>
+    <string name="pref_title_feature_forecast">"Előrejelzés"</string>
+    <string name="pref_title_feature_hrforecast">"Óránkénti előrejelzés"</string>
+    <string name="pref_title_feature_details">"Időjárás részletei"</string>
+    <string name="pref_title_feature_uv">"UV"</string>
+    <string name="pref_title_feature_beaufort">"Beaufort"</string>
+    <string name="pref_title_feature_aqindex">"Levegőminőségi index"</string>
+    <string name="pref_title_feature_moonphase">"Holdfázis"</string>
+    <string name="pref_title_feature_sunphase">"Napfázis"</string>
+    <string name="pref_title_feature_radar">"Időjárás radar"</string>
+    <string name="pref_title_feature_locpanelimg">"Hely panel képe"</string>
+
+    <!-- Widget -->
+    <string name="widget_configure_prompt">"Widget konfigurálása"</string>
+    <string name="title_activity_widget_config">"Widget beállítások"</string>
+    <string name="pref_title_bgcolor">"Háttér"</string>
+    <string name="label_color_transparent">"Átlátszó"</string>
+    <string name="pref_title_bgstyle">"Háttérstílus"</string>
+    <string name="label_style_fullbg">"Teljes háttér"</string>
+    <string name="label_style_panda">"Alapértelmezett"</string>
+
+    <!-- Can be shortened to 'Color' -->
+    <string name="label_style_pendingcolor">"Időjárás színe"</string>
+    <string name="label_style_light">"Világos"</string>
+    <string name="label_style_dark">"Sötét"</string>
+    <string name="locname_pref_title">"Hely neve"</string>
+    <string name="locname_pref_summary">"Helynév elrejtése a widgetről"</string>
+    <string name="settingsbtn_pref_title">"Beállítások gomb"</string>
+    <string name="settingsbtn_pref_summary">"Beállítások gomb elrejtése a widgetről"</string>
+    <string name="clock_pref_title">"Óra"</string>
+    <string name="calendar_pref_title">"Naptár"</string>
+    <string name="pref_title_fcastoption">"Előrejelzés"</string>
+    <string name="label_fcast_full">"Napi és óránkénti előrejelzés (ha elérhető)"</string>
+    <string name="label_fcast_daily">"Napi előrejelzés"</string>
+    <string name="label_fcast_hourly">"Óránkénti előrejelzés (ha elérhető)"</string>
+    <string name="pref_category_timeanddate">"Idő és dátum"</string>
+    <string name="pref_title_timezone">"Időzóna"</string>
+    <string name="pref_timezone_summaryoff">"Rendszer időzónájának használata az idő és dátum megjelenítéséhez"</string>
+    <string name="pref_timezone_summaryon">"Hely időzónájának használata az idő és dátum megjelenítéséhez"</string>
+    <string name="pref_location">"Hely"</string>
+    <string name="pref_item_gpslocation">"Aktuális GPS hely"</string>
+    <string name="prompt_setup_app_first">"Kérjük, először állítsa be az alkalmazást"</string>
+
+    <!-- LineView -->
+    <string name="label_series">"Sorozat"</string>
+
+    <!-- In-App Updates -->
+    <string name="not_channel_update_title">"Alkalmazásfrissítések"</string>
+    <string name="prompt_update_title">"SimpleWeather frissítése"</string>
+    <string name="prompt_update_available">"Frissítés elérhető. Kattintson a telepítéshez"</string>
+
+    <!-- Support -->
+    <string name="pref_category_support">"Támogatás"</string>
+
+    <!-- Feedback -->
+    <string name="pref_title_feedback">"Visszajelzés"</string>
+    <string name="pref_summary_feedback">"Jelentsen be hibákat, vagy küldjön javaslatokat az alkalmazás fejlesztéséhez"</string>
+
+    <!-- Rate / Review -->
+    <string name="pref_title_rateandreview">"Értékelés és véleményezés"</string>
+    <string name="pref_summary_rateandreview">"Tetszik az alkalmazás? Segítsen támogatni egy véleménnyel"</string>
+
+    <!-- Translate -->
+    <string name="pref_title_translate">"Fordítás"</string>
+    <string name="pref_summary_translate">"Segítsen lefordítani az alkalmazást"</string>
+
+    <!-- Custom Color -->
+    <string name="label_color_custom">"Egyéni"</string>
+    <string name="pref_title_bgcolorcode">"Háttérszín"</string>
+    <string name="pref_title_txtcolorcode">"Szövegszín"</string>
+
+    <!-- SplitInstall Prompts -->
+    <string name="splitlang_start_install">"A nyelvi csomag telepítése megkezdődött…"</string>
+    <string name="splitlang_installing">"Nyelvi csomag telepítése…"</string>
+    <string name="splitlang_downloading">"Nyelvi csomag letöltése…"</string>
+    <string name="splitlang_failure">"Nem sikerült telepíteni a nyelvi csomagot"</string>
+    <string name="pref_title_feature_charts">"Grafikonok"</string>
+
+    <!-- Widget Service -->
+    <string name="message_widgetservice_running">"A widget frissítő szolgáltatás fut"</string>
+    <string name="pref_title_foreground_service">"Widget frissítő szolgáltatás"</string>
+    <string name="pref_summary_foreground_service">"A szolgáltatás engedélyezésével frissítheti az időjárás widgeteket és értesítéseket"</string>
+    <string name="pref_title_ignore_batt_opts">"Akkumulátor optimalizálás figyelmen kívül hagyása"</string>
+    <string name="pref_summary_ignore_batt_opts">"Kapcsolja ki a háttérszolgáltatás korlátozását, ha a widgetek és értesítések nem frissülnek"</string>
+    <string name="pref_title_tap2switch">"Érintés művelet"</string>
+    <string name="pref_tap2switch_summaryOn">"Érintse meg az előrejelzés váltásához"</string>
+    <string name="pref_tap2switch_summaryOff">"Alkalmazás megnyitása"</string>
+
+    <!-- Daily Notification -->
+    <string name="not_channel_name_dailynotification">"Napi értesítés"</string>
+    <string name="pref_title_time">"Idő"</string>
+    <string name="pref_summary_off">"Ki"</string>
+    <string name="pref_summary_on">"Be"</string>
+
+    <!-- Precipitation Notification -->
+    <string name="not_channel_name_precipnotification">"Csapadék értesítés"</string>
+
+    <!-- Example: 80% chance of rain in 2 hours
+(%1$d) -> Percentage | (%2$s) -> Time in minutes or hours -->
+    <string name="precipitation_text_format">"%1$d%% esély az esőre %2$s településen"</string>
+    <string name="precipitation_nexthour_text_format">"%1$d%% esély az esőre a következő órában"</string>
+
+    <!-- Weather Summary or Weather Overview -->
+    <string name="pref_title_feature_summary">"Időjárás összefoglaló"</string>
+    <string name="prompt_max_locations_allowed">"Legfeljebb öt hely engedélyezett."</string>
+    <string name="pref_title_widgetgraphtype">"Előrejelzés típusa"</string>
+
+    <!-- Widget Labels -->
+    <string name="label_widget_weather_1x1">"Időjárás (1x1)"</string>
+    <string name="label_widget_weather_clock_2x2">"Időjárás + Óra (2x2)"</string>
+    <string name="label_widget_weather_4x1">"Időjárás (4x1)"</string>
+    <string name="label_widget_weather_clock_4x2">"Időjárás + Óra (4x2)"</string>
+    <string name="label_widget_weather_date_4x1">"Időjárás + Dátum (4x1)"</string>
+    <string name="label_widget_weather_2x2">"Időjárás (2x2)"</string>
+    <string name="label_widget_weather_4x2">"Időjárás (4x2)"</string>
+    <string name="label_widget_weather_4x4">"Időjárás (4x4)"</string>
+    <string name="label_widget_weather_clock_4x3">"Időjárás + Óra (4x3)"</string>
+    <string name="label_widget_weather_3x1">"Időjárás (3x1)"</string>
+    <string name="label_widget_weather_forecast_4x2">"Időjárás-előrejelzés (4x2)"</string>
+    <string name="widget_loading_prompt">"Betöltés…"</string>
+    <string name="refreshbtn_pref_title">"Frissítés gomb"</string>
+    <string name="refreshbtn_pref_summary">"A frissítés gomb elrejtése a widgetről"</string>
+    <string name="pref_category_customsize">"Ikon és szöveg mérete"</string>
+    <string name="pref_title_textsize">"Szövegméret"</string>
+    <string name="pref_title_iconsize">"Ikonméret"</string>
+    <string name="precipitation_minutely_starting_text_format">"Körülbelül %1$s múlva kezdődik az eső."</string>
+    <string name="precipitation_minutely_stopping_text_format">"Körülbelül %1$s múlva szűnik meg az eső."</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Minimális riasztási súlyosság"</string>
+    <string name="alertsev_all">"Nincs (Minden riasztás megjelenítése)"</string>
+    <string name="alertsev_moderate">"Mérsékelt"</string>
+    <string name="alertsev_severe">"Súlyos"</string>
+    <string name="alertsev_extreme">"Extrém"</string>
+    <string name="pref_title_txtshadow">"Szöveg árnyék"</string>
+    <string name="pref_summary_txtshadow">"Árnyékréteg hozzáadása a szöveghez"</string>
+    <string name="precipitation_likely_text_format">"Valószínűleg eső körülbelül %1$s (%2$d%% eséllyel)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Várhatóan eső kezdődik körülbelül %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Várhatóan eső szűnik körülbelül %1$s"</string>
+</resources>

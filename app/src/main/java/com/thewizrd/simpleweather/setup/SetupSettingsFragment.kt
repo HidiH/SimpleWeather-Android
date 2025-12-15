@@ -7,10 +7,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.text.util.LocalePreferences
 import androidx.preference.ListPreference
+import androidx.preference.PreferenceManager
+import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreferenceCompat
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.transition.MaterialSharedAxis
 import com.thewizrd.common.helpers.LocationPermissionLauncher
@@ -21,9 +24,11 @@ import com.thewizrd.common.helpers.notificationPermissionEnabled
 import com.thewizrd.common.helpers.openAppSettingsActivity
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.preferences.SettingsManager
+import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
-import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
+import com.thewizrd.shared_resources.utils.Units
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.databinding.FragmentSetupSettingsBinding
 import com.thewizrd.simpleweather.extras.enableAdditionalRefreshIntervals
 import com.thewizrd.simpleweather.notifications.NotificationUtils.Companion.openAppNotificationSettingsActivity
@@ -54,7 +59,9 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
         onGoingNotifPermissionLauncher = PermissionLauncher(this) { results ->
             val isChecked = results.isNotEmpty() && results.all { it.value }
             if (isChecked) {
-                onGoingPref.isChecked = true
+                if (onGoingPref.callChangeListener(true)) {
+                    onGoingPref.isChecked = true
+                }
             } else {
                 context?.let {
                     showSnackbar(
@@ -101,6 +108,17 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
                 }
             }
         }
+
+        // Set default units based on user locale
+        PreferenceManager.getDefaultSharedPreferences(requireContext()).run {
+            if (!contains(SettingsManager.KEY_USECELSIUS) && !contains(SettingsManager.KEY_TEMPUNIT)) {
+                if (LocalePreferences.getTemperatureUnit() == LocalePreferences.TemperatureUnit.CELSIUS) {
+                    settingsManager.setDefaultUnits(Units.CELSIUS)
+                } else {
+                    settingsManager.setDefaultUnits(Units.FAHRENHEIT)
+                }
+            }
+        }
     }
 
     override fun createSnackManager(activity: Activity): SnackbarManager {
@@ -123,11 +141,19 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
         val inflatedView = super.onCreateView(inflater, container, savedInstanceState)
 
         binding.fragmentContainer.addView(inflatedView)
-
-        setDivider(root.context.getAttrColor(R.attr.colorOnSurface).toDrawable())
-        setDividerHeight(root.context.dpToPx(1f).toInt())
+        binding.fragmentContainer.setBackgroundColor(Colors.TRANSPARENT)
 
         return root
+    }
+
+    override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
+        val adapter = super.onCreateAdapter(preferenceScreen)
+
+        if (adapter is ConcatAdapter) {
+            adapter.addAdapter(0, SpacerAdapter(preferenceScreen.context.dpToPx(16f).toInt()))
+        }
+
+        return adapter
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -139,8 +165,17 @@ class SetupSettingsFragment : CustomPreferenceFragmentCompat() {
         onGoingPref = findPreference(SettingsManager.KEY_ONGOINGNOTIFICATION)!!
         alertsPref = findPreference(SettingsManager.KEY_USEALERTS)!!
 
-        if (LocalePreferences.getTemperatureUnit() == LocalePreferences.TemperatureUnit.CELSIUS) {
-            unitPref.setDefaultValue(true)
+        unitPref.setOnPreferenceChangeListener { preference, newValue ->
+            val value = newValue as Boolean
+
+            if (value) {
+                // Use Celsius
+                settingsManager.setDefaultUnits(Units.CELSIUS)
+            } else {
+                settingsManager.setDefaultUnits(Units.FAHRENHEIT)
+            }
+
+            true
         }
 
         if (enableAdditionalRefreshIntervals()) {

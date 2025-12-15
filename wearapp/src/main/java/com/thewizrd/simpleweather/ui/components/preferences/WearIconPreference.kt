@@ -15,12 +15,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.CardDefaults
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TitleCard
 import androidx.wear.compose.material.ToggleChipDefaults
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.TitleCard
 import com.thewizrd.shared_resources.icons.WeatherIconProvider
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.icons.WeatherIconsEFProvider
@@ -63,14 +62,10 @@ private fun WearIconPreference(
         },
         onClick = {
             onCheckedChange(!checked)
-        },
-        backgroundPainter = CardDefaults.cardBackgroundPainter(
-            startBackgroundColor = MaterialTheme.colors.surface,
-            endBackgroundColor = MaterialTheme.colors.surface
-        )
+        }
     ) {
         Row(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier.weight(1f)
@@ -84,7 +79,7 @@ private fun WearIconPreference(
                             weatherIcon = icon,
                             shouldAnimate = true,
                             iconProvider = iconProvider.key,
-                            tint = MaterialTheme.colors.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

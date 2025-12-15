@@ -4,10 +4,6 @@
 
     <application tools:ignore="AllowBackup,MissingApplicationIcon">
 
-        <activity
-            android:name=".setup.SetupSyncActivity"
-            android:theme="@style/WearAppTheme" />
-
         <service
             android:name=".wearable.WearableDataListenerService"
             android:enabled="true"

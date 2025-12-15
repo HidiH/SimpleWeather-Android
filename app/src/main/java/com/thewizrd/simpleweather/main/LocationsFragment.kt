@@ -33,6 +33,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.withStateAtLeast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -292,13 +293,17 @@ class LocationsFragment : ToolbarFragment() {
         }
         binding.fab.setOnClickListener {
             runWithView {
-                locationSearchLauncher.launch(
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        requireActivity(),
-                        it,
-                        Constants.SHARED_ELEMENT
-                    )
-                )
+                runCatching {
+                    withStateAtLeast(state = Lifecycle.State.RESUMED) {
+                        locationSearchLauncher.launch(
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                requireActivity(),
+                                it,
+                                Constants.SHARED_ELEMENT
+                            )
+                        )
+                    }
+                }
             }
         }
         ViewCompat.setTransitionName(binding.fab, Constants.SHARED_ELEMENT)
@@ -799,7 +804,7 @@ class LocationsFragment : ToolbarFragment() {
             }
             toolbar.setTitleTextAppearance(
                 toolbar.context,
-                R.style.TextAppearance_OpenSans_ActionModeTitleOnPrimary
+                R.style.TextAppearance_SimpleWeather_ActionModeTitleOnPrimary
             )
         } else {
             toolbar.navigationIcon = null

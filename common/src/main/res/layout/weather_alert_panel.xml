@@ -14,7 +14,7 @@
 
     <merge
         tools:parentTag="android.widget.FrameLayout"
-        tools:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        tools:theme="@style/Theme.Material3Expressive.DayNight.NoActionBar">
 
         <FrameLayout
             android:id="@+id/body_card"
@@ -26,7 +26,7 @@
             android:layout_marginTop="48dp"
             android:stateListAnimator="@animator/weather_detail_item_anim">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/body_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                     app:tint="@android:color/white"
                     tools:src="@drawable/ic_error_white" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/alert_title"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -95,11 +95,11 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     app:autoSizeMaxTextSize="16sp"
-                    app:autoSizeMinTextSize="2dp"
+                    app:autoSizeMinTextSize="2sp"
                     app:autoSizeTextType="uniform"
                     tools:text="Winter Weather Advisory" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/post_date"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -115,7 +115,7 @@
                     android:textSize="12sp"
                     android:textStyle="bold"
                     app:autoSizeMaxTextSize="14sp"
-                    app:autoSizeMinTextSize="2dp"
+                    app:autoSizeMinTextSize="2sp"
                     tools:text="1hr ago" />
 
                 <CheckBox

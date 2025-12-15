@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Ort eingeben"</string>
+    <string name="api_label">"Wetteranbieter"</string>
+    <string name="key_hint">"Anbieterschlüssel"</string>
+    <string name="label_gpsfollow">"Standort"</string>
+    <string name="label_getstarted">"Loslegen"</string>
+    <string name="setup_welcome_prompt">"Willkommen zu SimpleWeather"</string>
+    <string name="setup_welcome_tagline_prompt">"Nur eine einfache Wetter-App"</string>
+    <string name="setup_location_prompt">"Ort hinzufügen"</string>
+    <string name="setup_preferences_prompt">"Einstellungen anpassen"</string>
+    <string name="label_next">"Vorwärts"</string>
+    <string name="label_back">"Zurück"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Wetter"</string>
+    <string name="action_settings">"Einstellungen"</string>
+    <string name="action_retry">"Erneut versuchen"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Details"</string>
+    <string name="label_humidity">"Luftfeuchtigkeit"</string>
+    <string name="label_pressure">"Luftdruck"</string>
+    <string name="label_visibility">"Sichtweite"</string>
+    <string name="label_feelslike">"Gefühlt"</string>
+    <string name="label_wind">"Wind"</string>
+    <string name="label_forecast">"Vorhersage"</string>
+    <string name="label_condition">"Bedingung"</string>
+    <string name="label_sunriseset">"Sonnenauf- und -untergang"</string>
+    <string name="label_sunrise">"Sonnenaufgang"</string>
+    <string name="label_sunset">"Sonnenuntergang"</string>
+    <string name="label_hourlyforecast">"Stündlich"</string>
+    <string name="label_precipitation">"Niederschlag"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"Niederschlagsgefahr"</string>
+    <string name="label_cloudiness">"Bewölkung"</string>
+    <string name="label_qpf_rain">"Regen"</string>
+    <string name="label_qpf_snow">"Schnee"</string>
+    <string name="credit_prefix">"Daten von"</string>
+    <string name="attrib_prefix">"Foto von"</string>
+    <string name="label_high">"Höchst-"</string>
+    <string name="label_low">"Tiefstwerte"</string>
+    <string name="label_dewpoint">"Taupunkt"</string>
+    <string name="label_moonrise">"Mondaufgang"</string>
+    <string name="label_moonset">"Monduntergang"</string>
+    <string name="label_moonphase">"Mondphase"</string>
+    <string name="label_beaufort">"Beaufort"</string>
+    <string name="label_uv">"UV-Index"</string>
+    <string name="label_airquality">"Luftqualitätsindex"</string>
+    <string name="label_airquality_short">"Luftqualität"</string>
+    <string name="label_radar">"Radar"</string>
+    <string name="label_afternoon">"Nachmittag"</string>
+    <string name="label_eve">"Abend"</string>
+    <string name="label_morning">"Morgen"</string>
+    <string name="label_night">"Nacht"</string>
+    <string name="label_temp">"Temp"</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Wetter"</string>
+    <string name="label_nav_alerts">"Warnungen"</string>
+    <string name="label_nav_locations">"Orte"</string>
+    <string name="title_activity_settings">"Einstellungen"</string>
+    <string name="title_fragment_alerts">"Unwetterwarnungen"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"Allgemein"</string>
+    <string name="pref_category_version">"Version"</string>
+    <string name="pref_title_units">"Einheiten"</string>
+    <string name="pref_summary_fahrenheit">"Einheiten in Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Einheiten in Celsius (°C)"</string>
+    <string name="pref_title_about">"Über"</string>
+    <string name="pref_title_about_app">"Über SimpleWeather"</string>
+    <string name="pref_title_credits">"Danksagungen"</string>
+    <string name="pref_title_oslibs">"Open Source Bibliotheken"</string>
+    <string name="pref_category_providers">"Datenanbieter"</string>
+    <string name="pref_summary_currentlocation">"Standortzugriff per GPS erlauben"</string>
+    <string name="pref_summary_apikey">"Anbieterschlüssel notwendig für %1$s"</string>
+    <string name="message_enter_apikey">"Anbieterschlüssel eingeben"</string>
+    <string name="message_keyverified">"Schlüssel bestätigt"</string>
+    <string name="message_keyinvalid">"Schlüssel ungültig"</string>
+    <string name="pref_title_onnotification">"Wetter-Benachrichtigung"</string>
+    <string name="pref_summary_notification">"Dauerhafte Benachrichtigung der aktuellen Wetterbedingungen anzeigen"</string>
+    <string name="pref_title_api">"Wetteranbieter"</string>
+    <string name="pref_category_notification">"Benachrichtigungen"</string>
+    <string name="pref_title_notificationicon">"Benachrichtigungssymbol"</string>
+    <string name="pref_title_alerts">"Wetterwarnungen"</string>
+    <string name="pref_summary_alerts">"Benachrichtigungen für Wetterwarnungen anzeigen"</string>
+    <string name="pref_summary_alerts_disabled">"Wetterwarnungen werden von diesem Wetteranbieter nicht unterstützt"</string>
+    <string name="pref_title_apiregister">"Benutzerkonto erstellen"</string>
+    <string name="pref_summary_apiregister">"Benutzerkonto zum Erhalt eines Anbieterschlüssels erstellen"</string>
+    <string name="error_message_weather_region_unsupported">"Dieses Land wird von diesem Wetteranbieter nicht unterstützt"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Ort hinzufügen"</string>
+    <string name="action_editmode">"Bearbeiten"</string>
+    <string name="label_currentlocation">"Standort"</string>
+    <string name="label_favoritelocations">"Favoriten"</string>
+    <string name="error_location_denied">"Standortzugriff verweigert"</string>
+    <string name="error_retrieve_location">"Standort nicht verfügbar"</string>
+    <string name="error_enable_location_services">"Standortdienste in den Einstellungen aktivieren"</string>
+    <string name="error_noresults">"Keine Ergebnisse gefunden"</string>
+    <string name="label_fab_add_location">"Ort hinzufügen"</string>
+    <string name="message_locationremoved">"Ort entfernt"</string>
+    <string name="message_needfavorite">"Mindestens ein Favorit erforderlich"</string>
+    <string name="undo">"Rückgängig"</string>
+    <string name="delete">"Löschen"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Standortzugriff im Hintergrund für Benachrichtigungen und Widgets erlauben"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Laden von Wetterdaten nicht möglich"</string>
+    <string name="werror_networkerror">"Netzwerkverbindungsfehler"</string>
+    <string name="werror_invalidkey">"Ungültiger Anbieterschlüssel"</string>
+    <string name="werror_querynotfound">"Keine passenden Städte gefunden"</string>
+    <string name="werror_unknown">"Unbekannter Fehler"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Aktualisierungsintervall"</string>
+    <string name="refresh_60min">"1 Stunde"</string>
+    <string name="refresh_2hrs">"2 Stunden"</string>
+    <string name="refresh_3hrs">"3 Stunden"</string>
+    <string name="refresh_6hrs">"6 Stunden"</string>
+    <string name="refresh_12hrs">"12 Stunden"</string>
+    <string name="update_prefix">"Aktualisiert am"</string>
+    <string name="update_prefix_day">"Aktualisiert um"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Temperatur"</string>
+    <string name="notificationicon_condition">"Wetterbedingung"</string>
+    <string name="not_channel_name_weather">"Wetterbenachrichtigungen"</string>
+    <string name="not_channel_desc_weather">"Wetterbenachrichtigungen"</string>
+    <string name="not_channel_name_alerts">"Wetterwarnungen"</string>
+    <string name="not_channel_desc_alerts">"Benachrichtigungen für Wetterwarnungen"</string>
+    <string name="not_channel_name_general">"Service-Meldungen"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"vor %1$d Tagen"</string>
+    <string name="datetime_hr_ago">"vor %1$d Stunden"</string>
+    <string name="datetime_min_ago">"vor %1$d Minuten"</string>
+    <string name="datetime_sec_ago">"vor %1$d Sekunden"</string>
+    <string name="datetime_validuntil">"Gültig bis"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Persönlicher Anbieterschlüssel"</string>
+    <string name="pref_summary_personalkey">"Persönlichen Anbieterschlüssel benutzen"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Design"</string>
+    <string name="userthememode_default">"Systemstandard"</string>
+    <string name="userthememode_dark">"Dunkel"</string>
+    <string name="userthememode_black">"Schwarz (AMOLED)"</string>
+    <string name="userthememode_light">"Hell"</string>
+    <string name="summary_default">"Standard"</string>
+    <string name="action_refresh">"Aktualisieren"</string>
+    <string name="label_windgust">"Windböe"</string>
+    <string name="pref_title_language">"Sprache"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Temperatur"</string>
+    <string name="label_speed">"Geschwindigkeit"</string>
+    <string name="label_distance">"Entfernung"</string>
+    <string name="pref_title_resetunits">"Einheiten auf Standardwerte zurücksetzen"</string>
+    <string name="not_title_weather_update">"Aktualisierung des Wetters…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Symbole"</string>
+    <string name="refresh_30min">"30 Minuten"</string>
+    <string name="label_day">"Tag"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Pollenflug"</string>
+    <string name="label_pollen_tree">"Baum"</string>
+    <string name="label_tree_pollen">"Baumpollen"</string>
+    <string name="label_pollen_grass">"Gras"</string>
+    <string name="label_grass_pollen">"Gräserpollen"</string>
+    <string name="label_pollen_ragweed">"Ambrosia"</string>
+    <string name="label_ragweed_pollen">"Ambrosia-Pollen"</string>
+    <string name="label_count_low">"Niedrig"</string>
+    <string name="label_count_moderate">"Moderat"</string>
+    <string name="label_count_high">"Hoch"</string>
+    <string name="label_count_veryhigh">"Sehr hoch"</string>
+    <string name="bg_location_permission_rationale_settings">"Um den Standort im Hintergrund für Benachrichtigungen und Widgets zu aktualisieren, setzen Sie bitte die Standortberechtigung auf '%1$s'"</string>
+    <string name="prompt_location_not_set">"Ort nicht festgelegt. Bitte fügen Sie einen Ort hinzu"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Hintergrund Standort Zugang"</string>
+    <string name="wear_bg_location_permission_rationale">"Standortzugriff im Hintergrund für Kacheln und Komplikationen zulassen"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"Um den Standort im Hintergrund für Kacheln und Komplikationen zu aktualisieren, setzen Sie bitte die Standortberechtigung auf '%1$s'"</string>
+    <string name="time_current">"Aktuell"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"KEINE DATEN"</string>
+    <string name="label_minutelyforecast">"Vorhersage im Minutentakt"</string>
+    <string name="hint_username">"Nutzername"</string>
+    <string name="hint_password">"Passwort"</string>
+    <string name="pref_title_privacypolicy">"Adatvédelmi irányelvek"</string>
+    <string name="pref_title_termsofservice">"Nutzungsbedingungen"</string>
+    <string name="label_moreinfo">"Mehr Infos"</string>
+    <string name="action_reset">"Zurücksetzen"</string>
+    <string name="label_count_low_short">"Niedrig"</string>
+    <string name="label_count_moderate_short">"Moderat"</string>
+    <string name="label_count_high_short">"Hoch"</string>
+    <string name="label_count_veryhigh_short">"Hoch"</string>
+    <string name="werror_ratelimited">"Zu viele Anfragen. Bitte versuchen Sie es nach ein paar Minuten erneut"</string>
+    <string name="werror_locationnotsupported">"Dieser Standort wird von diesem Wetteranbieter nicht unterstützt"</string>
+    <string name="notification_perm_denied">"Benachrichtigungserlaubnis verweigert"</string>
+    <string name="pref_title_color">Farbe</string>
+</resources>

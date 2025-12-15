@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.Intent.FilterComparison
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.location.LocationManager
 import android.os.Build
@@ -39,6 +40,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.thewizrd.common.helpers.ListChangedArgs
 import com.thewizrd.common.helpers.OnListChangedListener
 import com.thewizrd.common.helpers.PermissionLauncher
@@ -48,6 +50,7 @@ import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.helpers.notificationPermissionEnabled
 import com.thewizrd.common.helpers.openAppSettingsActivity
 import com.thewizrd.common.preferences.KeyEntryPreferenceDialogFragment
+import com.thewizrd.common.utils.ActivityUtils.recreateCompat
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.controls.ProviderEntry
@@ -59,8 +62,10 @@ import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.AnalyticsProps
+import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
+import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrResourceId
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
@@ -72,8 +77,8 @@ import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.adapters.ButtonAdapter
-import com.thewizrd.simpleweather.adapters.DividerAdapter
 import com.thewizrd.simpleweather.adapters.FeaturesAdapter
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.adapters.ViewHolderLongClickListener
 import com.thewizrd.simpleweather.controls.FeatureItem
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
@@ -86,12 +91,12 @@ import com.thewizrd.simpleweather.extras.isWeatherAPISupported
 import com.thewizrd.simpleweather.extras.navigateToPremiumFragment
 import com.thewizrd.simpleweather.extras.navigateUnsupportedIconPack
 import com.thewizrd.simpleweather.extras.setupReviewPreference
-import com.thewizrd.simpleweather.fragments.ToolbarFragment
+import com.thewizrd.simpleweather.fragments.LargeCollapsingToolbarFragment
 import com.thewizrd.simpleweather.locale.InstallRequest
 import com.thewizrd.simpleweather.locale.LocaleInstaller
 import com.thewizrd.simpleweather.notifications.NotificationUtils.Companion.openAppNotificationSettingsActivity
 import com.thewizrd.simpleweather.notifications.WeatherNotificationWorker
-import com.thewizrd.simpleweather.preferences.chippreference.ChipPreference
+import com.thewizrd.simpleweather.preferences.buttongrouppreference.ButtonGroupPreference
 import com.thewizrd.simpleweather.preferences.iconpreference.IconProviderPickerFragment
 import com.thewizrd.simpleweather.preferences.radiopreference.CandidateInfo
 import com.thewizrd.simpleweather.preferences.radiopreference.RadioButtonPreference
@@ -104,6 +109,8 @@ import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetWorker
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
+import com.thewizrd.simpleweather.theming.DynamicColorsHelper
+import com.thewizrd.simpleweather.theming.dynamicColorsHelper
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
 import com.thewizrd.simpleweather.utils.PowerUtils
 import com.thewizrd.simpleweather.wearable.WearableWorker
@@ -127,6 +134,7 @@ class SettingsFragment : BaseSettingsFragment(),
     private lateinit var keyEntry: EditTextPreference
     private lateinit var registerPref: Preference
     private lateinit var themePref: ListPreference
+    private lateinit var colorPref: ListPreference
     private lateinit var languagePref: ListPreference
 
     private var premiumPref: Preference? = null
@@ -498,6 +506,46 @@ class SettingsFragment : BaseSettingsFragment(),
                 dispatchThemeChanged(mode)
                 true
             }
+
+        colorPref = findPreference(DynamicColorsHelper.KEY_COLORTHEME)!!
+        colorPref.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                val args = Bundle()
+                args.putString("mode", newValue.toString())
+                AnalyticsLogger.logEvent("Settings: color changed", args)
+
+                when (newValue.toString()) {
+                    // IMAGE
+                    "1" -> {
+                        val lastColor = dynamicColorsHelper.getLastColor()
+                        if (lastColor != null) {
+                            activity?.run {
+                                dynamicColorsHelper.applyToActivityIfAvailable(this, lastColor)
+                            }
+                            dynamicColorsHelper.applyToActivitiesIfAvailable(lastColor)
+                        } else {
+                            activity?.run {
+                                dynamicColorsHelper.applyToActivityIfAvailable(this)
+                            }
+                            dynamicColorsHelper.applyToActivitiesIfAvailable()
+                        }
+
+                        activity?.recreateCompat()
+                    }
+
+                    // DEFAULT
+                    else -> {
+                        activity?.run {
+                            dynamicColorsHelper.applyToActivityIfAvailable(this)
+                        }
+                        dynamicColorsHelper.applyToActivitiesIfAvailable()
+
+                        activity?.recreateCompat()
+                    }
+                }
+                true
+            }
+        colorPref.isVisible = dynamicColorsHelper.isDynamicColorsAvailable()
 
         keyEntry = findPreference(SettingsManager.KEY_APIKEY)!!
         personalKeyPref = findPreference(SettingsManager.KEY_USEPERSONALKEY)!!
@@ -1009,11 +1057,11 @@ class SettingsFragment : BaseSettingsFragment(),
             private const val KEY_RESETUNITS = "key_resetunits"
         }
 
-        private lateinit var tempUnitPref: ChipPreference
-        private lateinit var speedUnitPref: ChipPreference
-        private lateinit var distanceUnitPref: ChipPreference
-        private lateinit var precipationUnitPref: ChipPreference
-        private lateinit var pressureUnitPref: ChipPreference
+        private lateinit var tempUnitPref: ButtonGroupPreference
+        private lateinit var speedUnitPref: ButtonGroupPreference
+        private lateinit var distanceUnitPref: ButtonGroupPreference
+        private lateinit var precipationUnitPref: ButtonGroupPreference
+        private lateinit var pressureUnitPref: ButtonGroupPreference
 
         private var unitsChanged = false
 
@@ -1122,7 +1170,7 @@ class SettingsFragment : BaseSettingsFragment(),
         }
     }
 
-    class FeaturesFragment : ToolbarFragment() {
+    class FeaturesFragment : LargeCollapsingToolbarFragment() {
         private lateinit var binding: FragmentWeatherListBinding
         private lateinit var orderableFeaturesAdapter: FeaturesAdapter
         private lateinit var nonOrderableFeaturesAdapter: FeaturesAdapter
@@ -1147,6 +1195,9 @@ class SettingsFragment : BaseSettingsFragment(),
             toolbar.setNavigationIcon(toolbar.context.getAttrResourceId(R.attr.homeAsUpIndicator))
             toolbar.setNavigationOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
 
+            appBarLayout.setExpanded(false)
+            appBarLayout.isLiftOnScroll = false
+
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the binding.recyclerView
             binding.recyclerView.setHasFixedSize(true)
@@ -1163,11 +1214,11 @@ class SettingsFragment : BaseSettingsFragment(),
                             .toList()
                     )
                 }.also { orderableFeaturesAdapter = it },
-                DividerAdapter(),
+                SpacerAdapter(requireContext().dpToPx(16f).toInt()),
                 FeaturesAdapter().apply {
                     updateList(FeaturesAdapter.NON_ORDERABLE_ITEMS.toList())
                 }.also { nonOrderableFeaturesAdapter = it },
-                DividerAdapter(),
+                SpacerAdapter(requireContext().dpToPx(4f).toInt()),
                 ButtonAdapter(
                     resId = R.string.action_reset,
                     padding = context?.dpToPx(8f)?.toInt() ?: 0,
@@ -1240,6 +1291,7 @@ class SettingsFragment : BaseSettingsFragment(),
                     if (viewHolder is FeaturesAdapter.ViewHolder) {
                         viewHolder.itemView.elevation = 0f
                     }
+                    orderableFeaturesAdapter.onClearView(recyclerView, viewHolder)
                 }
             }
 
@@ -1277,6 +1329,30 @@ class SettingsFragment : BaseSettingsFragment(),
             })
 
             return root
+        }
+
+        @SuppressLint("MissingSuperCall")
+        override fun updateWindowColors() {
+            context?.let { ctx ->
+                var backgroundColor = ctx.getAttrColor(R.attr.colorSurfaceContainer)
+                var statusBarColor = ctx.getAttrColor(R.attr.colorSurfaceContainer)
+                if (settingsManager.getUserThemeMode() === UserThemeMode.AMOLED_DARK) {
+                    statusBarColor = Colors.BLACK
+                    backgroundColor = Colors.BLACK
+                }
+
+                rootView.setBackgroundColor(backgroundColor)
+                collapsingToolbar.setContentScrimColor(backgroundColor)
+                collapsingToolbar.setStatusBarScrimColor(statusBarColor)
+                collapsingToolbar.setBackgroundColor(statusBarColor)
+                appBarLayout.setLiftOnScrollColor(ColorStateList.valueOf(statusBarColor))
+                if (appBarLayout.background is MaterialShapeDrawable) {
+                    val materialShapeDrawable = appBarLayout.background as MaterialShapeDrawable
+                    materialShapeDrawable.fillColor = ColorStateList.valueOf(statusBarColor)
+                } else {
+                    appBarLayout.setBackgroundColor(statusBarColor)
+                }
+            }
         }
 
         override val scrollTargetViewId: Int

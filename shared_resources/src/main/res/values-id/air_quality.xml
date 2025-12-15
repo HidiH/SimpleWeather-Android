@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- https://aqicn.org/scale -->
+    <string name="aqi_level_0_50">"Baik"</string>
+    <string name="aqi_level_51_100">"Sedang"</string>
+    <string name="aqi_level_101_150">"Tidak Sehat untuk Kelompok Sensitif"</string>
+    <string name="aqi_level_151_200">"Tidak Sehat"</string>
+    <string name="aqi_level_201_300">"Sangat Tidak Sehat"</string>
+    <string name="aqi_level_300">"Berbahaya"</string>
+    <string name="aqi_desc_0_50">"Kualitas udara dianggap memuaskan, dan polusi udara menimbulkan sedikit atau tidak ada risiko"</string>
+    <string name="aqi_desc_51_100">"Kualitas udara dapat diterima"</string>
+    <string name="aqi_desc_101_150">"Anggota kelompok sensitif mungkin mengalami efek kesehatan. Masyarakat umum kemungkinan tidak akan terpengaruh."</string>
+    <string name="aqi_desc_151_200">"Setiap orang mungkin mulai mengalami efek kesehatan; anggota kelompok sensitif mungkin mengalami efek kesehatan yang lebih serius"</string>
+    <string name="aqi_desc_201_300">"Peringatan kesehatan tentang kondisi darurat. Seluruh populasi lebih mungkin terpengaruh."</string>
+    <string name="aqi_desc_300">"Peringatan kesehatan: setiap orang mungkin mengalami efek kesehatan yang lebih serius"</string>
+</resources>

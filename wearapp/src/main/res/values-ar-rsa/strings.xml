@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"الإعداد من الهاتف"</string>
+    <string name="action_changelocation">"تغيير الموقع"</string>
+    <string name="action_openonphone">"فتح على الهاتف"</string>
+    <string name="message_openedonphone">"تم فتحه على الهاتف..."</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"الجهاز غير متصل"</string>
+    <string name="status_connecting">"جاري الاتصال..."</string>
+    <string name="status_notinstalled">"التطبيق غير مثبت على الجهاز"</string>
+    <string name="status_connected">"متصل"</string>
+    <string name="status_node_unavailable">"الجهاز غير متصل أو التطبيق غير مثبت على الجهاز..."</string>
+    <string name="status_node_notsupported">"الجهاز المتصل غير مدعوم"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"هل تريد الإعداد ومزامنة البيانات من هاتفك/جهازك المتصل؟"</string>
+    <string name="message_gettingstatus">"جاري الحصول على حالة الاتصال..."</string>
+    <string name="error_notinstalled">"قم بتثبيت التطبيق على الجهاز وحاول مرة أخرى"</string>
+    <string name="message_continueondevice">"متابعة الإعداد على الجهاز المتصل"</string>
+    <string name="message_retrievingdata">"جاري استرداد البيانات من الجهاز المتصل..."</string>
+    <string name="error_syncing">"غير قادر على مزامنة البيانات"</string>
+    <string name="message_settingsretrieved">"تم استلام بيانات الإعدادات..."</string>
+    <string name="message_locationretrieved">"تم استلام بيانات الموقع..."</string>
+    <string name="message_weatherretrieved">"تم استلام بيانات الطقس..."</string>
+    <string name="message_synccompleted">"تمت مزامنة البيانات بنجاح"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"إيقاف"</string>
+    <string name="pref_sync_deviceonly">"المزامنة من الجهاز فقط"</string>
+    <string name="pref_sync_whenavailable">"المزامنة من الجهاز (عند التوفر)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"مزامنة"</string>
+    <string name="pref_sync_title">"مزامنة البيانات"</string>
+    <string name="pref_connectionstatus_title">"حالة الاتصال"</string>
+    <string name="message_disconnected">"غير متصل"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"الطقس الحالي"</string>
+    <string name="tile_label_weather_forecast">"الطقس + التوقعات"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"الطقس (الأعلى / الأدنى)"</string>
+    <string name="complication_label_weather_currentlocation">"الطقس (الموقع الحالي)"</string>
+    <string name="tile_label_weather_hrforecast">"الطقس + توقعات كل ساعة"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"الطقس (الموقع الحالي + الإحساس)"</string>
+    <string name="title_tile_config">"تكوين البطاقات"</string>
+    <string name="message_reset_to_default">"إعادة التعيين إلى الوضع الافتراضي؟"</string>
+    <string name="pref_title_detailstileeditor">"محرر البطاقات"</string>
+</resources>

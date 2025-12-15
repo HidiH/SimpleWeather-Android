@@ -98,4 +98,12 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+    <string-array name="colortheme_entries">
+        <item>@string/userthememode_default</item>
+        <item>@string/pref_title_feature_bgimage</item>
+    </string-array>
+    <string-array name="colortheme_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 </resources>

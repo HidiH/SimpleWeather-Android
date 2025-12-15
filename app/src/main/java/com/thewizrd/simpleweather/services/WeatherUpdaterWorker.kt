@@ -10,7 +10,17 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ForegroundInfo
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import androidx.work.multiprocess.RemoteWorkManager
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.location.LocationProvider
@@ -24,7 +34,7 @@ import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.notifications.PoPChanceNotificationHelper
@@ -36,7 +46,9 @@ import com.thewizrd.simpleweather.weatheralerts.WeatherAlertHandler
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper
 import com.thewizrd.simpleweather.widgets.WidgetUtils
 import com.thewizrd.weather_api.weatherModule
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.cancellation.CancellationException
@@ -197,6 +209,13 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
 
                 val weatherResult = getWeather()
 
+                result = when (weatherResult) {
+                    is WeatherResult.Success -> Result.success()
+                    is WeatherResult.NoWeather -> Result.failure()
+                    is WeatherResult.Error,
+                    is WeatherResult.WeatherWithError -> Result.retry()
+                }
+
                 val willRetry = result == Result.retry()
 
                 if (WidgetUpdaterHelper.widgetsExist()) {
@@ -236,13 +255,6 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                     }
                     LocalBroadcastManager.getInstance(context)
                         .sendBroadcast(Intent(CommonActions.ACTION_WEATHER_SENDWEATHERUPDATE))
-                }
-
-                result = when (weatherResult) {
-                    is WeatherResult.Success -> Result.success()
-                    is WeatherResult.NoWeather -> Result.failure()
-                    is WeatherResult.Error,
-                    is WeatherResult.WeatherWithError -> Result.retry()
                 }
             }
 

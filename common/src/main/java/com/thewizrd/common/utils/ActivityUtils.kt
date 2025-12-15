@@ -1,5 +1,6 @@
 package com.thewizrd.common.utils
 
+import android.app.Activity
 import android.graphics.Color
 import android.os.Build
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
+import androidx.core.app.ActivityCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -147,5 +149,9 @@ object ActivityUtils {
         lifecycleScope.launch(Dispatchers.Main.immediate) {
             Toast.makeText(this@showToast, message, duration).show()
         }
+    }
+
+    fun Activity.recreateCompat() {
+        ActivityCompat.recreate(this)
     }
 }

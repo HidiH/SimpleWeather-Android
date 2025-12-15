@@ -15,6 +15,7 @@ import com.thewizrd.common.weatherdata.WeatherDataLoader
 import com.thewizrd.common.weatherdata.WeatherRequest
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.icons.WeatherIcons
+import com.thewizrd.shared_resources.utils.AirQualityUtils.getIndexFromData
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.weatherdata.model.AirQuality
 import com.thewizrd.simpleweather.R
@@ -145,7 +146,8 @@ class AQIComplicationService : BaseWeatherComplicationService() {
             return null
         }
 
-        val aqiModel = aqi?.let { AirQualityViewModel(it) }
+        val aqiModel = aqi?.apply { if (index == null) index = getIndexFromData() }
+            ?.takeIf { it.index != null }?.let { AirQualityViewModel(it) }
         val aqiStr = aqiModel?.let { "${it.index}, ${it.level}" } ?: WeatherIcons.EM_DASH
         val aqiShortStr = aqiModel?.let { "${it.index}" } ?: WeatherIcons.EM_DASH
         val aqiProgress = aqiModel?.progress?.toFloat() ?: 0f

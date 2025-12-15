@@ -5,10 +5,8 @@ import android.app.Activity
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.hardware.SensorManager
-import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
@@ -19,6 +17,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.GridLayout
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.Insets
 import androidx.core.util.ObjectsCompat
 import androidx.core.view.ViewCompat
@@ -57,6 +56,7 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -67,6 +67,7 @@ import com.thewizrd.common.helpers.ColorsUtils
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.locationPermissionEnabled
 import com.thewizrd.common.location.LocationResult
+import com.thewizrd.common.utils.ActivityUtils.recreateCompat
 import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.utils.isTextTruncated
 import com.thewizrd.shared_resources.Constants
@@ -78,6 +79,7 @@ import com.thewizrd.shared_resources.helpers.RecyclerOnClickListenerInterface
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.ColorMode
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
@@ -124,6 +126,7 @@ import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetWorker
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
+import com.thewizrd.simpleweather.theming.dynamicColorsHelper
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowFragmentStateModel
@@ -173,6 +176,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
     private lateinit var mGlide: RequestManager
     private var paletteJob: Job? = null
+    private var isRecreating = false
 
     // View Models
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
@@ -226,18 +230,22 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         enterTransition = MaterialFadeThrough()
         exitTransition = MaterialFadeThrough()
 
-        val locationData = if (savedInstanceState?.containsKey(Constants.KEY_DATA) == true) {
-            JSONParser.deserializer(
-                savedInstanceState.getString(Constants.KEY_DATA),
-                LocationData::class.java
-            )
-        } else if (args.data != null) {
-            JSONParser.deserializer(args.data, LocationData::class.java)
-        } else {
-            null
-        }
+        isRecreating = savedInstanceState?.getBoolean("isRecreating", false) ?: false
 
-        wNowViewModel.initialize(locationData)
+        if (!isRecreating) {
+            val locationData = if (savedInstanceState?.containsKey(Constants.KEY_DATA) == true) {
+                JSONParser.deserializer(
+                    savedInstanceState.getString(Constants.KEY_DATA),
+                    LocationData::class.java
+                )
+            } else if (args.data != null) {
+                JSONParser.deserializer(args.data, LocationData::class.java)
+            } else {
+                null
+            }
+
+            wNowViewModel.initialize(locationData)
+        }
 
         locationPermissionLauncher = LocationPermissionLauncher(
             this,
@@ -435,10 +443,9 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         })
 
         // SwipeRefresh
-        binding.refreshLayout.setProgressBackgroundColorSchemeColor(
-            requireContext().getAttrColor(R.attr.colorSurface)
-        )
-        binding.refreshLayout.setColorSchemeColors(requireContext().getAttrColor(R.attr.colorAccent))
+        binding.refreshLayout.setRefreshingDelay(350)
+        binding.refreshLayout.setContainerColor(requireContext().getAttrColor(R.attr.colorPrimaryContainer))
+        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorPrimary))
         binding.refreshLayout.setOnRefreshListener {
             AnalyticsLogger.logEvent("WeatherNowFragment: onRefresh")
             wNowViewModel.refreshWeather(true)
@@ -455,15 +462,6 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             conditionPanelBinding.bgAttribution.movementMethod = LinkMovementMethod.getInstance()
 
             // Alerts
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                conditionPanelBinding.alertButton.backgroundTintList =
-                    ColorStateList.valueOf(Colors.ORANGERED)
-            } else {
-                val drawable = conditionPanelBinding.alertButton.background.mutate()
-                drawable.setColorFilter(Colors.ORANGERED, PorterDuff.Mode.SRC_IN)
-                conditionPanelBinding.alertButton.background = drawable
-            }
-
             conditionPanelBinding.alertButton.setOnClickListener {
                 openDetails(
                     TwoPaneNavGraphDirections.actionGlobalWeatherListFragment2()
@@ -623,11 +621,15 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                 onClickListener.onClick(it, 0)
             }
 
-            precipPanelBinding!!.minutelyPrecipGraphPanel.setDrawIconLabels(false)
-            precipPanelBinding!!.precipGraphPanel.setDrawIconLabels(false)
-
             precipPanelBinding!!.minutelyPrecipGraphPanel.setOnClickPositionListener(onClickListener)
             precipPanelBinding!!.precipGraphPanel.setOnClickPositionListener(onClickListener)
+
+            precipPanelBinding!!.minutelyPrecipGraphPanel.setOnClickListener {
+                onClickListener.onClick(it, 0)
+            }
+            precipPanelBinding!!.precipGraphPanel.setOnClickListener {
+                onClickListener.onClick(it, 0)
+            }
 
             binding.listLayout.addView(precipPanelBinding!!.root)
             precipPanelBinding!!.root.updateLayoutParams<GridLayout.LayoutParams> {
@@ -884,6 +886,18 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
         updateViewOrder()
 
         slidingPaneLayout.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
+        slidingPaneLayout.addPanelSlideListener(object :
+            SlidingPaneLayout.SimplePanelSlideListener() {
+            override fun onPanelOpened(panel: View) {
+                super.onPanelOpened(panel)
+                twoPaneStateViewModel.updateIsOpened(true)
+            }
+
+            override fun onPanelClosed(panel: View) {
+                super.onPanelClosed(panel)
+                twoPaneStateViewModel.updateIsOpened(false)
+            }
+        })
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             if (detailPaneNavHostFragment.arguments == null) {
@@ -918,9 +932,10 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                if (wNowViewModel.isInitialized.value) {
+                if (!isRecreating && wNowViewModel.isInitialized.value) {
                     initializeState()
                 }
+                isRecreating = false
             }
         }
 
@@ -1105,6 +1120,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("isRecreating", isRecreating)
         radarViewProvider?.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
@@ -1127,10 +1143,8 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        binding.refreshLayout.setProgressBackgroundColorSchemeColor(
-            requireContext().getAttrColor(R.attr.colorSurface)
-        )
-        binding.refreshLayout.setColorSchemeColors(requireContext().getAttrColor(R.attr.colorAccent))
+        binding.refreshLayout.setContainerColor(requireContext().getAttrColor(R.attr.colorPrimaryContainer))
+        binding.refreshLayout.setIndicatorColor(requireContext().getAttrColor(R.attr.colorPrimary))
 
         // Resize necessary views
         adjustConditionPanelLayout()
@@ -1228,7 +1242,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                         )
                         .placeholder(ColorDrawable(Colors.LIGHTGRAY))
                         .transition(BitmapTransitionOptions.withCrossFade(300))
-                        .addListener(object : RequestListener<Bitmap?> {
+                        .addListener(object : RequestListener<Bitmap> {
                             override fun onLoadFailed(
                                 e: GlideException?, model: Any?,
                                 target: Target<Bitmap?>,
@@ -1251,23 +1265,71 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
                                 paletteJob = runWithView {
                                     withContext(Dispatchers.IO) {
                                         runCatching {
-                                            val palette = Palette.from(resource).generate()
+                                            val palette = Palette.from(resource)
+                                                .maximumColorCount(128).generate()
+
+                                            val seedColor = DynamicColorsOptions.Builder()
+                                                .setContentBasedSource(resource)
+                                                .build()
+                                                .contentBasedSeedColor
+
+                                            val dominantColor = seedColor ?: imageView.context.run {
+                                                getColor(R.color.colorPrimary)
+                                            }
+
+                                            val backgroundColor =
+                                                if (ColorsUtils.isSuperDark(palette)) {
+                                                    ColorUtils.setAlphaComponent(Colors.WHITE, 0x08)
+                                                } else if (ColorsUtils.isSuperLight(palette)) {
+                                                    ColorUtils.setAlphaComponent(Colors.BLACK, 0x08)
+                                                } else {
+                                                    ColorUtils.setAlphaComponent(
+                                                        dominantColor,
+                                                        0x08
+                                                    )
+                                                }
+
+                                            val bodyTextColor =
+                                                if (ColorsUtils.isSuperLight(palette)) {
+                                                    Colors.BLACK
+                                                } else if (ColorsUtils.isSuperDark(palette)) {
+                                                    Colors.WHITE
+                                                } else {
+                                                    ColorsUtils.getBodyTextColor(dominantColor)
+                                                }
 
                                             if (isActive) {
-                                                if (ColorsUtils.isSuperLight(palette)) {
+                                                val oldColor = dynamicColorsHelper.getLastColor()
+
+                                                lifecycleScope.launch(Dispatchers.Main) {
+                                                    dynamicColorsHelper.setLastColor(dominantColor)
+
+                                                    conditionPanelBinding.bgAttribution.backgroundTintList =
+                                                        ColorStateList.valueOf(backgroundColor)
+
                                                     conditionPanelBinding.bgAttribution.setTextColor(
-                                                        Colors.BLACK
+                                                        bodyTextColor
                                                     )
                                                     conditionPanelBinding.bgAttribution.setLinkTextColor(
-                                                        Colors.BLACK
+                                                        bodyTextColor
                                                     )
-                                                } else {
-                                                    conditionPanelBinding.bgAttribution.setTextColor(
-                                                        Colors.WHITESMOKE
-                                                    )
-                                                    conditionPanelBinding.bgAttribution.setLinkTextColor(
-                                                        Colors.WHITESMOKE
-                                                    )
+
+                                                    if (dynamicColorsHelper.getColorMode() == ColorMode.IMAGE && oldColor != dominantColor) {
+                                                        lifecycleScope.launch(Dispatchers.Main) {
+                                                            dynamicColorsHelper.applyToActivitiesIfAvailable(
+                                                                dominantColor
+                                                            )
+                                                            activity?.run {
+                                                                dynamicColorsHelper.applyToActivityIfAvailable(
+                                                                    this,
+                                                                    dominantColor
+                                                                ) {
+                                                                    isRecreating = true
+                                                                    it.recreateCompat()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -1443,6 +1505,7 @@ class WeatherNowFragment : AbstractWeatherListDetailFragment(), BannerManagerInt
             } else {
                 binding.appBarLayout.setBackgroundColor(statusBarColor)
             }
+            binding.appBarLayout.setLiftOnScrollColor(ColorStateList.valueOf(statusBarColor))
         }
     }
 

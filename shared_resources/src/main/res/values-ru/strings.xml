@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Введите местоположение"</string>
+    <string name="api_label">"Погодный провайдер"</string>
+    <string name="key_hint">"Ключ провайдера"</string>
+    <string name="label_gpsfollow">"Текущее местоположение"</string>
+    <string name="label_getstarted">"Начать"</string>
+    <string name="setup_welcome_prompt">"Добро пожаловать в SimpleWeather"</string>
+    <string name="setup_welcome_tagline_prompt">"Простое приложение о погоде"</string>
+    <string name="setup_location_prompt">"Добавьте местоположение, чтобы начать"</string>
+    <string name="setup_preferences_prompt">"Настройте параметры ниже"</string>
+    <string name="label_next">"Далее"</string>
+    <string name="label_back">"Назад"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Погода"</string>
+    <string name="action_settings">"Настройки"</string>
+    <string name="action_retry">"Повторить"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Детали"</string>
+    <string name="label_humidity">"Влажность"</string>
+    <string name="label_pressure">"Давление"</string>
+    <string name="label_visibility">"Видимость"</string>
+    <string name="label_feelslike">"Ощущается как"</string>
+    <string name="label_wind">"Ветер"</string>
+    <string name="label_forecast">"Прогноз"</string>
+    <string name="label_condition">"Состояние"</string>
+    <string name="label_sunriseset">"Восход / Закат"</string>
+    <string name="label_sunrise">"Восход"</string>
+    <string name="label_sunset">"Закат"</string>
+    <string name="label_hourlyforecast">"Почасовой"</string>
+    <string name="label_precipitation">"Осадки"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"Вероятность"</string>
+    <string name="label_cloudiness">"Облачность"</string>
+    <string name="label_qpf_rain">"Дождь"</string>
+    <string name="label_qpf_snow">"Снег"</string>
+    <string name="credit_prefix">"Данные от"</string>
+    <string name="attrib_prefix">"Фото от"</string>
+    <string name="label_high">"Максимум"</string>
+    <string name="label_low">"Минимум"</string>
+    <string name="label_dewpoint">"Точка росы"</string>
+    <string name="label_moonrise">"Восход луны"</string>
+    <string name="label_moonset">"Заход луны"</string>
+    <string name="label_moonphase">"Фаза луны"</string>
+    <string name="label_beaufort">"Бофорт"</string>
+    <string name="label_uv">"УФ индекс"</string>
+    <string name="label_airquality">"Индекс качества воздуха"</string>
+    <string name="label_airquality_short">"Качество воздуха"</string>
+    <string name="label_radar">"Радар"</string>
+    <string name="label_afternoon">"День"</string>
+    <string name="label_eve">"Вечер"</string>
+    <string name="label_morning">"Утро"</string>
+    <string name="label_night">"Ночь"</string>
+    <string name="label_temp">"Темп."</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Погода"</string>
+    <string name="label_nav_alerts">"Предупреждения"</string>
+    <string name="label_nav_locations">"Местоположения"</string>
+    <string name="title_activity_settings">"Настройки"</string>
+    <string name="title_fragment_alerts">"Предупреждения о суровой погоде"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"Общие"</string>
+    <string name="pref_category_version">"Версия"</string>
+    <string name="pref_title_units">"Единицы измерения"</string>
+    <string name="pref_summary_fahrenheit">"Отображать единицы измерения в градусах Фаренгейта (°F)"</string>
+    <string name="pref_summary_celsius">"Отображать единицы измерения в градусах Цельсия (°C)"</string>
+    <string name="pref_title_about">"О программе"</string>
+    <string name="pref_title_about_app">"О SimpleWeather"</string>
+    <string name="pref_title_credits">"Авторы"</string>
+    <string name="pref_title_oslibs">"Библиотеки с открытым исходным кодом"</string>
+    <string name="pref_category_providers">"Поставщики данных"</string>
+    <string name="pref_summary_currentlocation">"Разрешить доступ к текущему местоположению через GPS"</string>
+    <string name="pref_summary_apikey">"Введите ключ провайдера, необходимый для %1$s"</string>
+    <string name="message_enter_apikey">"Пожалуйста, введите ключ провайдера"</string>
+    <string name="message_keyverified">"Ключ подтвержден"</string>
+    <string name="message_keyinvalid">"Неверный ключ"</string>
+    <string name="pref_title_onnotification">"Уведомление о погоде"</string>
+    <string name="pref_summary_notification">"Показывать постоянное уведомление, отображающее текущие погодные условия"</string>
+    <string name="pref_title_api">"Погодный провайдер"</string>
+    <string name="pref_category_notification">"Уведомления"</string>
+    <string name="pref_title_notificationicon">"Иконка уведомлений"</string>
+    <string name="pref_title_alerts">"Погодные оповещения"</string>
+    <string name="pref_summary_alerts">"Показывать уведомления о погодных оповещениях"</string>
+    <string name="pref_summary_alerts_disabled">"Погодные оповещения не поддерживаются этим поставщиком погоды"</string>
+    <string name="pref_title_apiregister">"Создать учетную запись"</string>
+    <string name="pref_summary_apiregister">"Создайте учетную запись, чтобы зарегистрировать ключ поставщика"</string>
+    <string name="error_message_weather_region_unsupported">"Страна не поддерживается этим поставщиком погоды"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Добавить местоположение"</string>
+    <string name="action_editmode">"Редактировать"</string>
+    <string name="label_currentlocation">"Текущее местоположение"</string>
+    <string name="label_favoritelocations">"Избранные местоположения"</string>
+    <string name="error_location_denied">"Доступ к местоположению запрещен"</string>
+    <string name="error_retrieve_location">"Не удалось получить местоположение"</string>
+    <string name="error_enable_location_services">"Службы определения местоположения отключены. Пожалуйста, включите их в настройках"</string>
+    <string name="error_noresults">"Результаты не найдены"</string>
+    <string name="label_fab_add_location">"Добавить местоположение"</string>
+    <string name="message_locationremoved">"Местоположение удалено"</string>
+    <string name="message_needfavorite">"Должно быть хотя бы одно избранное местоположение"</string>
+    <string name="undo">"Отменить"</string>
+    <string name="delete">"Удалить"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Разрешить доступ для обновления местоположения в фоновом режиме для уведомлений и виджетов"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Не удалось загрузить данные о погоде"</string>
+    <string name="werror_networkerror">"Ошибка сетевого подключения"</string>
+    <string name="werror_invalidkey">"Недействительный ключ поставщика"</string>
+    <string name="werror_querynotfound">"Нет городов, соответствующих вашему поисковому запросу"</string>
+    <string name="werror_unknown">"Произошла неизвестная ошибка"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Интервал обновления"</string>
+    <string name="refresh_60min">"1 час"</string>
+    <string name="refresh_2hrs">"2 часа"</string>
+    <string name="refresh_3hrs">"3 часа"</string>
+    <string name="refresh_6hrs">"6 часов"</string>
+    <string name="refresh_12hrs">"12 часов"</string>
+    <string name="update_prefix">"Обновлено"</string>
+    <string name="update_prefix_day">"Обновлено в"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Температура"</string>
+    <string name="notificationicon_condition">"Погодные условия"</string>
+    <string name="not_channel_name_weather">"Погодные уведомления"</string>
+    <string name="not_channel_desc_weather">"Погодные уведомления"</string>
+    <string name="not_channel_name_alerts">"Погодные оповещения"</string>
+    <string name="not_channel_desc_alerts">"Уведомления о погодных оповещениях"</string>
+    <string name="not_channel_name_general">"Служебные уведомления"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"%1$d д. назад"</string>
+    <string name="datetime_hr_ago">"%1$d ч. назад"</string>
+    <string name="datetime_min_ago">"%1$d мин. назад"</string>
+    <string name="datetime_sec_ago">"%1$d сек. назад"</string>
+    <string name="datetime_validuntil">"Действителен до"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Персональный ключ поставщика"</string>
+    <string name="pref_summary_personalkey">"Использовать персональный ключ поставщика погоды"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Тема"</string>
+    <string name="userthememode_default">"Системная тема"</string>
+    <string name="userthememode_dark">"Темная"</string>
+    <string name="userthememode_black">"Темная (AMOLED)"</string>
+    <string name="userthememode_light">"Светлая"</string>
+    <string name="summary_default">"По умолчанию"</string>
+    <string name="action_refresh">"Обновить"</string>
+    <string name="label_windgust">"Порыв ветра"</string>
+    <string name="pref_title_language">"Язык"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Температура"</string>
+    <string name="label_speed">"Скорость"</string>
+    <string name="label_distance">"Расстояние"</string>
+    <string name="pref_title_resetunits">"Сбросить единицы измерения до значений по умолчанию"</string>
+    <string name="not_title_weather_update">"Обновление погоды…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Иконки"</string>
+    <string name="refresh_30min">"30 минут"</string>
+    <string name="label_day">"День"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Уровень пыльцы"</string>
+    <string name="label_pollen_tree">"Дерево"</string>
+    <string name="label_tree_pollen">"Пыльца деревьев"</string>
+    <string name="label_pollen_grass">"Трава"</string>
+    <string name="label_grass_pollen">"Пыльца травы"</string>
+    <string name="label_pollen_ragweed">"Амброзия"</string>
+    <string name="label_ragweed_pollen">"Пыльца амброзии"</string>
+    <string name="label_count_low">"Низкий"</string>
+    <string name="label_count_moderate">"Умеренный"</string>
+    <string name="label_count_high">"Высокий"</string>
+    <string name="label_count_veryhigh">"Очень высокий"</string>
+    <string name="bg_location_permission_rationale_settings">"Чтобы обновить местоположение в фоновом режиме для уведомлений и виджетов, установите разрешение на определение местоположения на '%1$s'"</string>
+    <string name="prompt_location_not_set">"Местоположение не установлено. Пожалуйста, добавьте местоположение"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Доступ к местоположению в фоновом режиме"</string>
+    <string name="wear_bg_location_permission_rationale">"Разрешить доступ для обновления местоположения в фоновом режиме для плиток и осложнений"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"Чтобы обновить местоположение в фоновом режиме для плиток и осложнений, установите разрешение на определение местоположения на '%1$s'"</string>
+    <string name="time_current">"Текущий"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"НЕТ ДАННЫХ"</string>
+    <string name="label_minutelyforecast">"Минутно"</string>
+    <string name="hint_username">"Имя пользователя"</string>
+    <string name="hint_password">"Пароль"</string>
+    <string name="pref_title_privacypolicy">"Политика конфиденциальности"</string>
+    <string name="pref_title_termsofservice">"Условия использования"</string>
+    <string name="label_moreinfo">"Подробнее"</string>
+    <string name="action_reset">"Сброс"</string>
+    <string name="label_count_low_short">"Низкий"</string>
+    <string name="label_count_moderate_short">"Средний"</string>
+    <string name="label_count_high_short">"Высокий"</string>
+    <string name="label_count_veryhigh_short">"Высокий"</string>
+    <string name="werror_ratelimited">"Слишком много запросов. Пожалуйста, повторите попытку через несколько минут"</string>
+    <string name="werror_locationnotsupported">"Это местоположение не поддерживается этим поставщиком погоды"</string>
+    <string name="notification_perm_denied">"Разрешение на уведомление отклонено"</string>
+    <string name="pref_title_color">Цвет</string>
+</resources>

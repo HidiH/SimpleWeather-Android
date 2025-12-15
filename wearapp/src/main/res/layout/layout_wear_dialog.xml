@@ -89,7 +89,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="4dp"
-                android:textAppearance="?textAppearanceButton"
+                android:textAppearance="?textAppearanceTitleMedium"
                 tools:text="Title" />
 
         </LinearLayout>
@@ -102,7 +102,7 @@
             android:gravity="center"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:textAppearance="?textAppearanceCaption1"
+            android:textAppearance="?textAppearanceBodyMedium"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@android:id/content"
             app:layout_constraintEnd_toStartOf="@id/right"
@@ -166,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@android:string/yes"
                 android:visibility="gone"
-                app:backgroundTint="?colorAccent"
+                app:backgroundTint="?colorPrimary"
                 app:collapsedSize="@dimen/diag_button_size"
                 app:icon="@drawable/ic_check_24dp"
                 app:iconTint="?colorOnPrimary"

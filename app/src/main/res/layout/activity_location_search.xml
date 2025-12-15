@@ -27,6 +27,7 @@
 
         <com.thewizrd.simpleweather.controls.LocationSearchView
             android:id="@+id/search_view"
+            style="@style/Widget.Material3Expressive.SearchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/location_search_hint" />

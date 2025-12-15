@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- https://aqicn.org/scale -->
+    <string name="aqi_level_0_50">"Jó"</string>
+    <string name="aqi_level_51_100">"Mérsékelt"</string>
+    <string name="aqi_level_101_150">"Egészségtelen az érzékeny csoportok számára"</string>
+    <string name="aqi_level_151_200">"Egészségtelen"</string>
+    <string name="aqi_level_201_300">"Nagyon egészségtelen"</string>
+    <string name="aqi_level_300">"Veszélyes"</string>
+    <string name="aqi_desc_0_50">"A levegőminőség kielégítőnek tekinthető, és a légszennyezés csekély vagy semmilyen kockázatot nem jelent"</string>
+    <string name="aqi_desc_51_100">"A levegőminőség elfogadható"</string>
+    <string name="aqi_desc_101_150">"Az érzékeny csoportok tagjai egészségügyi hatásokat tapasztalhatnak. A lakosság általában nem érintett."</string>
+    <string name="aqi_desc_151_200">"Mindenki elkezdheti tapasztalni az egészségügyi hatásokat; az érzékeny csoportok tagjai súlyosabb egészségügyi hatásokat tapasztalhatnak"</string>
+    <string name="aqi_desc_201_300">"Figyelmeztetések a vészhelyzeti körülményekre. A teljes lakosság nagyobb valószínűséggel érintett."</string>
+    <string name="aqi_desc_300">"Egészségügyi riasztás: mindenki súlyosabb egészségügyi hatásokat tapasztalhat"</string>
+</resources>

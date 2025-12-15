@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- https://aqicn.org/scale -->
+    <string name="aqi_level_0_50">"İyi"</string>
+    <string name="aqi_level_51_100">"Orta"</string>
+    <string name="aqi_level_101_150">"Hassas Gruplar İçin Sağlıksız"</string>
+    <string name="aqi_level_151_200">"Sağlıksız"</string>
+    <string name="aqi_level_201_300">"Çok Sağlıksız"</string>
+    <string name="aqi_level_300">"Tehlikeli"</string>
+    <string name="aqi_desc_0_50">"Hava kalitesi tatmin edici olarak kabul edilir ve hava kirliliği çok az risk oluşturur veya hiç risk oluşturmaz"</string>
+    <string name="aqi_desc_51_100">"Hava kalitesi kabul edilebilir"</string>
+    <string name="aqi_desc_101_150">"Hassas grupların üyeleri sağlık sorunları yaşayabilir. Genel halkın etkilenmesi olası değildir."</string>
+    <string name="aqi_desc_151_200">"Herkes sağlık sorunları yaşamaya başlayabilir; hassas grupların üyeleri daha ciddi sağlık sorunları yaşayabilir"</string>
+    <string name="aqi_desc_201_300">"Acil durumların sağlık uyarıları. Tüm nüfusun etkilenme olasılığı daha yüksektir."</string>
+    <string name="aqi_desc_300">"Sağlık uyarısı: herkes daha ciddi sağlık sorunları yaşayabilir"</string>
+</resources>

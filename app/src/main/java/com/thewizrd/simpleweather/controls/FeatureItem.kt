@@ -2,6 +2,7 @@ package com.thewizrd.simpleweather.controls
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,17 @@ import android.widget.Checkable
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.StringRes
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
+import androidx.core.view.updatePaddingRelative
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.utils.Colors
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
+import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColorStateList
+import com.thewizrd.shared_resources.utils.ContextUtils.getAttrDrawable
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.simpleweather.R
 
@@ -46,24 +53,45 @@ class FeatureItem @JvmOverloads constructor(
     init {
         LayoutInflater.from(context).inflate(R.layout.layout_featureitem, this, true)
         layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            LayoutParams.MATCH_PARENT,
+            LayoutParams.WRAP_CONTENT
         )
 
-        background = MaterialShapeDrawable().apply {
-            fillColor = ColorStateList.valueOf(
-                if (settingsManager.getUserThemeMode() == UserThemeMode.AMOLED_DARK) {
-                    Colors.BLACK
-                } else {
-                    context.getAttrColor(R.attr.colorSurface)
-                }
-            )
-            initializeElevationOverlay(context)
-            elevation = 0f
-        }
+        background = RippleDrawable(
+            ColorStateList.valueOf(context.getAttrColor(android.R.attr.colorControlHighlight)),
+            MaterialShapeDrawable().apply {
+                fillColor = ColorStateList.valueOf(
+                    if (settingsManager.getUserThemeMode() == UserThemeMode.AMOLED_DARK) {
+                        ColorUtils.compositeColors(
+                            context.getAttrColor(R.attr.colorSurfaceDim),
+                            Colors.BLACK
+                        )
+                    } else {
+                        context.getAttrColor(R.attr.colorSurfaceBright)
+                    }
+                )
+                initializeElevationOverlay(context)
+                elevation = 0f
+                shapeAppearanceModel = ShapeAppearanceModel.builder(
+                    context,
+                    R.style.ShapeAppearance_Material3_Corner_LargeIncreased,
+                    0
+                ).build()
+            },
+            null
+        )
 
         titleTextView = findViewById(R.id.title)
         dragHandle = findViewById(R.id.drag_handle)
+
+        // Expressive styling
+        minimumHeight = context.dpToPx(56f).toInt()
+        val horizontalPadding =
+            context.resources.getDimensionPixelSize(R.dimen.preference_expressive_space_small1)
+        updatePaddingRelative(start = horizontalPadding, end = horizontalPadding)
+        clipToPadding = false
+        isBaselineAligned = false
+        filterTouchesWhenObscured = false
     }
 
     override fun setOnLongClickListener(l: OnLongClickListener?) {
@@ -113,6 +141,16 @@ class FeatureItem @JvmOverloads constructor(
         super.setElevation(elevation)
         if (background is MaterialShapeDrawable) {
             (background as? MaterialShapeDrawable)?.elevation = elevation
+        } else if (background is RippleDrawable) {
+            (background as? RippleDrawable)?.let { rippleDrawable ->
+                for (i in 0 until rippleDrawable.numberOfLayers) {
+                    val drawable = rippleDrawable.getDrawable(i)
+                    if (drawable is MaterialShapeDrawable) {
+                        drawable.elevation = elevation
+                        break
+                    }
+                }
+            }
         }
     }
 }

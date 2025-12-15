@@ -1,15 +1,36 @@
 <vector android:height="24dp"
     android:viewportHeight="24.0"
-    android:viewportWidth="24.0"
-    android:width="24dp"
+    android:viewportWidth="32.0"
+    android:width="32dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <path
-        android:fillAlpha="0.38"
-        android:strokeAlpha="0.38"
-        android:fillColor="#fff"
-        android:pathData="M5,7 L19,7 A5,5 0 0 1 24 12 L24,12 A5,5 0 0 1 19 17 L5,17 A5,5 0 0 1 0 12 L0,12 A5,5 0 0 1 5 7z" />
-    <path
-        android:fillType="evenOdd"
-        android:fillColor="#fff"
-        android:pathData="M17,19 C 20.866 19 24 15.866 24 12 C 24 8.134 20.866 5 17 5 C 13.134 5 10 8.134 10 12 C 10 15.866 13.134 19 17 19z" />
+    <group
+        android:scaleX="0.6125"
+        android:scaleY="0.6125"
+        android:translateY="2.25">
+        <path
+            android:name="track"
+            android:fillColor="?colorOnPrimaryContainer"
+            android:pathData="@string/mtrl_switch_track_path" />
+    </group>
+    <group
+        android:scaleX="0.6125"
+        android:scaleY="0.6125"
+        android:translateY="2.25"
+        android:translateX="12.75">
+        <path
+            android:fillColor="?attr/colorPrimaryContainer"
+            android:pathData="@string/mtrl_switch_thumb_path_checked" />
+    </group>
+    <group
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:translateY="6.25"
+        android:translateX="16.75">
+        <path
+            android:strokeColor="?colorOnPrimaryContainer"
+            android:strokeWidth="1"
+            android:strokeLineCap="round"
+            android:fillColor="?colorOnPrimaryContainer"
+            android:pathData="M9.0,16.17L5.53,12.7c-0.39,-0.39,-1.02,-0.39,-1.41,0.0c-0.39,0.39,-0.39,1.02,0.0,1.41l4.18,4.18c0.39,0.39,1.02,0.39,1.41,0.0L20.29,7.71c0.39,-0.39,0.39,-1.02,0.0,-1.41c-0.39,-0.39,-1.02,-0.39,-1.41,0.0L9.0,16.17z" />
+    </group>
 </vector>

@@ -48,7 +48,6 @@ sealed interface WeatherNowState {
     val isGPSLocation: Boolean
     val locationData: LocationData?
     val noLocationAvailable: Boolean
-    val showDisconnectedView: Boolean
     val isImageLoading: Boolean
 
     data class NoWeather(
@@ -58,7 +57,6 @@ sealed interface WeatherNowState {
         override val isGPSLocation: Boolean,
         override val locationData: LocationData? = null,
         override val noLocationAvailable: Boolean = false,
-        override val showDisconnectedView: Boolean = false,
         override val isImageLoading: Boolean = false
     ) : WeatherNowState
 
@@ -69,7 +67,6 @@ sealed interface WeatherNowState {
         override val isGPSLocation: Boolean,
         override val locationData: LocationData? = null,
         override val noLocationAvailable: Boolean = false,
-        override val showDisconnectedView: Boolean = false,
         override val isImageLoading: Boolean = false
     ) : WeatherNowState
 }
@@ -81,7 +78,6 @@ private data class WeatherNowViewModelState(
     val isGPSLocation: Boolean = false,
     val locationData: LocationData? = null,
     val noLocationAvailable: Boolean = false,
-    val showDisconnectedView: Boolean = false,
     val scrollViewPosition: Int = 0,
     val isImageLoading: Boolean = false,
     val isInitialized: Boolean = false
@@ -95,7 +91,6 @@ private data class WeatherNowViewModelState(
                 isGPSLocation = isGPSLocation,
                 locationData = locationData,
                 noLocationAvailable = noLocationAvailable,
-                showDisconnectedView = showDisconnectedView,
                 isImageLoading = isImageLoading
             )
         } else {
@@ -105,7 +100,6 @@ private data class WeatherNowViewModelState(
                 isGPSLocation = isGPSLocation,
                 locationData = locationData,
                 noLocationAvailable = noLocationAvailable,
-                showDisconnectedView = showDisconnectedView,
                 isImageLoading = isImageLoading
             )
         }

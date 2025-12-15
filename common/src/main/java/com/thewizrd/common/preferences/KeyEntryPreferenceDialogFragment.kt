@@ -18,7 +18,12 @@ import androidx.preference.PreferenceDialogFragmentCompat
 import com.google.android.material.textfield.TextInputLayout
 import com.thewizrd.common.R
 import com.thewizrd.shared_resources.di.settingsManager
-import com.thewizrd.shared_resources.weatherdata.auth.*
+import com.thewizrd.shared_resources.weatherdata.WeatherAPI
+import com.thewizrd.shared_resources.weatherdata.auth.AuthType
+import com.thewizrd.shared_resources.weatherdata.auth.BasicAuthProviderKey
+import com.thewizrd.shared_resources.weatherdata.auth.ProviderApiKey
+import com.thewizrd.shared_resources.weatherdata.auth.ProviderAppKey
+import com.thewizrd.shared_resources.weatherdata.auth.ProviderKey
 import com.thewizrd.weather_api.weatherModule
 
 class KeyEntryPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
@@ -135,7 +140,11 @@ class KeyEntryPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
                 val credentials = providerKey as? ProviderAppKey
 
                 view.findViewById<TextInputLayout>(R.id.keyentry1_layout)?.apply {
-                    this.setHint(R.string.hint_appid)
+                    if (apiProvider == WeatherAPI.HERE) {
+                        this.hint = "Access Key ID"
+                    } else {
+                        this.setHint(R.string.hint_appid)
+                    }
                     editText?.let { editText ->
                         editText.requestFocus()
                         editText.setText(credentials?.appId ?: "")
@@ -147,7 +156,11 @@ class KeyEntryPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
                     }
                 }
                 view.findViewById<TextInputLayout>(R.id.keyentry2_layout)?.apply {
-                    this.setHint(R.string.hint_appcode)
+                    if (apiProvider == WeatherAPI.HERE) {
+                        this.hint = "Access Key Secret"
+                    } else {
+                        this.setHint(R.string.hint_appcode)
+                    }
                     editText?.let { editText ->
                         editText.setText(credentials?.appCode ?: "")
 

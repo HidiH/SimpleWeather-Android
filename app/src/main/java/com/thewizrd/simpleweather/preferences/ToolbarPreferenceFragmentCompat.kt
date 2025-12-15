@@ -1,5 +1,6 @@
 package com.thewizrd.simpleweather.preferences
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.PorterDuff
@@ -15,10 +16,12 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceGroup
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.transition.MaterialFadeThrough
+import com.thewizrd.common.utils.isAdapterOfTypeOrConcatContains
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
@@ -35,6 +38,8 @@ abstract class ToolbarPreferenceFragmentCompat : WindowColorPreferenceFragmentCo
         get() = binding.appBar
     val rootView: CoordinatorLayout
         get() = binding.coordinatorLayout
+    val collapsingToolbar: CollapsingToolbarLayout
+        get() = binding.collapsingToolbar
     val toolbar: MaterialToolbar
         get() = binding.toolbar
 
@@ -91,22 +96,32 @@ abstract class ToolbarPreferenceFragmentCompat : WindowColorPreferenceFragmentCo
         updateWindowColors(settingsManager.getUserThemeMode())
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     protected fun updateWindowColors(mode: UserThemeMode) {
         activity?.let {
-            var backgroundColor = it.getAttrColor(android.R.attr.colorBackground)
-            var statusBarColor = it.getAttrColor(R.attr.colorSurface)
+            var backgroundColor = it.getAttrColor(R.attr.colorSurfaceContainer)
+            var statusBarColor = it.getAttrColor(R.attr.colorSurfaceContainer)
             if (mode == UserThemeMode.AMOLED_DARK) {
                 statusBarColor = Colors.BLACK
-                backgroundColor = statusBarColor
+                backgroundColor = Colors.BLACK
             }
 
             binding.coordinatorLayout.setBackgroundColor(backgroundColor)
+            binding.collapsingToolbar.setContentScrimColor(backgroundColor)
+            binding.collapsingToolbar.setStatusBarScrimColor(statusBarColor)
+            binding.collapsingToolbar.setBackgroundColor(statusBarColor)
+            binding.appBar.setLiftOnScrollColor(ColorStateList.valueOf(statusBarColor))
             if (binding.appBar.background is MaterialShapeDrawable) {
                 val materialShapeDrawable = binding.appBar.background as MaterialShapeDrawable
                 materialShapeDrawable.fillColor = ColorStateList.valueOf(statusBarColor)
             } else {
                 binding.appBar.setBackgroundColor(statusBarColor)
             }
+        }
+
+        // Update preference background tint
+        if (listView.adapter.isAdapterOfTypeOrConcatContains(SettingsPreferenceGroupAdapter::class.java)) {
+            listView.adapter?.notifyDataSetChanged()
         }
     }
 

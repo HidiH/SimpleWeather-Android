@@ -128,8 +128,9 @@ object ImageDatabase {
         try {
             query[Source.SERVER].await()
             imageDataService.invalidateCache(false)
-            if (imageDataService.getImageDBUpdateTime() == 0L) {
-                imageDataService.setImageDBUpdateTime(getLastUpdateTime())
+            if (imageDataService.getImageDBVersionTimestamp() == 0L) {
+                imageDataService.setImageDBVersionTimestamp(getVersionTimestamp())
+                imageDataService.setImageDBUpdateTime(System.currentTimeMillis())
             }
         } catch (e: Exception) {
             Logger.writeLine(Log.ERROR, e)
@@ -142,7 +143,7 @@ object ImageDatabase {
     }
 
     @WorkerThread
-    suspend fun getLastUpdateTime(): Long = withContext(Dispatchers.IO) {
+    suspend fun getVersionTimestamp(): Long = withContext(Dispatchers.IO) {
         val db = FirebaseHelper.getFirebaseDB()
 
         return@withContext suspendCancellableCoroutine { continuation ->

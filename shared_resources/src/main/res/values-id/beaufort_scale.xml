@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="beaufort_0">"Tenang"</string>
+    <string name="beaufort_1">"Udara Lembut"</string>
+    <string name="beaufort_2">"Angin Sepoi-Sepoi"</string>
+    <string name="beaufort_3">"Angin Lembut"</string>
+    <string name="beaufort_4">"Angin Sedang"</string>
+    <string name="beaufort_5">"Angin Segar"</string>
+    <string name="beaufort_6">"Angin Kencang"</string>
+    <string name="beaufort_7">"Hampir Badai"</string>
+    <string name="beaufort_8">"Badai"</string>
+    <string name="beaufort_9">"Badai Parah"</string>
+    <string name="beaufort_10">"Topan"</string>
+    <string name="beaufort_11">"Badai Dahsyat"</string>
+    <string name="beaufort_12">"Topan"</string>
+</resources>

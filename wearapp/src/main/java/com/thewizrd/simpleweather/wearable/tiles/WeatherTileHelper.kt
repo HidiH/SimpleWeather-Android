@@ -36,6 +36,26 @@ object WeatherTileHelper {
             context.applicationContext
         )
             .requestUpdate(DetailsWeatherTileProviderService::class.java)
+
+        TileService.getUpdater(
+            context.applicationContext
+        )
+            .requestUpdate(HourlyForecastCardTileProviderService::class.java)
+
+        TileService.getUpdater(
+            context.applicationContext
+        )
+            .requestUpdate(HourlyForecastPillsTileProviderService::class.java)
+
+        TileService.getUpdater(
+            context.applicationContext
+        )
+            .requestUpdate(M3ForecastWeatherTileProviderService::class.java)
+
+        TileService.getUpdater(
+            context.applicationContext
+        )
+            .requestUpdate(M3HourlyForecastWeatherTileProviderService::class.java)
     }
 
     @JvmStatic

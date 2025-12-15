@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="uv_0">"Thấp"</string>
+    <string name="uv_3">"Vừa phải"</string>
+    <string name="uv_6">"Cao"</string>
+    <string name="uv_8">"Rất cao"</string>
+    <string name="uv_11">"Cực đoan"</string>
+</resources>

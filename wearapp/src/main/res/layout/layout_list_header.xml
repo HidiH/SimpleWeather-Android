@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/list_header_horizontal_padding"
         android:textColor="?colorOnSurfaceVariant"
-        android:textAppearance="?textAppearanceButton"
+        android:textAppearance="?textAppearanceLabelMedium"
         android:gravity="center"
         tools:text="Header" />
 

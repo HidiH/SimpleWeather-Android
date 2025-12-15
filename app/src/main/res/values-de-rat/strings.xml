@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Feature Settings -->
+    <string name="pref_title_features">"Funktionen"</string>
+    <string name="pref_summary_features">"Funktionen auswählen"</string>
+    <string name="pref_title_feature_bgimage">"Hintergrundbild"</string>
+    <string name="pref_title_feature_forecast">"Vorhersage"</string>
+    <string name="pref_title_feature_hrforecast">"Stündliche Vorhersage"</string>
+    <string name="pref_title_feature_details">"Wetterdetails"</string>
+    <string name="pref_title_feature_uv">"UV"</string>
+    <string name="pref_title_feature_beaufort">"Beaufort"</string>
+    <string name="pref_title_feature_aqindex">"Luftqualitätsindex"</string>
+    <string name="pref_title_feature_moonphase">"Mondphase"</string>
+    <string name="pref_title_feature_sunphase">"Sonnenphase"</string>
+    <string name="pref_title_feature_radar">"Wetterradar"</string>
+    <string name="pref_title_feature_locpanelimg">"Bild in der Ortsliste"</string>
+
+    <!-- Widget -->
+    <string name="widget_configure_prompt">"Widget konfigurieren"</string>
+    <string name="title_activity_widget_config">"Widgeteinstellungen"</string>
+    <string name="pref_title_bgcolor">"Hintergrund"</string>
+    <string name="label_color_transparent">"Transparent"</string>
+    <string name="pref_title_bgstyle">"Hintergrundstil"</string>
+    <string name="label_style_fullbg">"Hintergrund"</string>
+    <string name="label_style_panda">"Standard"</string>
+
+    <!-- Can be shortened to 'Color' -->
+    <string name="label_style_pendingcolor">"Wetterfarbe"</string>
+    <string name="label_style_light">"Hell"</string>
+    <string name="label_style_dark">"Dunkel"</string>
+    <string name="locname_pref_title">"Ortsname"</string>
+    <string name="locname_pref_summary">"Ortsnamen im Widget ausblenden"</string>
+    <string name="settingsbtn_pref_title">"Einstellungsschaltfläche"</string>
+    <string name="settingsbtn_pref_summary">"Einstellungsschaltfläche im Widget ausblenden"</string>
+    <string name="clock_pref_title">"Uhr"</string>
+    <string name="calendar_pref_title">"Kalender"</string>
+    <string name="pref_title_fcastoption">"Vorhersage"</string>
+    <string name="label_fcast_full">"Tägliche und stündliche Vorhersage (falls verfügbar)"</string>
+    <string name="label_fcast_daily">"Tägliche Vorhersage"</string>
+    <string name="label_fcast_hourly">"Stündliche Vorhersage (falls verfügbar)"</string>
+    <string name="pref_category_timeanddate">"Datum und Zeit"</string>
+    <string name="pref_title_timezone">"Zeitzone"</string>
+    <string name="pref_timezone_summaryoff">"Zeitzone des Systems verwenden"</string>
+    <string name="pref_timezone_summaryon">"Zeitzone des Orts verwenden"</string>
+    <string name="pref_location">"Ort"</string>
+    <string name="pref_item_gpslocation">"Standort"</string>
+    <string name="prompt_setup_app_first">"Anwendung bitte zuerst einrichten"</string>
+
+    <!-- LineView -->
+    <string name="label_series">"Verlauf"</string>
+
+    <!-- In-App Updates -->
+    <string name="not_channel_update_title">"App-Updates"</string>
+    <string name="prompt_update_title">"SimpleWeather aktualisieren"</string>
+    <string name="prompt_update_available">"Aktualisierung verfügbar. Zum Installieren klicken"</string>
+
+    <!-- Support -->
+    <string name="pref_category_support">"Unterstützung"</string>
+
+    <!-- Feedback -->
+    <string name="pref_title_feedback">"Feedback"</string>
+    <string name="pref_summary_feedback">"Melden Sie alle Probleme oder Vorschläge zur Verbesserung der App"</string>
+
+    <!-- Rate / Review -->
+    <string name="pref_title_rateandreview">"Bewertung und Überprüfung"</string>
+    <string name="pref_summary_rateandreview">"Mag die App? Helfen Sie bei der Unterstützung durch eine Rezension"</string>
+
+    <!-- Translate -->
+    <string name="pref_title_translate">"Übersetzung"</string>
+    <string name="pref_summary_translate">"Bei der Übersetzung der Anwendung helfen"</string>
+
+    <!-- Custom Color -->
+    <string name="label_color_custom">"Individuelle Farbe"</string>
+    <string name="pref_title_bgcolorcode">"Hintergrundfarbe"</string>
+    <string name="pref_title_txtcolorcode">"Textfarbe"</string>
+
+    <!-- SplitInstall Prompts -->
+    <string name="splitlang_start_install">"Installation für Sprachpaket starten..."</string>
+    <string name="splitlang_installing">"Sprachpaket installieren..."</string>
+    <string name="splitlang_downloading">"Herunterladen des Sprachpakets..."</string>
+    <string name="splitlang_failure">"Sprachpaket konnte nicht installiert werden"</string>
+    <string name="pref_title_feature_charts">"Diagramme"</string>
+
+    <!-- Widget Service -->
+    <string name="message_widgetservice_running">"Der Widget-Update-Dienst läuft"</string>
+    <string name="pref_title_foreground_service">"Widget-Updater-Dienst"</string>
+    <string name="pref_summary_foreground_service">"Dienst zur Aktualisierung von Wetter-Widgets und -Benachrichtigungen aktivieren"</string>
+    <string name="pref_title_ignore_batt_opts">"Optimierungen der Akkuleistung ignorieren"</string>
+    <string name="pref_summary_ignore_batt_opts">"Einschränkung des Hintergrunddienstes deaktivieren, wenn Widgets und Benachrichtigungen nicht aktualisiert werden"</string>
+    <string name="pref_title_tap2switch">"Tippen Sie auf Aktion"</string>
+    <string name="pref_tap2switch_summaryOn">"Tippen Sie auf, um die Prognose zu wechseln"</string>
+    <string name="pref_tap2switch_summaryOff">"App öffnen"</string>
+
+    <!-- Daily Notification -->
+    <string name="not_channel_name_dailynotification">"Tägliche Benachrichtigung"</string>
+    <string name="pref_title_time">"Zeit"</string>
+    <string name="pref_summary_off">"Deaktiviert"</string>
+    <string name="pref_summary_on">"Aktiviert"</string>
+
+    <!-- Precipitation Notification -->
+    <string name="not_channel_name_precipnotification">"Niederschlagsbenachrichtigung"</string>
+
+    <!-- Example: 80% chance of rain in 2 hours
+(%1$d) -> Percentage | (%2$s) -> Time in minutes or hours -->
+    <string name="precipitation_text_format">"%1$d%% Chance auf Regen in %2$s"</string>
+    <string name="precipitation_nexthour_text_format">"%1$d%% Chance auf Regen in der nächsten Stunde"</string>
+
+    <!-- Weather Summary or Weather Overview -->
+    <string name="pref_title_feature_summary">"Wetterübersicht"</string>
+    <string name="prompt_max_locations_allowed">"Maximal fünf Standorte erlaubt"</string>
+    <string name="pref_title_widgetgraphtype">"Vorhersage-Typ"</string>
+
+    <!-- Widget Labels -->
+    <string name="label_widget_weather_1x1">"Wetter (1x1)"</string>
+    <string name="label_widget_weather_clock_2x2">"Wetter und Uhr (2x2)"</string>
+    <string name="label_widget_weather_4x1">"Wetter (4x1)"</string>
+    <string name="label_widget_weather_clock_4x2">"Wetter und Uhr (4x2)"</string>
+    <string name="label_widget_weather_date_4x1">"Wetter und Datum (4x1)"</string>
+    <string name="label_widget_weather_2x2">"Wetter (2x2)"</string>
+    <string name="label_widget_weather_4x2">"Wetter (4x2)"</string>
+    <string name="label_widget_weather_4x4">"Wetter (4x4)"</string>
+    <string name="label_widget_weather_clock_4x3">"Wetter und Uhr (4x3)"</string>
+    <string name="label_widget_weather_3x1">"Wetter (3x1)"</string>
+    <string name="label_widget_weather_forecast_4x2">"Wettervorhersage (4x2)"</string>
+    <string name="widget_loading_prompt">"Wird geladen…"</string>
+    <string name="refreshbtn_pref_title">"Schaltfläche Aktualisieren"</string>
+    <string name="refreshbtn_pref_summary">"Aktualisierungsschaltfläche aus dem Widget ausblenden"</string>
+    <string name="pref_category_customsize">"Symbolgröße und Schriftgröße"</string>
+    <string name="pref_title_textsize">"Schriftgröße"</string>
+    <string name="pref_title_iconsize">"Symbolgröße"</string>
+    <string name="precipitation_minutely_starting_text_format">"Regen wird in etwa %1$s einsetzen"</string>
+    <string name="precipitation_minutely_stopping_text_format">"Der Regen wird in etwa %1$s aufhören"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Mindestschwere der Warnung"</string>
+    <string name="alertsev_all">"Keine (Alle Warnungen anzeigen)"</string>
+    <string name="alertsev_moderate">"Mäßig"</string>
+    <string name="alertsev_severe">"Schwere"</string>
+    <string name="alertsev_extreme">"Extrem"</string>
+    <string name="pref_title_txtshadow">"Textschatten"</string>
+    <string name="pref_summary_txtshadow">"Schattenebene zum Text hinzufügen"</string>
+    <string name="precipitation_likely_text_format">"Regen wahrscheinlich gegen %1$s (%2$d%% Chance)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Regenbeginn voraussichtlich um %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Regenende voraussichtlich um %1$s"</string>
+</resources>

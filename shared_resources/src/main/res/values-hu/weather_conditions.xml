@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Conditions -->
+    <string name="weather_tornado">"Tornádó"</string>
+    <string name="weather_tropicalstorm">"Trópusi vihar"</string>
+    <string name="weather_hurricane">"Hurrikán"</string>
+    <string name="weather_severetstorms">"Súlyos zivatarok"</string>
+    <string name="weather_tstorms">"Zivatarok"</string>
+    <string name="weather_rainandsnow">"Vegyes eső és hó"</string>
+    <string name="weather_rainandsleet">"Vegyes eső és ónos eső"</string>
+    <string name="weather_snowandsleet">"Vegyes hó és ónos eső"</string>
+    <string name="weather_freezingrain">"Jeges eső"</string>
+    <string name="weather_snowflurries">"Hó záporok"</string>
+    <string name="weather_lightsnowshowers">"Enyhe havazás"</string>
+    <string name="weather_blowingsnow">"Hófúvás"</string>
+    <string name="weather_snow">"Hó"</string>
+    <string name="weather_hail">"Jégeső"</string>
+    <string name="weather_sleet">"Ónos eső"</string>
+    <string name="weather_dust">"Por"</string>
+    <string name="weather_foggy">"Ködös"</string>
+    <string name="weather_haze">"Pára"</string>
+    <string name="weather_smoky">"Füstös"</string>
+    <string name="weather_windy">"Szeles"</string>
+    <string name="weather_cold">"Hideg"</string>
+    <string name="weather_cloudy">"Felhős"</string>
+    <string name="weather_mostlycloudy">"Többnyire felhős"</string>
+    <string name="weather_partlycloudy">"Részben felhős"</string>
+    <string name="weather_clear">"Tiszta"</string>
+    <string name="weather_sunny">"Napos"</string>
+    <string name="weather_fair">"Derült"</string>
+    <string name="weather_rainandhail">"Vegyes eső és jégeső"</string>
+    <string name="weather_hot">"Forró"</string>
+    <string name="weather_isotstorms">"Elszigetelt zivatarok"</string>
+    <string name="weather_scatteredtstorms">"Szórványos zivatarok"</string>
+    <string name="weather_scatteredshowers">"Szórványos záporok"</string>
+    <string name="weather_heavysnow">"Sűrű havazás"</string>
+    <string name="weather_fog">"Köd"</string>
+    <string name="weather_lightrain">"Enyhe eső"</string>
+    <string name="weather_rain">"Eső"</string>
+    <string name="weather_rainshowers">"Záporok"</string>
+    <string name="weather_blizzard">"Hóvihar"</string>
+    <string name="weather_overcast">"Borult"</string>
+    <string name="weather_sleet_tstorms">"Ónos eső és dörgés"</string>
+    <string name="weather_snow_tstorms">"Hó és dörgés"</string>
+    <string name="weather_clearsky">"Tiszta égbolt"</string>
+    <string name="weather_heavyrain">"Sűrű eső"</string>
+    <string name="weather_mostlyclear">"Nagyrészt derűs"</string>
+    <string name="weather_lightfog">"Enyhe köd"</string>
+    <string name="weather_drizzle">"Szemerkélő eső"</string>
+    <string name="weather_lightwind">"Enyhe szél"</string>
+    <string name="weather_smog">"Szmog"</string>
+</resources>

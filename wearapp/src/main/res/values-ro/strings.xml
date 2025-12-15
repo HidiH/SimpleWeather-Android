@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"Configurare de pe telefon"</string>
+    <string name="action_changelocation">"Schimbă locația"</string>
+    <string name="action_openonphone">"Deschide pe telefon"</string>
+    <string name="message_openedonphone">"Deschis pe telefon…"</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"Dispozitivul nu este conectat"</string>
+    <string name="status_connecting">"Se conectează…"</string>
+    <string name="status_notinstalled">"Aplicația nu este instalată pe dispozitiv"</string>
+    <string name="status_connected">"Conectat"</string>
+    <string name="status_node_unavailable">"Dispozitivul nu este conectat sau aplicația nu este instalată pe dispozitiv…"</string>
+    <string name="status_node_notsupported">"Dispozitivul conectat nu este acceptat"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"Doriți să configurați și să sincronizați datele de pe telefonul/dispozitivul conectat?"</string>
+    <string name="message_gettingstatus">"Se obține starea conexiunii…"</string>
+    <string name="error_notinstalled">"Instalați aplicația pe dispozitiv și încercați din nou"</string>
+    <string name="message_continueondevice">"Continuă configurarea pe dispozitivul conectat"</string>
+    <string name="message_retrievingdata">"Se preiau date de pe dispozitivul conectat…"</string>
+    <string name="error_syncing">"Nu se pot sincroniza datele"</string>
+    <string name="message_settingsretrieved">"Datele setărilor au fost primite…"</string>
+    <string name="message_locationretrieved">"Datele locației au fost primite…"</string>
+    <string name="message_weatherretrieved">"Datele meteo au fost primite…"</string>
+    <string name="message_synccompleted">"Sincronizarea datelor a reușit"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"Oprit"</string>
+    <string name="pref_sync_deviceonly">"Sincronizare doar de pe dispozitiv"</string>
+    <string name="pref_sync_whenavailable">"Sincronizare de pe dispozitiv (când este disponibil)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"Sincronizare"</string>
+    <string name="pref_sync_title">"Sincronizare date"</string>
+    <string name="pref_connectionstatus_title">"Stare conexiune"</string>
+    <string name="message_disconnected">"Deconectat"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"Vremea curentă"</string>
+    <string name="tile_label_weather_forecast">"Vremea + Prognoza"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"Vremea (Temperaturi maxime / minime)"</string>
+    <string name="complication_label_weather_currentlocation">"Vremea (locația curentă)"</string>
+    <string name="tile_label_weather_hrforecast">"Vremea + prognoza pe oră"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Vremea (Locația curentă + Senzație termică)"</string>
+    <string name="title_tile_config">"Configurați cardul"</string>
+    <string name="message_reset_to_default">"Resetați la valoarea implicită?"</string>
+    <string name="pref_title_detailstileeditor">"Editor de carduri"</string>
+</resources>

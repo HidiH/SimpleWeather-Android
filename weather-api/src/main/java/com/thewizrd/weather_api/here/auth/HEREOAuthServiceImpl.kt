@@ -3,17 +3,21 @@ package com.thewizrd.weather_api.here.auth
 import android.content.Context
 import android.util.Log
 import androidx.core.content.edit
+import com.thewizrd.shared_resources.di.settingsManager
+import com.thewizrd.shared_resources.exceptions.ErrorStatus
+import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.getStream
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
+import com.thewizrd.shared_resources.weatherdata.auth.ProviderAppKey
 import com.thewizrd.weather_api.here.auth.HEREOAuthService.Companion.HERE_OAUTH_URL
-import com.thewizrd.weather_api.keys.Keys
 import com.thewizrd.weather_api.oauth.OAuthRequest
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkForErrors
 import com.thewizrd.weather_api.utils.APIRequestUtils.checkRateLimit
+import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
@@ -34,7 +38,39 @@ class HEREOAuthServiceImpl : HEREOAuthService {
     private val context
         get() = sharedDeps.context
 
-    override suspend fun getBearerToken(forceRefresh: Boolean): String? =
+    private val hereWeatherProvider by lazy {
+        weatherModule.weatherProviderFactory.getWeatherProvider(
+            WeatherAPI.HERE
+        )
+    }
+
+    private fun getProviderKey(): String? {
+        return if (settingsManager.usePersonalKey(WeatherAPI.HERE)) {
+            settingsManager.getAPIKey(WeatherAPI.HERE)
+        } else {
+            hereWeatherProvider.getAPIKey()
+        }
+    }
+
+    override suspend fun getBearerToken(forceRefresh: Boolean): String? {
+        val key = getProviderKey()
+
+        val providerKey = ProviderAppKey().apply {
+            fromString(key ?: "")
+        }
+
+        if (providerKey.appId.isBlank() || providerKey.appCode.isBlank()) {
+            throw WeatherException(ErrorStatus.INVALIDAPIKEY)
+        }
+
+        return getBearerToken(providerKey.appId, providerKey.appCode, forceRefresh)
+    }
+
+    override suspend fun getBearerToken(
+        clientId: String?,
+        clientSecret: String?,
+        forceRefresh: Boolean
+    ): String? =
         withContext(Dispatchers.IO) {
             if (!forceRefresh) {
                 val token = getTokenFromStorage()
@@ -43,8 +79,8 @@ class HEREOAuthServiceImpl : HEREOAuthService {
             }
 
             val oAuthRequest = OAuthRequest(
-                Keys.getHERECliID(),
-                Keys.getHERECliSecr(),
+                clientId,
+                clientSecret,
                 OAuthRequest.SignatureMethod.HMAC_SHA256,
                 OAuthRequest.HTTPRequestType.POST
             )
@@ -52,49 +88,50 @@ class HEREOAuthServiceImpl : HEREOAuthService {
             val client = sharedDeps.httpClient
             var response: Response? = null
 
-        try {
-            // If were under rate limit, deny request
-            checkRateLimit(WeatherAPI.HERE)
+            try {
+                // If were under rate limit, deny request
+                checkRateLimit(WeatherAPI.HERE)
 
-            val authorization = oAuthRequest.getAuthorizationHeader(HERE_OAUTH_URL, true)
+                val authorization = oAuthRequest.getAuthorizationHeader(HERE_OAUTH_URL, true)
 
-            val request = Request.Builder()
-                .cacheControl(CacheControl.FORCE_NETWORK)
-                .url(HERE_OAUTH_URL)
-                .addHeader("Authorization", authorization)
-                .post(FormBody.Builder().addEncoded("grant_type", "client_credentials").build())
-                .build()
+                val request = Request.Builder()
+                    .cacheControl(CacheControl.FORCE_NETWORK)
+                    .url(HERE_OAUTH_URL)
+                    .addHeader("Authorization", authorization)
+                    .post(FormBody.Builder().addEncoded("grant_type", "client_credentials").build())
+                    .build()
 
-            response = client.newCall(request).await()
-            response.checkForErrors(WeatherAPI.HERE, 10000)
+                response = client.newCall(request).await()
+                response.checkForErrors(WeatherAPI.HERE, 10000)
 
-            val stream = response.getStream()
-            val dateField = response.header("Date", null)
-            val date = ZonedDateTime.parse(dateField, DateTimeFormatter.RFC_1123_DATE_TIME)
+                val stream = response.getStream()
+                val dateField = response.header("Date", null)
+                val date = ZonedDateTime.parse(dateField, DateTimeFormatter.RFC_1123_DATE_TIME)
 
-            val tokenRoot = JSONParser.deserializer<TokenRootobject>(stream, TokenRootobject::class.java)
+                val tokenRoot =
+                    JSONParser.deserializer<TokenRootobject>(stream, TokenRootobject::class.java)
 
-            if (tokenRoot != null) {
-                val tokenStr = String.format(Locale.ROOT, "Bearer %s", tokenRoot.accessToken)
+                if (tokenRoot != null) {
+                    val tokenStr = String.format(Locale.ROOT, "Bearer %s", tokenRoot.accessToken)
 
-                // Store token for future operations
-                val token = Token().apply {
-                    expirationDate = date.plusSeconds(tokenRoot.expiresIn.toLong())
-                    access_token = tokenStr
+                    // Store token for future operations
+                    val token = Token().apply {
+                        expirationDate = date.plusSeconds(tokenRoot.expiresIn.toLong())
+                        access_token = tokenStr
+                    }
+
+                    storeToken(token)
+
+                    return@withContext tokenStr
                 }
-
-                storeToken(token)
-
-                return@withContext tokenStr
+            } catch (e: Exception) {
+                Logger.writeLine(Log.ERROR, e, "HEREOAuthUtils: Error retrieving token")
+            } finally {
+                response?.closeQuietly()
             }
-        } catch (e: Exception) {
-            Logger.writeLine(Log.ERROR, e, "HEREOAuthUtils: Error retrieving token")
-        } finally {
-            response?.closeQuietly()
-        }
 
-        return@withContext null
-    }
+            return@withContext null
+        }
 
     private suspend fun getTokenFromStorage(): String? {
         val prefs = context.getSharedPreferences(WeatherAPI.HERE, Context.MODE_PRIVATE)

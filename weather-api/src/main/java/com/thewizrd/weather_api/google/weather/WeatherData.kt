@@ -320,7 +320,7 @@ fun createAstronomy(day: ForecastDaysItem?): Astronomy {
         }
 
         runCatching {
-            sunrise = day?.sunEvents?.sunsetTime?.let {
+            sunset = day?.sunEvents?.sunsetTime?.let {
                 ZonedDateTime.parse(it).toLocalDateTime()
             }
         }

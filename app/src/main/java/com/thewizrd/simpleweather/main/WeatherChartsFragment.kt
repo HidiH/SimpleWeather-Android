@@ -5,42 +5,52 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.thewizrd.common.helpers.SimpleRecyclerViewAdapterObserver
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.locationdata.LocationData
-import com.thewizrd.shared_resources.utils.*
+import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.Colors
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrResourceId
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
+import com.thewizrd.shared_resources.utils.JSONParser
+import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.MinutelyForecast
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.adapters.ChartsItemAdapter
-import com.thewizrd.simpleweather.controls.graphs.LineDataSeries
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.controls.viewmodels.ChartsViewModel
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel.GraphType
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
-import com.thewizrd.simpleweather.databinding.LayoutLocationHeaderBinding
-import com.thewizrd.simpleweather.fragments.ToolbarFragment
+import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
+import com.thewizrd.simpleweather.review.InAppReviewManager
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.navControllerViewModels
 import com.thewizrd.simpleweather.viewmodels.TwoPaneStateViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import de.twoid.ui.decoration.InsetItemDecoration
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
-class WeatherChartsFragment : ToolbarFragment() {
+class WeatherChartsFragment : CollapsingToolbarFragment() {
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
     private val chartsView: ChartsViewModel by viewModels()
     private val twoPaneStateViewModel: TwoPaneStateViewModel by navControllerViewModels(R.id.two_pane_nav_graph)
@@ -48,10 +58,13 @@ class WeatherChartsFragment : ToolbarFragment() {
     private var locationData: LocationData? = null
 
     private lateinit var binding: FragmentWeatherListBinding
-    private lateinit var headerBinding: LayoutLocationHeaderBinding
     private lateinit var adapter: ChartsItemAdapter
 
     private val args: WeatherChartsFragmentArgs by navArgs()
+
+    private var dataJob: Job? = null
+
+    private lateinit var inAppReviewManager: InAppReviewManager
 
     init {
         arguments = Bundle()
@@ -84,6 +97,8 @@ class WeatherChartsFragment : ToolbarFragment() {
                 locationData = JSONParser.deserializer(args.data, LocationData::class.java)
             }
         }
+
+        inAppReviewManager = InAppReviewManager.create(requireContext())
     }
 
     override val scrollTargetViewId: Int
@@ -97,11 +112,7 @@ class WeatherChartsFragment : ToolbarFragment() {
         val root = super.onCreateView(inflater, container, savedInstanceState) as ViewGroup?
         // Use this to return your custom view for this Fragment
         binding = FragmentWeatherListBinding.inflate(inflater, root, true)
-        headerBinding = LayoutLocationHeaderBinding.inflate(inflater, appBarLayout, true)
-
         binding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.viewModel = wNowViewModel
 
         // Setup Actionbar
         toolbar.setNavigationIcon(toolbar.context.getAttrResourceId(R.attr.homeAsUpIndicator))
@@ -118,9 +129,13 @@ class WeatherChartsFragment : ToolbarFragment() {
                 binding.recyclerView.addItemDecoration(InsetItemDecoration(it, maxWidth))
             }
         }
-        binding.recyclerView.adapter = ChartsItemAdapter().also {
-            adapter = it
-        }
+        binding.recyclerView.adapter = ConcatAdapter(
+            SpacerAdapter(binding.recyclerView.context.dpToPx(4f).toInt()),
+            ChartsItemAdapter().also {
+                adapter = it
+            },
+            SpacerAdapter(binding.recyclerView.context.dpToPx(4f).toInt())
+        )
 
         return root
     }
@@ -128,24 +143,41 @@ class WeatherChartsFragment : ToolbarFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.show()
+
+        adapter.registerAdapterDataObserver(object : SimpleRecyclerViewAdapterObserver() {
+            override fun onChanged() {
+                adapter.unregisterAdapterDataObserver(this)
+                inAppReviewManager.incrementCounter()
+            }
+        })
 
         viewLifecycleOwner.lifecycleScope.launch {
             twoPaneStateViewModel.twoPaneState.collectLatest { state ->
                 setNavigationIconVisible(!state.isSideBySide)
-                headerBinding.root.isVisible = !state.isSideBySide
+                toolbar.subtitle = if (!state.isSideBySide) {
+                    wNowViewModel.uiState.value.weather?.location
+                } else {
+                    ""
+                }
             }
-        }
-
-        chartsView.getForecastData().observe(viewLifecycleOwner) {
-            adapter.submitList(createGraphModelData(it?.first, it?.second))
         }
 
         if (args.data.isNullOrBlank() && savedInstanceState?.containsKey(Constants.KEY_DATA) != true) {
             viewLifecycleOwner.lifecycleScope.launch {
                 wNowViewModel.uiState.collect {
+                    val oldData = locationData
                     locationData = it.locationData
-                    initialize()
+
+                    toolbar.subtitle = if (!twoPaneStateViewModel.twoPaneState.value.isSideBySide) {
+                        wNowViewModel.uiState.value.weather?.location
+                    } else {
+                        ""
+                    }
+
+                    if (oldData != locationData) {
+                        initialize()
+                    }
                 }
             }
         }
@@ -153,6 +185,29 @@ class WeatherChartsFragment : ToolbarFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 initialize()
+            }
+        }
+
+        // Show review prompt when applicable
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                runCatching {
+                    delay(5000)
+
+                    val paneIsOpened = twoPaneStateViewModel.twoPaneState.value.isOpened
+                    if (isActive && isVisible && paneIsOpened && isViewAlive && inAppReviewManager.shouldShowReviewFlow()) {
+                        // Wait for no movement
+                        while (isActive && binding.recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+                            delay(2500)
+                        }
+
+                        if (isActive) {
+                            activity?.run {
+                                inAppReviewManager.showReviewFlow(this)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -163,6 +218,7 @@ class WeatherChartsFragment : ToolbarFragment() {
     }
 
     override fun onPause() {
+        dataJob?.cancel()
         AnalyticsLogger.logEvent("WeatherChartsFragment: onPause")
         super.onPause()
     }
@@ -177,6 +233,14 @@ class WeatherChartsFragment : ToolbarFragment() {
 
         locationData?.let {
             chartsView.updateForecasts(it)
+        }
+
+        dataJob?.cancel()
+
+        dataJob = runWithView {
+            chartsView.getForecastData().collect {
+                adapter.submitList(createGraphModelData(it?.first, it?.second))
+            }
         }
 
         binding.progressBar.hide()
@@ -217,12 +281,12 @@ class WeatherChartsFragment : ToolbarFragment() {
     ): List<ForecastGraphViewModel> {
         val ctx = requireContext()
 
-        val graphTypes = ForecastGraphViewModel.ForecastGraphType.values()
+        val graphTypes = ForecastType.entries
         val data = ArrayList<ForecastGraphViewModel>(graphTypes.size)
 
         if (!minfcasts.isNullOrEmpty()) {
             data.add(ForecastGraphViewModel(ctx).apply {
-                setMinutelyForecastData(minfcasts)
+                setMinutelyForecastData(minfcasts, GraphType.Bar)
             })
         }
 
@@ -273,7 +337,8 @@ class WeatherChartsFragment : ToolbarFragment() {
                     if (hrfcast.extras?.pop != null) {
                         popData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.PRECIPITATION
+                            ForecastType.PRECIPITATION,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -281,7 +346,8 @@ class WeatherChartsFragment : ToolbarFragment() {
                     if (hrfcast.windMph != null && hrfcast.windKph != null) {
                         windData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.WIND
+                            ForecastType.WIND,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -289,7 +355,8 @@ class WeatherChartsFragment : ToolbarFragment() {
                     if (hrfcast.extras?.qpfRainIn != null && hrfcast.extras?.qpfRainMm != null) {
                         rainData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.RAIN
+                            ForecastType.RAIN,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -297,7 +364,8 @@ class WeatherChartsFragment : ToolbarFragment() {
                     if (hrfcast.extras?.qpfSnowIn != null && hrfcast.extras?.qpfSnowCm != null) {
                         snowData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.SNOW
+                            ForecastType.SNOW,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -305,7 +373,8 @@ class WeatherChartsFragment : ToolbarFragment() {
                     if (hrfcast.extras?.uvIndex != null) {
                         uviData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.UVINDEX
+                            ForecastType.UVINDEX,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -313,7 +382,8 @@ class WeatherChartsFragment : ToolbarFragment() {
                     if (hrfcast.extras?.humidity != null) {
                         humidityData.addForecastData(
                             hrfcast,
-                            ForecastGraphViewModel.ForecastGraphType.HUMIDITY
+                            ForecastType.HUMIDITY,
+                            GraphType.Bar
                         )
                     }
                 }
@@ -337,31 +407,11 @@ class WeatherChartsFragment : ToolbarFragment() {
                 data.add(uviData!!)
             }
             if ((rainData?.graphData?.dataCount ?: 0) > 0) {
-                rainData?.graphData?.dataSets?.forEach {
-                    if (it is LineDataSeries) {
-                        // Heavy rain — rate is >= 7.6 mm (0.30 in) per hr
-                        when (settingsManager.getPrecipitationUnit()) {
-                            Units.INCHES -> it.setSeriesMinMax(0f, max(it.yMax, 0.3f))
-                            Units.MILLIMETERS -> it.setSeriesMinMax(0f, max(it.yMax, 7.6f))
-                            else -> it.setSeriesMinMax(0f, max(it.yMax, 0.3f))
-                        }
-                    }
-                }
-                rainData?.graphData?.notifyDataChanged()
+                rainData?.updateDataSetMinMax()
                 data.add(rainData!!)
             }
             if ((snowData?.graphData?.dataCount ?: 0) > 0) {
-                snowData?.graphData?.dataSets?.forEach {
-                    if (it is LineDataSeries) {
-                        // Snow will often accumulate at a rate of 0.5in (12.7mm) an hour
-                        when (settingsManager.getPrecipitationUnit()) {
-                            Units.INCHES -> it.setSeriesMinMax(0f, max(it.yMax, 0.5f))
-                            Units.MILLIMETERS -> it.setSeriesMinMax(0f, max(it.yMax, 12.7f))
-                            else -> it.setSeriesMinMax(0f, max(it.yMax, 0.3f))
-                        }
-                    }
-                }
-                snowData?.graphData?.notifyDataChanged()
+                snowData?.updateDataSetMinMax()
                 data.add(snowData!!)
             }
         }

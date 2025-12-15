@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- North -->
+    <string name="wind_dir_n">"ش"</string>
+
+    <!-- North-North East -->
+    <string name="wind_dir_nne">"ش ش ش"</string>
+
+    <!-- North-East -->
+    <string name="wind_dir_ne">"ش ش"</string>
+
+    <!-- East North-East -->
+    <string name="wind_dir_ene">"ش ش ق"</string>
+
+    <!-- East -->
+    <string name="wind_dir_e">"ق"</string>
+
+    <!-- East South-East -->
+    <string name="wind_dir_ese">"ق ج ش"</string>
+
+    <!-- South-East -->
+    <string name="wind_dir_se">"ج ش"</string>
+
+    <!-- South South-East -->
+    <string name="wind_dir_sse">"ج ش ش"</string>
+
+    <!-- South -->
+    <string name="wind_dir_s">"ج"</string>
+
+    <!-- South South-West -->
+    <string name="wind_dir_ssw">"ج ج غ"</string>
+
+    <!-- South-West -->
+    <string name="wind_dir_sw">"ج غ"</string>
+
+    <!-- West South-West -->
+    <string name="wind_dir_wsw">"غ ج غ"</string>
+
+    <!-- West -->
+    <string name="wind_dir_w">"غ"</string>
+
+    <!-- West North-West -->
+    <string name="wind_dir_wnw">"غ ش ش"</string>
+
+    <!-- North-West -->
+    <string name="wind_dir_nw">"غ ش"</string>
+
+    <!-- North North-West -->
+    <string name="wind_dir_nnw">"ش ش غ"</string>
+</resources>

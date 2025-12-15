@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 data class TwoPaneState(
-    val isSideBySide: Boolean = false
+    val isSideBySide: Boolean = false,
+    val isOpened: Boolean = false
 )
 
 class TwoPaneStateViewModel : ViewModel() {
@@ -23,6 +24,12 @@ class TwoPaneStateViewModel : ViewModel() {
     fun updateSideBySide(isSideBySide: Boolean) {
         viewModelState.update {
             it.copy(isSideBySide = isSideBySide)
+        }
+    }
+
+    fun updateIsOpened(isOpened: Boolean) {
+        viewModelState.update {
+            it.copy(isOpened = isOpened)
         }
     }
 

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Introduceți Locația"</string>
+    <string name="api_label">"Furnizor Meteo"</string>
+    <string name="key_hint">"Cheie Furnizor"</string>
+    <string name="label_gpsfollow">"Locația Curentă"</string>
+    <string name="label_getstarted">"Începeți"</string>
+    <string name="setup_welcome_prompt">"Bun venit la SimpleWeather"</string>
+    <string name="setup_welcome_tagline_prompt">"Doar o aplicație meteo simplă"</string>
+    <string name="setup_location_prompt">"Adăugați o locație pentru a începe"</string>
+    <string name="setup_preferences_prompt">"Personalizați-vă setările mai jos"</string>
+    <string name="label_next">"Următorul"</string>
+    <string name="label_back">"Înapoi"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Vremea"</string>
+    <string name="action_settings">"Setări"</string>
+    <string name="action_retry">"Reîncearcă"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Detalii"</string>
+    <string name="label_humidity">"Umiditate"</string>
+    <string name="label_pressure">"Presiune"</string>
+    <string name="label_visibility">"Vizibilitate"</string>
+    <string name="label_feelslike">"Se Simte Ca"</string>
+    <string name="label_wind">"Vânt"</string>
+    <string name="label_forecast">"Prognoză"</string>
+    <string name="label_condition">"Condiție"</string>
+    <string name="label_sunriseset">"Răsărit / Apus"</string>
+    <string name="label_sunrise">"Răsărit"</string>
+    <string name="label_sunset">"Apus"</string>
+    <string name="label_hourlyforecast">"Pe Ore"</string>
+    <string name="label_precipitation">"Precipitații"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"Probabilitate"</string>
+    <string name="label_cloudiness">"Înnorare"</string>
+    <string name="label_qpf_rain">"Ploaie"</string>
+    <string name="label_qpf_snow">"Zăpadă"</string>
+    <string name="credit_prefix">"Date de la"</string>
+    <string name="attrib_prefix">"Fotografie de"</string>
+    <string name="label_high">"Maximă"</string>
+    <string name="label_low">"Minimă"</string>
+    <string name="label_dewpoint">"Punct de Rouă"</string>
+    <string name="label_moonrise">"Răsăritul Lunii"</string>
+    <string name="label_moonset">"Apusul Lunii"</string>
+    <string name="label_moonphase">"Faza Lunii"</string>
+    <string name="label_beaufort">"Beaufort"</string>
+    <string name="label_uv">"Index UV"</string>
+    <string name="label_airquality">"Indicele Calității Aerului"</string>
+    <string name="label_airquality_short">"Calitatea Aerului"</string>
+    <string name="label_radar">"Radar"</string>
+    <string name="label_afternoon">"După-amiază"</string>
+    <string name="label_eve">"Seară"</string>
+    <string name="label_morning">"Dimineață"</string>
+    <string name="label_night">"Noapte"</string>
+    <string name="label_temp">"Temp."</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Vremea"</string>
+    <string name="label_nav_alerts">"Alerte"</string>
+    <string name="label_nav_locations">"Locații"</string>
+    <string name="title_activity_settings">"Setări"</string>
+    <string name="title_fragment_alerts">"Alerte Meteo Severe"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"General"</string>
+    <string name="pref_category_version">"Versiune"</string>
+    <string name="pref_title_units">"Unități"</string>
+    <string name="pref_summary_fahrenheit">"Afișează unitățile în Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Afișează unitățile în Celsius (°C)"</string>
+    <string name="pref_title_about">"Despre"</string>
+    <string name="pref_title_about_app">"Despre SimpleWeather"</string>
+    <string name="pref_title_credits">"Credite"</string>
+    <string name="pref_title_oslibs">"Biblioteci Open Source"</string>
+    <string name="pref_category_providers">"Furnizori de Date"</string>
+    <string name="pref_summary_currentlocation">"Permite accesul la locația curentă prin GPS"</string>
+    <string name="pref_summary_apikey">"Introduceți cheia furnizorului necesară pentru %1$s"</string>
+    <string name="message_enter_apikey">"Vă rugăm să introduceți o cheie de furnizor"</string>
+    <string name="message_keyverified">"Cheie verificată"</string>
+    <string name="message_keyinvalid">"Cheie invalidă"</string>
+    <string name="pref_title_onnotification">"Notificare Meteo"</string>
+    <string name="pref_summary_notification">"Afișează o notificare persistentă care afișează condițiile meteo curente"</string>
+    <string name="pref_title_api">"Furnizor Meteo"</string>
+    <string name="pref_category_notification">"Notificări"</string>
+    <string name="pref_title_notificationicon">"Pictogramă Notificare"</string>
+    <string name="pref_title_alerts">"Alerte Meteo"</string>
+    <string name="pref_summary_alerts">"Afișează notificări pentru alerte meteo"</string>
+    <string name="pref_summary_alerts_disabled">"Alertele meteo nu sunt suportate de acest furnizor meteo"</string>
+    <string name="pref_title_apiregister">"Creează un cont"</string>
+    <string name="pref_summary_apiregister">"Creează un cont pentru a te înregistra pentru o cheie de furnizor"</string>
+    <string name="error_message_weather_region_unsupported">"Țara nu este suportată de acest furnizor meteo"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Adaugă locație"</string>
+    <string name="action_editmode">"Editează"</string>
+    <string name="label_currentlocation">"Locația curentă"</string>
+    <string name="label_favoritelocations">"Locații favorite"</string>
+    <string name="error_location_denied">"Accesul la locație a fost refuzat"</string>
+    <string name="error_retrieve_location">"Nu se poate obține locația"</string>
+    <string name="error_enable_location_services">"Serviciile de localizare sunt dezactivate. Vă rugăm să le activați în Setări"</string>
+    <string name="error_noresults">"Niciun rezultat găsit"</string>
+    <string name="label_fab_add_location">"Adaugă o locație"</string>
+    <string name="message_locationremoved">"Locația a fost eliminată"</string>
+    <string name="message_needfavorite">"Trebuie să ai cel puțin o locație favorită"</string>
+    <string name="undo">"Anulează"</string>
+    <string name="delete">"Șterge"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Permite accesul pentru a actualiza locația în fundal pentru notificări și widget-uri"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Nu se pot încărca datele meteo"</string>
+    <string name="werror_networkerror">"Eroare de conexiune la rețea"</string>
+    <string name="werror_invalidkey">"Cheie de furnizor invalidă"</string>
+    <string name="werror_querynotfound">"Niciun oraș nu se potrivește cu interogarea ta de căutare"</string>
+    <string name="werror_unknown">"A apărut o eroare necunoscută"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Interval de actualizare"</string>
+    <string name="refresh_60min">"1 oră"</string>
+    <string name="refresh_2hrs">"2 ore"</string>
+    <string name="refresh_3hrs">"3 ore"</string>
+    <string name="refresh_6hrs">"6 ore"</string>
+    <string name="refresh_12hrs">"12 ore"</string>
+    <string name="update_prefix">"Actualizat pe"</string>
+    <string name="update_prefix_day">"Actualizat la"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Temperatură"</string>
+    <string name="notificationicon_condition">"Condiții meteo"</string>
+    <string name="not_channel_name_weather">"Notificări meteo"</string>
+    <string name="not_channel_desc_weather">"Notificări meteo"</string>
+    <string name="not_channel_name_alerts">"Alerte meteo"</string>
+    <string name="not_channel_desc_alerts">"Notificări pentru alerte meteo"</string>
+    <string name="not_channel_name_general">"Notificări de service"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"Acum %1$dd"</string>
+    <string name="datetime_hr_ago">"Acum %1$dh"</string>
+    <string name="datetime_min_ago">"Acum %1$dm"</string>
+    <string name="datetime_sec_ago">"Acum %1$ds"</string>
+    <string name="datetime_validuntil">"Valabil până la"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Cheie personală de furnizor"</string>
+    <string name="pref_summary_personalkey">"Utilizează cheia personală de furnizor meteo"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Temă"</string>
+    <string name="userthememode_default">"Implicit sistem"</string>
+    <string name="userthememode_dark">"Întunecată"</string>
+    <string name="userthememode_black">"Întunecată (AMOLED)"</string>
+    <string name="userthememode_light">"Luminoasă"</string>
+    <string name="summary_default">"Implicit"</string>
+    <string name="action_refresh">"Reîmprospătează"</string>
+    <string name="label_windgust">"Rafală de vânt"</string>
+    <string name="pref_title_language">"Limbă"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Temperatură"</string>
+    <string name="label_speed">"Viteză"</string>
+    <string name="label_distance">"Distanță"</string>
+    <string name="pref_title_resetunits">"Resetează unitățile la valorile implicite"</string>
+    <string name="not_title_weather_update">"Se actualizează vremea…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Pictograme"</string>
+    <string name="refresh_30min">"30 de minute"</string>
+    <string name="label_day">"Zi"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Cantitatea de polen"</string>
+    <string name="label_pollen_tree">"Arbore"</string>
+    <string name="label_tree_pollen">"Polen de arbore"</string>
+    <string name="label_pollen_grass">"Iarbă"</string>
+    <string name="label_grass_pollen">"Polen de iarbă"</string>
+    <string name="label_pollen_ragweed">"Ambrozie"</string>
+    <string name="label_ragweed_pollen">"Polen de ambrozie"</string>
+    <string name="label_count_low">"Scăzut"</string>
+    <string name="label_count_moderate">"Moderat"</string>
+    <string name="label_count_high">"Mare"</string>
+    <string name="label_count_veryhigh">"Foarte mare"</string>
+    <string name="bg_location_permission_rationale_settings">"Pentru a actualiza locația în fundal pentru notificări și widget-uri, vă rugăm să setați permisiunea de locație la '%1$s'"</string>
+    <string name="prompt_location_not_set">"Locația nu este setată. Vă rugăm să adăugați o locație"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Acces la locație în fundal"</string>
+    <string name="wear_bg_location_permission_rationale">"Permiteți accesul pentru a actualiza locația în fundal pentru plăci și complicații"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"Pentru a actualiza locația în fundal pentru plăci și complicații, vă rugăm să setați permisiunea de locație la '%1$s'"</string>
+    <string name="time_current">"Curent"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"NICI O DATĂ"</string>
+    <string name="label_minutelyforecast">"Pe minute"</string>
+    <string name="hint_username">"Nume de utilizator"</string>
+    <string name="hint_password">"Parolă"</string>
+    <string name="pref_title_privacypolicy">"Politica de confidențialitate"</string>
+    <string name="pref_title_termsofservice">"Termeni și condiții"</string>
+    <string name="label_moreinfo">"Mai multe informații"</string>
+    <string name="action_reset">"Resetează"</string>
+    <string name="label_count_low_short">"Scăzut"</string>
+    <string name="label_count_moderate_short">"Moderat"</string>
+    <string name="label_count_high_short">"Mare"</string>
+    <string name="label_count_veryhigh_short">"Mare"</string>
+    <string name="werror_ratelimited">"Prea multe cereri. Vă rugăm să încercați din nou după câteva minute"</string>
+    <string name="werror_locationnotsupported">"Această locație nu este acceptată de acest furnizor de servicii meteo"</string>
+    <string name="notification_perm_denied">"Notificare permisiune refuzată"</string>
+    <string name="pref_title_color">Culoare</string>
+</resources>
