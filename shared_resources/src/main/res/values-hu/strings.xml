@@ -197,6 +197,7 @@
     <string name="label_minutelyforecast">"Percenként"</string>
     <string name="hint_username">"Felhasználónév"</string>
     <string name="hint_password">"Jelszó"</string>
+    <string name="pref_category_terms">Szolgáltatási feltételek</string>
     <string name="pref_title_privacypolicy">"Adatvédelmi irányelvek"</string>
     <string name="pref_title_termsofservice">"Szolgáltatási feltételek"</string>
     <string name="label_moreinfo">"További információ"</string>

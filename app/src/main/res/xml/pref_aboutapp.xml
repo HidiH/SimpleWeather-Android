@@ -41,7 +41,7 @@
 
     <PreferenceCategory
         android:key="key_privacy_tos"
-        android:title="@string/view_terms_link"
+        android:title="@string/pref_category_terms"
         app:isPreferenceVisible="false"
         tools:isPreferenceVisible="true">
 

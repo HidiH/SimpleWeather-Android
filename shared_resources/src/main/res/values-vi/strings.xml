@@ -197,6 +197,7 @@
     <string name="label_minutelyforecast">"Từng phút"</string>
     <string name="hint_username">"Tên người dùng"</string>
     <string name="hint_password">"Mật khẩu"</string>
+    <string name="pref_category_terms">Điều khoản</string>
     <string name="pref_title_privacypolicy">"Chính sách bảo mật"</string>
     <string name="pref_title_termsofservice">"Điều khoản dịch vụ"</string>
     <string name="label_moreinfo">"Thêm thông tin"</string>

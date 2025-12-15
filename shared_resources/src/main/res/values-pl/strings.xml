@@ -208,6 +208,7 @@
     <string name="label_minutelyforecast">"Prognoza minutowa"</string>
     <string name="hint_username">"Nazwa użytkownika"</string>
     <string name="hint_password">"Hasło"</string>
+    <string name="pref_category_terms">Warunki</string>
     <string name="pref_title_privacypolicy">"Polityka prywatności"</string>
     <string name="pref_title_termsofservice">"Warunki korzystania z usługi"</string>
     <string name="label_moreinfo">"Więcej informacji"</string>

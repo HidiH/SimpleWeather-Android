@@ -197,6 +197,7 @@
     <string name="label_minutelyforecast">"Минутно"</string>
     <string name="hint_username">"Имя пользователя"</string>
     <string name="hint_password">"Пароль"</string>
+    <string name="pref_category_terms">Условия</string>
     <string name="pref_title_privacypolicy">"Политика конфиденциальности"</string>
     <string name="pref_title_termsofservice">"Условия использования"</string>
     <string name="label_moreinfo">"Подробнее"</string>
