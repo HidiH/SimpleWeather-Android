@@ -11,11 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceScreen
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.transition.MaterialSharedAxis
 import com.thewizrd.common.preferences.KeyEntryPreferenceDialogFragment
@@ -23,12 +25,13 @@ import com.thewizrd.shared_resources.controls.ProviderEntry
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.preferences.SettingsManager
+import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
-import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.databinding.FragmentSetupProvidersBinding
 import com.thewizrd.simpleweather.preferences.CustomPreferenceFragmentCompat
 import com.thewizrd.simpleweather.snackbar.Snackbar
@@ -79,11 +82,19 @@ class SetupProviderFragment : CustomPreferenceFragmentCompat(), StepperFragment 
         val inflatedView = super.onCreateView(inflater, container, savedInstanceState)
 
         binding.fragmentContainer.addView(inflatedView)
-
-        setDivider(root.context.getAttrColor(R.attr.colorPrimary).toDrawable())
-        setDividerHeight(root.context.dpToPx(1f).toInt())
+        binding.fragmentContainer.setBackgroundColor(Colors.TRANSPARENT)
 
         return root
+    }
+
+    override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
+        val adapter = super.onCreateAdapter(preferenceScreen)
+
+        if (adapter is ConcatAdapter) {
+            adapter.addAdapter(0, SpacerAdapter(preferenceScreen.context.dpToPx(16f).toInt()))
+        }
+
+        return adapter
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

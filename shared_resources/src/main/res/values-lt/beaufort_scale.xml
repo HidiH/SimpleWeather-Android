@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="beaufort_0">"Ramus"</string>
+    <string name="beaufort_1">"Lengvas vėjelis"</string>
+    <string name="beaufort_2">"Švelnus vėjelis"</string>
+    <string name="beaufort_3">"Malonus vėjelis"</string>
+    <string name="beaufort_4">"Vidutinis vėjelis"</string>
+    <string name="beaufort_5">"Gaivus vėjelis"</string>
+    <string name="beaufort_6">"Stiprus vėjelis"</string>
+    <string name="beaufort_7">"Artėja audra"</string>
+    <string name="beaufort_8">"Audra"</string>
+    <string name="beaufort_9">"Smarki audra"</string>
+    <string name="beaufort_10">"Audra"</string>
+    <string name="beaufort_11">"Šėlstančia audra"</string>
+    <string name="beaufort_12">"Uraganas"</string>
+</resources>

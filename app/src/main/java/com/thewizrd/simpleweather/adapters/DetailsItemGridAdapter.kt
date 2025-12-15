@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.thewizrd.common.controls.DetailItemViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
-import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.sequenceEqual
 import com.thewizrd.simpleweather.controls.DetailCard
 import com.thewizrd.simpleweather.preferences.FeatureSettings
@@ -32,15 +31,8 @@ class DetailsItemGridAdapter(private val itemType: ItemType = ItemType.WEATHER_N
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView as? DetailCard ?: DetailCard(parent.context).apply {
-            if (itemType == ItemType.FORECAST) {
-                setStrokeWidth(1f)
-                elevation = parent.context.dpToPx(4f)
-            }
-        }
-
+        val view = convertView as? DetailCard ?: DetailCard(parent.context)
         view.bindModel(mDataset!![position])
-
         return view
     }
 

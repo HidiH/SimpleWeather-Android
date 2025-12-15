@@ -31,7 +31,7 @@
             android:minHeight="?attr/actionBarSize"
             android:orientation="vertical"
             android:fitsSystemWindows="@bool/enable_fitsSystemWindows"
-            app:liftOnScroll="true"
+            app:liftOnScroll="false"
             app:liftOnScrollTargetViewId="@id/scrollView">
 
             <com.thewizrd.simpleweather.controls.ClockToolbar
@@ -43,6 +43,7 @@
                 app:navigationIconTint="?attr/colorOnSurface"
                 app:title="@{!StringUtils.isNullOrWhitespace(viewModel.weather.location) ? viewModel.weather.location : @string/title_activity_weather_now}"
                 app:titleCentered="true"
+                app:titleTextAppearance="@style/TextAppearance.SimpleWeather.ToolbarTitle"
                 app:subtitleCentered="true"
                 app:subtitleTextAppearance="?textAppearanceTitleSmall"
                 tools:navigationIcon="@drawable/ic_place_white_24dp"
@@ -51,9 +52,9 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.ContentLoadingProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressBar"
-            style="@style/Widget.AppCompat.ProgressBar"
+            style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -62,7 +63,7 @@
             android:indeterminateTintMode="src_in"
             app:showProgressBarIfTrue="@{viewModel.uiState.loading &amp;&amp; (viewModel.uiState.noLocationAvailable || StringUtils.isNullOrWhitespace(viewModel.weather.location))}" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        <com.thewizrd.simpleweather.controls.LoadingIndicatorRefreshLayout
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -85,7 +86,7 @@
                     android:layout_gravity="center_horizontal"
                     android:orientation="vertical">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/weather_credit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -100,7 +101,7 @@
 
             </com.thewizrd.simpleweather.controls.ObservableNestedScrollView>
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </com.thewizrd.simpleweather.controls.LoadingIndicatorRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

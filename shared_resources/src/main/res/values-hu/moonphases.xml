@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moonphase_new">"Újhold"</string>
+    <string name="moonphase_waxcrescent">"Növekvő holdsarló"</string>
+    <string name="moonphase_firstqtr">"Első negyed"</string>
+    <string name="moonphase_waxgibbous">"Növekvő hold"</string>
+    <string name="moonphase_full">"Telihold"</string>
+    <string name="moonphase_wangibbous">"Fogyó hold"</string>
+    <string name="moonphase_lastqtr">"Utolsó negyed"</string>
+    <string name="moonphase_wancrescent">"Fogyó holdsarló"</string>
+    <string name="moonphase_new_short">"Új"</string>
+    <string name="moonphase_waxcrescent_short">"Növekvő"</string>
+    <string name="moonphase_firstqtr_short">"Első n."</string>
+    <string name="moonphase_waxgibbous_short">"Növekvő"</string>
+    <string name="moonphase_full_short">"Teli"</string>
+    <string name="moonphase_wangibbous_short">"Fogyó"</string>
+    <string name="moonphase_lastqtr_short">"Utolsó"</string>
+    <string name="moonphase_wancrescent_short">"Fogyó"</string>
+</resources>

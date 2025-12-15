@@ -12,6 +12,16 @@ abstract class BaseImageDataService : ImageDataService {
     @WorkerThread
     protected abstract suspend fun storeImage(imageUri: Uri, imageData: ImageData): ImageData?
 
+    override fun getImageDBVersionTimestamp(): Long {
+        return preferences.getString("ImageDB_VersionTimestamp", "0")!!.toLong()
+    }
+
+    override fun setImageDBVersionTimestamp(value: Long) {
+        preferences.edit {
+            putString("ImageDB_VersionTimestamp", value.toString())
+        }
+    }
+
     override fun getImageDBUpdateTime(): Long {
         return preferences.getString("ImageDB_LastUpdated", "0")!!.toLong()
     }

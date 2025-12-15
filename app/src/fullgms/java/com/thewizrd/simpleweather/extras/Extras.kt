@@ -12,8 +12,8 @@ import androidx.preference.Preference
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.play.core.splitcompat.SplitCompat
-import com.google.firebase.installations.ktx.installations
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.installations.installations
 import com.thewizrd.extras.extrasModule
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.store.PlayStoreUtils

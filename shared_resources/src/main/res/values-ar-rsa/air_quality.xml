@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- https://aqicn.org/scale -->
+    <string name="aqi_level_0_50">"جيد"</string>
+    <string name="aqi_level_51_100">"معتدل"</string>
+    <string name="aqi_level_101_150">"غير صحي للمجموعات الحساسة"</string>
+    <string name="aqi_level_151_200">"غير صحي"</string>
+    <string name="aqi_level_201_300">"غير صحي جداً"</string>
+    <string name="aqi_level_300">"خطر"</string>
+    <string name="aqi_desc_0_50">"تعتبر جودة الهواء مُرضية، والتلوث الهوائي لا يمثل خطرًا يُذكر أو لا يمثل أي خطر"</string>
+    <string name="aqi_desc_51_100">"جودة الهواء مقبولة"</string>
+    <string name="aqi_desc_101_150">"قد يعاني أفراد المجموعات الحساسة من آثار صحية. من غير المحتمل أن يتأثر عامة الناس."</string>
+    <string name="aqi_desc_151_200">"قد يبدأ الجميع في الشعور بآثار صحية؛ قد يعاني أفراد المجموعات الحساسة من آثار صحية أكثر خطورة"</string>
+    <string name="aqi_desc_201_300">"تحذيرات صحية من الظروف الطارئة. من المرجح أن يتأثر جميع السكان."</string>
+    <string name="aqi_desc_300">"تنبيه صحي: قد يعاني الجميع من آثار صحية أكثر خطورة"</string>
+</resources>

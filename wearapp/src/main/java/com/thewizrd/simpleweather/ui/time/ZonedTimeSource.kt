@@ -5,26 +5,34 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.annotation.VisibleForTesting
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.wear.compose.material.TimeSource
+import androidx.wear.compose.material3.TimeSource
 import com.thewizrd.shared_resources.utils.ZoneIdCompat
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 /**
- * Based on [androidx.wear.compose.material.DefaultTimeSource]
+ * Based on [androidx.wear.compose.material3.DefaultTimeSource]
  */
 class ZonedTimeSource constructor(timeFormat: String, private val timeZone: String? = null) :
     TimeSource {
     private val _timeFormat = timeFormat
 
-    override val currentTime: String
-        @Composable
-        get() = currentTime({ Instant.now() }, _timeFormat, timeZone).value
+    @Composable
+    override fun currentTime(): String = currentTime({ Instant.now() }, _timeFormat, timeZone).value
 }
 
 @Composable
@@ -35,12 +43,13 @@ internal fun currentTime(
     timeZone: String? = null
 ): State<String> {
     val context = LocalContext.current
+    val config = LocalConfiguration.current
 
     var zoneId: ZoneId by remember {
         mutableStateOf(timeZone?.let { ZoneIdCompat.of(it) } ?: ZoneId.systemDefault())
     }
     var currentInstant by remember { mutableStateOf(instant()) }
-    val locale by remember(context) { mutableStateOf(context.resources.configuration.locale) }
+    val locale by remember(config) { mutableStateOf(config.locales[0]) }
 
     val timeText = remember {
         derivedStateOf { formatInstant(currentInstant, timeFormat, zoneId, locale) }
@@ -66,7 +75,7 @@ internal fun currentTime(
  */
 private class TimeBroadcastReceiver(
     val onTimeChanged: () -> Unit,
-    val onTimeZoneChanged: () -> Unit
+    val onTimeZoneChanged: () -> Unit,
 ) : BroadcastReceiver() {
     private var registered = false
 

@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.annotation.MainThread
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.thewizrd.shared_resources.database.WeatherDatabase
 import com.thewizrd.shared_resources.locationdata.LocationData
@@ -13,7 +12,12 @@ import com.thewizrd.shared_resources.locationdata.toLocationData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 
@@ -41,7 +45,7 @@ class WeatherAlertsViewModel(app: Application) : AndroidViewModel(app) {
                 flowScope?.cancel()
 
                 currentAlertsData =
-                    weatherDAO.getLiveWeatherAlertData(location.query).asFlow().map {
+                    weatherDAO.getLiveWeatherAlertData(location.query).distinctUntilChanged().map {
                         return@map it?.alerts?.let { weatherAlerts ->
                             val alerts = ArrayList<WeatherAlertViewModel>(weatherAlerts.size)
                             val now = ZonedDateTime.now()

@@ -5,7 +5,6 @@ import androidx.annotation.MainThread
 import androidx.arch.core.util.Function
 import androidx.core.util.ObjectsCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
@@ -24,6 +23,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
@@ -74,7 +74,8 @@ class ForecastPanelsViewModel(app: Application) : AndroidViewModel(app) {
 
                 flowScope?.cancel()
 
-                currentForecastsData = weatherDAO.getLiveForecastData(location.query).asFlow()
+                currentForecastsData =
+                    weatherDAO.getLiveForecastData(location.query).distinctUntilChanged()
 
                 val hrInterval = weatherModule.weatherManager.getHourlyForecastInterval()
                 currentHrForecastsData =
@@ -82,7 +83,7 @@ class ForecastPanelsViewModel(app: Application) : AndroidViewModel(app) {
                         location.query, 6,
                         ZonedDateTime.now(location.tzOffset).minusHours((hrInterval * 0.5).toLong())
                             .truncatedTo(ChronoUnit.HOURS)
-                    ).asFlow()
+                    ).distinctUntilChanged()
 
                 flowScope = CoroutineScope(SupervisorJob())
                 flowScope?.launch {

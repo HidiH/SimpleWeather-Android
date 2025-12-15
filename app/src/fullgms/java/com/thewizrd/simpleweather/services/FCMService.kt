@@ -20,7 +20,7 @@ class FCMService : FirebaseMessagingService() {
                 if (remoteMessage.data.containsKey("date")) {
                     val date = remoteMessage.data["date"]
                     if (date != null) {
-                        imageDataService.setImageDBUpdateTime(date.toLong())
+                        imageDataService.setImageDBVersionTimestamp(date.toLong())
                     }
                 }
                 // For long-running tasks (10 seconds or more) use WorkManager.

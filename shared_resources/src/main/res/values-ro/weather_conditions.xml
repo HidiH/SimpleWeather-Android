@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Conditions -->
+    <string name="weather_tornado">"Tornadă"</string>
+    <string name="weather_tropicalstorm">"Furtună tropicală"</string>
+    <string name="weather_hurricane">"Uragan"</string>
+    <string name="weather_severetstorms">"Furtuni puternice"</string>
+    <string name="weather_tstorms">"Furtuni"</string>
+    <string name="weather_rainandsnow">"Amestec de ploaie și ninsoare"</string>
+    <string name="weather_rainandsleet">"Amestec de ploaie și lapoviță"</string>
+    <string name="weather_snowandsleet">"Amestec de ninsoare și lapoviță"</string>
+    <string name="weather_freezingrain">"Ploaie înghețată"</string>
+    <string name="weather_snowflurries">"Fulguieli de zăpadă"</string>
+    <string name="weather_lightsnowshowers">"Ninsoare ușoară"</string>
+    <string name="weather_blowingsnow">"Viscol"</string>
+    <string name="weather_snow">"Ninsoare"</string>
+    <string name="weather_hail">"Grindină"</string>
+    <string name="weather_sleet">"Lapoviță"</string>
+    <string name="weather_dust">"Praf"</string>
+    <string name="weather_foggy">"Ceață"</string>
+    <string name="weather_haze">"Ceată uscată"</string>
+    <string name="weather_smoky">"Fum"</string>
+    <string name="weather_windy">"Vânt"</string>
+    <string name="weather_cold">"Frig"</string>
+    <string name="weather_cloudy">"Înnorat"</string>
+    <string name="weather_mostlycloudy">"Mai mult noros"</string>
+    <string name="weather_partlycloudy">"Parțial noros"</string>
+    <string name="weather_clear">"Senin"</string>
+    <string name="weather_sunny">"Însorit"</string>
+    <string name="weather_fair">"Frumos"</string>
+    <string name="weather_rainandhail">"Amestec de ploaie și grindină"</string>
+    <string name="weather_hot">"Cald"</string>
+    <string name="weather_isotstorms">"Furtuni izolate"</string>
+    <string name="weather_scatteredtstorms">"Furtuni împrăștiate"</string>
+    <string name="weather_scatteredshowers">"Averse împrăștiate"</string>
+    <string name="weather_heavysnow">"Ninsoare abundentă"</string>
+    <string name="weather_fog">"Ceață"</string>
+    <string name="weather_lightrain">"Ploaie ușoară"</string>
+    <string name="weather_rain">"Ploaie"</string>
+    <string name="weather_rainshowers">"Averse de ploaie"</string>
+    <string name="weather_blizzard">"Viscol puternic"</string>
+    <string name="weather_overcast">"Acoperit"</string>
+    <string name="weather_sleet_tstorms">"Lapoviță și tunete"</string>
+    <string name="weather_snow_tstorms">"Ninsoare și tunete"</string>
+    <string name="weather_clearsky">"Cer senin"</string>
+    <string name="weather_heavyrain">"Ploaie torențială"</string>
+    <string name="weather_mostlyclear">"În general senin"</string>
+    <string name="weather_lightfog">"Ceață slabă"</string>
+    <string name="weather_drizzle">"Burniță"</string>
+    <string name="weather_lightwind">"Vânt slab"</string>
+    <string name="weather_smog">"Smog"</string>
+</resources>

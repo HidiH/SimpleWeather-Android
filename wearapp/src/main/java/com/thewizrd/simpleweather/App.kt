@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColors
 import com.thewizrd.common.CommonModule
 import com.thewizrd.common.commonModule
 import com.thewizrd.common.preferences.SettingsListener
@@ -103,6 +104,8 @@ class App : Application(), ActivityLifecycleCallbacks {
         }
 
         appLib.registerAppSharedPreferenceListener()
+
+        DynamicColors.applyToActivitiesIfAvailable(this)
     }
 
     private fun registerCommonReceiver() {

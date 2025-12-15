@@ -51,7 +51,7 @@
                 tools:visibility="visible"
                 tools:tint="?attr/colorOnSurface" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/location_name"
                 style="@style/ShadowText"
                 android:layout_width="0dp"
@@ -72,7 +72,7 @@
                 tools:text="New York, NY"
                 tools:textColor="?attr/colorOnSurface" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:gravity="center"
@@ -92,7 +92,7 @@
                 tools:textColor="?attr/colorOnSurface"
                 tools:visibility="gone" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weather_temp"
                 style="@style/ShadowText"
                 android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
                 tools:text="50°F"
                 tools:textColor="?attr/colorOnSurface" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weather_condition"
                 style="@style/ShadowText"
                 android:layout_width="0dp"
@@ -256,7 +256,7 @@
                 tools:srcCompat="@drawable/wi_umbrella"
                 tools:tint="?attr/colorOnSurface" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weather_pop"
                 style="@style/ShadowText"
                 android:layout_width="wrap_content"
@@ -307,7 +307,7 @@
                 tools:rotation="0"
                 tools:tint="?attr/colorOnSurface" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weather_windspeed"
                 style="@style/ShadowText"
                 android:layout_width="wrap_content"
@@ -329,6 +329,7 @@
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressBar"
+            style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

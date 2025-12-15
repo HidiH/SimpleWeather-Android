@@ -9,10 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.compose.foundation.CurvedTextStyle
-import androidx.wear.compose.material.*
+import androidx.wear.compose.foundation.CurvedModifier
+import androidx.wear.compose.foundation.basicCurvedText
+import androidx.wear.compose.foundation.weight
+import androidx.wear.compose.material3.TimeSource
+import androidx.wear.compose.material3.TimeText
+import androidx.wear.compose.material3.TimeTextDefaults
+import androidx.wear.compose.material3.curvedText
+import androidx.wear.compose.material3.timeTextCurvedText
+import androidx.wear.compose.material3.timeTextSeparator
+import androidx.wear.tooling.preview.devices.WearDevices
 import com.thewizrd.simpleweather.BuildConfig
 
 /**
@@ -24,7 +32,7 @@ fun CustomTimeText(
     visible: Boolean,
     modifier: Modifier = Modifier,
     startText: String? = null,
-    timeSource: TimeSource = TimeTextDefaults.timeSource(TimeTextDefaults.timeFormat())
+    timeSource: TimeSource = TimeTextDefaults.rememberTimeSource(TimeTextDefaults.timeFormat())
 ) {
     val textStyle = TimeTextDefaults.timeTextStyle()
     val debugWarning = remember {
@@ -46,62 +54,47 @@ fun CustomTimeText(
         TimeText(
             modifier = modifier,
             timeSource = timeSource,
-            startCurvedContent = if (visibleText) {
-                {
+            content = { time ->
+                if (visibleText) {
                     curvedText(
-                        text = startText!!,
-                        style = CurvedTextStyle(textStyle)
+                        text = startText,
+                        modifier = CurvedModifier.weight(1f),
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    timeTextSeparator()
+                }
+                timeTextCurvedText(time)
+                if (showWarning) {
+                    timeTextSeparator()
+                    basicCurvedText(
+                        text = debugWarning,
+                        modifier = CurvedModifier.weight(1f),
+                        overflow = TextOverflow.Ellipsis,
+                        style = textStyle.copy(color = Color.Red)
                     )
                 }
-            } else null,
-            startLinearContent = if (visibleText) {
-                {
-                    Text(
-                        text = startText!!,
-                        style = textStyle
-                    )
-                }
-            } else null,
-            // Trailing text is against Wear UX guidance, used here just for development.
-            endCurvedContent = if (showWarning) {
-                {
-                    curvedText(
-                        text = debugWarning!!,
-                        style = CurvedTextStyle(textStyle),
-                        color = Color.Red
-                    )
-                }
-            } else null,
-            endLinearContent = if (showWarning) {
-                {
-                    Text(
-                        text = debugWarning!!,
-                        style = textStyle,
-                        color = Color.Red
-                    )
-                }
-            } else null,
+            },
         )
     }
 }
 
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_LARGE_ROUND
+    device = WearDevices.LARGE_ROUND
 )
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_SQUARE
+    device = WearDevices.SQUARE
 )
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_SMALL_ROUND
+    device = WearDevices.SMALL_ROUND
 )
 // This will only be rendered properly in AS Chipmunk and beyond
 @Composable

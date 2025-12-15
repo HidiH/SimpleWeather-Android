@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- https://aqicn.org/scale -->
+    <string name="aqi_level_0_50">"Geras"</string>
+    <string name="aqi_level_51_100">"Vidutinis"</string>
+    <string name="aqi_level_101_150">"Kenksmingas jautrioms grupėms"</string>
+    <string name="aqi_level_151_200">"Kenksmingas"</string>
+    <string name="aqi_level_201_300">"Labai kenksmingas"</string>
+    <string name="aqi_level_300">"Pavojingas"</string>
+    <string name="aqi_desc_0_50">"Oro kokybė laikoma patenkinama, o oro tarša kelia mažą arba jokios rizikos"</string>
+    <string name="aqi_desc_51_100">"Oro kokybė priimtina"</string>
+    <string name="aqi_desc_101_150">"Jautrių grupių nariai gali patirti poveikį sveikatai. Plačioji visuomenė greičiausiai nebus paveikta."</string>
+    <string name="aqi_desc_151_200">"Visi gali pradėti patirti poveikį sveikatai; jautrių grupių nariai gali patirti rimtesnį poveikį sveikatai"</string>
+    <string name="aqi_desc_201_300">"Įspėjimai apie sveikatos problemas ekstremaliomis sąlygomis. Visa populiacija labiau paveikiama."</string>
+    <string name="aqi_desc_300">"Įspėjimas apie sveikatos problemas: visi gali patirti rimtesnį poveikį sveikatai"</string>
+</resources>

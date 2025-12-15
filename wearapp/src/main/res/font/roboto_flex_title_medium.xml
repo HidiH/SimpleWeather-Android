@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="550"
+        android:fontVariationSettings="'wght' 550, 'wdth' 110"
+        android:font="@font/roboto_flex"
+        app:fontVariationSettings="'wght' 550, 'wdth' 110" />
+</font-family>

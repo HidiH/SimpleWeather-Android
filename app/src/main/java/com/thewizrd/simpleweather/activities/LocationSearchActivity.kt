@@ -35,6 +35,7 @@ import com.thewizrd.shared_resources.helpers.ListAdapterOnClickInterface
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.LocationQuery
 import com.thewizrd.shared_resources.utils.Colors
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.ContextUtils.getOrientation
 import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
@@ -184,6 +185,11 @@ class LocationSearchActivity : WindowColorActivity() {
             false
         })
         binding.searchView.onItemClickListener = recyclerClickListener
+
+        val padding = dpToPx(8f).toInt()
+        binding.searchView.recyclerView.updatePaddingRelative(
+            start = padding, end = padding, top = padding
+        )
 
         val color = getAttrColor(R.attr.colorPrimarySurface)
         window.setTransparentWindow(color)

@@ -17,16 +17,16 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginVertical="4dp"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginVertical="2dp"
         android:visibility="@{!FeatureSettings.sunPhaseEnabled || viewModel.weather.sunPhase == null ? View.GONE : View.VISIBLE}"
-        style="@style/Widget.Material3.CardView.Elevated">
+        style="@style/WeatherNow.CardView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/sunriseset_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

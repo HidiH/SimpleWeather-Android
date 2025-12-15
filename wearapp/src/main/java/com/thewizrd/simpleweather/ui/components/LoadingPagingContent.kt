@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.wear.compose.material.CircularProgressIndicator
 import com.google.android.horologist.compose.layout.fillMaxRectangle
+import com.thewizrd.simpleweather.ui.compose.CircularWavyProgressIndicator
 
 @Composable
 fun <T : Any> LoadingPagingContent(
@@ -25,7 +25,7 @@ fun <T : Any> LoadingPagingContent(
             modifier = Modifier.fillMaxRectangle(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(
+            CircularWavyProgressIndicator(
                 trackColor = Color.Transparent
             )
         }

@@ -1,11 +1,13 @@
 package com.thewizrd.simpleweather.widgets.preferences
 
 import android.app.Activity
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.util.SizeF
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -32,6 +34,7 @@ import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.ArrayMultiSelectListPreference
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.widgets.MultiLocationPreferenceDialogFragment
+import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper.apply
 import com.thewizrd.simpleweather.widgets.WidgetUtils
 import com.thewizrd.simpleweather.widgets.remoteviews.WeatherWidget4x3LocationsCreator
 import kotlinx.coroutines.Dispatchers
@@ -182,10 +185,21 @@ class WeatherWidget4x3LocationFragment : BaseWeatherWidgetPreferenceFragment() {
                 }
             }
 
-            val widgetView = views.apply(mWidgetViewCtx, binding.widgetContainer)
+            val widgetSize = mWidgetOptions.let {
+                val minWidth = it.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0).toFloat()
+                val minHeight = it.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0).toFloat()
+
+                if (minWidth > 0 && minHeight > 0) {
+                    SizeF(minWidth, minHeight)
+                } else {
+                    null
+                }
+            }
+
+            val widgetView = views.apply(mWidgetViewCtx, binding.widgetContainer, widgetSize)
             binding.widgetContainer.addView(widgetView)
             widgetView.updateLayoutParams<FrameLayout.LayoutParams> {
-                height = mWidgetViewCtx.dpToPx(96f * 3).toInt()
+                height = mWidgetViewCtx.dpToPx(96f * 2.5f /* 3 is too big */).toInt()
                 width = mWidgetViewCtx.dpToPx(96f * 4).toInt()
                 gravity = Gravity.CENTER
             }

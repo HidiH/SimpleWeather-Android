@@ -48,7 +48,7 @@
                     app:tint="@android:color/white"
                     tools:srcCompat="@drawable/wi_snowflake_cold" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/alert_title"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -94,7 +94,7 @@
             app:cardCornerRadius="0dp"
             tools:visibility="visible">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/body_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

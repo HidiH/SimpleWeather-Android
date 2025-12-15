@@ -69,8 +69,8 @@
     <string name="pref_title_general">"Allgemein"</string>
     <string name="pref_category_version">"Version"</string>
     <string name="pref_title_units">"Einheiten"</string>
-    <string name="pref_summary_fahrenheit">"Einheiten in Fahrenheit"</string>
-    <string name="pref_summary_celsius">"Einheiten in Celsius"</string>
+    <string name="pref_summary_fahrenheit">"Einheiten in Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Einheiten in Celsius (°C)"</string>
     <string name="pref_title_about">"Über"</string>
     <string name="pref_title_about_app">"Über SimpleWeather"</string>
     <string name="pref_title_credits">"Danksagungen"</string>
@@ -206,6 +206,9 @@
     <string name="wear_bg_location_permission_rationale_settings">"Um den Standort im Hintergrund für Kacheln und Komplikationen zu aktualisieren, setzen Sie bitte die Standortberechtigung auf '%1$s'"</string>
     <string name="time_current">"Aktuell"</string>
 
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"KEINE DATEN"</string>
+
     <!-- Fuzzy -->
     <string name="label_minutelyforecast">"Vorhersage im Minutentakt"</string>
     <string name="hint_username">"Nutzername"</string>
@@ -221,4 +224,5 @@
     <string name="werror_ratelimited">"Zu viele Anfragen. Bitte versuchen Sie es nach ein paar Minuten erneut"</string>
     <string name="werror_locationnotsupported">"Dieser Standort wird von diesem Wetteranbieter nicht unterstützt"</string>
     <string name="notification_perm_denied">"Benachrichtigungserlaubnis verweigert"</string>
+    <string name="pref_title_color">Farbe</string>
 </resources>

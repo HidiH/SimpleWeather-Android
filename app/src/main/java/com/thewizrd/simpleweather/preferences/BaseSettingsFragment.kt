@@ -136,7 +136,7 @@ abstract class BaseSettingsFragment : ToolbarPreferenceFragmentCompat() {
                 return
             }
 
-            val is24hour = DateFormat.is24HourFormat(preference.getContext())
+            val is24hour = DateFormat.is24HourFormat(preference.context)
 
             val f = MaterialTimePicker.Builder()
                 .setTimeFormat(if (is24hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)

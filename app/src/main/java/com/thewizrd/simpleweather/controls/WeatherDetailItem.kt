@@ -14,6 +14,7 @@ import androidx.transition.ChangeBounds
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.thewizrd.common.controls.BaseForecastItemViewModel
 import com.thewizrd.common.controls.ForecastItemViewModel
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
@@ -52,6 +53,12 @@ class WeatherDetailItem : FrameLayout {
     ) {
         initialize(context)
     }
+
+    var shapeAppearanceModel: ShapeAppearanceModel
+        get() = binding.headerCard.shapeAppearanceModel
+        set(value) {
+            binding.headerCard.shapeAppearanceModel = value
+        }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initialize(context: Context) {

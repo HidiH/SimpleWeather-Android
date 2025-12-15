@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="uv_0">"Düşük"</string>
+    <string name="uv_3">"Orta"</string>
+    <string name="uv_6">"Yüksek"</string>
+    <string name="uv_8">"Çok Yüksek"</string>
+    <string name="uv_11">"Aşırı"</string>
+</resources>

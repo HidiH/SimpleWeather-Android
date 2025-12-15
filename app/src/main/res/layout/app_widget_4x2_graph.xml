@@ -106,7 +106,7 @@
             android:paddingStart="4dp"
             android:paddingTop="4dp"
             android:paddingEnd="4dp"
-            android:textAppearance="?textAppearanceBodyMedium"
+            android:textAppearance="?textAppearanceBodyMediumEmphasized"
             android:shadowColor="#000000"
             android:textColor="?colorOnSurface"
             tools:text="Precipitation" />

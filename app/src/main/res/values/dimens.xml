@@ -29,6 +29,7 @@
     <dimen name="section_label_padding">16dp</dimen>
     <dimen name="forecast_panel_height">225dp</dimen>
     <dimen name="bargraph_panel_height">150dp</dimen>
+    <dimen name="barview_panel_height">135dp</dimen>
     <dimen name="detail_card_size">100dp</dimen>
     <dimen name="detail_grid_column_width">150dp</dimen>
     <dimen name="moonriseset_text_size">16sp</dimen>
@@ -36,7 +37,7 @@
     <dimen name="sun_phase_view_height">200dp</dimen>
     <dimen name="wnow_max_view_width">1366dp</dimen>
     <dimen name="aqi_forecast_textsize">14sp</dimen>
-    <dimen name="hr_forecast_item_width">100dp</dimen>
+    <dimen name="hr_forecast_item_width">90dp</dimen>
     <dimen name="hr_forecast_item_height">160dp</dimen>
     <dimen name="hr_forecast_item_icon_size">36dp</dimen>
     <dimen name="hr_forecast_item_temp_size">18sp</dimen>
@@ -77,5 +78,13 @@
     <dimen name="appwidget_cells_3">180dp</dimen>
     <dimen name="appwidget_cells_4">250dp</dimen>
     <dimen name="appwidget_cells_5">320dp</dimen>
+
+    <!-- Settings -->
+    <dimen name="preference_expressive_corner_radius">20dp</dimen>
+    <dimen name="preference_expressive_space_extraSmall4">8dp</dimen>
+    <dimen name="preference_expressive_space_extraSmall6">12dp</dimen>
+    <dimen name="preference_expressive_space_small1">16dp</dimen>
+    <dimen name="preference_expressive_space_medium3">40dp</dimen>
+    <dimen name="preference_expressive_space_large3">72dp</dimen>
 
 </resources>

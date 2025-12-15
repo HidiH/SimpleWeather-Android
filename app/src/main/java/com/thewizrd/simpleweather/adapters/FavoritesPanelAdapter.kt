@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -26,6 +27,7 @@ import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
+import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColorStateList
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.LocationPanel
@@ -446,10 +448,15 @@ class FavoritesPanelAdapter : LocationPanelAdapter(), ItemTouchHelperAdapter,
 
         override fun setHeader() {
             header.setText(R.string.label_favoritelocations)
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_star_24dp, 0, 0, 0)
         }
 
         override fun setHeaderTextColor() {
             header.setTextColor(header.context.getAttrColor(android.R.attr.textColorPrimary))
+            TextViewCompat.setCompoundDrawableTintList(
+                header,
+                header.context.getAttrColorStateList(android.R.attr.textColorPrimary)
+            )
         }
     }
 

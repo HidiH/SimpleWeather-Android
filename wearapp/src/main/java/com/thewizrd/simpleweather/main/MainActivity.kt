@@ -1,21 +1,21 @@
 package com.thewizrd.simpleweather.main
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.core.util.ObjectsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.thewizrd.common.controls.ForecastsListViewModel
 import com.thewizrd.common.controls.WeatherAlertsViewModel
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.locationPermissionEnabled
+import com.thewizrd.common.location.LocationResult
 import com.thewizrd.common.utils.ActivityUtils.showToast
 import com.thewizrd.common.utils.ErrorMessage
-import com.thewizrd.common.wearable.WearConnectionStatus
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.preferences.SettingsManager
@@ -29,15 +29,16 @@ import com.thewizrd.simpleweather.services.WeatherUpdaterWorker
 import com.thewizrd.simpleweather.services.WidgetUpdaterWorker
 import com.thewizrd.simpleweather.ui.weather.WeatherNow
 import com.thewizrd.simpleweather.viewmodels.ForecastPanelsViewModel
+import com.thewizrd.simpleweather.viewmodels.WeatherDataSyncViewModel
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_OPENONPHONE
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_REQUESTSETUPSTATUS
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_CONNECTIONSTATUS
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_SHOWANIMATION
-import com.thewizrd.simpleweather.wearable.WearableListenerManager
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_REQUESTREFRESHWEATHER
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_REQUESTSYNCWEATHER
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_SYNCSETTINGUPDATED
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATESYNCSTATUS
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_SUCCESS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -47,10 +48,10 @@ class MainActivity : UserLocaleActivity() {
         private const val TAG = "MainActivity"
     }
 
-    private lateinit var wearListenerMgr: WearableListenerManager
-
     // View Models
     private val wNowViewModel: WeatherNowViewModel by viewModels()
+    private val dataSyncViewModel: WeatherDataSyncViewModel by viewModels()
+
     private val forecastsView: ForecastsListViewModel by viewModels()
     private val forecastPanelsView: ForecastPanelsViewModel by viewModels()
     private val alertsView: WeatherAlertsViewModel by viewModels()
@@ -66,13 +67,6 @@ class MainActivity : UserLocaleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AnalyticsLogger.logEvent("$TAG: onCreate")
-
-        wearListenerMgr =
-            WearableListenerManager(this, WearableSyncReceiver(), IntentFilter().apply {
-                addAction(ACTION_OPENONPHONE)
-                addAction(ACTION_REQUESTSETUPSTATUS)
-                addAction(ACTION_UPDATECONNECTIONSTATUS)
-            })
 
         locationPermissionLauncher = LocationPermissionLauncher(
             this,
@@ -94,17 +88,18 @@ class MainActivity : UserLocaleActivity() {
             WeatherNow()
         }
 
-        lifecycleScope.launchWhenCreated {
-            if ((BuildConfig.IS_NONGMS || settingsManager.getDataSync() == WearableDataSync.OFF) && settingsManager.useFollowGPS()) {
-                if (!locationPermissionEnabled()) {
-                    locationPermissionLauncher.requestLocationPermission()
+        wNowViewModel.initialize()
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                if (wNowViewModel.isInitialized.value) {
+                    initializeState()
                 }
             }
         }
     }
 
     override fun onStart() {
-        wearListenerMgr.onStart()
         super.onStart()
 
         lifecycleScope.launch {
@@ -143,22 +138,90 @@ class MainActivity : UserLocaleActivity() {
             }
         }
 
-        if (!BuildConfig.IS_NONGMS && settingsManager.getDataSync() != WearableDataSync.OFF) {
-            lifecycleScope.launch {
-                wNowViewModel.updateConnectionStatus(wearListenerMgr.getConnectionStatus())
+        lifecycleScope.launch {
+            wNowViewModel.eventFlow.collect { event ->
+                when (event.eventType) {
+                    ACTION_REQUESTSYNCWEATHER -> {
+                        dataSyncViewModel.syncWeather()
+                    }
+                }
             }
+        }
+
+        lifecycleScope.launch {
+            dataSyncViewModel.eventFlow.collect { event ->
+                when (event.eventType) {
+                    ACTION_UPDATESYNCSTATUS -> {
+                        val success = event.data.getBoolean(EXTRA_SUCCESS, false)
+
+                        if (success) {
+                            // reinitialize state
+                            initializeState()
+                        } else {
+                            wNowViewModel.refreshWeather(false)
+                        }
+                    }
+
+                    ACTION_SYNCSETTINGUPDATED -> {
+                        initializeState()
+                    }
+
+                    ACTION_REQUESTREFRESHWEATHER -> {
+                        wNowViewModel.refreshWeather(false)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun verifyLocationData(): LocationResult = withContext(Dispatchers.IO) {
+        var locationData = wNowViewModel.uiState.value.locationData
+        var locationChanged = false
+
+        // Check if home location changed
+        // For ex. due to GPS setting change
+        val homeData = settingsManager.getHomeData()
+        if (!ObjectsCompat.equals(locationData, homeData)) {
+            locationData = homeData
+            locationChanged = true
+        }
+
+        if (locationChanged) {
+            if (locationData != null) {
+                LocationResult.Changed(locationData)
+            } else {
+                LocationResult.ChangedInvalid(null)
+            }
+        } else {
+            LocationResult.NotChanged(locationData)
+        }
+    }
+
+    private suspend fun initializeState() {
+        val result = verifyLocationData()
+
+        result.data?.let {
+            if ((BuildConfig.IS_NONGMS || settingsManager.getDataSync() == WearableDataSync.OFF) && settingsManager.useFollowGPS()) {
+                if (!locationPermissionEnabled()) {
+                    locationPermissionLauncher.requestLocationPermission()
+                }
+            }
+        }
+
+        if (result is LocationResult.Changed || result is LocationResult.ChangedInvalid) {
+            wNowViewModel.initialize(result.data)
+        } else {
+            wNowViewModel.refreshWeather()
         }
     }
 
     override fun onResume() {
         super.onResume()
         AnalyticsLogger.logEvent("$TAG: onResume")
-        wearListenerMgr.onResume()
     }
 
     override fun onPause() {
         AnalyticsLogger.logEvent("$TAG: onPause")
-        wearListenerMgr.onPause()
         super.onPause()
     }
 
@@ -176,33 +239,5 @@ class MainActivity : UserLocaleActivity() {
         }
 
         wNowViewModel.setErrorMessageShown(error)
-    }
-
-    /* Data Sync */
-    private inner class WearableSyncReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            lifecycleScope.launch {
-                when (intent.action) {
-                    ACTION_OPENONPHONE -> {
-                        val showAni = intent.getBooleanExtra(EXTRA_SHOWANIMATION, false)
-                        wearListenerMgr.openAppOnPhone(showAni)
-                    }
-
-                    ACTION_REQUESTSETUPSTATUS -> {
-                        wearListenerMgr.sendSetupStatusRequest()
-                    }
-
-                    ACTION_UPDATECONNECTIONSTATUS -> {
-                        val connStatus = WearConnectionStatus.valueOf(
-                            intent.getIntExtra(
-                                EXTRA_CONNECTIONSTATUS,
-                                0
-                            )
-                        )
-                        wNowViewModel.updateConnectionStatus(connStatus)
-                    }
-                }
-            }
-        }
     }
 }

@@ -1,11 +1,9 @@
 package com.thewizrd.simpleweather.preferences
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.Intent.FilterComparison
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
@@ -17,11 +15,19 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.arch.core.util.Function
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.location.LocationManagerCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -30,12 +36,12 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.RecyclerView
 import androidx.wear.remote.interactions.RemoteActivityHelper
-import androidx.wear.widget.ConfirmationOverlay
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.thewizrd.common.helpers.LocationPermissionLauncher
 import com.thewizrd.common.helpers.backgroundLocationPermissionEnabled
 import com.thewizrd.common.helpers.getBackgroundLocationRationale
 import com.thewizrd.common.helpers.locationPermissionEnabled
+import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.wearable.WearConnectionStatus
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.controls.ProviderEntry
@@ -50,6 +56,7 @@ import com.thewizrd.shared_resources.utils.AnalyticsLogger
 import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.ContextUtils.getThemeContextOverride
+import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.LocaleUtils
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.utils.Units
@@ -57,6 +64,7 @@ import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.extras.enableAdditionalRefreshIntervals
 import com.thewizrd.simpleweather.extras.isIconPackSupported
 import com.thewizrd.simpleweather.extras.isWeatherAPISupported
 import com.thewizrd.simpleweather.extras.navigateToPremiumFragment
@@ -64,19 +72,21 @@ import com.thewizrd.simpleweather.extras.navigateUnsupportedIconPack
 import com.thewizrd.simpleweather.fragments.WearDialogFragment
 import com.thewizrd.simpleweather.fragments.WearDialogParams
 import com.thewizrd.simpleweather.helpers.AcceptDenyDialog
-import com.thewizrd.simpleweather.helpers.showConfirmationOverlay
 import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.preferences.iconpreference.WearIconProviderPickerFragment
 import com.thewizrd.simpleweather.preferences.radiopreference.CandidateInfo
 import com.thewizrd.simpleweather.preferences.radiopreference.RadioButtonPreference
-import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_SENDCONNECTIONSTATUS
+import com.thewizrd.simpleweather.ui.components.ConfirmationOverlay
+import com.thewizrd.simpleweather.ui.theme.WearAppTheme
+import com.thewizrd.simpleweather.viewmodels.ConfirmationData
+import com.thewizrd.simpleweather.viewmodels.ConfirmationViewModel
+import com.thewizrd.simpleweather.viewmodels.SettingsViewModel
+import com.thewizrd.simpleweather.wearable.WearableListenerActions
 import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_UPDATECONNECTIONSTATUS
 import com.thewizrd.simpleweather.wearable.WearableListenerActions.EXTRA_CONNECTIONSTATUS
-import com.thewizrd.simpleweather.wearable.WearableListenerManager
 import com.thewizrd.simpleweather.wearable.complications.WeatherComplicationHelper
 import com.thewizrd.simpleweather.wearable.tiles.WeatherTileHelper
 import com.thewizrd.weather_api.weatherModule
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -141,6 +151,7 @@ class SettingsActivity : UserLocaleActivity() {
 
         // Preferences
         private lateinit var followGps: SwitchPreference
+        private lateinit var intervalPref: ListPreference
         private lateinit var bgLocationPref: Preference
         private lateinit var languagePref: ListPreference
         private lateinit var providerPref: ListPreference
@@ -159,9 +170,8 @@ class SettingsActivity : UserLocaleActivity() {
         private val intentQueue = mutableSetOf<FilterComparison>()
 
         // Wearable status
-        private var mConnectionStatus = WearConnectionStatus.DISCONNECTED
-        private var statusReceiver: BroadcastReceiver? = null
-        private lateinit var wearListenerMgr: WearableListenerManager
+        private val settingsViewModel: SettingsViewModel by viewModels()
+        private val confirmationViewModel: ConfirmationViewModel by viewModels()
 
         private lateinit var locationPermissionLauncher: LocationPermissionLauncher
 
@@ -172,18 +182,6 @@ class SettingsActivity : UserLocaleActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-
-            wearListenerMgr = WearableListenerManager(
-                requireActivity(),
-                object : BroadcastReceiver() {
-                    override fun onReceive(context: Context, intent: Intent) {
-                        if (ACTION_SENDCONNECTIONSTATUS == intent.action) {
-                            lifecycleScope.launch { wearListenerMgr.updateConnectionStatus() }
-                        }
-                    }
-                },
-                IntentFilter(ACTION_SENDCONNECTIONSTATUS)
-            )
 
             locationPermissionLauncher = LocationPermissionLauncher(
                 this,
@@ -215,6 +213,59 @@ class SettingsActivity : UserLocaleActivity() {
             requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         }
 
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+            val root = super.onCreateView(inflater, container, savedInstanceState)
+
+            if (root is ViewGroup) {
+                root.addView(
+                    ComposeView(root.context).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        setContent {
+                            val confirmationData by confirmationViewModel.confirmationEventsFlow.collectAsState()
+
+                            WearAppTheme {
+                                ConfirmationOverlay(
+                                    confirmationData = confirmationData,
+                                    onTimeout = { confirmationViewModel.clearFlow() },
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+
+            return root
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                settingsViewModel.errorMessagesFlow.collect { error ->
+                    when (error) {
+                        is ErrorMessage.Resource -> {
+                            showToast(error.stringId, Toast.LENGTH_SHORT)
+                        }
+
+                        is ErrorMessage.String -> {
+                            showToast(error.message, Toast.LENGTH_SHORT)
+                        }
+
+                        is ErrorMessage.WeatherError -> {
+                            showToast(error.exception.message, Toast.LENGTH_SHORT)
+                        }
+                    }
+                }
+            }
+        }
+
         private fun checkBackPressedCallback() {
             onBackPressedCallback.isEnabled = isProviderAndKeyInvalid()
         }
@@ -225,15 +276,8 @@ class SettingsActivity : UserLocaleActivity() {
                     weatherModule.weatherManager.isKeyRequired(providerPref.value)
         }
 
-        override fun onStart() {
-            wearListenerMgr.onStart()
-            super.onStart()
-        }
-
         override fun onResume() {
             super.onResume()
-            wearListenerMgr.onResume()
-
             AnalyticsLogger.logEvent("SettingsFragment: onResume")
 
             // Register listener
@@ -241,27 +285,35 @@ class SettingsActivity : UserLocaleActivity() {
             appLib.registerAppSharedPreferenceListener(this)
 
             if (!BuildConfig.IS_NONGMS) {
-                statusReceiver = object : BroadcastReceiver() {
-                    override fun onReceive(context: Context, intent: Intent) {
-                        if (ACTION_UPDATECONNECTIONSTATUS == intent.action) {
-                            mConnectionStatus = WearConnectionStatus.valueOf(
-                                intent.getIntExtra(
-                                    EXTRA_CONNECTIONSTATUS,
-                                    0
+                lifecycleScope.launch {
+                    settingsViewModel.eventFlow.collect { (eventType, data) ->
+                        when (eventType) {
+                            ACTION_UPDATECONNECTIONSTATUS -> {
+                                val status = WearConnectionStatus.valueOf(
+                                    data.getInt(
+                                        EXTRA_CONNECTIONSTATUS,
+                                        0
+                                    )
                                 )
-                            )
-                            updateConnectionPref()
+                                updateConnectionPref(status)
+                            }
+
+                            WearableListenerActions.ACTION_SHOWCONFIRMATION -> {
+                                val jsonData =
+                                    data.getString(WearableListenerActions.EXTRA_EVENTDATA)
+
+                                JSONParser.deserializer<ConfirmationData>(
+                                    jsonData,
+                                    ConfirmationData::class.java
+                                )?.let {
+                                    confirmationViewModel.showConfirmation(it)
+                                }
+                            }
                         }
                     }
                 }
 
-                localBroadcastManager.registerReceiver(
-                    statusReceiver!!,
-                    IntentFilter(ACTION_UPDATECONNECTIONSTATUS)
-                )
-                localBroadcastManager.sendBroadcast(
-                    Intent(ACTION_SENDCONNECTIONSTATUS)
-                )
+                settingsViewModel.requestConnectionStatus()
             }
 
             updateBGLocationPrefState()
@@ -285,10 +337,6 @@ class SettingsActivity : UserLocaleActivity() {
             // Unregister listener
             appLib.unregisterAppSharedPreferenceListener(this)
             appLib.registerAppSharedPreferenceListener()
-
-            if (!BuildConfig.IS_NONGMS) {
-                statusReceiver?.run { localBroadcastManager.unregisterReceiver(this) }
-            }
 
             intentQueue.forEach { filter ->
                 when (filter.intent.action) {
@@ -341,7 +389,6 @@ class SettingsActivity : UserLocaleActivity() {
 
             intentQueue.clear()
 
-            wearListenerMgr.onPause()
             super.onPause()
         }
 
@@ -408,6 +455,14 @@ class SettingsActivity : UserLocaleActivity() {
 
                     true
                 }
+            intervalPref = findPreference(SettingsManager.KEY_REFRESHINTERVAL)!!
+            if (enableAdditionalRefreshIntervals()) {
+                intervalPref.setEntries(R.array.premium_refreshinterval_entries)
+                intervalPref.setEntryValues(R.array.premium_refreshinterval_values)
+            } else {
+                intervalPref.setEntries(R.array.refreshinterval_entries)
+                intervalPref.setEntryValues(R.array.refreshinterval_values)
+            }
 
             bgLocationPref = findPreference(KEY_BGLOCATIONACCESS)!!
             bgLocationPref.setOnPreferenceClickListener {
@@ -683,7 +738,7 @@ class SettingsActivity : UserLocaleActivity() {
         }
 
         override fun onDisplayPreferenceDialog(preference: Preference) {
-            if (preference is WearEditTextPreference && (SettingsManager.KEY_APIKEY == preference.getKey())) {
+            if (preference is WearEditTextPreference && (SettingsManager.KEY_APIKEY == preference.key)) {
                 val TAG = KeyEntryPreferenceDialogFragment::class.java.name
 
                 if (parentFragmentManager.findFragmentByTag(TAG) != null) {
@@ -747,7 +802,9 @@ class SettingsActivity : UserLocaleActivity() {
         }
 
         private val connStatusPrefClickListener = Preference.OnPreferenceClickListener {
-            wearListenerMgr.openPlayStoreOnPhone(true)
+            lifecycleScope.launch {
+                settingsViewModel.openPlayStore(showAnimation = true)
+            }
             true
         }
 
@@ -756,13 +813,14 @@ class SettingsActivity : UserLocaleActivity() {
                 .addCategory(Intent.CATEGORY_BROWSABLE)
 
             lifecycleScope.launch {
-                runCatching {
-                    wearListenerMgr.startRemoteActivity(intentAndroid)
-                    showConfirmationOverlay(true)
-                }.onFailure {
-                    if (it !is CancellationException) {
-                        showConfirmationOverlay(false)
-                    }
+                val success = runCatching {
+                    settingsViewModel.startRemoteActivity(intentAndroid)
+                }.getOrDefault(false)
+
+                if (success) {
+                    confirmationViewModel.showOpenOnPhone()
+                } else {
+                    confirmationViewModel.showFailure()
                 }
             }
 
@@ -822,8 +880,8 @@ class SettingsActivity : UserLocaleActivity() {
             }
         }
 
-        private fun updateConnectionPref() {
-            when (mConnectionStatus) {
+        private fun updateConnectionPref(status: WearConnectionStatus) {
+            when (status) {
                 WearConnectionStatus.DISCONNECTED -> {
                     connStatusPref.setSummary(R.string.status_disconnected)
                     connStatusPref.onPreferenceClickListener = null
@@ -988,6 +1046,7 @@ class SettingsActivity : UserLocaleActivity() {
 
     class CreditsFragment : SwipeDismissPreferenceFragment() {
         private lateinit var remoteActivityHelper: RemoteActivityHelper
+        private val confirmationViewModel: ConfirmationViewModel by viewModels()
 
         override val titleResId: Int
             get() = R.string.pref_title_credits
@@ -997,6 +1056,37 @@ class SettingsActivity : UserLocaleActivity() {
             remoteActivityHelper = RemoteActivityHelper(requireContext())
         }
 
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+            val root = super.onCreateView(inflater, container, savedInstanceState)
+
+            if (root is ViewGroup) {
+                root.addView(
+                    ComposeView(root.context).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        setContent {
+                            val confirmationData by confirmationViewModel.confirmationEventsFlow.collectAsState()
+
+                            WearAppTheme {
+                                ConfirmationOverlay(
+                                    confirmationData = confirmationData,
+                                    onTimeout = { confirmationViewModel.clearFlow() },
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+
+            return root
+        }
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_credits, rootKey)
         }
@@ -1004,18 +1094,19 @@ class SettingsActivity : UserLocaleActivity() {
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
             if (preference.intent != null && !BuildConfig.IS_NONGMS) {
                 runWithView {
-                    runCatching {
+                    val success = runCatching {
                         remoteActivityHelper.startRemoteActivity(
                             preference.intent!!
                                 .setAction(Intent.ACTION_VIEW)
                                 .addCategory(Intent.CATEGORY_BROWSABLE)
                         )
+                        true
+                    }.getOrDefault(false)
 
-                        // Show open on phone animation
-                        ConfirmationOverlay()
-                            .setType(ConfirmationOverlay.OPEN_ON_PHONE_ANIMATION)
-                            .setMessage(preference.context.getString(R.string.message_openedonphone))
-                            .showAbove(requireView())
+                    if (success) {
+                        confirmationViewModel.showOpenOnPhone()
+                    } else {
+                        confirmationViewModel.showFailure()
                     }
                 }
 

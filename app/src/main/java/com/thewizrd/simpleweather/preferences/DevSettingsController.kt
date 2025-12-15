@@ -6,6 +6,7 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import com.thewizrd.common.utils.ActivityUtils.recreateCompat
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.simpleweather.utils.NavigationUtils.safeNavigate
 
@@ -34,6 +35,7 @@ class DevSettingsController(private val prefFragment: PreferenceFragmentCompat, 
                 true
             }
             isVisible = settingsManager.isDevSettingsEnabled()
+            isIconSpaceReserved = false
         }.also { devSettingPref = it })
     }
 
@@ -61,9 +63,18 @@ class DevSettingsController(private val prefFragment: PreferenceFragmentCompat, 
                     mDevHitToast!!.show()
                 }
             } else if (mDevHitCountdown < 0) {
-                mDevHitToast?.cancel()
-                mDevHitToast = Toast.makeText(preference.context, "Dev settings already enabled.", Toast.LENGTH_LONG)
-                mDevHitToast!!.show()
+                mDevHitCountdown--
+
+                if (mDevHitCountdown < -2) {
+                    mDevHitToast?.cancel()
+                    mDevHitToast = Toast.makeText(
+                        preference.context,
+                        "Dev settings already enabled.",
+                        Toast.LENGTH_LONG
+                    )
+                    mDevHitToast!!.show()
+                    mDevHitCountdown = -1
+                }
             }
             return true
         } else {
@@ -75,6 +86,6 @@ class DevSettingsController(private val prefFragment: PreferenceFragmentCompat, 
         mDevHitCountdown = 0
         settingsManager.setDevSettingsEnabled(true)
         // Refresh prefs
-        prefFragment.activity?.recreate()
+        prefFragment.activity?.recreateCompat()
     }
 }

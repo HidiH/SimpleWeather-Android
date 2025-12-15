@@ -1,6 +1,7 @@
 package com.thewizrd.common.adapters;
 
 import android.annotation.SuppressLint;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -48,8 +49,17 @@ public class WeatherAlertPanelAdapter extends ListAdapter<WeatherAlertViewModel,
                 mAlertPanel.postOnAnimation(() -> {
                     notifyItemChanged(getBindingAdapterPosition(), "animation");
                 });
+                if (onItemClickListener != null) {
+                    onItemClickListener.onClick(v);
+                }
             });
         }
+    }
+
+    private View.OnClickListener onItemClickListener = null;
+
+    public void setOnItemClickListener(View.OnClickListener listener) {
+        onItemClickListener = listener;
     }
 
     @SuppressLint("NewApi")

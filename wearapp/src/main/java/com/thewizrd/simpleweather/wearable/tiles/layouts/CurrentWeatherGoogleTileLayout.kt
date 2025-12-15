@@ -123,7 +123,7 @@ internal fun currentWeatherGoogleTileLayout(
                             .build()
                     )
                     .addContent(
-                        Text.Builder(context, location)
+                        Text.Builder(context, location.split(',').firstOrNull() ?: location)
                             .setColor(ColorBuilders.argb(Colors.GRAY))
                             .setTypography(Typography.TYPOGRAPHY_BODY1)
                             .setMultilineAlignment(TEXT_ALIGN_START)

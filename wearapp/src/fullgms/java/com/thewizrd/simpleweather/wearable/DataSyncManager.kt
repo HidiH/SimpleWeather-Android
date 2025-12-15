@@ -64,6 +64,12 @@ object DataSyncManager {
                 }
 
                 settingsMgr.setFollowGPS(dataMap.getBoolean(WearableSettings.KEY_FOLLOWGPS, false))
+                settingsMgr.setRefreshInterval(
+                    dataMap.getInt(
+                        WearableSettings.KEY_REFRESHINTERVAL,
+                        SettingsManager.DEFAULT_INTERVAL
+                    )
+                )
 
                 val unitMap = dataMap.getDataMap(WearableSettings.KEY_UNITS)
                 val oldUnits = settingsMgr.getUnitString()

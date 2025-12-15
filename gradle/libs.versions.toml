@@ -1,0 +1,195 @@
+[versions]
+compileSdkVersion = "36"
+minSdkVersion = "23"
+targetSdkVersion = "36"
+
+gradleVersion = "8.13.2"
+kotlin_version = '2.1.20'
+kotlinx_version = '1.10.2'
+ksp_version = '2.1.20-2.0.1'
+
+desugar_version = '2.1.5'
+
+firebase_version = "34.7.0"
+firebaseCrashlyticsGradleVersion = "3.0.6"
+firebasePerfPluginVersion = "2.0.2"
+gms_location_version = '21.3.0'
+gms_base_version = '18.9.0'
+gms_basement_version = '18.9.0'
+gms_tasks_version = '18.4.0'
+gms_wearable_version = '19.0.0'
+googleServicesVersion = "4.4.4"
+
+annotation_version = '1.9.1'
+activity_version = "1.12.1"
+appcompat_version = '1.7.1'
+constraintlayout_version = '2.2.1'
+core_version = '1.17.0'
+arch_core_runtime_version = '2.2.0'
+fragment_version = '1.8.9'
+lifecycle_version = "2.10.0"
+nav_version = "2.9.6"
+paging_version = '3.3.6'
+preference_version = '1.2.1'
+recyclerview_version = '1.4.0'
+room_version = "2.8.4"
+coresplash_version = "1.2.0"
+vectordrawable_version = '1.2.0'
+work_version = '2.11.0'
+
+test_core_version = '1.7.0'
+test_runner_version = '1.7.0'
+test_rules_version = '1.7.0'
+test_junit_version = '1.3.0'
+junit_version = "4.13.2"
+androidx_truth_version = '1.7.0'
+google_truth_version = '1.4.5'
+espresso_core_version = "3.7.0"
+
+material_version = "1.14.0-alpha07"
+material_compose_version = "1.5.0-alpha10"
+
+compose_compiler_version = '1.5.15'
+compose_bom_version = "2025.12.00"
+wear_version = '1.3.0'
+wear_compose_version = "1.5.6"
+wear_input_version = '1.2.0'
+wear_tiles_version = '1.5.0'
+wear_watchface_version = '1.2.1'
+horologist_version = '0.7.15'
+accompanist_version = '0.37.3'
+
+glide_version = '5.0.5'
+icu4j_version = "78.1"
+jjwt_version = '0.13.0'
+moshi_version = '1.15.2'
+okhttp_version = "5.3.2"
+timber_version = '5.0.1'
+
+revcat_version = "9.15.4"
+
+[libraries]
+com-google-devtools-ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp_version" }
+compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin_version" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso_core_version" }
+junit = { module = "junit:junit", version.ref = "junit_version" }
+revcat-purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "revcat_version" }
+test-core = { module = "androidx.test:core", version.ref = "test_core_version" }
+firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradleVersion" }
+google-services = { module = "com.google.gms:google-services", version.ref = "googleServicesVersion" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradleVersion" }
+firebase-perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerfPluginVersion" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin_version" }
+nav-safe-args-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "nav_version" }
+room-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room_version" }
+
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat_version" }
+desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_version" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_version" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-database = { module = "com.google.firebase:firebase-database" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+firebase-storage = { module = "com.google.firebase:firebase-storage" }
+gms-play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "gms_base_version" }
+google-truth = { module = "com.google.truth:truth", version.ref = "google_truth_version" }
+icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j_version" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx_version" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx_version" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinx_version" }
+legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version = "1.0.0" }
+material = { module = "com.google.android.material:material", version.ref = "material_version" }
+moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshi_version" }
+moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi_version" }
+moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi_version" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp_version" }
+paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging_version" }
+preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preference_version" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room_version" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room_version" }
+room-paging = { module = "androidx.room:room-paging", version.ref = "room_version" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room_version" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room_version" }
+test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "test_junit_version" }
+test-ext-truth = { module = "androidx.test.ext:truth", version.ref = "androidx_truth_version" }
+test-rules = { module = "androidx.test:rules", version.ref = "test_rules_version" }
+test-runner = { module = "androidx.test:runner", version.ref = "test_runner_version" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber_version" }
+kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinx_version" }
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "core_version" }
+core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coresplash_version" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment_version" }
+cardview = { module = "androidx.cardview:cardview", version = "1.0.0" }
+recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview_version" }
+annotation = { module = "androidx.annotation:annotation", version.ref = "annotation_version" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout_version" }
+vectordrawable = { module = "androidx.vectordrawable:vectordrawable", version.ref = "vectordrawable_version" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version = "1.2.0" }
+lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version = "2.2.0" }
+lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle_version" }
+arch-core-runtime = { module = "androidx.arch.core:core-runtime", version.ref = "arch_core_runtime_version" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work_version" }
+wear = { module = "androidx.wear:wear", version.ref = "wear_version" }
+wear-input = { module = "androidx.wear:wear-input", version.ref = "wear_input_version" }
+wear-input-testing = { module = "androidx.wear:wear-input-testing", version.ref = "wear_input_version" }
+wear-phone-interactions = { module = "androidx.wear:wear-phone-interactions", version = "1.1.0" }
+wear-remote-interactions = { module = "androidx.wear:wear-remote-interactions", version = "1.1.0" }
+wear-watchface-complications-data = { module = "androidx.wear.watchface:watchface-complications-data", version.ref = "wear_watchface_version" }
+wear-watchface-complications-data-source-ktx = { module = "androidx.wear.watchface:watchface-complications-data-source-ktx", version.ref = "wear_watchface_version" }
+wear-tiles = { module = "androidx.wear.tiles:tiles", version.ref = "wear_tiles_version" }
+wear-tiles-renderer = { module = "androidx.wear.tiles:tiles-renderer", version.ref = "wear_tiles_version" }
+wear-tiles-testing = { module = "androidx.wear.tiles:tiles-testing", version.ref = "wear_tiles_version" }
+wear-tiles-tooling = { module = "androidx.wear.tiles:tiles-tooling", version.ref = "wear_tiles_version" }
+wear-tiles-tooling-preview = { module = "androidx.wear.tiles:tiles-tooling-preview", version.ref = "wear_tiles_version" }
+wear-protolayout-material = { module = "androidx.wear.protolayout:protolayout-material", version.ref = "wear_version" }
+wear-protolayout-material3 = { module = "androidx.wear.protolayout:protolayout-material3", version.ref = "wear_version" }
+horologist-tiles = { module = "com.google.android.horologist:horologist-tiles", version.ref = "horologist_version" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity_version" }
+compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose_compiler_version" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose_bom_version" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-animation-graphics = { module = "androidx.compose.animation:animation-graphics" }
+compose-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material_compose_version" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle_version" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging_version" }
+wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "wear_compose_version" }
+wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "wear_compose_version" }
+wear-compose-navigation = { module = "androidx.wear.compose:compose-navigation", version.ref = "wear_compose_version" }
+wear-tooling-preview = { module = "androidx.wear:wear-tooling-preview", version = "1.0.0" }
+accompanist-drawablepainter = { module = "com.google.accompanist:accompanist-drawablepainter", version.ref = "accompanist_version" }
+horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologist_version" }
+horologist-compose-tools = { module = "com.google.android.horologist:horologist-compose-tools", version.ref = "horologist_version" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version = "3.0.0" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+firebase-perf = { module = "com.google.firebase:firebase-perf" }
+gms-play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "gms_location_version" }
+gms-play-services-wearable = { module = "com.google.android.gms:play-services-wearable", version.ref = "gms_wearable_version" }
+wearable = { module = "com.google.android.wearable:wearable", version = "2.9.0" }
+palette-ktx = { module = "androidx.palette:palette-ktx", version = "1.0.0" }
+work-multiprocess = { module = "androidx.work:work-multiprocess", version.ref = "work_version" }
+navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "nav_version" }
+navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "nav_version" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide_version" }
+glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide_version" }
+colorpickerview = { module = "com.github.skydoves:colorpickerview", version = "2.3.0" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+gms-play-services-maps = { module = "com.google.android.gms:play-services-maps", version = "19.2.0" }
+play-app-update-ktx = { module = "com.google.android.play:app-update-ktx", version = "2.1.0" }
+play-feature-delivery-ktx = { module = "com.google.android.play:feature-delivery-ktx", version = "2.1.0" }
+play-review-ktx = { module = "com.google.android.play:review-ktx", version = "2.0.2" }
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version = "6.1.20" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt_version" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt_version" }
+jjwt-orgjson = { module = "io.jsonwebtoken:jjwt-orgjson", version.ref = "jjwt_version" }
+moshi-java-codegen = { module = "com.github.nename0:moshi-java-codegen", version = "1.1.1" }
+places = { module = "com.google.android.libraries.places:places", version = "4.4.1" }
+volley = { module = "com.android.volley:volley", version = "1.2.1" }
+gms-play-services-basement = { module = "com.google.android.gms:play-services-basement", version.ref = "gms_basement_version" }
+gms-play-services-tasks = { module = "com.google.android.gms:play-services-tasks", version.ref = "gms_tasks_version" }
+
+[plugins]

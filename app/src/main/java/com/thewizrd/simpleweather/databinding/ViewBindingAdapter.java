@@ -23,6 +23,7 @@ import com.thewizrd.shared_resources.icons.WeatherIcons;
 import com.thewizrd.shared_resources.utils.AirQualityUtils;
 import com.thewizrd.shared_resources.utils.LocaleUtils;
 import com.thewizrd.simpleweather.R;
+import com.thewizrd.simpleweather.controls.LoadingIndicatorRefreshLayout;
 
 import java.util.Locale;
 
@@ -132,5 +133,10 @@ public class ViewBindingAdapter {
         }
 
         view.setText(level);
+    }
+
+    @BindingAdapter("isRefreshing")
+    public static void setRefreshing(@NonNull LoadingIndicatorRefreshLayout refreshLayout, boolean showRefresh) {
+        refreshLayout.setRefreshing(showRefresh);
     }
 }

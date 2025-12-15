@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moonphase_new">"Новолуние"</string>
+    <string name="moonphase_waxcrescent">"Растущий полумесяц"</string>
+    <string name="moonphase_firstqtr">"Первая четверть"</string>
+    <string name="moonphase_waxgibbous">"Растущий полумесяц"</string>
+    <string name="moonphase_full">"Полнолуние"</string>
+    <string name="moonphase_wangibbous">"Убывающая Луна"</string>
+    <string name="moonphase_lastqtr">"Последняя четверть"</string>
+    <string name="moonphase_wancrescent">"Убывающий полумесяц"</string>
+    <string name="moonphase_new_short">"Нов. Л."</string>
+    <string name="moonphase_waxcrescent_short">"Рост п."</string>
+    <string name="moonphase_firstqtr_short">"1 четв."</string>
+    <string name="moonphase_waxgibbous_short">"Рост Л."</string>
+    <string name="moonphase_full_short">"Полная"</string>
+    <string name="moonphase_wangibbous_short">"Уб. Л."</string>
+    <string name="moonphase_lastqtr_short">"3 четв."</string>
+    <string name="moonphase_wancrescent_short">"Уб. п."</string>
+</resources>

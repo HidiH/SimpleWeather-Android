@@ -199,5 +199,7 @@ fun createAtmosphere(currRoot: CurrentResponse): Atmosphere {
         pressureTrend = ""
         visibilityMi = currRoot.visMi
         visibilityKm = currRoot.visKm
+        dewpointC = currRoot.dewpointC
+        dewpointF = currRoot.dewpointF
     }
 }

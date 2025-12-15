@@ -1,11 +1,12 @@
 package com.thewizrd.weather_api.aqicn
 
 import com.thewizrd.shared_resources.utils.AirQualityUtils.getIndexFromData
+import com.thewizrd.shared_resources.weatherdata.model.AQIExtras
 import com.thewizrd.shared_resources.weatherdata.model.AirQuality
 import com.thewizrd.shared_resources.weatherdata.model.AirQualityData
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 class AQICNData internal constructor(root: Rootobject) : AirQualityData() {
@@ -46,10 +47,16 @@ class AQICNData internal constructor(root: Rootobject) : AirQualityData() {
 
                     if (existing != null) {
                         existing.o3 = it.avg
+                        existing.extras.o3Max = it.max
+                        existing.extras.o3Min = it.min
                     } else {
                         aqiForecasts.add(AirQuality().apply {
                             date = itemDate
                             o3 = it.avg
+                            extras = AQIExtras().apply {
+                                o3Max = it.max
+                                o3Min = it.min
+                            }
                         })
                     }
                 }
@@ -64,10 +71,16 @@ class AQICNData internal constructor(root: Rootobject) : AirQualityData() {
 
                     if (existing != null) {
                         existing.pm25 = it.avg
+                        existing.extras.pm25Max = it.max
+                        existing.extras.pm25Min = it.min
                     } else {
                         aqiForecasts.add(AirQuality().apply {
                             date = itemDate
                             pm25 = it.avg
+                            extras = AQIExtras().apply {
+                                pm25Max = it.max
+                                pm25Min = it.min
+                            }
                         })
                     }
                 }
@@ -82,10 +95,16 @@ class AQICNData internal constructor(root: Rootobject) : AirQualityData() {
 
                     if (existing != null) {
                         existing.pm10 = it.avg
+                        existing.extras.pm10Max = it.max
+                        existing.extras.pm10Min = it.min
                     } else {
                         aqiForecasts.add(AirQuality().apply {
                             date = itemDate
                             pm10 = it.avg
+                            extras = AQIExtras().apply {
+                                pm10Max = it.max
+                                pm10Min = it.min
+                            }
                         })
                     }
                 }

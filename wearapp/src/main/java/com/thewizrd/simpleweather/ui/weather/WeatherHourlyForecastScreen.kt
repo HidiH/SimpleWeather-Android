@@ -17,6 +17,7 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
+import androidx.wear.compose.material3.ScreenScaffold
 import com.thewizrd.common.controls.ForecastsListViewModel
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
@@ -37,37 +38,39 @@ fun WeatherHourlyForecastScreen(
 
     val scrollStateViewModel: ScalingLazyListStateViewModel = viewModel(backStackEntry)
 
-    LoadingPagingContent(
-        pagingItems = hourlyForecasts
-    ) {
-        ScalingLazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .rotaryScrollable(
-                    RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
-                    focusRequester
-                ),
-            state = scrollStateViewModel.scrollState,
-            anchorType = ScalingLazyListAnchorType.ItemCenter,
-            contentPadding = PaddingValues(top = 48.dp)
+    ScreenScaffold(scrollState = scrollStateViewModel.scrollState) {
+        LoadingPagingContent(
+            pagingItems = hourlyForecasts
         ) {
-            items(hourlyForecasts) {
-                it?.let {
-                    WeatherHourlyForecastPanel(model = it)
+            ScalingLazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .rotaryScrollable(
+                        RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
+                        focusRequester
+                    ),
+                state = scrollStateViewModel.scrollState,
+                anchorType = ScalingLazyListAnchorType.ItemCenter,
+                contentPadding = PaddingValues(top = 48.dp)
+            ) {
+                items(hourlyForecasts) {
+                    it?.let {
+                        WeatherHourlyForecastPanel(model = it)
+                    }
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                    focusRequester.requestFocus()
                 }
             }
         }
 
-        LaunchedEffect(Unit) {
-            lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-                focusRequester.requestFocus()
+        LaunchedEffect(backStackEntry) {
+            backStackEntry.arguments?.getInt(Constants.KEY_POSITION)?.let { position ->
+                scrollStateViewModel.scrollState.scrollToItem(position)
             }
-        }
-    }
-
-    LaunchedEffect(backStackEntry) {
-        backStackEntry.arguments?.getInt(Constants.KEY_POSITION)?.let { position ->
-            scrollStateViewModel.scrollState.scrollToItem(position)
         }
     }
 }

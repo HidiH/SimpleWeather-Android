@@ -72,6 +72,7 @@
     <string name="label_night">Night</string>
     <string name="label_temp">Temp</string>
     <string name="label_minutelyforecast">Minutely</string>
+    <string name="label_nodata">NO DATA</string>
     <!-- Units -->
     <string name="label_temperature">Temperature</string>
     <string name="label_speed">Speed</string>
@@ -91,8 +92,8 @@
     <string name="pref_title_general">General</string>
     <string name="pref_category_version">Version</string>
     <string name="pref_title_units">Units</string>
-    <string name="pref_summary_fahrenheit">Display units in Fahrenheit</string>
-    <string name="pref_summary_celsius">Display units in Celsius</string>
+    <string name="pref_summary_fahrenheit">Display units in Fahrenheit (°F)</string>
+    <string name="pref_summary_celsius">Display units in Celsius (°C)</string>
     <string name="pref_title_about">About</string>
     <string name="pref_title_about_app">About SimpleWeather</string>
     <string name="pref_title_credits">Credits</string>
@@ -196,6 +197,7 @@
     <string name="userthememode_dark">Dark</string>
     <string name="userthememode_black">Dark (AMOLED)</string>
     <string name="userthememode_light">Light</string>
+    <string name="pref_title_color">Color</string>
 
     <!-- Date and Time Format -->
     <string name="clock_12_hours_ampm_format" translatable="false">h:mm<small>a</small></string>

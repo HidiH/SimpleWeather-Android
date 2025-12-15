@@ -7,9 +7,13 @@ import android.os.Bundle
 import android.text.style.TextAppearanceSpan
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.RemoteViews
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.view.drawToBitmap
+import androidx.core.view.forEach
+import androidx.databinding.DataBindingUtil
 import com.thewizrd.common.controls.WeatherUiModel
 import com.thewizrd.common.helpers.ColorsUtils
 import com.thewizrd.shared_resources.locationdata.LocationData
@@ -21,6 +25,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.shared_resources.utils.TextUtils.applySpan
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.controls.ForecastBarGraphView
 import com.thewizrd.simpleweather.controls.graphs.BarGraphData
 import com.thewizrd.simpleweather.controls.graphs.BarGraphView
 import com.thewizrd.simpleweather.controls.graphs.LineView
@@ -28,8 +33,11 @@ import com.thewizrd.simpleweather.controls.graphs.LineViewData
 import com.thewizrd.simpleweather.controls.graphs.RangeBarGraphView
 import com.thewizrd.simpleweather.controls.graphs.isNullOrEmpty
 import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastGraphViewModel.GraphType
+import com.thewizrd.simpleweather.controls.viewmodels.ForecastType
 import com.thewizrd.simpleweather.controls.viewmodels.RangeBarGraphMapper
 import com.thewizrd.simpleweather.controls.viewmodels.createAQIGraphData
+import com.thewizrd.simpleweather.databinding.LayoutBarBinding
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider4x2ForecastGraph
 import com.thewizrd.simpleweather.widgets.WidgetGraphType
 import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
@@ -379,6 +387,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                     setBottomTextColor(textColor)
                     setBottomTextShadow(useTextShadow)
                     setFillParentWidth(true)
+                    setBarWidth(viewCtx.dpToPx(24f))
 
                     setBottomTextSize(graphTextSize)
                     setIconSize(graphIconSize)
@@ -402,7 +411,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
             }
 
             val graphData = ForecastGraphViewModel(viewCtx).apply {
-                setMinutelyForecastData(minutelyData)
+                setMinutelyForecastData(minutelyData, GraphType.Line)
             }.graphData
 
             return if (!graphData.isEmpty && !graphData.getDataSetByIndex(0).isNullOrEmpty()) {
@@ -430,6 +439,7 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                         setDrawIconLabels(false)
                         setBottomTextColor(textColor)
                         setBottomTextShadow(useTextShadow)
+                        setBarWidth(viewCtx.dpToPx(24f))
 
                         setBottomTextSize(graphTextSize)
                         setIconSize(graphIconSize)
@@ -458,16 +468,24 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                 return null
             }
 
-            val forecastGraphType = when (graphType) {
-                WidgetGraphType.Precipitation -> ForecastGraphViewModel.ForecastGraphType.PRECIPITATION
-                WidgetGraphType.Wind -> ForecastGraphViewModel.ForecastGraphType.WIND
-                WidgetGraphType.Humidity -> ForecastGraphViewModel.ForecastGraphType.HUMIDITY
-                WidgetGraphType.UVIndex -> ForecastGraphViewModel.ForecastGraphType.UVINDEX
-                else -> ForecastGraphViewModel.ForecastGraphType.TEMPERATURE
+            val forecastType = when (graphType) {
+                WidgetGraphType.Precipitation -> ForecastType.PRECIPITATION
+                WidgetGraphType.Wind -> ForecastType.WIND
+                WidgetGraphType.Humidity -> ForecastType.HUMIDITY
+                WidgetGraphType.UVIndex -> ForecastType.UVINDEX
+                else -> ForecastType.TEMPERATURE
+            }
+
+            val graphType = when (graphType) {
+                WidgetGraphType.Precipitation,
+                WidgetGraphType.Wind,
+                WidgetGraphType.Humidity,
+                WidgetGraphType.UVIndex -> GraphType.Bar
+                else -> GraphType.Line
             }
 
             val graphData = ForecastGraphViewModel(viewCtx).apply {
-                setForecastData(hrfcastData, forecastGraphType)
+                setForecastData(hrfcastData, forecastType, graphType)
             }.graphData
 
             return if (!graphData.isEmpty && !graphData.getDataSetByIndex(0).isNullOrEmpty()) {
@@ -490,16 +508,32 @@ class WeatherWidget4x2GraphCreator(context: Context) : WidgetRemoteViewCreator(c
                         data = graphData
                     }
                 } else if (graphData is BarGraphData) {
-                    BarGraphView(viewCtx).apply {
-                        setDrawDataLabels(true)
-                        setDrawIconLabels(false)
-                        setBottomTextColor(textColor)
-                        setBottomTextShadow(useTextShadow)
+                    fun updateTextView(v: TextView) {
+                        v.setTextColor(textColor)
+                        if (useTextShadow) {
+                            v.setShadowLayer(1f, 1f, 1f, Colors.BLACK)
+                        } else {
+                            v.setShadowLayer(0f, 0f, 0f, Colors.TRANSPARENT)
+                        }
+                        v.setTextSize(TypedValue.COMPLEX_UNIT_PX, graphTextSize)
+                        v.requestLayout()
+                    }
 
-                        setBottomTextSize(graphTextSize)
-                        setIconSize(graphIconSize)
+                    withContext(Dispatchers.Main.immediate) {
+                        ForecastBarGraphView(viewCtx).apply {
+                            setData(graphData, forecastType)
+                            findViewById<ViewGroup>(R.id.inner_layout)?.forEach { bar ->
+                                DataBindingUtil.getBinding<LayoutBarBinding>(bar)
+                                    ?.executePendingBindings()
 
-                        data = graphData
+                                bar.findViewById<TextView>(R.id.bar_value)?.let { v ->
+                                    updateTextView(v)
+                                }
+                                bar.findViewById<TextView>(R.id.bar_date)?.let { v ->
+                                    updateTextView(v)
+                                }
+                            }
+                        }
                     }
                 } else {
                     null

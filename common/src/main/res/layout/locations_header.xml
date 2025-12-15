@@ -7,14 +7,18 @@
     android:layout_height="wrap_content"
     tools:viewBindingIgnore="true">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawablePadding="8dp"
         android:padding="8dp"
         android:textAppearance="?attr/textAppearanceLabelLarge"
         android:textColor="?android:attr/textColorPrimary"
+        android:gravity="center_vertical"
         app:textAllCaps="false"
+        tools:drawableStartCompat="@drawable/ic_my_location_white_24dp"
+        tools:drawableTint="?android:attr/textColorPrimary"
         tools:text="@string/label_favoritelocations" />
 
 </LinearLayout>

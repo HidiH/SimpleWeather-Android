@@ -6,7 +6,6 @@ import android.view.View
 import androidx.annotation.ColorInt
 import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.android.material.search.SearchView
-import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
 import com.thewizrd.simpleweather.R
 
 open class CustomSearchView @JvmOverloads constructor(
@@ -17,7 +16,7 @@ open class CustomSearchView @JvmOverloads constructor(
 
     fun setBackgroundOverlayColor(@ColorInt backgroundColor: Int) {
         // 6dp
-        val elevation = context.dpToPx(6f)
+        val elevation = context.resources.getDimension(R.dimen.m3_searchview_elevation)
         val backgroundColorWithOverlay =
             elevationOverlayProvider.compositeOverlayIfNeeded(backgroundColor, elevation)
         findViewById<View>(R.id.open_search_view_background)?.setBackgroundColor(

@@ -33,12 +33,27 @@
         <attr name="android:format24Hour" />
         <attr name="android:timeZone" />
     </declare-styleable>
+    <attr name="chipPreferenceStyle" format="reference" />
     <declare-styleable name="ChipPreference">
         <attr name="android:entries" />
         <attr name="android:entryValues" />
     </declare-styleable>
+    <attr name="buttonGroupPreferenceStyle" format="reference" />
+    <declare-styleable name="ButtonGroupPreference">
+        <attr name="android:entries" />
+        <attr name="android:entryValues" />
+    </declare-styleable>
+    <attr name="providerIconPreferenceStyle" format="reference" />
+    <attr name="radioButtonPreferenceStyle" format="reference" />
+    <attr name="iconProviderPreferenceStyle" format="reference" />
     <declare-styleable name="AQIProgressBar">
         <attr name="android:progress" />
+    </declare-styleable>
+    <declare-styleable name="ForecastRangeBarGraphView">
+        <attr name="graphHeight" />
+    </declare-styleable>
+    <declare-styleable name="ForecastBarGraphView">
+        <attr name="graphHeight" />
     </declare-styleable>
     <attr name="graphHeight" format="dimension" />
 </resources>

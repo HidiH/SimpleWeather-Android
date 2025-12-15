@@ -3,7 +3,7 @@ package com.thewizrd.simpleweather.preferences.iconpreference;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 
-import androidx.annotation.LayoutRes;
+import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.thewizrd.shared_resources.SharedModuleKt;
@@ -27,7 +27,7 @@ public abstract class IconProviderPickerFragment extends RadioButtonPickerFragme
 
         final Activity activity = getActivity();
         if (activity != null) {
-            activity.recreate();
+            ActivityCompat.recreate(activity);
         }
     }
 
@@ -57,14 +57,6 @@ public abstract class IconProviderPickerFragment extends RadioButtonPickerFragme
         });
 
         return mCandidates;
-    }
-
-    /**
-     * Provides a custom layout for each candidate row.
-     */
-    @LayoutRes
-    protected int getRadioButtonPreferenceCustomLayoutResId() {
-        return R.layout.preference_icon;
     }
 
     @Override

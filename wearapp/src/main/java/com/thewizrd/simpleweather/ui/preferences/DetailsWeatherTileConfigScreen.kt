@@ -1,17 +1,16 @@
-@file:OptIn(
-    ExperimentalHorologistApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalFoundationApi::class
-)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 
 package com.thewizrd.simpleweather.ui.preferences
 
 import android.annotation.SuppressLint
+import android.text.format.DateFormat
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -42,12 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -58,28 +58,37 @@ import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.google.android.horologist.compose.material.AlertDialog
-import com.google.android.horologist.compose.material.ButtonSize
-import com.google.android.horologist.compose.material.ResponsiveListHeader
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.AlertDialogDefaults
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButton
+import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.ListHeader
+import androidx.wear.compose.material3.LocalContentColor
+import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import com.thewizrd.common.controls.WeatherDetailsType
+import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.preferences.DetailsWeatherTileUtils
 import com.thewizrd.simpleweather.ui.LazyGridStateViewModel
+import com.thewizrd.simpleweather.ui.components.CustomTimeText
 import com.thewizrd.simpleweather.ui.components.WeatherIcon
+import com.thewizrd.simpleweather.ui.compose.LazyGridScrollIndicator
+import com.thewizrd.simpleweather.ui.compose.LazyGridScrollInfoProvider
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
+import com.thewizrd.simpleweather.ui.theme.WearAppTheme
+import com.thewizrd.simpleweather.ui.time.ZonedTimeSource
 import com.thewizrd.simpleweather.ui.utils.ReorderHapticFeedbackType
 import com.thewizrd.simpleweather.ui.utils.rememberFocusRequester
 import com.thewizrd.simpleweather.ui.utils.rememberReorderHapticFeedback
+import com.thewizrd.simpleweather.viewmodels.WeatherNowState
 import com.thewizrd.simpleweather.wearable.tiles.DetailsWeatherTileProviderService
 import com.thewizrd.simpleweather.wearable.tiles.WeatherTileHelper
 import kotlinx.coroutines.Dispatchers
@@ -87,12 +96,14 @@ import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 import java.util.Collections
+import kotlin.math.roundToInt
 
 @Composable
 fun DetailsWeatherTileConfigScreen(
     navController: NavController,
     backStackEntry: NavBackStackEntry,
     focusRequester: FocusRequester,
+    uiState: WeatherNowState,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -106,24 +117,63 @@ fun DetailsWeatherTileConfigScreen(
         )
     }
 
-    DetailsWeatherTileConfigScreen(
-        lazyGridState = scrollStateViewModel.scrollState,
-        focusRequester = focusRequester,
-        tileConfig = tileConfig,
-        onSaveItems = { items ->
-            if (items.isEmpty()) {
-                DetailsWeatherTileUtils.setTileConfig(null)
-            } else {
-                DetailsWeatherTileUtils.setTileConfig(items)
-            }
-
-            navController.popBackStack()
+    ScreenScaffold(
+        timeText = {
+            CustomTimeText(
+                visible = true,
+                modifier = Modifier.offset {
+                    if (0 < scrollStateViewModel.scrollState.layoutInfo.totalItemsCount) {
+                        scrollStateViewModel.scrollState.layoutInfo.visibleItemsInfo.find {
+                            it.index == 0
+                        }?.offset
+                            ?: if (scrollStateViewModel.scrollState.layoutInfo.orientation == Orientation.Vertical) {
+                                IntOffset(
+                                    0,
+                                    -36.dp.toPx().roundToInt()
+                                )
+                            } else {
+                                IntOffset(
+                                    -36.dp.toPx().roundToInt(), 0
+                                )
+                            }
+                    } else {
+                        IntOffset.Zero
+                    }
+                },
+                timeSource = ZonedTimeSource(
+                    timeFormat = if (DateFormat.is24HourFormat(LocalContext.current)) {
+                        "${DateTimeConstants.CLOCK_FORMAT_24HR} ${DateTimeConstants.TIMEZONE_NAME}"
+                    } else {
+                        "${DateTimeConstants.CLOCK_FORMAT_12HR} ${DateTimeConstants.TIMEZONE_NAME}"
+                    },
+                    timeZone = uiState.locationData?.tzLong
+                )
+            )
+        },
+        scrollInfoProvider = LazyGridScrollInfoProvider(scrollStateViewModel.scrollState),
+        scrollIndicator = {
+            LazyGridScrollIndicator(lazyGridState = scrollStateViewModel.scrollState)
         }
-    )
+    ) {
+        DetailsWeatherTileConfigScreen(
+            lazyGridState = scrollStateViewModel.scrollState,
+            focusRequester = focusRequester,
+            tileConfig = tileConfig,
+            onSaveItems = { items ->
+                if (items.isEmpty()) {
+                    DetailsWeatherTileUtils.setTileConfig(null)
+                } else {
+                    DetailsWeatherTileUtils.setTileConfig(items)
+                }
 
-    LaunchedEffect(lifecycleOwner) {
-        lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-            focusRequester.requestFocus()
+                navController.popBackStack()
+            }
+        )
+
+        LaunchedEffect(lifecycleOwner) {
+            lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                focusRequester.requestFocus()
+            }
         }
     }
 
@@ -170,6 +220,7 @@ private fun DetailsWeatherTileConfigScreen(
     val reorderableGridState = rememberReorderableLazyGridState(
         lazyGridState = lazyGridState
     ) { from, to ->
+        // Offset index by 1 to account for header
         Collections.swap(userTileConfigList, from.index - 1, to.index - 1)
         haptic.performHapticFeedback(ReorderHapticFeedbackType.MOVE)
     }
@@ -191,7 +242,7 @@ private fun DetailsWeatherTileConfigScreen(
         userScrollEnabled = true
     ) {
         item(span = { GridItemSpan(6) }) {
-            ResponsiveListHeader {
+            ListHeader {
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
                     text = stringResource(R.string.title_tile_config),
@@ -202,7 +253,7 @@ private fun DetailsWeatherTileConfigScreen(
 
         itemsIndexed(
             userTileConfigList,
-            key = { index, item -> if (item is WeatherDetailsType) item else index },
+            key = { index, item -> item as? WeatherDetailsType ?: index },
             span = { index, _ ->
                 if (index == 0 || index == 1 || index == 5 || index == 6) {
                     GridItemSpan(3)
@@ -254,19 +305,18 @@ private fun DetailsWeatherTileConfigScreen(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            Button(
-                                modifier = Modifier.size(ButtonDefaults.DefaultButtonSize),
-                                colors = ButtonDefaults.secondaryButtonColors(backgroundColor = Color.White),
+                            IconButton(
+                                modifier = Modifier.size(ButtonDefaults.Height),
+                                colors = IconButtonDefaults.filledIconButtonColors(),
                                 onClick = {
                                     userTileConfigList.removeAt(index)
                                     userTileConfigList.add("")
                                 }
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(ButtonDefaults.DefaultIconSize),
+                                    modifier = Modifier.size(ButtonDefaults.IconSize),
                                     painter = painterResource(id = R.drawable.ic_close_white_24dp),
                                     contentDescription = null,
-                                    tint = Color.Black
                                 )
                             }
                         }
@@ -291,13 +341,17 @@ private fun DetailsWeatherTileConfigScreen(
                                 wim.getWeatherIconResource(item.toWeatherIcon())
                             }
 
-                            com.google.android.horologist.compose.material.Button(
-                                id = iconResId,
-                                contentDescription = stringResource(item.toLabelStringResId()),
-                                colors = ButtonDefaults.secondaryButtonColors(),
+                            IconButton(
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(),
                                 onClick = onClick,
                                 onLongClick = onLongClick
-                            )
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                                    painter = painterResource(id = iconResId),
+                                    contentDescription = stringResource(item.toLabelStringResId())
+                                )
+                            }
                         }
                     }
                 }
@@ -306,18 +360,17 @@ private fun DetailsWeatherTileConfigScreen(
                     modifier = itemModifier,
                     contentAlignment = Alignment.Center
                 ) {
-                    Button(
-                        modifier = Modifier.size(ButtonDefaults.DefaultButtonSize),
-                        colors = ButtonDefaults.secondaryButtonColors(backgroundColor = Color.White),
+                    IconButton(
+                        modifier = Modifier.size(ButtonDefaults.Height),
+                        colors = IconButtonDefaults.filledIconButtonColors(),
                         onClick = {
                             showAddTileDialog = true
                         }
                     ) {
                         Icon(
-                            modifier = Modifier.size(ButtonDefaults.DefaultIconSize),
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
                             painter = painterResource(id = R.drawable.ic_add_24dp),
                             contentDescription = null,
-                            tint = Color.Black
                         )
                     }
                 }
@@ -333,28 +386,30 @@ private fun DetailsWeatherTileConfigScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(
-                    modifier = Modifier.size(ButtonDefaults.DefaultButtonSize),
-                    colors = ButtonDefaults.secondaryButtonColors(),
+                IconButton(
+                    modifier = Modifier.size(ButtonDefaults.Height),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(),
                     onClick = {
                         showConfirmation = true
                     }
                 ) {
                     Icon(
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
                         painter = painterResource(id = R.drawable.ic_restart_alt_24dp),
-                        contentDescription = stringResource(R.string.action_reset)
+                        contentDescription = stringResource(R.string.action_reset),
                     )
                 }
-                Button(
-                    modifier = Modifier.size(ButtonDefaults.DefaultButtonSize),
-                    colors = ButtonDefaults.primaryButtonColors(),
+                IconButton(
+                    modifier = Modifier.size(ButtonDefaults.Height),
+                    colors = IconButtonDefaults.filledIconButtonColors(),
                     onClick = {
                         onSaveItems.invoke(userTileConfigList.filterIsInstance<WeatherDetailsType>())
                     }
                 ) {
                     Icon(
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
                         painter = painterResource(id = R.drawable.ic_check_24dp),
-                        contentDescription = stringResource(android.R.string.ok)
+                        contentDescription = stringResource(android.R.string.ok),
                     )
                 }
             }
@@ -366,17 +421,30 @@ private fun DetailsWeatherTileConfigScreen(
     }
 
     AlertDialog(
-        showDialog = showConfirmation,
-        onOk = {
-            userTileConfigList.clear()
-            userTileConfigList.addAll(DetailsWeatherTileUtils.DEFAULT_ITEMS)
-            DetailsWeatherTileUtils.setTileConfig(null)
+        visible = showConfirmation,
+        onDismissRequest = {
             showConfirmation = false
         },
-        onCancel = {
-            showConfirmation = false
+        confirmButton = {
+            AlertDialogDefaults.ConfirmButton(
+                onClick = {
+                    userTileConfigList.clear()
+                    userTileConfigList.addAll(DetailsWeatherTileUtils.DEFAULT_ITEMS)
+                    DetailsWeatherTileUtils.setTileConfig(null)
+                    showConfirmation = false
+                }
+            )
         },
-        message = stringResource(id = R.string.message_reset_to_default)
+        dismissButton = {
+            AlertDialogDefaults.DismissButton(
+                onClick = {
+                    showConfirmation = false
+                }
+            )
+        },
+        title = {
+            Text(text = stringResource(id = R.string.message_reset_to_default))
+        }
     )
 
     if (showAddTileDialog) {
@@ -388,23 +456,35 @@ private fun DetailsWeatherTileConfigScreen(
 
         AlertDialog(
             modifier = Modifier.fillMaxSize(),
-            showDialog = true,
-            onDismiss = { showAddTileDialog = false }
+            visible = showAddTileDialog,
+            onDismissRequest = { showAddTileDialog = false },
+            title = { Text(text = stringResource(id = R.string.label_details)) },
+            edgeButton = {
+                EdgeButton(
+                    onClick = { showAddTileDialog = false }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                        painter = painterResource(id = R.drawable.ic_close_white_24dp),
+                        contentDescription = stringResource(android.R.string.cancel)
+                    )
+                }
+            }
         ) {
             items(availableItems) {
-                Chip(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ChipDefaults.secondaryChipColors(),
+                    colors = ButtonDefaults.filledTonalButtonColors(),
                     label = {
                         Text(
-                            text = stringResource(it.toLabelStringResId()),
-                            style = MaterialTheme.typography.button
+                            text = stringResource(it.toLabelStringResId())
                         )
                     },
                     icon = {
                         WeatherIcon(
-                            modifier = Modifier.size(ChipDefaults.IconSize),
-                            weatherIcon = it.toWeatherIcon()
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                            weatherIcon = it.toWeatherIcon(),
+                            tint = LocalContentColor.current
                         )
                     },
                     onClick = {
@@ -416,24 +496,15 @@ private fun DetailsWeatherTileConfigScreen(
                     }
                 )
             }
+        }
+    }
 
-            item {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    com.google.android.horologist.compose.material.Button(
-                        id = R.drawable.ic_close_white_24dp,
-                        contentDescription = stringResource(android.R.string.cancel),
-                        onClick = { showAddTileDialog = false },
-                        buttonSize = ButtonSize.Default,
-                        colors = ButtonDefaults.secondaryButtonColors(),
-                    )
-                }
-            }
+    LaunchedEffect(tileConfig) {
+        if (userTileConfigList.size < DetailsWeatherTileUtils.MAX_BUTTONS && !userTileConfigList.contains(
+                ""
+            )
+        ) {
+            userTileConfigList.add("")
         }
     }
 }
@@ -441,13 +512,18 @@ private fun DetailsWeatherTileConfigScreen(
 @WearPreviewDevices
 @Composable
 private fun PreviewDetailsWeatherTileConfigScreen() {
+    val context = LocalContext.current.also {
+        it.initializeDependencies(isPhone = false)
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val focusRequester = rememberFocusRequester()
 
-    DetailsWeatherTileConfigScreen(
-        focusRequester = focusRequester,
-        tileConfig = DetailsWeatherTileUtils.DEFAULT_ITEMS
-    )
+    WearAppTheme {
+        DetailsWeatherTileConfigScreen(
+            focusRequester = focusRequester,
+            tileConfig = DetailsWeatherTileUtils.DEFAULT_ITEMS
+        )
+    }
 
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {

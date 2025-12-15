@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Feature Settings -->
+    <string name="pref_title_features">"Özellikler"</string>
+    <string name="pref_summary_features">"Etkinleştirmek/devre dışı bırakmak için özellikleri seçin"</string>
+    <string name="pref_title_feature_bgimage">"Arka Plan Resmi"</string>
+    <string name="pref_title_feature_forecast">"Tahmin"</string>
+    <string name="pref_title_feature_hrforecast">"Saatlik Tahmin"</string>
+    <string name="pref_title_feature_details">"Hava Durumu Detayları"</string>
+    <string name="pref_title_feature_uv">"UV"</string>
+    <string name="pref_title_feature_beaufort">"Beaufort"</string>
+    <string name="pref_title_feature_aqindex">"Hava Kalitesi İndeksi"</string>
+    <string name="pref_title_feature_moonphase">"Ay Evresi"</string>
+    <string name="pref_title_feature_sunphase">"Güneş Evresi"</string>
+    <string name="pref_title_feature_radar">"Hava Radarı"</string>
+    <string name="pref_title_feature_locpanelimg">"Konum Paneli Resmi"</string>
+
+    <!-- Widget -->
+    <string name="widget_configure_prompt">"Widget'ı Yapılandır"</string>
+    <string name="title_activity_widget_config">"Widget Tercihleri"</string>
+    <string name="pref_title_bgcolor">"Arka plan"</string>
+    <string name="label_color_transparent">"Şeffaf"</string>
+    <string name="pref_title_bgstyle">"Arka Plan Stili"</string>
+    <string name="label_style_fullbg">"Tam Arka Plan"</string>
+    <string name="label_style_panda">"Varsayılan"</string>
+
+    <!-- Can be shortened to 'Color' -->
+    <string name="label_style_pendingcolor">"Hava Durumu Rengi"</string>
+    <string name="label_style_light">"Açık"</string>
+    <string name="label_style_dark">"Koyu"</string>
+    <string name="locname_pref_title">"Konum Adı"</string>
+    <string name="locname_pref_summary">"Konum adını widget'tan gizle"</string>
+    <string name="settingsbtn_pref_title">"Ayarlar Düğmesi"</string>
+    <string name="settingsbtn_pref_summary">"Ayarlar düğmesini widget'tan gizle"</string>
+    <string name="clock_pref_title">"Saat"</string>
+    <string name="calendar_pref_title">"Takvim"</string>
+    <string name="pref_title_fcastoption">"Tahmin"</string>
+    <string name="label_fcast_full">"Günlük Tahmin ve Saatlik Tahmin (mümkünse)"</string>
+    <string name="label_fcast_daily">"Günlük Tahmin"</string>
+    <string name="label_fcast_hourly">"Saatlik Tahmin (mümkünse)"</string>
+    <string name="pref_category_timeanddate">"Saat ve Tarih"</string>
+    <string name="pref_title_timezone">"Saat dilimi"</string>
+    <string name="pref_timezone_summaryoff">"Saat ve tarih için sistem saat dilimini kullan"</string>
+    <string name="pref_timezone_summaryon">"Saat ve tarih için konum saat dilimini kullan"</string>
+    <string name="pref_location">"Konum"</string>
+    <string name="pref_item_gpslocation">"Mevcut GPS Konumu"</string>
+    <string name="prompt_setup_app_first">"Lütfen önce uygulamayı kurun"</string>
+
+    <!-- LineView -->
+    <string name="label_series">"Seri"</string>
+
+    <!-- In-App Updates -->
+    <string name="not_channel_update_title">"Uygulama Güncellemeleri"</string>
+    <string name="prompt_update_title">"SimpleWeather'ı Güncelle"</string>
+    <string name="prompt_update_available">"Güncelleme mevcut. Yüklemek için tıklayın"</string>
+
+    <!-- Support -->
+    <string name="pref_category_support">"Destek"</string>
+
+    <!-- Feedback -->
+    <string name="pref_title_feedback">"Geri Bildirim"</string>
+    <string name="pref_summary_feedback">"Uygulamayı geliştirmek için hataları veya önerileri bildirin"</string>
+
+    <!-- Rate / Review -->
+    <string name="pref_title_rateandreview">"Puan Ver ve Yorum Yap"</string>
+    <string name="pref_summary_rateandreview">"Uygulamayı beğendiniz mi? Yorum yaparak destekleyin"</string>
+
+    <!-- Translate -->
+    <string name="pref_title_translate">"Çevir"</string>
+    <string name="pref_summary_translate">"Uygulamayı çevirmeye yardım et"</string>
+
+    <!-- Custom Color -->
+    <string name="label_color_custom">"Özel"</string>
+    <string name="pref_title_bgcolorcode">"Arka Plan Rengi"</string>
+    <string name="pref_title_txtcolorcode">"Metin Rengi"</string>
+
+    <!-- SplitInstall Prompts -->
+    <string name="splitlang_start_install">"Dil paketi için kurulum başlatılıyor…"</string>
+    <string name="splitlang_installing">"Dil paketi yükleniyor…"</string>
+    <string name="splitlang_downloading">"Dil paketi indiriliyor…"</string>
+    <string name="splitlang_failure">"Dil paketi yüklenemedi"</string>
+    <string name="pref_title_feature_charts">"Grafikler"</string>
+
+    <!-- Widget Service -->
+    <string name="message_widgetservice_running">"Widget güncelleme servisi çalışıyor"</string>
+    <string name="pref_title_foreground_service">"Widget Güncelleyici Servisi"</string>
+    <string name="pref_summary_foreground_service">"Hava durumu widget'larını ve bildirimlerini güncellemek için servisi etkinleştirin"</string>
+    <string name="pref_title_ignore_batt_opts">"Pil Optimizasyonunu Yoksay"</string>
+    <string name="pref_summary_ignore_batt_opts">"Widget'lar ve bildirimler güncellenmiyorsa arka plan servisi kısıtlamasını devre dışı bırakın"</string>
+    <string name="pref_title_tap2switch">"Dokunma Eylemi"</string>
+    <string name="pref_tap2switch_summaryOn">"Tahmini değiştirmek için dokunun"</string>
+    <string name="pref_tap2switch_summaryOff">"Uygulamayı aç"</string>
+
+    <!-- Daily Notification -->
+    <string name="not_channel_name_dailynotification">"Günlük Bildirim"</string>
+    <string name="pref_title_time">"Saat"</string>
+    <string name="pref_summary_off">"Kapalı"</string>
+    <string name="pref_summary_on">"Açık"</string>
+
+    <!-- Precipitation Notification -->
+    <string name="not_channel_name_precipnotification">"Yağış Bildirimi"</string>
+
+    <!-- Example: 80% chance of rain in 2 hours
+(%1$d) -> Percentage | (%2$s) -> Time in minutes or hours -->
+    <string name="precipitation_text_format">"%2$s içinde %1$d%% yağmur olasılığı"</string>
+    <string name="precipitation_nexthour_text_format">"Önümüzdeki saat içinde %1$d%% yağmur olasılığı"</string>
+
+    <!-- Weather Summary or Weather Overview -->
+    <string name="pref_title_feature_summary">"Hava Durumu Özeti"</string>
+    <string name="prompt_max_locations_allowed">"En fazla beş konuma izin verilir"</string>
+    <string name="pref_title_widgetgraphtype">"Tahmin Türü"</string>
+
+    <!-- Widget Labels -->
+    <string name="label_widget_weather_1x1">"Hava Durumu (1x1)"</string>
+    <string name="label_widget_weather_clock_2x2">"Hava Durumu + Saat (2x2)"</string>
+    <string name="label_widget_weather_4x1">"Hava Durumu (4x1)"</string>
+    <string name="label_widget_weather_clock_4x2">"Hava Durumu + Saat (4x2)"</string>
+    <string name="label_widget_weather_date_4x1">"Hava Durumu + Tarih (4x1)"</string>
+    <string name="label_widget_weather_2x2">"Hava Durumu (2x2)"</string>
+    <string name="label_widget_weather_4x2">"Hava Durumu (4x2)"</string>
+    <string name="label_widget_weather_4x4">"Hava Durumu (4x4)"</string>
+    <string name="label_widget_weather_clock_4x3">"Hava Durumu + Saat (4x3)"</string>
+    <string name="label_widget_weather_3x1">"Hava Durumu (3x1)"</string>
+    <string name="label_widget_weather_forecast_4x2">"Hava Durumu Tahmini (4x2)"</string>
+    <string name="widget_loading_prompt">"Yükleniyor…"</string>
+    <string name="refreshbtn_pref_title">"Yenileme Düğmesi"</string>
+    <string name="refreshbtn_pref_summary">"Yenileme düğmesini araç takımından gizle"</string>
+    <string name="pref_category_customsize">"Simge ve Metin Boyutu"</string>
+    <string name="pref_title_textsize">"Metin Boyutu"</string>
+    <string name="pref_title_iconsize">"Simge Boyutu"</string>
+    <string name="precipitation_minutely_starting_text_format">"Yağmur yaklaşık %1$s içinde başlayacak"</string>
+    <string name="precipitation_minutely_stopping_text_format">"Yağmur yaklaşık %1$s içinde duracak"</string>
+
+    <!-- Minimum Alert Severity -->
+    <string name="pref_title_minalertseverity">"Minimum Uyarı Ciddiyeti"</string>
+    <string name="alertsev_all">"Yok (Tüm uyarıları göster)"</string>
+    <string name="alertsev_moderate">"Orta"</string>
+    <string name="alertsev_severe">"Şiddetli"</string>
+    <string name="alertsev_extreme">"Aşırı"</string>
+    <string name="pref_title_txtshadow">"Metin gölgesi"</string>
+    <string name="pref_summary_txtshadow">"Metne gölge katmanı ekle"</string>
+    <string name="precipitation_likely_text_format">"Yağmurun yaklaşık %1$s civarında başlaması muhtemel (%2$d%% olasılık)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Yağmurun yaklaşık %1$s civarında başlaması bekleniyor"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Yağmurun yaklaşık %1$s civarında durması bekleniyor"</string>
+</resources>

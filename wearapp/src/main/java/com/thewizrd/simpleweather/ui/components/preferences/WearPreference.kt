@@ -9,9 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.Text
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Text
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 import com.thewizrd.simpleweather.ui.text.toAnnotatedString
 
@@ -40,7 +40,7 @@ fun WearPreference(
     onClick: () -> Unit,
     enabled: Boolean = true,
 ) {
-    Chip(
+    Button(
         modifier = modifier,
         label = {
             Text(
@@ -60,7 +60,7 @@ fun WearPreference(
         },
         onClick = onClick,
         enabled = enabled,
-        colors = ChipDefaults.secondaryChipColors()
+        colors = ButtonDefaults.filledTonalButtonColors()
     )
 }
 

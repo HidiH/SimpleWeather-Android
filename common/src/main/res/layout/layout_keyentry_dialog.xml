@@ -22,7 +22,7 @@
     android:layout_marginBottom="48dp"
     android:overScrollMode="ifContentScrolls"
     tools:viewBindingIgnore="true"
-    tools:theme="@style/Theme.Material3.DayNight.NoActionBar">
+    tools:theme="@style/Theme.Material3Expressive.DayNight.NoActionBar">
 
     <LinearLayout
         android:layout_width="match_parent"

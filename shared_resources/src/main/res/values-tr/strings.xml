@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Konum Girin"</string>
+    <string name="api_label">"Hava Durumu Sağlayıcısı"</string>
+    <string name="key_hint">"Sağlayıcı Anahtarı"</string>
+    <string name="label_gpsfollow">"Mevcut Konum"</string>
+    <string name="label_getstarted">"Başlayın"</string>
+    <string name="setup_welcome_prompt">"SimpleWeather'a Hoş Geldiniz"</string>
+    <string name="setup_welcome_tagline_prompt">"Sadece basit bir hava durumu uygulaması"</string>
+    <string name="setup_location_prompt">"Başlamak için bir konum ekleyin"</string>
+    <string name="setup_preferences_prompt">"Aşağıdaki ayarları özelleştirin"</string>
+    <string name="label_next">"İleri"</string>
+    <string name="label_back">"Geri"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Hava Durumu"</string>
+    <string name="action_settings">"Ayarlar"</string>
+    <string name="action_retry">"Tekrar Dene"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Detaylar"</string>
+    <string name="label_humidity">"Nem"</string>
+    <string name="label_pressure">"Basınç"</string>
+    <string name="label_visibility">"Görüş Mesafesi"</string>
+    <string name="label_feelslike">"Hissedilen"</string>
+    <string name="label_wind">"Rüzgar"</string>
+    <string name="label_forecast">"Tahmin"</string>
+    <string name="label_condition">"Durum"</string>
+    <string name="label_sunriseset">"Gündoğumu / Günbatımı"</string>
+    <string name="label_sunrise">"Gündoğumu"</string>
+    <string name="label_sunset">"Günbatımı"</string>
+    <string name="label_hourlyforecast">"Saatlik"</string>
+    <string name="label_precipitation">"Yağış"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"İhtimal"</string>
+    <string name="label_cloudiness">"Bulutluluk"</string>
+    <string name="label_qpf_rain">"Yağmur"</string>
+    <string name="label_qpf_snow">"Kar"</string>
+    <string name="credit_prefix">"Veriler"</string>
+    <string name="attrib_prefix">"Fotoğrafçı"</string>
+    <string name="label_high">"Yüksek"</string>
+    <string name="label_low">"Düşük"</string>
+    <string name="label_dewpoint">"Çiy Noktası"</string>
+    <string name="label_moonrise">"Ay Doğuşu"</string>
+    <string name="label_moonset">"Ay Batışı"</string>
+    <string name="label_moonphase">"Ay Evresi"</string>
+    <string name="label_beaufort">"Beaufort"</string>
+    <string name="label_uv">"UV İndeksi"</string>
+    <string name="label_airquality">"Hava Kalitesi İndeksi"</string>
+    <string name="label_airquality_short">"Hava Kalitesi"</string>
+    <string name="label_radar">"Radar"</string>
+    <string name="label_afternoon">"Öğleden Sonra"</string>
+    <string name="label_eve">"Akşam"</string>
+    <string name="label_morning">"Sabah"</string>
+    <string name="label_night">"Gece"</string>
+    <string name="label_temp">"Sıcaklık"</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Hava Durumu"</string>
+    <string name="label_nav_alerts">"Uyarılar"</string>
+    <string name="label_nav_locations">"Konumlar"</string>
+    <string name="title_activity_settings">"Ayarlar"</string>
+    <string name="title_fragment_alerts">"Şiddetli Hava Durumu Uyarıları"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"Genel"</string>
+    <string name="pref_category_version">"Sürüm"</string>
+    <string name="pref_title_units">"Birimler"</string>
+    <string name="pref_summary_fahrenheit">"Birimleri Fahrenheit cinsinden göster (°F)"</string>
+    <string name="pref_summary_celsius">"Birimleri Celsius cinsinden göster (°C)"</string>
+    <string name="pref_title_about">"Hakkında"</string>
+    <string name="pref_title_about_app">"SimpleWeather Hakkında"</string>
+    <string name="pref_title_credits">"Katkıda Bulunanlar"</string>
+    <string name="pref_title_oslibs">"Açık Kaynak Kütüphaneler"</string>
+    <string name="pref_category_providers">"Veri Sağlayıcıları"</string>
+    <string name="pref_summary_currentlocation">"GPS aracılığıyla mevcut konuma erişime izin ver"</string>
+    <string name="pref_summary_apikey">"%1$s için gereken Sağlayıcı Anahtarını girin"</string>
+    <string name="message_enter_apikey">"Lütfen bir Sağlayıcı Anahtarı girin"</string>
+    <string name="message_keyverified">"Anahtar Doğrulandı"</string>
+    <string name="message_keyinvalid">"Anahtar Geçersiz"</string>
+    <string name="pref_title_onnotification">"Hava Durumu Bildirimi"</string>
+    <string name="pref_summary_notification">"Mevcut hava koşullarını görüntüleyen kalıcı bildirim göster"</string>
+    <string name="pref_title_api">"Hava Durumu Sağlayıcısı"</string>
+    <string name="pref_category_notification">"Bildirimler"</string>
+    <string name="pref_title_notificationicon">"Bildirim Simgesi"</string>
+    <string name="pref_title_alerts">"Hava Durumu Uyarıları"</string>
+    <string name="pref_summary_alerts">"Hava durumu uyarıları için bildirimleri göster"</string>
+    <string name="pref_summary_alerts_disabled">"Hava durumu uyarıları bu hava durumu sağlayıcısı tarafından desteklenmiyor"</string>
+    <string name="pref_title_apiregister">"Hesap oluştur"</string>
+    <string name="pref_summary_apiregister">"Sağlayıcı anahtarı için kaydolmak için bir hesap oluşturun"</string>
+    <string name="error_message_weather_region_unsupported">"Ülke bu hava durumu sağlayıcısı tarafından desteklenmiyor"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Konum Ekle"</string>
+    <string name="action_editmode">"Düzenle"</string>
+    <string name="label_currentlocation">"Şuanki konum"</string>
+    <string name="label_favoritelocations">"Favori Konumlar"</string>
+    <string name="error_location_denied">"Konum erişimi reddedildi"</string>
+    <string name="error_retrieve_location">"Konum alınamadı"</string>
+    <string name="error_enable_location_services">"Konum Servisleri devre dışı. Lütfen Ayarlar'dan etkinleştirin"</string>
+    <string name="error_noresults">"Sonuç bulunamadı"</string>
+    <string name="label_fab_add_location">"Bir konum ekle"</string>
+    <string name="message_locationremoved">"Konum kaldırıldı"</string>
+    <string name="message_needfavorite">"En az bir favori konumunuz olmalı"</string>
+    <string name="undo">"Geri Al"</string>
+    <string name="delete">"Sil"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Bildirimler ve widget'lar için konumun arka planda güncellenmesine izin ver"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Hava durumu verileri yüklenemedi"</string>
+    <string name="werror_networkerror">"Ağ Bağlantısı Hatası"</string>
+    <string name="werror_invalidkey">"Geçersiz Sağlayıcı Anahtarı"</string>
+    <string name="werror_querynotfound">"Arama sorgunuzla eşleşen şehir bulunamadı"</string>
+    <string name="werror_unknown">"Bilinmeyen bir hata oluştu"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Güncelleme Aralığı"</string>
+    <string name="refresh_60min">"1 saat"</string>
+    <string name="refresh_2hrs">"2 saat"</string>
+    <string name="refresh_3hrs">"3 saat"</string>
+    <string name="refresh_6hrs">"6 saat"</string>
+    <string name="refresh_12hrs">"12 saat"</string>
+    <string name="update_prefix">"Güncellendi"</string>
+    <string name="update_prefix_day">"Güncellenme Saati"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Sıcaklık"</string>
+    <string name="notificationicon_condition">"Hava Durumu Koşulu"</string>
+    <string name="not_channel_name_weather">"Hava Durumu Bildirimleri"</string>
+    <string name="not_channel_desc_weather">"Hava durumu bildirimleri"</string>
+    <string name="not_channel_name_alerts">"Hava Durumu Uyarıları"</string>
+    <string name="not_channel_desc_alerts">"Hava durumu uyarıları için bildirimler"</string>
+    <string name="not_channel_name_general">"Servis bildirimleri"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"%1$d dakika önce"</string>
+    <string name="datetime_hr_ago">"%1$d saat önce"</string>
+    <string name="datetime_min_ago">"%1$d dakika önce"</string>
+    <string name="datetime_sec_ago">"%1$d saniye önce"</string>
+    <string name="datetime_validuntil">"Geçerlilik süresi"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Kişisel Sağlayıcı Anahtarı"</string>
+    <string name="pref_summary_personalkey">"Kişisel hava durumu sağlayıcısı anahtarını kullan"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Tema"</string>
+    <string name="userthememode_default">"Sistem Varsayılanı"</string>
+    <string name="userthememode_dark">"Koyu"</string>
+    <string name="userthememode_black">"Koyu (AMOLED)"</string>
+    <string name="userthememode_light">"Açık"</string>
+    <string name="summary_default">"Varsayılan"</string>
+    <string name="action_refresh">"Yenile"</string>
+    <string name="label_windgust">"Rüzgar Hamlesi"</string>
+    <string name="pref_title_language">"Dil"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Sıcaklık"</string>
+    <string name="label_speed">"Hız"</string>
+    <string name="label_distance">"Mesafe"</string>
+    <string name="pref_title_resetunits">"Birimleri varsayılan değerlere sıfırla"</string>
+    <string name="not_title_weather_update">"Hava durumu güncelleniyor…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Simgeler"</string>
+    <string name="refresh_30min">"30 dakika"</string>
+    <string name="label_day">"Gün"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Polen Sayımı"</string>
+    <string name="label_pollen_tree">"Ağaç"</string>
+    <string name="label_tree_pollen">"Ağaç Poleni"</string>
+    <string name="label_pollen_grass">"Çim"</string>
+    <string name="label_grass_pollen">"Çim Poleni"</string>
+    <string name="label_pollen_ragweed">"Ragweed"</string>
+    <string name="label_ragweed_pollen">"Ragweed Poleni"</string>
+    <string name="label_count_low">"Düşük"</string>
+    <string name="label_count_moderate">"Orta"</string>
+    <string name="label_count_high">"Yüksek"</string>
+    <string name="label_count_veryhigh">"Çok yüksek"</string>
+    <string name="bg_location_permission_rationale_settings">"Bildirimler ve araç takımları için konumun arka planda güncellenmesi için lütfen konum iznini '%1$s' olarak ayarlayın."</string>
+    <string name="prompt_location_not_set">"Konum ayarlanmadı. Lütfen bir konum ekleyin"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Arka Planda Konum Erişimi"</string>
+    <string name="wear_bg_location_permission_rationale">"Kareler ve komplikasyonlar için konumun arka planda güncellenmesine izin ver"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"Kareler ve komplikasyonlar için konumun arka planda güncellenmesi için lütfen konum iznini '%1$s' olarak ayarlayın."</string>
+    <string name="time_current">"Şu Anki"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"VERİ YOK"</string>
+    <string name="label_minutelyforecast">"Dakikalık"</string>
+    <string name="hint_username">"Kullanıcı Adı"</string>
+    <string name="hint_password">"Şifre"</string>
+    <string name="pref_title_privacypolicy">"Gizlilik politikası"</string>
+    <string name="pref_title_termsofservice">"Hizmet Şartları"</string>
+    <string name="label_moreinfo">"Daha Fazla Bilgi"</string>
+    <string name="action_reset">"Sıfırla"</string>
+    <string name="label_count_low_short">"Düşük"</string>
+    <string name="label_count_moderate_short">"Orta"</string>
+    <string name="label_count_high_short">"Yüksek"</string>
+    <string name="label_count_veryhigh_short">"Yüksek"</string>
+    <string name="werror_ratelimited">"Çok fazla istek var. Lütfen birkaç dakika sonra tekrar deneyin"</string>
+    <string name="werror_locationnotsupported">"Bu konum bu hava durumu sağlayıcısı tarafından desteklenmiyor"</string>
+    <string name="notification_perm_denied">"Bildirim izni reddedildi"</string>
+    <string name="pref_title_color">Renk</string>
+</resources>

@@ -4,6 +4,7 @@ import com.thewizrd.shared_resources.utils.ConversionMethods
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.StringUtils.toUpperCase
 import com.thewizrd.shared_resources.utils.calculateDewpointC
+import com.thewizrd.shared_resources.utils.calculateDewpointF
 import com.thewizrd.shared_resources.utils.getBeaufortScale
 import com.thewizrd.shared_resources.utils.getFeelsLikeTemp
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
@@ -284,6 +285,8 @@ fun createAtmosphere(root: CurrentRootobject): Atmosphere {
         pressureTrend = ""
         visibilityKm = root.visibility / 1000f
         visibilityMi = ConversionMethods.kmToMi(visibilityKm)
+        dewpointC = calculateDewpointC(ConversionMethods.KtoC(root.main.temp), root.main.humidity)
+        dewpointF = calculateDewpointF(ConversionMethods.KtoF(root.main.temp), root.main.humidity)
     }
 }
 

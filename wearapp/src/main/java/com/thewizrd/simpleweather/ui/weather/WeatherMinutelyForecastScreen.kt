@@ -19,6 +19,7 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
+import androidx.wear.compose.material3.ScreenScaffold
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.simpleweather.ui.ScalingLazyListStateViewModel
 import com.thewizrd.simpleweather.ui.components.WeatherMinutelyForecastPanel
@@ -37,31 +38,33 @@ fun WeatherMinutelyForecastScreen(
 
     val scrollStateViewModel: ScalingLazyListStateViewModel = viewModel(backStackEntry)
 
-    ScalingLazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .rotaryScrollable(
-                RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
-                focusRequester
-            ),
-        state = scrollStateViewModel.scrollState,
-        anchorType = ScalingLazyListAnchorType.ItemCenter,
-        contentPadding = PaddingValues(top = 48.dp)
-    ) {
-        items(minutelyForecasts) {
-            WeatherMinutelyForecastPanel(model = it)
+    ScreenScaffold(scrollState = scrollStateViewModel.scrollState) {
+        ScalingLazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .rotaryScrollable(
+                    RotaryScrollableDefaults.behavior(scrollStateViewModel.scrollState),
+                    focusRequester
+                ),
+            state = scrollStateViewModel.scrollState,
+            anchorType = ScalingLazyListAnchorType.ItemCenter,
+            contentPadding = PaddingValues(top = 48.dp)
+        ) {
+            items(minutelyForecasts) {
+                WeatherMinutelyForecastPanel(model = it)
+            }
         }
-    }
 
-    LaunchedEffect(backStackEntry) {
-        backStackEntry.arguments?.getInt(Constants.KEY_POSITION)?.let { position ->
-            scrollStateViewModel.scrollState.scrollToItem(position)
+        LaunchedEffect(backStackEntry) {
+            backStackEntry.arguments?.getInt(Constants.KEY_POSITION)?.let { position ->
+                scrollStateViewModel.scrollState.scrollToItem(position)
+            }
         }
-    }
 
-    LaunchedEffect(Unit) {
-        lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-            focusRequester.requestFocus()
+        LaunchedEffect(Unit) {
+            lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                focusRequester.requestFocus()
+            }
         }
     }
 }

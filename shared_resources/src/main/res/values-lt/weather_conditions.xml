@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Conditions -->
+    <string name="weather_tornado">"Tornadas"</string>
+    <string name="weather_tropicalstorm">"Atogrąžų audra"</string>
+    <string name="weather_hurricane">"Uraganas"</string>
+    <string name="weather_severetstorms">"Stiprios perkūnijos"</string>
+    <string name="weather_tstorms">"Perkūnijos"</string>
+    <string name="weather_rainandsnow">"Mišrus lietus ir sniegas"</string>
+    <string name="weather_rainandsleet">"Mišrus lietus ir šlapdriba"</string>
+    <string name="weather_snowandsleet">"Mišrus sniegas ir šlapdriba"</string>
+    <string name="weather_freezingrain">"Šalantis lietus"</string>
+    <string name="weather_snowflurries">"Sniego kruopos"</string>
+    <string name="weather_lightsnowshowers">"Lengvas sniegas"</string>
+    <string name="weather_blowingsnow">"Pūga"</string>
+    <string name="weather_snow">"Sniegas"</string>
+    <string name="weather_hail">"Kruša"</string>
+    <string name="weather_sleet">"Šlapdriba"</string>
+    <string name="weather_dust">"Dulkės"</string>
+    <string name="weather_foggy">"Rūkas"</string>
+    <string name="weather_haze">"Migla"</string>
+    <string name="weather_smoky">"Dūmai"</string>
+    <string name="weather_windy">"Vėjuota"</string>
+    <string name="weather_cold">"Šalta"</string>
+    <string name="weather_cloudy">"Debesuota"</string>
+    <string name="weather_mostlycloudy">"Daugiausia debesuota"</string>
+    <string name="weather_partlycloudy">"Iš dalies debesuota"</string>
+    <string name="weather_clear">"Giedra"</string>
+    <string name="weather_sunny">"Saulėta"</string>
+    <string name="weather_fair">"Giedra"</string>
+    <string name="weather_rainandhail">"Mišrus lietus ir kruša"</string>
+    <string name="weather_hot">"Karšta"</string>
+    <string name="weather_isotstorms">"Izoliuotos perkūnijos"</string>
+    <string name="weather_scatteredtstorms">"Išsibarstę perkūnijos"</string>
+    <string name="weather_scatteredshowers">"Išsibarstę lietūs"</string>
+    <string name="weather_heavysnow">"Smarkus sniegas"</string>
+    <string name="weather_fog">"Rūkas"</string>
+    <string name="weather_lightrain">"Nedidelis lietus"</string>
+    <string name="weather_rain">"Lietus"</string>
+    <string name="weather_rainshowers">"Lietus su perkūnija"</string>
+    <string name="weather_blizzard">"Pūga"</string>
+    <string name="weather_overcast">"Apsiniaukę"</string>
+    <string name="weather_sleet_tstorms">"Šlapdriba ir perkūnija"</string>
+    <string name="weather_snow_tstorms">"Sniegas ir perkūnija"</string>
+    <string name="weather_clearsky">"Giedras dangus"</string>
+    <string name="weather_heavyrain">"Smarkus lietus"</string>
+    <string name="weather_mostlyclear">"Daugiausia giedra"</string>
+    <string name="weather_lightfog">"Silpnas rūkas"</string>
+    <string name="weather_drizzle">"Dulksna"</string>
+    <string name="weather_lightwind">"Lengvas vėjas"</string>
+    <string name="weather_smog">"Smogas"</string>
+</resources>

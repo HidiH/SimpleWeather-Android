@@ -13,10 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.ToggleChip
-import androidx.wear.compose.material.ToggleChipDefaults
+import androidx.wear.compose.material3.SwitchButton
+import androidx.wear.compose.material3.Text
 import com.thewizrd.simpleweather.ui.compose.tools.WearPreviewDevices
 
 @Composable
@@ -47,7 +45,7 @@ fun WearSwitchPreference(
     onCheckedChange: (Boolean) -> Unit,
     enabled: Boolean = true,
 ) {
-    ToggleChip(
+    SwitchButton(
         modifier = modifier,
         label = {
             Text(
@@ -69,15 +67,6 @@ fun WearSwitchPreference(
         checked = checked,
         onCheckedChange = onCheckedChange,
         enabled = enabled,
-        toggleControl = {
-            Icon(
-                imageVector = ToggleChipDefaults.switchIcon(checked = checked),
-                contentDescription = if (checked) "On" else "Off",
-            )
-        },
-        colors = ToggleChipDefaults.toggleChipColors(
-            uncheckedToggleControlColor = ToggleChipDefaults.SwitchUncheckedIconColor
-        ),
     )
 }
 

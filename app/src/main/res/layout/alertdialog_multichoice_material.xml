@@ -16,6 +16,7 @@
 
 <CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
+    style="@style/Widget.Material3.CheckedTextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?attr/listPreferredItemHeightSmall"
@@ -29,4 +30,5 @@
     android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
     android:drawableStart="?android:attr/listChoiceIndicatorMultiple"
     android:drawablePadding="20dp"
+    android:drawableTint="@color/abc_tint_btn_checkable"
     android:ellipsize="marquee" />

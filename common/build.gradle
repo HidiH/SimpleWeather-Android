@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk rootProject.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toInteger()
 
     defaultConfig {
-        minSdk rootProject.minSdkVersion
-        targetSdk rootProject.targetSdkVersion
+        minSdk libs.versions.minSdkVersion.get().toInteger()
+        targetSdk libs.versions.targetSdkVersion.get().toInteger()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -57,39 +57,39 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
+    coreLibraryDesugaring libs.desugar.jdk.libs
 
     implementation project(":shared_resources")
     implementation project(":weather-api")
 
-    androidTestImplementation "androidx.test.ext:junit:$junit_version"
+    androidTestImplementation libs.test.ext.junit
 
-    implementation "androidx.core:core-ktx:$core_version"
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation "androidx.arch.core:core-runtime:$arch_core_runtime_version"
-    implementation "com.google.android.material:material:$material_version"
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    implementation "androidx.preference:preference-ktx:$preference_version"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "androidx.annotation:annotation:$annotation_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
-    implementation "androidx.vectordrawable:vectordrawable:$vectordrawable_version"
-    implementation 'androidx.palette:palette-ktx:1.0.0'
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    implementation libs.core.ktx
+    implementation libs.appcompat
+    implementation libs.arch.core.runtime
+    implementation libs.material
+    implementation libs.cardview
+    implementation libs.recyclerview
+    implementation libs.preference.ktx
+    implementation libs.legacy.support.v4
+    implementation libs.annotation
+    implementation libs.constraintlayout
+    implementation libs.vectordrawable
+    implementation libs.palette.ktx
+    implementation libs.paging.runtime.ktx
 
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation libs.lifecycle.extensions
 
-    implementation "com.github.bumptech.glide:glide:$glide_version"
-    implementation "com.ibm.icu:icu4j:$icu4j_version"
+    implementation libs.glide
+    implementation libs.icu4j
 
     // Firebase
-    fullgmsImplementation platform("com.google.firebase:firebase-bom:$firebase_version")
-    fullgmsImplementation 'com.google.firebase:firebase-perf'
+    fullgmsImplementation platform(libs.firebase.bom)
+    fullgmsImplementation libs.firebase.perf
 
-    fullgmsImplementation "com.google.android.gms:play-services-basement:$gms_basement_version"
-    fullgmsImplementation "com.google.android.gms:play-services-tasks:$gms_tasks_version"
-    fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
-    fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
+    fullgmsImplementation libs.gms.play.services.basement
+    fullgmsImplementation libs.gms.play.services.tasks
+    fullgmsImplementation libs.gms.play.services.location
+    fullgmsImplementation libs.gms.play.services.wearable
+    fullgmsImplementation libs.kotlinx.coroutines.play.services
 }
