@@ -197,6 +197,7 @@
     <string name="label_minutelyforecast">"Pe minute"</string>
     <string name="hint_username">"Nume de utilizator"</string>
     <string name="hint_password">"Parolă"</string>
+    <string name="pref_category_terms">Termeni</string>
     <string name="pref_title_privacypolicy">"Politica de confidențialitate"</string>
     <string name="pref_title_termsofservice">"Termeni și condiții"</string>
     <string name="label_moreinfo">"Mai multe informații"</string>

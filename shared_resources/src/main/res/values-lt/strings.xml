@@ -197,6 +197,7 @@
     <string name="label_minutelyforecast">"Minutinė"</string>
     <string name="hint_username">"Vartotojo vardas"</string>
     <string name="hint_password">"Slaptažodis"</string>
+    <string name="pref_category_terms">Sąlygos</string>
     <string name="pref_title_privacypolicy">"Privatumo politika"</string>
     <string name="pref_title_termsofservice">"Paslaugų teikimo sąlygos"</string>
     <string name="label_moreinfo">"Daugiau informacijos"</string>

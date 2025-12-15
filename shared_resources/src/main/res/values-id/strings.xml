@@ -197,6 +197,7 @@
     <string name="label_minutelyforecast">"Per Menit"</string>
     <string name="hint_username">"Nama Pengguna"</string>
     <string name="hint_password">"Kata Sandi"</string>
+    <string name="pref_category_terms">Persyaratan Layanan</string>
     <string name="pref_title_privacypolicy">"Kebijakan pribadi"</string>
     <string name="pref_title_termsofservice">"Ketentuan Layanan"</string>
     <string name="label_moreinfo">"Info Lebih Lanjut"</string>
