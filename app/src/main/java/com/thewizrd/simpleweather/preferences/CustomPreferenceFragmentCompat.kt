@@ -1,12 +1,22 @@
 package com.thewizrd.simpleweather.preferences
 
 import android.app.Activity
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.CallSuper
 import androidx.annotation.IntDef
 import androidx.annotation.StringRes
+import androidx.core.view.updatePaddingRelative
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceScreen
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.thewizrd.shared_resources.lifecycle.LifecycleAwarePreferenceFragmentCompat
+import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
+import com.thewizrd.simpleweather.adapters.SpacerAdapter
 import com.thewizrd.simpleweather.snackbar.Snackbar
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.snackbar.SnackbarManagerInterface
@@ -87,5 +97,18 @@ abstract class CustomPreferenceFragmentCompat : LifecycleAwarePreferenceFragment
     override fun onPause() {
         unloadSnackManager()
         super.onPause()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Don't allow any divider in between the preferences in expressive design.
+        setDivider(null)
+    }
+
+    override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
+        return ConcatAdapter(
+            SettingsPreferenceGroupAdapter(preferenceScreen),
+            SpacerAdapter(preferenceScreen.context.dpToPx(16f).toInt())
+        )
     }
 }

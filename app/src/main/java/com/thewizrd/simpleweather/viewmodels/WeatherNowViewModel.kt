@@ -26,12 +26,10 @@ import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.buildEmptyGPSLocation
 import com.thewizrd.shared_resources.utils.CommonActions
-import com.thewizrd.shared_resources.utils.CustomException
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
-import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.controls.ImageDataViewModel
 import com.thewizrd.weather_api.weatherModule
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +48,6 @@ sealed interface WeatherNowState {
     val isGPSLocation: Boolean
     val locationData: LocationData?
     val noLocationAvailable: Boolean
-    val showDisconnectedView: Boolean
     val isImageLoading: Boolean
 
     data class NoWeather(
@@ -60,7 +57,6 @@ sealed interface WeatherNowState {
         override val isGPSLocation: Boolean,
         override val locationData: LocationData? = null,
         override val noLocationAvailable: Boolean = false,
-        override val showDisconnectedView: Boolean = false,
         override val isImageLoading: Boolean = false
     ) : WeatherNowState
 
@@ -71,7 +67,6 @@ sealed interface WeatherNowState {
         override val isGPSLocation: Boolean,
         override val locationData: LocationData? = null,
         override val noLocationAvailable: Boolean = false,
-        override val showDisconnectedView: Boolean = false,
         override val isImageLoading: Boolean = false
     ) : WeatherNowState
 }
@@ -83,7 +78,6 @@ private data class WeatherNowViewModelState(
     val isGPSLocation: Boolean = false,
     val locationData: LocationData? = null,
     val noLocationAvailable: Boolean = false,
-    val showDisconnectedView: Boolean = false,
     val scrollViewPosition: Int = 0,
     val isImageLoading: Boolean = false,
     val isInitialized: Boolean = false
@@ -97,7 +91,6 @@ private data class WeatherNowViewModelState(
                 isGPSLocation = isGPSLocation,
                 locationData = locationData,
                 noLocationAvailable = noLocationAvailable,
-                showDisconnectedView = showDisconnectedView,
                 isImageLoading = isImageLoading
             )
         } else {
@@ -107,7 +100,6 @@ private data class WeatherNowViewModelState(
                 isGPSLocation = isGPSLocation,
                 locationData = locationData,
                 noLocationAvailable = noLocationAvailable,
-                showDisconnectedView = showDisconnectedView,
                 isImageLoading = isImageLoading
             )
         }
@@ -269,19 +261,6 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
         when (result) {
             is WeatherResult.Error -> {
                 viewModelState.update { state ->
-                    if (state.locationData?.let { !wm.isRegionSupported(it) } == true) {
-                        Logger.writeLine(
-                            Log.WARN,
-                            "Location: %s; countryCode: %s",
-                            JSONParser.serializer(state.locationData),
-                            state.locationData.countryCode
-                        )
-                        Logger.writeLine(
-                            Log.WARN,
-                            CustomException(R.string.error_message_weather_region_unsupported)
-                        )
-                    }
-
                     val errorMessages =
                         state.errorMessages + ErrorMessage.WeatherError(result.exception)
                     state.copy(
@@ -328,19 +307,6 @@ class WeatherNowViewModel(app: Application) : AndroidViewModel(app) {
                 val weatherData = result.data.toUiModel()
 
                 viewModelState.update { state ->
-                    if (state.locationData?.let { !wm.isRegionSupported(it) } == true) {
-                        Logger.writeLine(
-                            Log.WARN,
-                            "Location: %s; countryCode: %s",
-                            JSONParser.serializer(state.locationData),
-                            state.locationData.countryCode
-                        )
-                        Logger.writeLine(
-                            Log.WARN,
-                            CustomException(R.string.error_message_weather_region_unsupported)
-                        )
-                    }
-
                     val errorMessages =
                         state.errorMessages + ErrorMessage.WeatherError(result.exception)
                     state.copy(

@@ -72,6 +72,7 @@
     <string name="label_night">Night</string>
     <string name="label_temp">Temp</string>
     <string name="label_minutelyforecast">Minutely</string>
+    <string name="label_nodata">NO DATA</string>
     <!-- Units -->
     <string name="label_temperature">Temperature</string>
     <string name="label_speed">Speed</string>
@@ -91,8 +92,8 @@
     <string name="pref_title_general">General</string>
     <string name="pref_category_version">Version</string>
     <string name="pref_title_units">Units</string>
-    <string name="pref_summary_fahrenheit">Display units in Fahrenheit</string>
-    <string name="pref_summary_celsius">Display units in Celsius</string>
+    <string name="pref_summary_fahrenheit">Display units in Fahrenheit (°F)</string>
+    <string name="pref_summary_celsius">Display units in Celsius (°C)</string>
     <string name="pref_title_about">About</string>
     <string name="pref_title_about_app">About SimpleWeather</string>
     <string name="pref_title_credits">Credits</string>
@@ -153,6 +154,7 @@
     <string name="werror_querynotfound">No cities match your search query</string>
     <string name="werror_unknown">Unknown error occurred</string>
     <string name="werror_ratelimited">Too many requests. Please try again after a few minutes</string>
+    <string name="werror_locationnotsupported">Location not supported by this weather provider</string>
 
     <!-- Refresh Intervals -->
     <string name="pref_title_refreshinterval">Update Interval</string>
@@ -175,6 +177,7 @@
     <string name="not_channel_desc_alerts">Notifications for weather alerts</string>
     <string name="not_channel_name_general">Service notifications</string>
     <string name="not_title_weather_update">Updating weather…</string>
+    <string name="notification_perm_denied">Notification permission denied</string>
 
     <!-- Alerts -->
     <string name="datetime_day_ago">%1$dd ago</string>
@@ -194,6 +197,7 @@
     <string name="userthememode_dark">Dark</string>
     <string name="userthememode_black">Dark (AMOLED)</string>
     <string name="userthememode_light">Light</string>
+    <string name="pref_title_color">Color</string>
 
     <!-- Date and Time Format -->
     <string name="clock_12_hours_ampm_format" translatable="false">h:mm<small>a</small></string>
@@ -239,6 +243,8 @@
     <string name="hint_appcode" translatable="false">App Code/Key</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
+
+    <string name="pref_category_terms">Terms</string>
     <string name="pref_title_privacypolicy">Privacy Policy</string>
     <string name="pref_title_termsofservice">Terms of Service</string>
 

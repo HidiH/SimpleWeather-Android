@@ -33,6 +33,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.withStateAtLeast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -71,6 +72,7 @@ import com.thewizrd.shared_resources.utils.ContextUtils.getOrientation
 import com.thewizrd.shared_resources.utils.ContextUtils.isLargeTablet
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
+import com.thewizrd.simpleweather.NavGraphDirections
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.activities.LocationSearch
 import com.thewizrd.simpleweather.adapters.FavoritesPanelAdapter
@@ -291,13 +293,17 @@ class LocationsFragment : ToolbarFragment() {
         }
         binding.fab.setOnClickListener {
             runWithView {
-                locationSearchLauncher.launch(
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        requireActivity(),
-                        it,
-                        Constants.SHARED_ELEMENT
-                    )
-                )
+                runCatching {
+                    withStateAtLeast(state = Lifecycle.State.RESUMED) {
+                        locationSearchLauncher.launch(
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                requireActivity(),
+                                it,
+                                Constants.SHARED_ELEMENT
+                            )
+                        )
+                    }
+                }
             }
         }
         ViewCompat.setTransitionName(binding.fab, Constants.SHARED_ELEMENT)
@@ -631,9 +637,16 @@ class LocationsFragment : ToolbarFragment() {
                 }
                 showSnackbar(snackbar)
             }
-            ErrorStatus.QUERYNOTFOUND -> {
+            ErrorStatus.LOCATIONNOTSUPPORTED -> {
                 showSnackbar(
-                    Snackbar.make(rootView.context, wEx.message, Snackbar.Duration.LONG)
+                    Snackbar.make(rootView.context, wEx.message, Snackbar.Duration.LONG).apply {
+                        setAction(R.string.action_settings) {
+                            runCatching {
+                                rootView.findNavController()
+                                    .safeNavigate(NavGraphDirections.actionGlobalSettingsFragment())
+                            }
+                        }
+                    }
                 )
             }
             else -> {
@@ -791,7 +804,7 @@ class LocationsFragment : ToolbarFragment() {
             }
             toolbar.setTitleTextAppearance(
                 toolbar.context,
-                R.style.TextAppearance_OpenSans_ActionModeTitleOnPrimary
+                R.style.TextAppearance_SimpleWeather_ActionModeTitleOnPrimary
             )
         } else {
             toolbar.navigationIcon = null

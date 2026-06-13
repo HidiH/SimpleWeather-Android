@@ -109,9 +109,6 @@
     <!-- Weather Summary or Weather Overview -->
     <string name="pref_title_feature_summary">"Weeroverzicht"</string>
     <string name="prompt_max_locations_allowed">"Maximaal vijf locaties toegestaan"</string>
-
-    <!-- Forecast Graphs -->
-    <string name="label_nodata">"GEEN GEGEVENS"</string>
     <string name="pref_title_widgetgraphtype">"Voorspelling Type"</string>
 
     <!-- Widget Labels -->
@@ -143,4 +140,7 @@
     <string name="alertsev_extreme">"Extreem"</string>
     <string name="pref_title_txtshadow">"Tekst Schaduw"</string>
     <string name="pref_summary_txtshadow">"Schaduwlaag toevoegen aan tekst"</string>
+    <string name="precipitation_likely_text_format">"Waarschijnlijk regen rond %1$s (%2$d%% kans)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Regen begint naar verwachting rond %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Regen stopt naar verwachting rond %1$s"</string>
 </resources>

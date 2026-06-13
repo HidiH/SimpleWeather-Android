@@ -15,15 +15,16 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.horologist.compose.layout.fillMaxRectangle
 import com.thewizrd.common.controls.HourlyForecastItemViewModel
 import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.shared_resources.designer.initializeDependencies
 import com.thewizrd.shared_resources.icons.WeatherIcons
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import java.time.ZonedDateTime
@@ -35,8 +36,8 @@ fun HourlyForecastItem(
     iconProvider: String? = null
 ) {
     val ctx = LocalContext.current
-    val dateStr = remember(ctx, model.forecast.date) {
-        buildAnnotatedStringDate(model.forecast.date, DateFormat.is24HourFormat(ctx))
+    val dateStr = remember(ctx, model.dateTime) {
+        buildAnnotatedStringDate(model.dateTime, DateFormat.is24HourFormat(ctx))
     }
 
     HourlyForecastItem(
@@ -63,7 +64,7 @@ fun HourlyForecastItem(
                 .weight(1f),
             maxLines = 1,
             text = date,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
         WeatherIcon(
@@ -81,7 +82,7 @@ fun HourlyForecastItem(
                 .weight(1f),
             maxLines = 1,
             text = hiTemp,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
     }
@@ -134,31 +135,35 @@ private fun buildAnnotatedStringDatePreview(
 }
 
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_LARGE_ROUND,
+    device = WearDevices.LARGE_ROUND,
     showBackground = true,
     backgroundColor = 0xFF000000
 )
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_SQUARE,
+    device = WearDevices.SQUARE,
     showBackground = true,
     backgroundColor = 0xFF000000
 )
 @Preview(
-    apiLevel = 26,
+    apiLevel = 34,
     uiMode = Configuration.UI_MODE_TYPE_WATCH,
     showSystemUi = true,
-    device = Devices.WEAR_OS_SMALL_ROUND,
+    device = WearDevices.SMALL_ROUND,
     showBackground = true,
     backgroundColor = 0xFF000000
 )
 @Composable
 fun PreviewHourlyForecastItem() {
+    val context = LocalContext.current.also {
+        it.initializeDependencies(isPhone = false)
+    }
+
     Box(
         modifier = Modifier.fillMaxRectangle(),
         contentAlignment = Alignment.Center

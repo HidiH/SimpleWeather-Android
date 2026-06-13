@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="uv_0">"منخفض"</string>
+    <string name="uv_3">"معتدل"</string>
+    <string name="uv_6">"عالي"</string>
+    <string name="uv_8">"عالي جدا"</string>
+    <string name="uv_11">"شديد"</string>
+</resources>

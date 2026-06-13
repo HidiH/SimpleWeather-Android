@@ -12,7 +12,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.thewizrd.common.CommonModule
 import com.thewizrd.common.commonModule
 import com.thewizrd.common.controls.WeatherUiModel
-import com.thewizrd.shared_resources.*
+import com.thewizrd.shared_resources.AppState
+import com.thewizrd.shared_resources.ApplicationLib
+import com.thewizrd.shared_resources.DateTimeConstants
+import com.thewizrd.shared_resources.SharedModule
+import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
@@ -21,6 +25,7 @@ import com.thewizrd.shared_resources.locationdata.toLocationData
 import com.thewizrd.shared_resources.okhttp3.OkHttp3Utils.await
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.WeatherProviderConfig
+import com.thewizrd.shared_resources.sharedDeps
 import com.thewizrd.shared_resources.utils.Coordinate
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.JSONParser
@@ -39,6 +44,7 @@ import com.thewizrd.weather_api.google.location.AndroidLocationProvider
 import com.thewizrd.weather_api.google.location.GoogleLocationProvider
 import com.thewizrd.weather_api.google.location.getFromLocationNameAsync
 import com.thewizrd.weather_api.google.location.isGeocoderAvailable
+import com.thewizrd.weather_api.google.pollen.GooglePollenProvider
 import com.thewizrd.weather_api.here.auth.hereOAuthService
 import com.thewizrd.weather_api.locationiq.LocationIQProvider
 import com.thewizrd.weather_api.nws.SolCalcAstroProvider
@@ -53,7 +59,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,7 +69,7 @@ import java.io.IOException
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.ExecutionException
 
 @RunWith(AndroidJUnit4::class)
@@ -307,8 +315,8 @@ class UnitTests {
     @Throws(ExecutionException::class, InterruptedException::class)
     fun firebaseDBTest() {
         runBlocking(Dispatchers.Default) {
-            val updateTime = ImageDatabase.getLastUpdateTime()
-            assertTrue(updateTime > 0)
+            val remoteDBVersionTimestamp = ImageDatabase.getVersionTimestamp()
+            assertTrue(remoteDBVersionTimestamp > 0)
         }
     }
 
@@ -378,7 +386,9 @@ class UnitTests {
             val queryVM = locations.firstOrNull()
             assertNotNull(queryVM)
 
-            val locModel = if (locationProvider.needsLocationFromName()) {
+            val locModel = if (locationProvider.needsLocationFromID()) {
+                locationProvider.getLocationFromID(queryVM!!)
+            } else if (locationProvider.needsLocationFromName()) {
                 locationProvider.getLocationFromName(queryVM!!)
             } else if (locationProvider.needsLocationFromGeocoder()) {
                 locationProvider.getLocation(
@@ -387,8 +397,6 @@ class UnitTests {
                         queryVM.locationLong
                     ), WeatherAPI.GOOGLE
                 )
-            } else if (locationProvider.needsLocationFromID()) {
-                locationProvider.getLocationFromID(queryVM!!)
             } else {
                 queryVM
             }
@@ -672,6 +680,29 @@ class UnitTests {
 
         settingsManager.setAPIKey(WeatherAPI.GOOGLE, originalKey)
         settingsManager.setPersonalKey(WeatherAPI.GOOGLE, false)
+    }
+
+    @Throws(WeatherException::class)
+    @Test
+    fun getGooglePollen() {
+        val originalKey = settingsManager.getAPIKey(WeatherAPI.GOOGLE_POLLEN)
+
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE_POLLEN, true)
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE_POLLEN, "Google_REPLACE_VALUE")
+
+        runBlocking(Dispatchers.Default) {
+            val locationData = LocationData().apply {
+                latitude = 47.6721646
+                longitude = -122.1706614
+                tzLong = "America/Los_Angeles"
+            }
+
+            val pollen = GooglePollenProvider().getPollenData(locationData) // ~ Mountain View
+            assertNotNull(pollen)
+        }
+
+        settingsManager.setAPIKey(WeatherAPI.GOOGLE_POLLEN, originalKey)
+        settingsManager.setPersonalKey(WeatherAPI.GOOGLE_POLLEN, false)
     }
 
     @Test

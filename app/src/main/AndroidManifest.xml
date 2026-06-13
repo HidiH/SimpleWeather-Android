@@ -49,6 +49,7 @@
         android:allowBackup="${allowBackup}"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -310,6 +311,45 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/app_widget_4x2_tomorrow_info" />
+        </receiver>
+        <receiver
+            android:name=".widgets.WeatherWidgetProvider2x2M3"
+            android:label="@string/label_widget_weather_2x2"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_2x2_m3_info" />
+        </receiver>
+        <receiver
+            android:name=".widgets.WeatherWidgetProvider4x4M3"
+            android:label="@string/label_widget_weather_4x4"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_4x4_m3_info" />
+        </receiver>
+        <receiver
+            android:name=".widgets.WeatherWidgetProvider4x2M3"
+            android:label="@string/label_widget_weather_4x2"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_4x2_m3_info" />
         </receiver>
         <receiver
             android:name=".notifications.WeatherAlertNotificationBroadcastReceiver"

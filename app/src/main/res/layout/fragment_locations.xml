@@ -16,7 +16,7 @@
         tools:context=".main.LocationsFragment"
         tools:layout_height="match_parent"
         tools:layout_width="match_parent"
-        tools:theme="@style/Theme.Material3.DayNight">
+        tools:theme="@style/Theme.Material3Expressive.DayNight">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -32,7 +32,7 @@
             app:showIfTrue="@{!viewModel.uiState.loading}"
             tools:listitem="@layout/location_panel" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/no_locations_prompt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,8 +49,8 @@
             android:drawablePadding="8dp"
             tools:visibility="gone" />
 
-        <androidx.core.widget.ContentLoadingProgressBar
-            style="@style/Widget.AppCompat.ProgressBar"
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

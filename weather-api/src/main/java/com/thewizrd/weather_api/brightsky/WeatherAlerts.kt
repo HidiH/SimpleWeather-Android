@@ -20,10 +20,8 @@ fun createWeatherAlerts(alerts: AlertsResponse?): Collection<WeatherAlert>? {
 fun createWeatherAlert(alert: AlertsItem): WeatherAlert {
     return WeatherAlert().apply {
         attribution = "DWD"
-        date = ZonedDateTime.parse(alert.effective)
-        expiresDate =
-            alert.expires?.let { ZonedDateTime.parse(it) } ?: ZonedDateTime.parse(alert.onset)
-                .plusDays(1)
+        date = ZonedDateTime.parse(alert.onset ?: alert.effective)
+        expiresDate = alert.expires?.let { ZonedDateTime.parse(it) } ?: date.plusDays(1)
         severity = when (alert.severity) {
             "extreme" -> WeatherAlertSeverity.EXTREME
             "severe" -> WeatherAlertSeverity.SEVERE

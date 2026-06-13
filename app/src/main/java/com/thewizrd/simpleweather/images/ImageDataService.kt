@@ -25,6 +25,8 @@ interface ImageDataService {
     @get:WorkerThread
     val isEmpty: Boolean
 
+    fun getImageDBVersionTimestamp(): Long
+    fun setImageDBVersionTimestamp(value: Long)
     fun getImageDBUpdateTime(): Long
     fun setImageDBUpdateTime(value: Long)
     fun shouldInvalidateCache(): Boolean

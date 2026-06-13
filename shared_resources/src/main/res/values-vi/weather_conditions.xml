@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Conditions -->
+    <string name="weather_tornado">"Vòi rồng"</string>
+    <string name="weather_tropicalstorm">"Bão nhiệt đới"</string>
+    <string name="weather_hurricane">"Bão lớn"</string>
+    <string name="weather_severetstorms">"Dông bão nghiêm trọng"</string>
+    <string name="weather_tstorms">"Dông bão"</string>
+    <string name="weather_rainandsnow">"Mưa và tuyết lẫn"</string>
+    <string name="weather_rainandsleet">"Mưa và mưa tuyết lẫn"</string>
+    <string name="weather_snowandsleet">"Tuyết và mưa tuyết lẫn"</string>
+    <string name="weather_freezingrain">"Mưa đóng băng"</string>
+    <string name="weather_snowflurries">"Tuyết rơi nhẹ"</string>
+    <string name="weather_lightsnowshowers">"Tuyết nhẹ"</string>
+    <string name="weather_blowingsnow">"Bão tuyết"</string>
+    <string name="weather_snow">"Tuyết"</string>
+    <string name="weather_hail">"Mưa đá"</string>
+    <string name="weather_sleet">"Mưa tuyết"</string>
+    <string name="weather_dust">"Bụi"</string>
+    <string name="weather_foggy">"Có sương mù"</string>
+    <string name="weather_haze">"Trời mù"</string>
+    <string name="weather_smoky">"Nhiều khói"</string>
+    <string name="weather_windy">"Có gió"</string>
+    <string name="weather_cold">"Lạnh"</string>
+    <string name="weather_cloudy">"Nhiều mây"</string>
+    <string name="weather_mostlycloudy">"Nhiều mây"</string>
+    <string name="weather_partlycloudy">"Ít mây"</string>
+    <string name="weather_clear">"Quang đãng"</string>
+    <string name="weather_sunny">"Nắng"</string>
+    <string name="weather_fair">"Đẹp trời"</string>
+    <string name="weather_rainandhail">"Mưa và mưa đá lẫn"</string>
+    <string name="weather_hot">"Nóng"</string>
+    <string name="weather_isotstorms">"Dông bão rải rác"</string>
+    <string name="weather_scatteredtstorms">"Dông bão rải rác"</string>
+    <string name="weather_scatteredshowers">"Mưa rào rải rác"</string>
+    <string name="weather_heavysnow">"Tuyết lớn"</string>
+    <string name="weather_fog">"Sương mù"</string>
+    <string name="weather_lightrain">"Mưa nhỏ"</string>
+    <string name="weather_rain">"Mưa"</string>
+    <string name="weather_rainshowers">"Mưa rào"</string>
+    <string name="weather_blizzard">"Bão tuyết lớn"</string>
+    <string name="weather_overcast">"U ám"</string>
+    <string name="weather_sleet_tstorms">"Mưa tuyết và sấm sét"</string>
+    <string name="weather_snow_tstorms">"Tuyết và sấm sét"</string>
+    <string name="weather_clearsky">"Trời quang"</string>
+    <string name="weather_heavyrain">"Mưa lớn"</string>
+    <string name="weather_mostlyclear">"Trời quang mây"</string>
+    <string name="weather_lightfog">"Sương mù nhẹ"</string>
+    <string name="weather_drizzle">"Mưa phùn"</string>
+    <string name="weather_lightwind">"Gió nhẹ"</string>
+    <string name="weather_smog">"Khói mù"</string>
+</resources>

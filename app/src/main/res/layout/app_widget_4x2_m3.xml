@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget"
+    style="@style/Widget.AppWidget.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:theme="@style/AppWidgetTheme.AppWidgetContainer"
+    tools:ignore="ContentDescription,UnusedAttribute,UseAppTint"
+    tools:layout_height="wrap_content"
+    tools:layout_width="384dp"
+    tools:viewBindingIgnore="true">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="start|top"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/location_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingVertical="2dp"
+            android:paddingHorizontal="4dp"
+            android:textColor="@color/widget_m3_pill_foreground_color"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="London" />
+
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_below="@id/location_name"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="4dp"
+            android:tint="@color/widget_m3_pill_foreground_color"
+            android:tintMode="src_in"
+            tools:src="@drawable/wi_day_sunny" />
+
+        <TextView
+            android:id="@+id/condition_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="4dp"
+            android:textFontWeight="500"
+            android:textColor="@color/widget_m3_pill_foreground_color"
+            android:textSize="18sp"
+            android:layout_toEndOf="@id/weather_icon"
+            android:layout_alignTop="@id/weather_icon"
+            android:layout_alignBottom="@id/weather_icon"
+            tools:text="Mostly Cloudy" />
+
+        <TextView
+            android:id="@+id/condition_feelslike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/weather_icon"
+            android:gravity="center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="4dp"
+            android:textFontWeight="500"
+            android:textColor="@color/widget_m3_pill_foreground_color"
+            android:textSize="18sp"
+            tools:text="Feels like 13°" />
+
+        <TextView
+            android:id="@+id/condition_hi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_below="@id/condition_feelslike"
+            android:maxLines="1"
+            android:minWidth="36dp"
+            android:textColor="@color/widget_m3_pill_foreground_color"
+            android:textSize="18sp"
+            tools:text="16°" />
+
+        <TextView
+            android:id="@+id/condition_spacer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_toEndOf="@id/condition_hi"
+            android:layout_below="@id/condition_feelslike"
+            android:maxLines="1"
+            android:textColor="@color/widget_m3_pill_foreground_color"
+            android:textSize="18sp"
+            tools:text="\u2022" />
+
+        <TextView
+            android:id="@+id/condition_lo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/condition_spacer"
+            android:layout_below="@id/condition_feelslike"
+            android:alpha="0.5"
+            android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:minWidth="36dp"
+            android:textColor="?colorOnSurface"
+            android:textSize="18sp"
+            tools:text="11°" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/condition_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical|end"
+            android:gravity="end"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/widget_m3_pill_foreground_color"
+            android:textFontWeight="500"
+            android:textSize="72sp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="72sp"
+            tools:text="14°" />
+
+        <LinearLayout
+            android:id="@+id/hrforecast_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</LinearLayout>

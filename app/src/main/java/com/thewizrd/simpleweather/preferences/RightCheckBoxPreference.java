@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.PreferenceViewHolder;
 
@@ -27,7 +28,7 @@ public class RightCheckBoxPreference extends CheckBoxPreference {
     }
 
     @Override
-    public void onBindViewHolder(PreferenceViewHolder holder) {
+    public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         ViewGroup parent = (ViewGroup) holder.itemView;
         View widgetFrame = parent.findViewById(android.R.id.widget_frame);

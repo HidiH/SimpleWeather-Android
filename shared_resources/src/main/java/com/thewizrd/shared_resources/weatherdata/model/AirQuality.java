@@ -47,6 +47,9 @@ public class AirQuality extends CustomJsonObject {
     @Json(name = "date")
     private LocalDate date;
 
+    @Json(name = "extras")
+    protected AQIExtras extras;
+
     @RestrictTo({RestrictTo.Scope.LIBRARY})
     public AirQuality() {
         // Needed for deserialization
@@ -124,6 +127,14 @@ public class AirQuality extends CustomJsonObject {
         this.date = date;
     }
 
+    public AQIExtras getExtras() {
+        return extras;
+    }
+
+    public void setExtras(AQIExtras extras) {
+        this.extras = extras;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -137,7 +148,8 @@ public class AirQuality extends CustomJsonObject {
                 Objects.equals(pm25, that.pm25) &&
                 Objects.equals(pm10, that.pm10) &&
                 Objects.equals(co, that.co) &&
-                Objects.equals(date, that.date);
+                Objects.equals(date, that.date) &&
+                Objects.equals(extras, that.extras);
     }
 
     @Override
@@ -151,7 +163,8 @@ public class AirQuality extends CustomJsonObject {
                 pm25,
                 pm10,
                 co,
-                date
+                date,
+                extras
         );
     }
 
@@ -213,6 +226,10 @@ public class AirQuality extends CustomJsonObject {
                     case "date":
                         this.date = LocalDate.parse(reader.nextString());
                         break;
+                    case "extras":
+                        this.extras = new AQIExtras();
+                        this.extras.fromJson(reader);
+                        break;
                     default:
                         reader.skipValue();
                         break;
@@ -268,6 +285,15 @@ public class AirQuality extends CustomJsonObject {
                 // "date" : ""
                 writer.name("date");
                 writer.value(date.toString());
+            }
+
+            // "extras" : ""
+            if (extras != null) {
+                writer.name("extras");
+                if (extras == null)
+                    writer.nullValue();
+                else
+                    extras.toJson(writer);
             }
 
             // }

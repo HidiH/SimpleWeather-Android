@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Įveskite vietovę"</string>
+    <string name="api_label">"Orai teikėjas"</string>
+    <string name="key_hint">"Teikėjo raktas"</string>
+    <string name="label_gpsfollow">"Dabartinė vieta"</string>
+    <string name="label_getstarted">"Pradėti"</string>
+    <string name="setup_welcome_prompt">"Sveiki atvykę į SimpleWeather"</string>
+    <string name="setup_welcome_tagline_prompt">"Tiesiog paprasta orų programa"</string>
+    <string name="setup_location_prompt">"Pridėkite vietą, kad pradėtumėte"</string>
+    <string name="setup_preferences_prompt">"Tinkinkite savo nustatymus žemiau"</string>
+    <string name="label_next">"Toliau"</string>
+    <string name="label_back">"Atgal"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Orai"</string>
+    <string name="action_settings">"Nustatymai"</string>
+    <string name="action_retry">"Bandyti iš naujo"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Išsamiau"</string>
+    <string name="label_humidity">"Drėgmė"</string>
+    <string name="label_pressure">"Slėgis"</string>
+    <string name="label_visibility">"Matomumas"</string>
+    <string name="label_feelslike">"Jaučiasi kaip"</string>
+    <string name="label_wind">"Vėjas"</string>
+    <string name="label_forecast">"Prognozė"</string>
+    <string name="label_condition">"Būklė"</string>
+    <string name="label_sunriseset">"Saulėtekis / Saulėlydis"</string>
+    <string name="label_sunrise">"Saulėtekis"</string>
+    <string name="label_sunset">"Saulėlydis"</string>
+    <string name="label_hourlyforecast">"Kas valandą"</string>
+    <string name="label_precipitation">"Krituliai"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"Tikimybė"</string>
+    <string name="label_cloudiness">"Debesuotumas"</string>
+    <string name="label_qpf_rain">"Lietus"</string>
+    <string name="label_qpf_snow">"Sniegas"</string>
+    <string name="credit_prefix">"Duomenys iš"</string>
+    <string name="attrib_prefix">"Nuotrauka autorius"</string>
+    <string name="label_high">"Aukšta"</string>
+    <string name="label_low">"Žema"</string>
+    <string name="label_dewpoint">"Rasos taškas"</string>
+    <string name="label_moonrise">"Mėnulio patekėjimas"</string>
+    <string name="label_moonset">"Mėnulio nusileidimas"</string>
+    <string name="label_moonphase">"Mėnulio fazė"</string>
+    <string name="label_beaufort">"Bofortas"</string>
+    <string name="label_uv">"UV indeksas"</string>
+    <string name="label_airquality">"Oro kokybės indeksas"</string>
+    <string name="label_airquality_short">"Oro kokybė"</string>
+    <string name="label_radar">"Radaras"</string>
+    <string name="label_afternoon">"Popietė"</string>
+    <string name="label_eve">"Vakaras"</string>
+    <string name="label_morning">"Rytas"</string>
+    <string name="label_night">"Naktis"</string>
+    <string name="label_temp">"Temp"</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Orai"</string>
+    <string name="label_nav_alerts">"Įspėjimai"</string>
+    <string name="label_nav_locations">"Vietos"</string>
+    <string name="title_activity_settings">"Nustatymai"</string>
+    <string name="title_fragment_alerts">"Smarkaus oro įspėjimai"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"Bendra"</string>
+    <string name="pref_category_version">"Versija"</string>
+    <string name="pref_title_units">"Vienetai"</string>
+    <string name="pref_summary_fahrenheit">"Rodyti vienetus pagal Farenheitą (°F)"</string>
+    <string name="pref_summary_celsius">"Rodyti vienetus pagal Celsijų (°C)"</string>
+    <string name="pref_title_about">"Apie"</string>
+    <string name="pref_title_about_app">"Apie SimpleWeather"</string>
+    <string name="pref_title_credits">"Autoriai"</string>
+    <string name="pref_title_oslibs">"Atviro kodo bibliotekos"</string>
+    <string name="pref_category_providers">"Duomenų teikėjai"</string>
+    <string name="pref_summary_currentlocation">"Leisti prieigą prie dabartinės vietos naudojant GPS"</string>
+    <string name="pref_summary_apikey">"Įveskite teikėjo raktą, reikalingą %1$s"</string>
+    <string name="message_enter_apikey">"Prašome įvesti teikėjo raktą"</string>
+    <string name="message_keyverified">"Raktas patvirtintas"</string>
+    <string name="message_keyinvalid">"Netinkamas raktas"</string>
+    <string name="pref_title_onnotification">"Orų pranešimas"</string>
+    <string name="pref_summary_notification">"Rodyti nuolatinį pranešimą, kuriame rodomos dabartinės oro sąlygos"</string>
+    <string name="pref_title_api">"Orai teikėjas"</string>
+    <string name="pref_category_notification">"Pranešimai"</string>
+    <string name="pref_title_notificationicon">"Pranešimo piktograma"</string>
+    <string name="pref_title_alerts">"Įspėjimai apie orą"</string>
+    <string name="pref_summary_alerts">"Rodyti pranešimus apie įspėjimus apie orus"</string>
+    <string name="pref_summary_alerts_disabled">"Šis orų teikėjas nepalaiko įspėjimų apie orus"</string>
+    <string name="pref_title_apiregister">"Sukurti paskyrą"</string>
+    <string name="pref_summary_apiregister">"Sukurkite paskyrą, kad užsiregistruotumėte dėl teikėjo rakto"</string>
+    <string name="error_message_weather_region_unsupported">"Šalis nepalaikoma šio orų teikėjo"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Pridėti vietą"</string>
+    <string name="action_editmode">"Redaguoti"</string>
+    <string name="label_currentlocation">"Dabartinė vieta"</string>
+    <string name="label_favoritelocations">"Mėgstamiausios vietos"</string>
+    <string name="error_location_denied">"Vietos prieiga atmesta"</string>
+    <string name="error_retrieve_location">"Nepavyko nustatyti vietos"</string>
+    <string name="error_enable_location_services">"Vietos nustatymo paslaugos išjungtos. Įjunkite nustatymuose"</string>
+    <string name="error_noresults">"Rezultatų nerasta"</string>
+    <string name="label_fab_add_location">"Pridėti vietą"</string>
+    <string name="message_locationremoved">"Vieta pašalinta"</string>
+    <string name="message_needfavorite">"Turi būti bent viena mėgstamiausia vieta"</string>
+    <string name="undo">"Atšaukti"</string>
+    <string name="delete">"Ištrinti"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Leisti prieigą atnaujinti vietą fone, kad būtų teikiami pranešimai ir valdikliai"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Nepavyko įkelti orų duomenų"</string>
+    <string name="werror_networkerror">"Tinklo ryšio klaida"</string>
+    <string name="werror_invalidkey">"Neteisingas teikėjo raktas"</string>
+    <string name="werror_querynotfound">"Jūsų paieškos užklausa neatitinka jokių miestų"</string>
+    <string name="werror_unknown">"Įvyko nežinoma klaida"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Atnaujinimo intervalas"</string>
+    <string name="refresh_60min">"1 valanda"</string>
+    <string name="refresh_2hrs">"2 valandos"</string>
+    <string name="refresh_3hrs">"3 valandos"</string>
+    <string name="refresh_6hrs">"6 valandos"</string>
+    <string name="refresh_12hrs">"12 valandų"</string>
+    <string name="update_prefix">"Atnaujinta"</string>
+    <string name="update_prefix_day">"Atnaujinta"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Temperatūra"</string>
+    <string name="notificationicon_condition">"Oro sąlygos"</string>
+    <string name="not_channel_name_weather">"Pranešimai apie orą"</string>
+    <string name="not_channel_desc_weather">"Pranešimai apie orą"</string>
+    <string name="not_channel_name_alerts">"Įspėjimai apie orą"</string>
+    <string name="not_channel_desc_alerts">"Pranešimai apie įspėjimus apie orus"</string>
+    <string name="not_channel_name_general">"Paslaugų pranešimai"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"Prieš %1$dd"</string>
+    <string name="datetime_hr_ago">"Prieš %1$dh"</string>
+    <string name="datetime_min_ago">"Prieš %1$dm"</string>
+    <string name="datetime_sec_ago">"Prieš %1$ds"</string>
+    <string name="datetime_validuntil">"Galioja iki"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Asmeninis teikėjo raktas"</string>
+    <string name="pref_summary_personalkey">"Naudoti asmeninį orų teikėjo raktą"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Tema"</string>
+    <string name="userthememode_default">"Sistemos numatytoji"</string>
+    <string name="userthememode_dark">"Tamsi"</string>
+    <string name="userthememode_black">"Tamsi (AMOLED)"</string>
+    <string name="userthememode_light">"Šviesi"</string>
+    <string name="summary_default">"Numatytasis"</string>
+    <string name="action_refresh">"Atnaujinti"</string>
+    <string name="label_windgust">"Vėjo gūsis"</string>
+    <string name="pref_title_language">"Kalba"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Temperatūra"</string>
+    <string name="label_speed">"Greitis"</string>
+    <string name="label_distance">"Atstumas"</string>
+    <string name="pref_title_resetunits">"Atkurti numatytąsias vertes"</string>
+    <string name="not_title_weather_update">"Atnaujinamas oras…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Piktogramos"</string>
+    <string name="refresh_30min">"30 minučių"</string>
+    <string name="label_day">"Diena"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Žiedadulkių kiekis"</string>
+    <string name="label_pollen_tree">"Medis"</string>
+    <string name="label_tree_pollen">"Medžių žiedadulkės"</string>
+    <string name="label_pollen_grass">"Žolė"</string>
+    <string name="label_grass_pollen">"Žolių žiedadulkės"</string>
+    <string name="label_pollen_ragweed">"Ambrozija"</string>
+    <string name="label_ragweed_pollen">"Ambrozijos žiedadulkės"</string>
+    <string name="label_count_low">"Žemas"</string>
+    <string name="label_count_moderate">"Vidutinis"</string>
+    <string name="label_count_high">"Aukštas"</string>
+    <string name="label_count_veryhigh">"Labai aukštas"</string>
+    <string name="bg_location_permission_rationale_settings">"Norėdami atnaujinti vietovę fone pranešimams ir valdikliams, nustatykite vietos leidimą į „%1$s“"</string>
+    <string name="prompt_location_not_set">"Vietovė nenustatyta. Prašome pridėti vietovę"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Vietovės prieiga fone"</string>
+    <string name="wear_bg_location_permission_rationale">"Leisti prieigą atnaujinti vietovę fone plytelėms ir komplikacijoms"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"Norėdami atnaujinti vietovę fone plytelėms ir komplikacijoms, nustatykite vietos leidimą į „%1$s“"</string>
+    <string name="time_current">"Dabartinis"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"NĖRA DUOMENŲ"</string>
+    <string name="label_minutelyforecast">"Minutinė"</string>
+    <string name="hint_username">"Vartotojo vardas"</string>
+    <string name="hint_password">"Slaptažodis"</string>
+    <string name="pref_category_terms">Sąlygos</string>
+    <string name="pref_title_privacypolicy">"Privatumo politika"</string>
+    <string name="pref_title_termsofservice">"Paslaugų teikimo sąlygos"</string>
+    <string name="label_moreinfo">"Daugiau informacijos"</string>
+    <string name="action_reset">"Atstatyti"</string>
+    <string name="label_count_low_short">"Žemas"</string>
+    <string name="label_count_moderate_short">"Vidutinis"</string>
+    <string name="label_count_high_short">"Aukštas"</string>
+    <string name="label_count_veryhigh_short">"Aukštas"</string>
+    <string name="werror_ratelimited">"Per daug prašymų. Bandykite dar kartą po kelių minučių"</string>
+    <string name="werror_locationnotsupported">"Šis orų paslaugų teikėjas nepalaiko šios vietos"</string>
+    <string name="notification_perm_denied">"Atsisakyta išduoti leidimą teikti pranešimus"</string>
+    <string name="pref_title_color">Spalva</string>
+</resources>

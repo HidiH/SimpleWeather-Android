@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moonphase_new">"المحاق"</string>
+    <string name="moonphase_waxcrescent">"الهلال المتزايد (أول الشهر)"</string>
+    <string name="moonphase_firstqtr">"تربيع المتزايد (الأول)"</string>
+    <string name="moonphase_waxgibbous">"الأحدب المتزايد (الأول)"</string>
+    <string name="moonphase_full">"البدر"</string>
+    <string name="moonphase_wangibbous">"الأحدب المتناقص (الأخير)"</string>
+    <string name="moonphase_lastqtr">"التربيع المتناقص (الأخير)"</string>
+    <string name="moonphase_wancrescent">"الهلال المتناقص (آخر الشهر)"</string>
+    <string name="moonphase_new_short">"المحاق"</string>
+    <string name="moonphase_waxcrescent_short">"متزايد"</string>
+    <string name="moonphase_firstqtr_short">"الأول"</string>
+    <string name="moonphase_waxgibbous_short">"متزايد"</string>
+    <string name="moonphase_full_short">"بدر"</string>
+    <string name="moonphase_wangibbous_short">"متناقص"</string>
+    <string name="moonphase_lastqtr_short">"الأخير"</string>
+    <string name="moonphase_wancrescent_short">"متناقص"</string>
+</resources>

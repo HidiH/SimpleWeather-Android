@@ -18,13 +18,11 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
+        <com.google.android.material.loadingindicator.LoadingIndicator
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            app:indicatorColor="?attr/colorPrimary" />
+            android:layout_gravity="center" />
 
     </merge>
 </layout>

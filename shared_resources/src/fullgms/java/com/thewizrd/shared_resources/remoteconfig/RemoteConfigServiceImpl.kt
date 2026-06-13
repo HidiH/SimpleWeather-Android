@@ -81,6 +81,14 @@ class RemoteConfigServiceImpl : RemoteConfigService {
                 WeatherAPI.METEOFRANCE
             }
 
+            LocationUtils.isGermany(location) && isProviderEnabled(WeatherAPI.DWD) -> {
+                WeatherAPI.DWD
+            }
+
+            LocationUtils.isCanada(location) && isProviderEnabled(WeatherAPI.ECCC) -> {
+                WeatherAPI.ECCC
+            }
+
             else -> {
                 getDefaultWeatherProvider()
             }
@@ -96,6 +104,14 @@ class RemoteConfigServiceImpl : RemoteConfigService {
 
             LocationUtils.isFrance(location) && isProviderEnabled(WeatherAPI.METEOFRANCE) -> {
                 WeatherAPI.METEOFRANCE
+            }
+
+            LocationUtils.isGermany(location) && isProviderEnabled(WeatherAPI.DWD) -> {
+                WeatherAPI.DWD
+            }
+
+            LocationUtils.isCanada(location) && isProviderEnabled(WeatherAPI.ECCC) -> {
+                WeatherAPI.ECCC
             }
 
             else -> {
@@ -131,5 +147,13 @@ class RemoteConfigServiceImpl : RemoteConfigService {
 
     override fun getBoolean(key: String): Boolean {
         return FirebaseRemoteConfig.getInstance().getBoolean(key)
+    }
+
+    override fun getLong(key: String): Long {
+        return FirebaseRemoteConfig.getInstance().getLong(key)
+    }
+
+    override fun getDouble(key: String): Double {
+        return FirebaseRemoteConfig.getInstance().getDouble(key)
     }
 }

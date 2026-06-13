@@ -28,7 +28,8 @@
     android:background="?android:attr/selectableItemBackground"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    tools:theme="@style/Theme.Material3Expressive.Dark.NoActionBar">
 
     <include layout="@layout/image_frame" />
 
@@ -52,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceListItem"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:ellipsize="marquee"
                 tools:title="Title" />
 

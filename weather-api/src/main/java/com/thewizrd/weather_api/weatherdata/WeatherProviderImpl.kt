@@ -20,8 +20,11 @@ import com.thewizrd.shared_resources.weatherdata.AirQualityProvider
 import com.thewizrd.shared_resources.weatherdata.WeatherAPI
 import com.thewizrd.shared_resources.weatherdata.WeatherProvider
 import com.thewizrd.shared_resources.weatherdata.auth.AuthType
-import com.thewizrd.shared_resources.weatherdata.model.*
-import com.thewizrd.weather_api.accuweather.weather.AccuWeatherProvider
+import com.thewizrd.shared_resources.weatherdata.model.AirQualityData
+import com.thewizrd.shared_resources.weatherdata.model.ForecastExtras
+import com.thewizrd.shared_resources.weatherdata.model.UV
+import com.thewizrd.shared_resources.weatherdata.model.Weather
+import com.thewizrd.shared_resources.weatherdata.model.WeatherAlert
 import com.thewizrd.weather_api.aqicn.AQICNData
 import com.thewizrd.weather_api.aqicn.AQICNProvider
 import com.thewizrd.weather_api.extras.isPremiumEnabled
@@ -34,7 +37,7 @@ import com.thewizrd.weather_api.weatherapi.weather.WeatherApiProvider
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
     protected lateinit var mLocationProvider: WeatherLocationProvider
@@ -189,17 +192,9 @@ abstract class WeatherProviderImpl : WeatherProvider, RateLimitedRequest {
 
         if (weather.condition?.pollen == null) {
             runCatching {
-                if (settingsManager.isDevSettingsEnabled() && remoteConfigService.isProviderEnabled(
-                        WeatherAPI.ACCUWEATHER
-                    ) && weather.source != WeatherAPI.ACCUWEATHER
-                ) {
-                    weather.condition!!.pollen =
-                        AccuWeatherProvider().getPollenData(location)?.apply {
-                            attribution = context.getString(R.string.api_accuweather)
-                        }
-                } else if ((isPremiumEnabled() && remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE_POLLEN)) || settingsManager.usePersonalKey(
+                if (remoteConfigService.isProviderEnabled(WeatherAPI.GOOGLE_POLLEN) && (isPremiumEnabled() || BuildConfig.IS_NONGMS || settingsManager.isDevSettingsEnabled() && !settingsManager.getAPIKey(
                         WeatherAPI.GOOGLE_POLLEN
-                    )
+                    ).isNullOrBlank())
                 ) {
                     weather.condition!!.pollen =
                         GooglePollenProvider().getPollenData(location)?.apply {

@@ -23,7 +23,8 @@
     android:paddingEnd="?android:attr/scrollbarSize"
     android:paddingRight="?android:attr/scrollbarSize"
     android:clipChildren="false"
-    android:clipToPadding="false">
+    android:clipToPadding="false"
+    tools:theme="@style/Theme.Material3Expressive.Dark.NoActionBar">
 
     <ImageView
         android:id="@android:id/icon"

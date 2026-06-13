@@ -50,6 +50,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+@Deprecated("Meteomatics Free Basic plan will be discontinued on December 11th, 2025")
 class MeteomaticsWeatherProvider : WeatherProviderImpl() {
     companion object {
         private const val BASE_QUERY_URL = "https://api.meteomatics.com/"

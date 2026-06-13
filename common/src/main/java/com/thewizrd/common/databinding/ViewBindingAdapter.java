@@ -47,6 +47,15 @@ public class ViewBindingAdapter {
         view.setVisibility(hide ? View.INVISIBLE : View.VISIBLE);
     }
 
+    @BindingAdapter(value = {"invisibleIfTrue", "goneIfTrue"}, requireAll = true)
+    public static <T> void invisibleIfTrue(@NonNull View view, boolean hide, boolean gone) {
+        if (gone) {
+            view.setVisibility(View.GONE);
+        } else {
+            view.setVisibility(hide ? View.INVISIBLE : View.VISIBLE);
+        }
+    }
+
     @BindingAdapter("invisibleIfTrueAnimated")
     public static void invisibleIfTrueAnimated(@NonNull View view, boolean hide) {
         if (view.getParent() instanceof ViewGroup) {

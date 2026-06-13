@@ -109,9 +109,6 @@
     <!-- Weather Summary or Weather Overview -->
     <string name="pref_title_feature_summary">"Prehľad počasia"</string>
     <string name="prompt_max_locations_allowed">"Maximálne päť povolených miest"</string>
-
-    <!-- Forecast Graphs -->
-    <string name="label_nodata">"ŽIADNE ÚDAJE"</string>
     <string name="pref_title_widgetgraphtype">"Typ predpovede"</string>
 
     <!-- Widget Labels -->
@@ -143,4 +140,7 @@
     <string name="alertsev_extreme">"Extrémne"</string>
     <string name="pref_title_txtshadow">"Textový tieň"</string>
     <string name="pref_summary_txtshadow">"Pridajte do textu tieňovú vrstvu"</string>
+    <string name="precipitation_likely_text_format">"Je pravdepodobné, že okolo %1$s bude pršať (%2$d%% šanca)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Očakáva sa, že dážď začne okolo %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Očakáva sa, že dážď prestane okolo %1$s"</string>
 </resources>

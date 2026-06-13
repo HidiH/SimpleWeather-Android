@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Conditions -->
+    <string name="weather_tornado">"Hortum"</string>
+    <string name="weather_tropicalstorm">"Tropikal Fırtına"</string>
+    <string name="weather_hurricane">"Kasırga"</string>
+    <string name="weather_severetstorms">"Şiddetli Gök Gürültülü Fırtınalar"</string>
+    <string name="weather_tstorms">"Gök Gürültülü Fırtınalar"</string>
+    <string name="weather_rainandsnow">"Karışık Yağmur ve Kar"</string>
+    <string name="weather_rainandsleet">"Karışık Yağmur ve Sulusepken"</string>
+    <string name="weather_snowandsleet">"Karışık Kar ve Sulusepken"</string>
+    <string name="weather_freezingrain">"Dondurucu Yağmur"</string>
+    <string name="weather_snowflurries">"Hafif Kar Nöbetleri"</string>
+    <string name="weather_lightsnowshowers">"Hafif Kar"</string>
+    <string name="weather_blowingsnow">"Tipi"</string>
+    <string name="weather_snow">"Kar"</string>
+    <string name="weather_hail">"Dolu"</string>
+    <string name="weather_sleet">"Sulusepken"</string>
+    <string name="weather_dust">"Toz"</string>
+    <string name="weather_foggy">"Sisli"</string>
+    <string name="weather_haze">"Puslu"</string>
+    <string name="weather_smoky">"Dumanlı"</string>
+    <string name="weather_windy">"Rüzgarlı"</string>
+    <string name="weather_cold">"Soğuk"</string>
+    <string name="weather_cloudy">"Bulutlu"</string>
+    <string name="weather_mostlycloudy">"Çoğunlukla Bulutlu"</string>
+    <string name="weather_partlycloudy">"Parçalı Bulutlu"</string>
+    <string name="weather_clear">"Açık"</string>
+    <string name="weather_sunny">"Güneşli"</string>
+    <string name="weather_fair">"Hava Güzel"</string>
+    <string name="weather_rainandhail">"Karışık Yağmur ve Dolu"</string>
+    <string name="weather_hot">"Sıcak"</string>
+    <string name="weather_isotstorms">"Yerel Gök Gürültülü Fırtınalar"</string>
+    <string name="weather_scatteredtstorms">"Dağınık Gök Gürültülü Fırtınalar"</string>
+    <string name="weather_scatteredshowers">"Dağınık Sağanaklar"</string>
+    <string name="weather_heavysnow">"Yoğun Kar"</string>
+    <string name="weather_fog">"Sis"</string>
+    <string name="weather_lightrain">"Hafif Yağmur"</string>
+    <string name="weather_rain">"Yağmur"</string>
+    <string name="weather_rainshowers">"Sağanak"</string>
+    <string name="weather_blizzard">"Kar Fırtınası"</string>
+    <string name="weather_overcast">"Kapalı"</string>
+    <string name="weather_sleet_tstorms">"Sulusepken ve Gök Gürültüsü"</string>
+    <string name="weather_snow_tstorms">"Kar ve Gök Gürültüsü"</string>
+    <string name="weather_clearsky">"Açık hava"</string>
+    <string name="weather_heavyrain">"Şiddetli yağmur"</string>
+    <string name="weather_mostlyclear">"Çoğunlukla Açık"</string>
+    <string name="weather_lightfog">"Hafif Sis"</string>
+    <string name="weather_drizzle">"Çiseleme"</string>
+    <string name="weather_lightwind">"Hafif Rüzgar"</string>
+    <string name="weather_smog">"Sisli Hava"</string>
+</resources>

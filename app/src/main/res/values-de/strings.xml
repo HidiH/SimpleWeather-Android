@@ -12,8 +12,6 @@
     <string name="pref_title_feature_beaufort">"Beaufort"</string>
     <string name="pref_title_feature_aqindex">"Luftqualitätsindex"</string>
     <string name="pref_title_feature_moonphase">"Mondphase"</string>
-
-    <!-- Sun Phase or Sunrise/Sunset -->
     <string name="pref_title_feature_sunphase">"Sonnenphase"</string>
     <string name="pref_title_feature_radar">"Wetterradar"</string>
     <string name="pref_title_feature_locpanelimg">"Bild in der Ortsliste"</string>
@@ -73,14 +71,11 @@
     <!-- Rate / Review -->
     <string name="pref_title_rateandreview">"Bewertung und Überprüfung"</string>
 
-    <!-- Gefällt die Anwendung? Die Entwicklung durch eine Bewertung unterstützen -->
     <!-- Fuzzy -->
     <string name="pref_summary_rateandreview">"Mag die App? Helfen Sie bei der Unterstützung durch eine Rezension"</string>
 
     <!-- Translate -->
     <string name="pref_title_translate">"Übersetzung"</string>
-
-    <!-- Can be changed to 'Help us translate the app' -->
     <string name="pref_summary_translate">"Bei der Übersetzung der Anwendung helfen"</string>
 
     <!-- Custom Color -->
@@ -125,9 +120,6 @@
 
     <!-- Fuzzy -->
     <string name="prompt_max_locations_allowed">"Maximal fünf Standorte erlaubt"</string>
-
-    <!-- Forecast Graphs -->
-    <string name="label_nodata">"KEINE DATEN"</string>
     <string name="pref_title_widgetgraphtype">"Vorhersage-Typ"</string>
 
     <!-- Widget Labels -->
@@ -163,4 +155,7 @@
     <string name="alertsev_extreme">"Extrem"</string>
     <string name="pref_title_txtshadow">"Textschatten"</string>
     <string name="pref_summary_txtshadow">"Schattenebene zum Text hinzufügen"</string>
+    <string name="precipitation_likely_text_format">"Regen wahrscheinlich gegen %1$s (%2$d%% Chance)"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"Regenbeginn voraussichtlich um %1$s"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"Regenende voraussichtlich um %1$s"</string>
 </resources>

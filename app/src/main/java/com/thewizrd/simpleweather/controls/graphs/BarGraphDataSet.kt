@@ -1,25 +1,37 @@
 package com.thewizrd.simpleweather.controls.graphs
 
-class BarGraphDataSet(entries: List<BarGraphEntry>) :
-        GraphDataSet<BarGraphEntry>(entries) {
+class BarGraphDataSet : GraphDataSet<BarGraphEntry> {
 
+    var label: String? = null
+
+    var min: Float? = null
+    var max: Float? = null
+
+    constructor(entries: List<BarGraphEntry>) : super(entries) {
+        this.label = null
+    }
+
+    constructor(label: String?, entries: List<BarGraphEntry>) : this(entries) {
+        this.label = label
+    }
+
+    @JvmOverloads
     fun setMinMax(min: Float? = null, max: Float? = null) {
-        if (min != null) {
-            this.yMin = min
-        }
-
-        if (max != null) {
-            this.yMax = max
-        }
+        this.min = min
+        this.max = max
     }
 
     override fun calcMinMax(entry: BarGraphEntry) {
-        if (entry.entryData?.y != null && entry.entryData!!.y < yMin) {
-            yMin = entry.entryData!!.y
+        if (min == null) {
+            if (entry.entryData?.y != null && entry.entryData!!.y < yMin) {
+                yMin = entry.entryData!!.y
+            }
         }
 
-        if (entry.entryData?.y != null && entry.entryData!!.y > yMax) {
-            yMax = entry.entryData!!.y
+        if (max == null) {
+            if (entry.entryData?.y != null && entry.entryData!!.y > yMax) {
+                yMax = entry.entryData!!.y
+            }
         }
     }
 }

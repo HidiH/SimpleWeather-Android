@@ -2,7 +2,6 @@ package com.thewizrd.simpleweather.viewmodels
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import android.location.LocationManager
 import android.util.Log
 import androidx.core.location.LocationManagerCompat
@@ -15,30 +14,25 @@ import com.thewizrd.common.location.LocationProvider
 import com.thewizrd.common.location.LocationResult
 import com.thewizrd.common.performance.PerfTrace
 import com.thewizrd.common.utils.ErrorMessage
-import com.thewizrd.common.wearable.WearConnectionStatus
 import com.thewizrd.common.weatherdata.WeatherDataLoader
 import com.thewizrd.common.weatherdata.WeatherRequest
 import com.thewizrd.common.weatherdata.WeatherResult
-import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.exceptions.ErrorStatus
 import com.thewizrd.shared_resources.exceptions.WeatherException
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.buildEmptyGPSLocation
-import com.thewizrd.shared_resources.preferences.SettingsManager
-import com.thewizrd.shared_resources.utils.CustomException
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.wearable.WearableDataSync
 import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.simpleweather.BuildConfig
-import com.thewizrd.simpleweather.R
-import com.thewizrd.simpleweather.wearable.WearableWorker
-import com.thewizrd.simpleweather.wearable.WearableWorkerActions
-import com.thewizrd.simpleweather.wearable.WeatherDataSyncWorker
-import com.thewizrd.weather_api.weatherModule
+import com.thewizrd.simpleweather.wearable.WearableListenerActions.ACTION_REQUESTSYNCWEATHER
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -54,7 +48,6 @@ sealed interface WeatherNowState {
     val isGPSLocation: Boolean
     val locationData: LocationData?
     val noLocationAvailable: Boolean
-    val showDisconnectedView: Boolean
 
     data class NoWeather(
         override val weather: WeatherUiModel? = null,
@@ -62,8 +55,7 @@ sealed interface WeatherNowState {
         override val errorMessages: List<ErrorMessage>,
         override val isGPSLocation: Boolean,
         override val locationData: LocationData? = null,
-        override val noLocationAvailable: Boolean = false,
-        override val showDisconnectedView: Boolean = false
+        override val noLocationAvailable: Boolean = false
     ) : WeatherNowState
 
     data class HasWeather(
@@ -72,8 +64,7 @@ sealed interface WeatherNowState {
         override val errorMessages: List<ErrorMessage>,
         override val isGPSLocation: Boolean,
         override val locationData: LocationData? = null,
-        override val noLocationAvailable: Boolean = false,
-        override val showDisconnectedView: Boolean = false
+        override val noLocationAvailable: Boolean = false
     ) : WeatherNowState
 }
 
@@ -84,7 +75,7 @@ private data class WeatherNowViewModelState(
     val isGPSLocation: Boolean = false,
     val locationData: LocationData? = null,
     val noLocationAvailable: Boolean = false,
-    val showDisconnectedView: Boolean = false
+    val isInitialized: Boolean = false
 ) {
     fun toWeatherNowState(): WeatherNowState {
         return if (weather?.isValid == true) {
@@ -94,8 +85,7 @@ private data class WeatherNowViewModelState(
                 errorMessages = errorMessages,
                 isGPSLocation = isGPSLocation,
                 locationData = locationData,
-                noLocationAvailable = noLocationAvailable,
-                showDisconnectedView = showDisconnectedView
+                noLocationAvailable = noLocationAvailable
             )
         } else {
             WeatherNowState.NoWeather(
@@ -103,53 +93,26 @@ private data class WeatherNowViewModelState(
                 errorMessages = errorMessages,
                 isGPSLocation = isGPSLocation,
                 locationData = locationData,
-                noLocationAvailable = noLocationAvailable,
-                showDisconnectedView = showDisconnectedView
+                noLocationAvailable = noLocationAvailable
             )
         }
     }
 }
 
-class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
-    SharedPreferences.OnSharedPreferenceChangeListener {
+class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app) {
     private val viewModelState =
         MutableStateFlow(WeatherNowViewModelState(isLoading = true, noLocationAvailable = true))
+
     private val weatherDataLoader = WeatherDataLoader()
-    private val wm = weatherModule.weatherManager
 
     private val locationProvider = LocationProvider(app)
-    private val dataSyncWorker = WeatherDataSyncWorker(
-        app,
-        onLoadData = {
-            viewModelScope.launch {
-                // We got all our data; now load the weather
-                val locationData = settingsManager.getHomeData()
 
-                viewModelState.update {
-                    it.copy(isLoading = true, locationData = locationData)
-                }
-
-                if (locationData?.isValid == true) {
-                    weatherDataLoader.updateLocation(locationData)
-                    loadSavedWeather()
-                } else {
-                    cancelDataSync()
-                }
-            }
-        },
-        onCancelSync = {
-            cancelDataSync()
-        }
+    private val _eventsFlow = MutableSharedFlow<WearableEvent>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-
-    init {
-        if (!BuildConfig.IS_NONGMS) {
-            dataSyncWorker.registerSyncReceiver()
-        }
-        appLib.registerAppSharedPreferenceListener(this)
-
-        initializeWeatherState()
-    }
+    val eventFlow: SharedFlow<WearableEvent> = _eventsFlow
 
     val uiState = viewModelState.map {
         it.toWeatherNowState()
@@ -175,17 +138,25 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
         viewModelState.value.errorMessages
     )
 
+    val isInitialized = viewModelState.map {
+        it.isInitialized
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        viewModelState.value.isInitialized
+    )
+
     private fun getLocationData(): LocationData? {
         return viewModelState.value.locationData
     }
 
-    private fun initializeWeatherState() {
+    fun initialize(locationData: LocationData? = null) {
         viewModelState.update {
             it.copy(isLoading = true)
         }
 
         viewModelScope.launch {
-            var locData = settingsManager.getHomeData()
+            var locData = locationData ?: settingsManager.getHomeData()
 
             if (settingsManager.useFollowGPS()) {
                 if (locData != null && settingsManager.getAPI() != locData.weatherSource) {
@@ -200,25 +171,21 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
                 }
             }
 
-            if (locData?.isValid == true) {
-                viewModelState.update {
-                    it.copy(locationData = locData, noLocationAvailable = false)
-                }
-                weatherDataLoader.updateLocation(locData)
-                refreshWeather(false)
-            } else {
-                checkInvalidLocation(locData)
+            updateLocation(locData)
 
-                viewModelState.update {
-                    it.copy(isLoading = false)
-                }
+            viewModelState.update {
+                it.copy(isInitialized = true)
             }
         }
     }
 
     fun refreshWeather(forceRefresh: Boolean = false) {
+        val isDataSync =
+            !BuildConfig.IS_NONGMS && settingsManager.getDataSync() != WearableDataSync.OFF
+
         val trace = PerfTrace("wnow_refreshWeather").apply {
             putAttribute("forceRefresh", forceRefresh.toString())
+            putAttribute("isDataSync", isDataSync.toString())
             startTrace()
         }
 
@@ -227,7 +194,10 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
         }
 
         viewModelScope.launch {
-            if (BuildConfig.IS_NONGMS || settingsManager.getDataSync() == WearableDataSync.OFF) {
+            if (isDataSync) {
+                loadSavedWeather(forceSync = forceRefresh)
+                trace.stopTrace()
+            } else {
                 if (settingsManager.useFollowGPS()) {
                     val result = updateLocation()
 
@@ -261,48 +231,31 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
                 }
 
                 updateWeatherState(result)
-            } else {
-                syncWeather(forceRefresh)
             }
 
             trace.stopTrace()
         }
     }
 
-    private fun loadSavedWeather(forceSync: Boolean = false) {
-        viewModelScope.launch {
-            val result = weatherDataLoader.loadWeatherResult(
-                WeatherRequest.Builder()
-                    .forceLoadSavedData()
-                    .loadAlerts()
-                    .build()
-            )
+    private suspend fun loadSavedWeather(forceSync: Boolean = false) {
+        val result = weatherDataLoader.loadWeatherResult(
+            WeatherRequest.Builder()
+                .forceLoadSavedData()
+                .loadAlerts()
+                .build()
+        )
 
-            if (forceSync && (result !is WeatherResult.Success && result !is WeatherResult.WeatherWithError)) {
-                syncWeather(true)
-            } else {
-                updateWeatherState(result)
-            }
+        if (forceSync && (result !is WeatherResult.Success && result !is WeatherResult.WeatherWithError)) {
+            _eventsFlow.tryEmit(WearableEvent(ACTION_REQUESTSYNCWEATHER))
+        } else {
+            updateWeatherState(result)
         }
     }
 
     private fun updateWeatherState(result: WeatherResult) {
-        viewModelState.update { state ->
-            when (result) {
-                is WeatherResult.Error -> {
-                    if (state.locationData?.let { !wm.isRegionSupported(it) } == true) {
-                        Logger.writeLine(
-                            Log.WARN,
-                            "Location: %s; countryCode: %s",
-                            JSONParser.serializer(state.locationData),
-                            state.locationData.countryCode
-                        )
-                        Logger.writeLine(
-                            Log.WARN,
-                            CustomException(R.string.error_message_weather_region_unsupported)
-                        )
-                    }
-
+        when (result) {
+            is WeatherResult.Error -> {
+                viewModelState.update { state ->
                     val errorMessages =
                         state.errorMessages + ErrorMessage.WeatherError(result.exception)
                     state.copy(
@@ -311,7 +264,10 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
                         noLocationAvailable = false
                     )
                 }
-                is WeatherResult.NoWeather -> {
+            }
+
+            is WeatherResult.NoWeather -> {
+                viewModelState.update { state ->
                     val errorMessages =
                         state.errorMessages + ErrorMessage.WeatherError(WeatherException(ErrorStatus.NOWEATHER))
                     state.copy(
@@ -320,32 +276,29 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
                         noLocationAvailable = false
                     )
                 }
-                is WeatherResult.Success -> {
+            }
+
+            is WeatherResult.Success -> {
+                val weatherData = result.data.toUiModel()
+
+                viewModelState.update { state ->
                     state.copy(
-                        weather = result.data.toUiModel(),
+                        weather = weatherData,
                         isLoading = false,
                         noLocationAvailable = false,
                         isGPSLocation = state.locationData?.locationType == LocationType.GPS
                     )
                 }
-                is WeatherResult.WeatherWithError -> {
-                    if (state.locationData?.let { !wm.isRegionSupported(it) } == true) {
-                        Logger.writeLine(
-                            Log.WARN,
-                            "Location: %s; countryCode: %s",
-                            JSONParser.serializer(state.locationData),
-                            state.locationData.countryCode
-                        )
-                        Logger.writeLine(
-                            Log.WARN,
-                            CustomException(R.string.error_message_weather_region_unsupported)
-                        )
-                    }
+            }
 
+            is WeatherResult.WeatherWithError -> {
+                val weatherData = result.data.toUiModel()
+
+                viewModelState.update { state ->
                     val errorMessages =
                         state.errorMessages + ErrorMessage.WeatherError(result.exception)
                     state.copy(
-                        weather = result.data.toUiModel(),
+                        weather = weatherData,
                         errorMessages = errorMessages,
                         isLoading = false,
                         noLocationAvailable = false,
@@ -385,6 +338,26 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
         return LocationResult.NotChanged(locationData)
     }
 
+    fun updateLocation(locationData: LocationData?) {
+        viewModelState.update {
+            it.copy(locationData = locationData)
+        }
+
+        if (locationData?.isValid == true) {
+            viewModelState.update {
+                it.copy(locationData = locationData, noLocationAvailable = false)
+            }
+            weatherDataLoader.updateLocation(locationData)
+            refreshWeather(false)
+        } else {
+            checkInvalidLocation(locationData)
+
+            viewModelState.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
     private fun checkInvalidLocation(locationData: LocationData?) {
         if (locationData == null || !locationData.isValid) {
             viewModelScope.launch {
@@ -409,111 +382,6 @@ class WeatherNowViewModel(private val app: Application) : AndroidViewModel(app),
                 viewModelState.update {
                     it.copy(noLocationAvailable = true, isLoading = false)
                 }
-            }
-        }
-    }
-
-    /* Wearable Data Sync */
-    private fun cancelDataSync() {
-        if (!BuildConfig.IS_NONGMS) {
-            dataSyncWorker.cancelDataSync()
-
-            if (settingsManager.getDataSync() != WearableDataSync.OFF) {
-                viewModelScope.launch {
-                    var locationData = getLocationData()
-
-                    if (locationData == null) {
-                        locationData = settingsManager.getHomeData()
-                    }
-
-                    viewModelState.update {
-                        it.copy(locationData = locationData)
-                    }
-
-                    if (locationData?.isValid == true) {
-                        weatherDataLoader.updateLocation(locationData)
-                        loadSavedWeather()
-                    } else {
-                        viewModelState.update {
-                            it.copy(isLoading = false)
-                        }
-
-                        if (locationData != null) {
-                            checkInvalidLocation(locationData)
-                        } else {
-                            viewModelState.update {
-                                val errorMessages =
-                                    it.errorMessages + ErrorMessage.Resource(R.string.error_syncing)
-                                it.copy(errorMessages = errorMessages)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun syncWeather(forceRefresh: Boolean = false) {
-        if (!BuildConfig.IS_NONGMS) {
-            if (forceRefresh) {
-                // Request update from connected device
-                WearableWorker.enqueueAction(app, WearableWorkerActions.ACTION_REQUESTUPDATE, true)
-                dataSyncWorker.startSyncTimer()
-            } else {
-                val locationData = settingsManager.getHomeData()
-
-                viewModelState.update {
-                    it.copy(locationData = locationData)
-                }
-
-                if (locationData?.isValid == true) {
-                    viewModelState.update {
-                        it.copy(noLocationAvailable = false)
-                    }
-                    weatherDataLoader.updateLocation(locationData)
-                    loadSavedWeather(true)
-                } else {
-                    checkInvalidLocation(locationData)
-
-                    viewModelState.update {
-                        it.copy(isLoading = false)
-                    }
-                }
-            }
-        }
-    }
-
-    fun updateConnectionStatus(connectionStatus: WearConnectionStatus) {
-        viewModelState.update {
-            it.copy(showDisconnectedView = settingsManager.getDataSync() != WearableDataSync.OFF && connectionStatus != WearConnectionStatus.CONNECTED)
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-
-        dataSyncWorker.close()
-        appLib.unregisterAppSharedPreferenceListener(this)
-    }
-
-    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String?) {
-        if (key.isNullOrBlank()) return
-
-        when (key) {
-            SettingsManager.KEY_DATASYNC -> {
-                // If data sync settings changes,
-                // reset so we can properly reload
-                viewModelState.update {
-                    it.copy(locationData = null)
-                }
-            }
-            SettingsManager.KEY_TEMPUNIT,
-            SettingsManager.KEY_DISTANCEUNIT,
-            SettingsManager.KEY_PRECIPITATIONUNIT,
-            SettingsManager.KEY_PRESSUREUNIT,
-            SettingsManager.KEY_SPEEDUNIT,
-            SettingsManager.KEY_ICONSSOURCE -> {
-                refreshWeather(false)
             }
         }
     }

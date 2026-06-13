@@ -24,6 +24,8 @@ import com.thewizrd.shared_resources.icons.WeatherIconsEFProvider
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.shared_resources.locationdata.buildEmptyGPSLocation
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
+import com.thewizrd.shared_resources.utils.AnalyticsLogger
+import com.thewizrd.shared_resources.utils.AnalyticsProps
 import com.thewizrd.shared_resources.utils.CommonActions
 import com.thewizrd.shared_resources.utils.DateTimeUtils
 import com.thewizrd.shared_resources.utils.DateTimeUtils.LOCAL_DATE_TIME_FORMATTER
@@ -572,6 +574,7 @@ class SettingsManager(context: Context) {
     fun setDefaultUnits(@TemperatureUnits unit: String) {
         val isFahrenheit = FAHRENHEIT == unit
         preferences.edit {
+            putBoolean(KEY_USECELSIUS, !isFahrenheit)
             putString(KEY_TEMPUNIT, unit)
             putString(KEY_SPEEDUNIT, if (isFahrenheit) MILES_PER_HOUR else KILOMETERS_PER_HOUR)
             putString(KEY_PRESSUREUNIT, if (isFahrenheit) INHG else MILLIBAR)
@@ -610,6 +613,10 @@ class SettingsManager(context: Context) {
         preferences.edit {
             putString(KEY_API, api)
         }
+        AnalyticsLogger.setUserProperty(
+            AnalyticsProps.WEATHER_PROVIDER,
+            api
+        )
     }
 
     @Deprecated("Use getAPIKey()", ReplaceWith("getAPIKey()"))
@@ -868,6 +875,13 @@ class SettingsManager(context: Context) {
                 remove(prefKey)
             }
         }
+
+        if (provider == getAPI()) {
+            AnalyticsLogger.setUserProperty(
+                AnalyticsProps.USING_PERSONAL_KEY,
+                value
+            )
+        }
     }
 
     fun getVersionCode(): Long {
@@ -1012,7 +1026,7 @@ class SettingsManager(context: Context) {
     }
 
     fun getPoPChanceMinimumPercentage(): Int {
-        return preferences.getString(KEY_POPCHANCEPCT, "60")?.toIntOrNull() ?: 60
+        return preferences.getString(KEY_POPCHANCEPCT, "50")?.toIntOrNull() ?: 50
     }
 
     fun setPoPChanceMinimumPercentage(
@@ -1027,7 +1041,7 @@ class SettingsManager(context: Context) {
                 if (pct in 40..90) {
                     pct
                 } else {
-                    60
+                    50
                 }.toString()
             )
         }

@@ -1,66 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext {
-        compileSdkVersion = 35
-        minSdkVersion = 23
-        targetSdkVersion = 34
-
-        kotlin_version = '2.1.20'
-        kotlinx_version = '1.10.2'
-        ksp_version = '2.1.20-2.0.1'
-
-        desugar_version = '2.1.5'
-
-        firebase_version = '33.13.0'
-        gms_location_version = '21.3.0'
-        gms_base_version = '18.7.0'
-        gms_basement_version = '18.7.0'
-        gms_tasks_version = '18.3.0'
-        gms_wearable_version = '19.0.0'
-
-        annotation_version = '1.9.1'
-        activity_version = '1.10.1'
-        appcompat_version = '1.7.0'
-        constraintlayout_version = '2.2.1'
-        core_version = '1.16.0'
-        arch_core_runtime_version = '2.2.0'
-        fragment_version = '1.8.6'
-        lifecycle_version = '2.9.0'
-        nav_version = '2.9.0'
-        paging_version = '3.3.6'
-        preference_version = '1.2.1'
-        recyclerview_version = '1.4.0'
-        room_version = '2.7.1'
-        coresplash_version = '1.0.1'
-        vectordrawable_version = '1.2.0'
-        work_version = '2.10.1'
-
-        test_core_version = '1.6.1'
-        test_runner_version = '1.6.2'
-        test_rules_version = '1.6.1'
-        junit_version = '1.2.1'
-        androidx_truth_version = '1.6.0'
-        google_truth_version = '1.4.4'
-
-        material_version = '1.12.0'
-
-        compose_compiler_version = '1.5.15'
-        compose_bom_version = '2025.05.00'
-        wear_compose_version = '1.4.1'
-        wear_tiles_version = '1.4.1'
-        wear_watchface_version = '1.2.1'
-        horologist_version = '0.6.23'
-        accompanist_version = '0.37.3'
-
-        glide_version = '4.16.0'
-        icu4j_version = '77.1'
-        jjwt_version = '0.12.6'
-        moshi_version = '1.15.2'
-        okhttp_version = '4.12.0'
-        timber_version = '5.0.1'
-    }
-
     repositories {
         mavenCentral()
         google()
@@ -68,15 +8,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.10.0'
-        classpath "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:$ksp_version"
-        classpath 'com.google.gms:google-services:4.4.2'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.3'
-        classpath 'com.google.firebase:perf-plugin:1.4.2'
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
-        classpath "androidx.room:room-gradle-plugin:$room_version"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:$kotlin_version"
+        classpath libs.gradle
+        classpath libs.com.google.devtools.ksp.gradle.plugin
+        classpath libs.google.services
+        classpath libs.firebase.crashlytics.gradle
+        classpath libs.firebase.perf.plugin
+        classpath libs.nav.safe.args.plugin
+        classpath libs.room.plugin
+        classpath libs.kotlin.gradle.plugin
+        classpath libs.compose.compiler.gradle.plugin
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

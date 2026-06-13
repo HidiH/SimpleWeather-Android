@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moonphase_new">"Yeni ay"</string>
+    <string name="moonphase_waxcrescent">"Büyüyen hilal"</string>
+    <string name="moonphase_firstqtr">"İlk dördün"</string>
+    <string name="moonphase_waxgibbous">"Büyüyen ay"</string>
+    <string name="moonphase_full">"Dolunay"</string>
+    <string name="moonphase_wangibbous">"Küçülen ay"</string>
+    <string name="moonphase_lastqtr">"Son dördün"</string>
+    <string name="moonphase_wancrescent">"Küçülen hilal"</string>
+    <string name="moonphase_new_short">"Yeni"</string>
+    <string name="moonphase_waxcrescent_short">"Büyüyen"</string>
+    <string name="moonphase_firstqtr_short">"İlk d"</string>
+    <string name="moonphase_waxgibbous_short">"Büyüyen"</string>
+    <string name="moonphase_full_short">"Dolunay"</string>
+    <string name="moonphase_wangibbous_short">"Küçülen"</string>
+    <string name="moonphase_lastqtr_short">"Son d"</string>
+    <string name="moonphase_wancrescent_short">"Küçülen"</string>
+</resources>

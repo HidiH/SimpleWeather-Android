@@ -7,7 +7,7 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.TypeFilter
+import com.google.android.libraries.places.api.model.PlaceTypes
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -33,9 +33,9 @@ class GoogleLocationProvider : WeatherLocationProviderImpl() {
     companion object {
         private val BASIC_PLACE_FIELDS = listOf(
             Place.Field.ADDRESS_COMPONENTS,
-            Place.Field.ADDRESS,
-            Place.Field.LAT_LNG,
-            Place.Field.NAME,
+            Place.Field.FORMATTED_ADDRESS,
+            Place.Field.LOCATION,
+            Place.Field.DISPLAY_NAME,
             Place.Field.TYPES
         )
     }
@@ -90,10 +90,10 @@ class GoogleLocationProvider : WeatherLocationProviderImpl() {
 
             // Use the builder to create a FindAutocompletePredictionsRequest.
             val request = FindAutocompletePredictionsRequest.builder()
-                .setTypeFilter(TypeFilter.CITIES)
-                    .setSessionToken(autocompleteToken)
-                    .setQuery(ac_query)
-                    .build()
+                .setTypesFilter(listOf(PlaceTypes.CITIES))
+                .setSessionToken(autocompleteToken)
+                .setQuery(ac_query)
+                .build()
 
             val response = placesClient.findAutocompletePredictions(request).await()
             locations = HashSet()
@@ -153,14 +153,14 @@ class GoogleLocationProvider : WeatherLocationProviderImpl() {
             var wEx: WeatherException? = null
 
             try {
-                val request = FetchPlaceRequest.builder(model.locationQuery, BASIC_PLACE_FIELDS)
+                val request = FetchPlaceRequest.builder(model.locationQuery!!, BASIC_PLACE_FIELDS)
                     .setSessionToken(autocompleteToken)
                     .build()
 
-                    response = placesClient.fetchPlace(request).await()
+                response = placesClient.fetchPlace(request).await()
 
-                    autocompleteToken = null
-                } catch (e: Throwable) {
+                autocompleteToken = null
+            } catch (e: Throwable) {
                 var ex = e
 
                 if (ex is ExecutionException && ex.cause is Throwable) {
@@ -188,17 +188,17 @@ class GoogleLocationProvider : WeatherLocationProviderImpl() {
                         }
                     }
                 }
-                    Logger.writeLine(Log.ERROR, ex, "GoogleLocationProvider: error getting location")
-                }
-
-                if (wEx != null) throw wEx
-
-                location = response?.let {
-                    createLocationModel(it, model.weatherSource)
-                } ?: LocationQuery()
-
-                return@withContext location
+                Logger.writeLine(Log.ERROR, ex, "GoogleLocationProvider: error getting location")
             }
+
+            if (wEx != null) throw wEx
+
+            location = response?.let {
+                createLocationModel(it, model.weatherSource)
+            } ?: LocationQuery()
+
+            return@withContext location
+        }
 
     @Throws(WeatherException::class)
     override suspend fun getLocationFromName(

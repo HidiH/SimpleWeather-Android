@@ -33,13 +33,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.dialog.Alert
-import androidx.wear.compose.material.dialog.Dialog
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.helpers.SimpleActionModeCallback
@@ -59,6 +58,19 @@ fun WearEditTextPreference(
     var textForInput by rememberSaveable { mutableStateOf(text) }
     val scrollState = rememberScalingLazyListState()
 
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+            when (it.resultCode) {
+                RESULT_OK -> {
+                    it.data?.let { data ->
+                        val results = RemoteInput.getResultsFromIntent(data)
+                        textForInput = results?.getCharSequence(Constants.KEY_SEARCH) ?: ""
+                        openDialog = false
+                    }
+                }
+            }
+        }
+
     WearPreference(
         title = title,
         subtitle = text.toAnnotatedString(),
@@ -69,77 +81,61 @@ fun WearEditTextPreference(
         enabled = enabled,
     )
 
-    Dialog(
-        showDialog = openDialog,
+    AlertDialog(
+        visible = openDialog,
         onDismissRequest = {
             openDialog = false
         },
-        scrollState = scrollState
-    ) {
-        val launcher =
-            rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-                when (it.resultCode) {
-                    RESULT_OK -> {
-                        it.data?.let { data ->
-                            val results = RemoteInput.getResultsFromIntent(data)
-                            textForInput = results?.getCharSequence(Constants.KEY_SEARCH) ?: ""
-                            openDialog = false
-                        }
-                    }
-                }
-            }
-
-        Alert(
-            title = {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = title,
-                    textAlign = TextAlign.Center
+        title = {
+            Text(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                text = title,
+                textAlign = TextAlign.Center
+            )
+        },
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
+        contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 24.dp, bottom = 32.dp),
+        confirmButton = {
+            Button(
+                onClick = {
+                    onTextChanged(textForInput)
+                    openDialog = false
+                },
+                colors = ButtonDefaults.buttonColors()
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .wrapContentSize(align = Alignment.Center),
+                    painter = painterResource(id = R.drawable.ic_check_24dp),
+                    contentDescription = stringResource(id = android.R.string.ok)
                 )
-            },
-            scrollState = scrollState,
-            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
-            contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 24.dp, bottom = 32.dp),
-            negativeButton = {
-                Button(
-                    onClick = {
-                        openDialog = false
-                    },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .wrapContentSize(align = Alignment.Center),
-                        painter = painterResource(id = R.drawable.ic_close_white_24dp),
-                        contentDescription = stringResource(id = android.R.string.cancel)
-                    )
-                }
-            },
-            positiveButton = {
-                Button(
-                    onClick = {
-                        onTextChanged(textForInput)
-                        openDialog = false
-                    },
-                    colors = ButtonDefaults.primaryButtonColors()
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .wrapContentSize(align = Alignment.Center),
-                        painter = painterResource(id = R.drawable.ic_check_24dp),
-                        contentDescription = stringResource(id = android.R.string.ok)
-                    )
-                }
             }
-        ) {
+        },
+        dismissButton = {
+            Button(
+                onClick = {
+                    openDialog = false
+                },
+                colors = ButtonDefaults.filledTonalButtonColors()
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .wrapContentSize(align = Alignment.Center),
+                    painter = painterResource(id = R.drawable.ic_close_white_24dp),
+                    contentDescription = stringResource(id = android.R.string.cancel)
+                )
+            }
+        }
+    ) {
+        item {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(Alignment.CenterVertically)
                     .padding(horizontal = 16.dp)
-                    .border(1.dp, MaterialTheme.colors.primary, RoundedCornerShape(8.dp)),
+                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
             ) {
                 AndroidView(
                     modifier = Modifier

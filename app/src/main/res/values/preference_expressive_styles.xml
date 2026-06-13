@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomPreferenceThemeOverlay.Expressive" parent="CustomPreferenceThemeOverlay">
+        <!-- Set up  list item padding -->
+        <item name="android:listPreferredItemPaddingStart">
+            @dimen/preference_expressive_space_small1
+        </item>
+        <item name="android:listPreferredItemPaddingLeft">
+            @dimen/preference_expressive_space_small1
+        </item>
+        <item name="android:listPreferredItemPaddingEnd">@dimen/preference_expressive_space_small1
+        </item>
+        <item name="android:listPreferredItemPaddingRight">
+            @dimen/preference_expressive_space_small1
+        </item>
+        <item name="android:listPreferredItemHeightSmall">
+            @dimen/preference_expressive_space_large3
+        </item>
+
+        <!-- Set up edge-to-edge configuration for top app bar -->
+        <item name="android:clipToPadding">false</item>
+        <item name="android:clipChildren">false</item>
+
+        <item name="checkBoxPreferenceStyle">
+            @style/Preference.CheckBoxPreference.Material.Expressive
+        </item>
+        <item name="dialogPreferenceStyle">@style/Preference.DialogPreference.Material.Expressive
+        </item>
+        <item name="editTextPreferenceStyle">
+            @style/Preference.EditTextPreference.Material.Expressive
+        </item>
+        <item name="preferenceCategoryStyle">@style/Preference.Category.Material.Expressive</item>
+        <item name="preferenceScreenStyle">@style/Preference.PreferenceScreen.Material.Expressive
+        </item>
+        <item name="preferenceStyle">@style/Preference.Material.Expressive</item>
+        <item name="sliderPreferenceStyle">@style/Preference.SliderPreference.Material.Expressive
+        </item>
+        <item name="switchPreferenceCompatStyle">@style/Preference.MaterialSwitchCompat.Expressive
+        </item>
+        <item name="switchPreferenceStyle">@style/Preference.MaterialSwitch.Expressive</item>
+        <item name="chipPreferenceStyle">@style/Preference.ChipPreference.Expressive</item>
+        <item name="buttonGroupPreferenceStyle">@style/Preference.ButtonGroupPreference.Expressive
+        </item>
+        <item name="providerIconPreferenceStyle">
+            @style/Preference.ProviderIconPreference.Expressive
+        </item>
+        <item name="radioButtonPreferenceStyle">@style/Preference.RadioButtonPreference.Expressive
+        </item>
+        <item name="iconProviderPreferenceStyle">
+            @style/Preference.IconProviderPreference.Expressive
+        </item>
+        <item name="preferenceCategoryTitleTextAppearance">?textAppearanceBodyMediumEmphasized
+        </item>
+        <item name="preferenceCategoryTitleTextColor">?colorPrimary</item>
+    </style>
+
+    <style name="Preference.Material.Expressive" parent="Preference.Material">
+        <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.CheckBoxPreference.Material.Expressive" parent="Preference.CheckBoxPreference.Material">
+        <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.DialogPreference.Material.Expressive" parent="Preference.DialogPreference.Material">
+        <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.EditTextPreference.Material.Expressive" parent="Preference.EditTextPreference.Material">
+        <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="android:dialogLayout">@layout/preference_dialog_edittext_material</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.Category.Material.Expressive" parent="Preference.Category.Material">
+        <item name="android:layout">@layout/preference_category_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.PreferenceScreen.Material.Expressive" parent="Preference.PreferenceScreen.Material">
+        <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.SliderPreference.Material.Expressive" parent="Preference.SliderPreference.Material">
+        <item name="android:layout">@layout/preference_widget_slider_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.MaterialSwitchCompat.Expressive" parent="Preference.MaterialSwitchCompat">
+        <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.MaterialSwitch.Expressive" parent="Preference.MaterialSwitch">
+        <item name="android:layout">@layout/preference_material_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.ChipPreference.Expressive" parent="Preference.ChipPreference">
+        <item name="android:layout">@layout/preference_widget_chip_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.ButtonGroupPreference.Expressive" parent="Preference.ButtonGroupPreference">
+        <item name="android:layout">@layout/preference_widget_buttongroup_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.ProviderIconPreference.Expressive" parent="Preference.ProviderIconPreference">
+        <item name="android:layout">@layout/preference_providericon_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.RadioButtonPreference.Expressive" parent="Preference.RadioButtonPreference">
+        <item name="android:layout">@layout/preference_radio_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Preference.IconProviderPreference.Expressive" parent="Preference.IconProviderPreference">
+        <item name="android:layout">@layout/preference_icon_expressive</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+</resources>

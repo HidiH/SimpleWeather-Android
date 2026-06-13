@@ -3,17 +3,17 @@ package com.thewizrd.simpleweather.controls
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
+import androidx.core.view.updateMarginsRelative
 import androidx.core.widget.ImageViewCompat
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.BindingAdapter
@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.thewizrd.common.controls.TextViewDrawableCompat
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.dpToPx
@@ -34,7 +35,12 @@ import com.thewizrd.shared_resources.weatherdata.model.LocationType
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.databinding.LocationPanelBinding
 import com.thewizrd.simpleweather.preferences.FeatureSettings
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class LocationPanel : MaterialCardView {
     private lateinit var binding: LocationPanelBinding
@@ -83,7 +89,14 @@ class LocationPanel : MaterialCardView {
         binding = LocationPanelBinding.inflate(inflater, this, true)
 
         val height = context.resources.getDimensionPixelSize(R.dimen.location_panel_height)
-        this.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        this.layoutParams = MarginLayoutParams(LayoutParams.MATCH_PARENT, height).apply {
+            val horizontalMargins = context.dpToPx(4f).toInt()
+            updateMarginsRelative(start = horizontalMargins, end = horizontalMargins)
+        }
+
+        shapeAppearanceModel =
+            ShapeAppearanceModel.builder(context, R.style.ShapeAppearance_Material3_Corner_Large, 0)
+                .build()
 
         setCardBackgroundColor(context.getAttrColor(R.attr.colorSurface))
         overlayDrawable = ContextCompat.getDrawable(context, R.drawable.background_overlay)
@@ -167,7 +180,7 @@ class LocationPanel : MaterialCardView {
                             .centerCropTransform()
                             .format(DecodeFormat.PREFER_RGB_565)
                             .error(null)
-                            .placeholder(ColorDrawable(Colors.LIGHTGRAY))
+                            .placeholder(Colors.LIGHTGRAY.toDrawable())
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .skipMemoryCache(skipCache)
                     )

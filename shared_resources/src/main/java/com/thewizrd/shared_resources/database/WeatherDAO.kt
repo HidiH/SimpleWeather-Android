@@ -1,6 +1,5 @@
 package com.thewizrd.shared_resources.database
 
-import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
@@ -14,6 +13,7 @@ import com.thewizrd.shared_resources.weatherdata.model.HourlyForecast
 import com.thewizrd.shared_resources.weatherdata.model.HourlyForecasts
 import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.shared_resources.weatherdata.model.WeatherAlerts
+import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
 @Dao
@@ -71,7 +71,7 @@ interface WeatherDAO {
     suspend fun getWeatherAlertData(query: String): WeatherAlerts?
 
     @Query("SELECT * FROM weatheralerts WHERE `query` = :query")
-    fun getLiveWeatherAlertData(query: String): LiveData<WeatherAlerts?>
+    fun getLiveWeatherAlertData(query: String): Flow<WeatherAlerts?>
 
     @Query("SELECT COUNT(*) FROM weatheralerts")
     suspend fun getWeatherAlertDataCount(): Int
@@ -97,7 +97,7 @@ interface WeatherDAO {
     suspend fun getForecastData(query: String): Forecasts?
 
     @Query("SELECT * FROM forecasts WHERE `query` = :query")
-    fun getLiveForecastData(query: String): LiveData<Forecasts>
+    fun getLiveForecastData(query: String): Flow<Forecasts>
 
     @Query("SELECT COUNT(*) FROM forecasts GROUP BY `query`")
     suspend fun getForecastDataCountGroupedByQuery(): Int
@@ -148,7 +148,7 @@ interface WeatherDAO {
     fun getLiveHourlyForecastsByQueryOrderByDateByLimit(
         key: String,
         loadSize: Int
-    ): LiveData<List<HourlyForecast>>
+    ): Flow<List<HourlyForecast>>
 
     @Transaction
     @Query("SELECT `hrforecastblob` FROM hr_forecasts WHERE `query` = :key AND `dateblob` >= :date ORDER BY `dateblob` LIMIT :loadSize")
@@ -156,7 +156,7 @@ interface WeatherDAO {
         key: String,
         loadSize: Int,
         @TypeConverters(SortableDateTimeConverters::class) date: ZonedDateTime
-    ): LiveData<List<HourlyForecast>>
+    ): Flow<List<HourlyForecast>>
 
     @Transaction
     @Query("SELECT `hrforecastblob` FROM hr_forecasts WHERE `query` = :key ORDER BY `dateblob`")

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="beaufort_0">"هادئ"</string>
+    <string name="beaufort_1">"نسيم خفيف"</string>
+    <string name="beaufort_2">"نسيم عليل"</string>
+    <string name="beaufort_3">"نسيم لطيف"</string>
+    <string name="beaufort_4">"نسيم معتدل"</string>
+    <string name="beaufort_5">"نسيم منعش"</string>
+    <string name="beaufort_6">"نسيم قوي"</string>
+    <string name="beaufort_7">"قريب من العاصفة"</string>
+    <string name="beaufort_8">"عاصفة"</string>
+    <string name="beaufort_9">"عاصفة شديدة"</string>
+    <string name="beaufort_10">"عاصفة"</string>
+    <string name="beaufort_11">"عاصفة عنيفة"</string>
+    <string name="beaufort_12">"إعصار"</string>
+</resources>

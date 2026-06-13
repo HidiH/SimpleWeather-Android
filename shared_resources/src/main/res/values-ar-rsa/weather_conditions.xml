@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Conditions -->
+    <string name="weather_tornado">"إعصار قمعي"</string>
+    <string name="weather_tropicalstorm">"عاصفة استوائية"</string>
+    <string name="weather_hurricane">"إعصار"</string>
+    <string name="weather_severetstorms">"عواصف رعدية شديدة"</string>
+    <string name="weather_tstorms">"عواصف رعدية"</string>
+    <string name="weather_rainandsnow">"مطر وثلج مختلط"</string>
+    <string name="weather_rainandsleet">"مطر وبرد ناعم مختلط"</string>
+    <string name="weather_snowandsleet">"ثلج وبَرَد ناعم مختلط"</string>
+    <string name="weather_freezingrain">"مطر متجمد"</string>
+    <string name="weather_snowflurries">"زخات ثلجية"</string>
+    <string name="weather_lightsnowshowers">"ثلج خفيف"</string>
+    <string name="weather_blowingsnow">"ثلج متطاير"</string>
+    <string name="weather_snow">"ثلج"</string>
+    <string name="weather_hail">"بَرَد"</string>
+    <string name="weather_sleet">"بَرَد ناعم"</string>
+    <string name="weather_dust">"غبار"</string>
+    <string name="weather_foggy">"ضبابي"</string>
+    <string name="weather_haze">"ضباب دخاني"</string>
+    <string name="weather_smoky">"مدخن"</string>
+    <string name="weather_windy">"عاصف"</string>
+    <string name="weather_cold">"بارد"</string>
+    <string name="weather_cloudy">"غائم"</string>
+    <string name="weather_mostlycloudy">"غائم جزئياً في الغالب"</string>
+    <string name="weather_partlycloudy">"غائم جزئياً"</string>
+    <string name="weather_clear">"صافي"</string>
+    <string name="weather_sunny">"مشمس"</string>
+    <string name="weather_fair">"معتدل"</string>
+    <string name="weather_rainandhail">"مطر وبَرَد مختلط"</string>
+    <string name="weather_hot">"حار"</string>
+    <string name="weather_isotstorms">"عواصف رعدية متفرقة"</string>
+    <string name="weather_scatteredtstorms">"عواصف رعدية متناثرة"</string>
+    <string name="weather_scatteredshowers">"زخات مطر متناثرة"</string>
+    <string name="weather_heavysnow">"ثلج كثيف"</string>
+    <string name="weather_fog">"ضباب"</string>
+    <string name="weather_lightrain">"مطر خفيف"</string>
+    <string name="weather_rain">"مطر"</string>
+    <string name="weather_rainshowers">"زخات مطر"</string>
+    <string name="weather_blizzard">"عاصفة ثلجية"</string>
+    <string name="weather_overcast">"ملبد بالغيوم"</string>
+    <string name="weather_sleet_tstorms">"بَرَد ناعم ورعد"</string>
+    <string name="weather_snow_tstorms">"ثلج ورعد"</string>
+    <string name="weather_clearsky">"سماء صافية"</string>
+    <string name="weather_heavyrain">"مطر غزير"</string>
+    <string name="weather_mostlyclear">"صافي في الغالب"</string>
+    <string name="weather_lightfog">"ضباب خفيف"</string>
+    <string name="weather_drizzle">"رذاذ"</string>
+    <string name="weather_lightwind">"رياح خفيفة"</string>
+    <string name="weather_smog">"ضباب دخاني"</string>
+</resources>

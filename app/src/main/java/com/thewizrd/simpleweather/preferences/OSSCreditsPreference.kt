@@ -3,22 +3,26 @@ package com.thewizrd.simpleweather.preferences
 import android.content.Context
 import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
-import android.view.View
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
+import com.google.android.material.loadingindicator.LoadingIndicator
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.utils.Colors
 import com.thewizrd.shared_resources.utils.ContextUtils.getAttrColor
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.simpleweather.R
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 
-class OSSCreditsPreference : Preference {
+class OSSCreditsPreference : Preference, NoBackground {
     private var loadJob: Job? = null
 
     constructor(context: Context) : super(context)
@@ -39,12 +43,12 @@ class OSSCreditsPreference : Preference {
         holder.itemView.setBackgroundColor(bg_color)
 
         val webView = holder.itemView.findViewById<TextView>(R.id.textview)
-        val progressBar = holder.itemView.findViewById<ProgressBar>(R.id.progressBar)
+        val progressBar = holder.itemView.findViewById<LoadingIndicator>(R.id.progressBar)
 
         loadJob?.cancel()
         loadJob = appLib.appScope.launch(Dispatchers.Main.immediate) {
             supervisorScope {
-                progressBar.visibility = View.VISIBLE
+                progressBar.show()
 
                 val creditsText = withContext(Dispatchers.IO) {
                     val sBuilder = StringBuilder()
@@ -65,7 +69,7 @@ class OSSCreditsPreference : Preference {
                 webView.text = HtmlCompat.fromHtml(creditsText, HtmlCompat.FROM_HTML_MODE_COMPACT)
                 webView.movementMethod = LinkMovementMethod.getInstance()
 
-                progressBar.visibility = View.GONE
+                progressBar.hide()
             }
         }
     }

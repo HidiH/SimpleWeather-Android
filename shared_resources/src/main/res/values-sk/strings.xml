@@ -33,6 +33,8 @@
     <string name="label_sunset">"Súmrak"</string>
     <string name="label_hourlyforecast">"Hodinovo"</string>
     <string name="label_precipitation">"Zrážky"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Šanca"</string>
     <string name="label_cloudiness">"Oblačnosť"</string>
     <string name="label_qpf_rain">"Dážď"</string>
@@ -67,8 +69,8 @@
     <string name="pref_title_general">"Všeobecné"</string>
     <string name="pref_category_version">"Verzia"</string>
     <string name="pref_title_units">"Jednotky"</string>
-    <string name="pref_summary_fahrenheit">"Zobraziť v stupňoch Fahrenheita"</string>
-    <string name="pref_summary_celsius">"Zobraziť v stupňoch Celzia"</string>
+    <string name="pref_summary_fahrenheit">"Zobraziť v stupňoch Fahrenheita (°F)"</string>
+    <string name="pref_summary_celsius">"Zobraziť v stupňoch Celzia (°C)"</string>
     <string name="pref_title_about">"O aplikácii"</string>
     <string name="pref_title_about_app">"O SimpleWeather"</string>
     <string name="pref_title_credits">"S podporou"</string>
@@ -196,10 +198,14 @@
     <string name="wear_bg_location_permission_rationale_settings">"Ak chcete aktualizovať polohu na pozadí pre dlaždice a komplikácie, nastavte povolenie polohy na '%1$s'"</string>
     <string name="time_current">"Aktuálne"</string>
 
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"ŽIADNE ÚDAJE"</string>
+
     <!-- Fuzzy -->
     <string name="label_minutelyforecast">"Minútová predpoveď"</string>
     <string name="hint_username">"Používateľské meno"</string>
     <string name="hint_password">"Heslo"</string>
+    <string name="pref_category_terms">Podmienky</string>
     <string name="pref_title_privacypolicy">"Pravidlá ochrany súkromia"</string>
     <string name="pref_title_termsofservice">"Podmienky služby"</string>
     <string name="label_moreinfo">"Viac informácií"</string>
@@ -209,4 +215,7 @@
     <string name="label_count_high_short">"Vysoká"</string>
     <string name="label_count_veryhigh_short">"Vysoká"</string>
     <string name="werror_ratelimited">"Príliš veľa požiadaviek. Prosím, skúste to znova po niekoľkých minútach"</string>
+    <string name="werror_locationnotsupported">"Tento poskytovateľ počasia túto lokalitu nepodporuje."</string>
+    <string name="notification_perm_denied">"Povolenie na oznámenie zamietnuté"</string>
+    <string name="pref_title_color">Farba</string>
 </resources>

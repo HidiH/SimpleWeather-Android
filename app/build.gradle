@@ -1,23 +1,25 @@
-apply plugin: 'com.android.application'
-apply plugin: 'androidx.navigation.safeargs'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.devtools.ksp'
+plugins {
+    id 'com.android.application'
+    id 'androidx.navigation.safeargs'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
+}
 
 android {
-    compileSdk rootProject.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toInteger()
 
     defaultConfig {
         applicationId "com.thewizrd.simpleweather"
         testApplicationId "com.thewizrd.simpleweather.test"
         // Specifies the fully-qualified class name of the test instrumentation runner.
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion libs.versions.minSdkVersion.get().toInteger()
+        targetSdkVersion libs.versions.targetSdkVersion.get().toInteger()
         // NOTE: Version Code Format (TargetSDK, Version Name, Build Number, Variant Code (Android: 0, WearOS: 1)
         // ex) 345100131 = (34, 5.10, 013, 0)
-        versionCode 345110040
-        versionName "5.11.1"
+        versionCode 365130140
+        versionName "5.13.0"
 
         vectorDrawables {
             useSupportLibrary true
@@ -29,7 +31,7 @@ android {
             applicationIdSuffix ".debug"
             debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [allowBackup: false]
         }
         release {
@@ -100,84 +102,84 @@ dependencies {
     fullgmsImplementation project(":extras")
 
     // Unit Testing
-    androidTestImplementation "androidx.test:core:$test_core_version"
+    androidTestImplementation libs.test.core
 
     // AndroidJUnitRunner and JUnit Rules
-    androidTestImplementation "androidx.test:runner:$test_runner_version"
-    androidTestImplementation "androidx.test:rules:$test_rules_version"
+    androidTestImplementation libs.test.runner
+    androidTestImplementation libs.test.rules
 
     // Assertions
-    androidTestImplementation "androidx.test.ext:junit:$junit_version"
-    androidTestImplementation "androidx.test.ext:truth:$androidx_truth_version"
-    androidTestImplementation "com.google.truth:truth:$google_truth_version"
+    androidTestImplementation libs.test.ext.junit
+    androidTestImplementation libs.test.ext.truth
+    androidTestImplementation libs.google.truth
 
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
+    coreLibraryDesugaring libs.desugar.jdk.libs
 
     // Kotlin
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_version"
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
 
-    implementation "androidx.core:core-ktx:$core_version"
-    implementation "androidx.core:core-splashscreen:$coresplash_version"
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation "androidx.fragment:fragment-ktx:$fragment_version"
-    implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.arch.core:core-runtime:$arch_core_runtime_version"
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    implementation "androidx.preference:preference-ktx:$preference_version"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "androidx.annotation:annotation:$annotation_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
-    implementation "androidx.vectordrawable:vectordrawable:$vectordrawable_version"
-    implementation 'androidx.palette:palette-ktx:1.0.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
-    implementation "androidx.work:work-runtime-ktx:$work_version"
-    implementation "androidx.work:work-multiprocess:$work_version"
+    implementation libs.core.ktx
+    implementation libs.core.splashscreen
+    implementation libs.appcompat
+    implementation libs.fragment.ktx
+    implementation libs.material
+    implementation libs.arch.core.runtime
+    implementation libs.cardview
+    implementation libs.recyclerview
+    implementation libs.preference.ktx
+    implementation libs.legacy.support.v4
+    implementation libs.annotation
+    implementation libs.constraintlayout
+    implementation libs.vectordrawable
+    implementation libs.palette.ktx
+    implementation libs.swiperefreshlayout
+    implementation libs.paging.runtime.ktx
+    implementation libs.work.runtime.ktx
+    implementation libs.work.multiprocess
 
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.runtime.ktx
 
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation libs.navigation.fragment.ktx
+    implementation libs.navigation.ui.ktx
 
-    implementation "androidx.room:room-runtime:$room_version"
-    ksp "androidx.room:room-compiler:$room_version"
+    implementation libs.room.runtime
+    ksp libs.room.compiler
 
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
-    implementation "com.github.bumptech.glide:glide:$glide_version"
-    ksp "com.github.bumptech.glide:ksp:$glide_version"
-    implementation "com.jakewharton.timber:timber:$timber_version"
-    implementation "com.ibm.icu:icu4j:$icu4j_version"
-    implementation 'com.github.skydoves:colorpickerview:2.3.0'
+    implementation libs.okhttp
+    implementation libs.glide
+    ksp libs.glide.ksp
+    implementation libs.timber
+    implementation libs.icu4j
+    implementation libs.colorpickerview
 
-    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
-    ksp "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
-    implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
+    implementation libs.moshi.kotlin
+    ksp libs.moshi.kotlin.codegen
+    implementation libs.moshi.adapters
 
     // Firebase
-    fullgmsImplementation platform("com.google.firebase:firebase-bom:$firebase_version")
-    fullgmsImplementation 'com.google.firebase:firebase-analytics'
-    fullgmsImplementation 'com.google.firebase:firebase-crashlytics'
-    fullgmsImplementation 'com.google.firebase:firebase-auth'
-    fullgmsImplementation 'com.google.firebase:firebase-firestore'
-    fullgmsImplementation 'com.google.firebase:firebase-messaging'
-    fullgmsImplementation 'com.google.firebase:firebase-storage'
-    fullgmsImplementation 'com.google.firebase:firebase-database'
-    fullgmsImplementation 'com.google.firebase:firebase-config'
-    fullgmsImplementation 'com.google.firebase:firebase-perf'
+    fullgmsImplementation platform(libs.firebase.bom)
+    fullgmsImplementation libs.firebase.analytics
+    fullgmsImplementation libs.firebase.crashlytics
+    fullgmsImplementation libs.firebase.auth
+    fullgmsImplementation libs.firebase.firestore
+    fullgmsImplementation libs.firebase.messaging
+    fullgmsImplementation libs.firebase.storage
+    fullgmsImplementation libs.firebase.database
+    fullgmsImplementation libs.firebase.config
+    fullgmsImplementation libs.firebase.perf
 
-    fullgmsImplementation "com.google.android.gms:play-services-base:$gms_base_version"
-    fullgmsImplementation "com.google.android.gms:play-services-location:$gms_location_version"
-    fullgmsImplementation 'com.google.android.gms:play-services-maps:19.2.0'
-    fullgmsImplementation "com.google.android.gms:play-services-wearable:$gms_wearable_version"
-    fullgmsImplementation 'com.google.android.play:app-update-ktx:2.1.0'
-    fullgmsImplementation 'com.google.android.play:feature-delivery-ktx:2.1.0'
-    fullgmsImplementation 'com.google.android.play:review-ktx:2.0.2'
-    fullgmsImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinx_version"
+    fullgmsImplementation libs.gms.play.services.base
+    fullgmsImplementation libs.gms.play.services.location
+    fullgmsImplementation libs.gms.play.services.maps
+    fullgmsImplementation libs.gms.play.services.wearable
+    fullgmsImplementation libs.play.app.update.ktx
+    fullgmsImplementation libs.play.feature.delivery.ktx
+    fullgmsImplementation libs.play.review.ktx
+    fullgmsImplementation libs.kotlinx.coroutines.play.services
 
-    nongmsImplementation 'org.osmdroid:osmdroid-android:6.1.20'
+    nongmsImplementation libs.osmdroid.android
 }
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Fullgms")) {

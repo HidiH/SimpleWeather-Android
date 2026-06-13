@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TextAppearance.WeatherNow" parent="TextAppearance.OpenSans.BodyMedium" />
+    <style name="TextAppearance.WeatherNow" parent="TextAppearance.SimpleWeather.BodyMedium" />
 
-    <style name="TextAppearance.WeatherNow.ConditionText">
+    <style name="TextAppearance.WeatherNow.ConditionText" parent="TextAppearance.SimpleWeather.BodyLarge.Emphasized">
         <item name="android:textSize">18sp</item>
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
     </style>
 
-    <style name="TextAppearance.WeatherNow.Temperature">
+    <style name="TextAppearance.WeatherNow.Temperature" parent="TextAppearance.SimpleWeather.DisplayLarge">
         <item name="android:textSize">60sp</item>
-        <item name="android:fontFamily">@font/open_sans_light</item>
-        <item name="fontFamily">@font/open_sans_light</item>
+        <item name="android:fontFamily">@font/dm_sans_extralight</item>
+        <item name="fontFamily">@font/dm_sans_extralight</item>
     </style>
 
-    <style name="TextAppearance.WeatherNow.HiLoTemp">
+    <style name="TextAppearance.WeatherNow.HiLoTemp" parent="TextAppearance.SimpleWeather.BodyLarge">
         <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">@font/open_sans_light</item>
-        <item name="fontFamily">@font/open_sans_light</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="fontFamily">@font/dm_sans</item>
     </style>
 
-    <style name="TextAppearance.WeatherNow.SectionLabel">
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
-        <item name="fontFamily">@font/open_sans_semibold</item>
+    <style name="TextAppearance.WeatherNow.SectionLabel" parent="TextAppearance.SimpleWeather.LabelLarge.Emphasized">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="WeatherNow.CardView" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.LargeIncreased</item>
     </style>
 
 </resources>

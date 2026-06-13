@@ -49,17 +49,20 @@ fun Context.openAppSettingsActivity() {
 
 fun Context.getBackgroundLocationRationale(): String {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        this.getString(
-            getBackgroundLocationRationalResId(),
-            this.packageManager.backgroundPermissionOptionLabel
-        )
+        val permissionOptLabel = this.packageManager.backgroundPermissionOptionLabel
+
+        if (permissionOptLabel.isNotBlank()) {
+            this.getString(getBackgroundLocationRationalSettingsResId(), permissionOptLabel)
+        } else {
+            this.getString(getBackgroundLocationRationalResId())
+        }
     } else {
-        this.getString(getBackgroundLocationRationalResId())
+        this.getString(getBackgroundLocationRationalSettingsResId())
     }
 }
 
 @StringRes
-private fun Context.getBackgroundLocationRationalResId(): Int {
+private fun Context.getBackgroundLocationRationalSettingsResId(): Int {
     val isWatch =
         resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK == Configuration.UI_MODE_TYPE_WATCH
 
@@ -75,5 +78,17 @@ private fun Context.getBackgroundLocationRationalResId(): Int {
         } else {
             R.string.bg_location_permission_rationale
         }
+    }
+}
+
+@StringRes
+private fun Context.getBackgroundLocationRationalResId(): Int {
+    val isWatch =
+        resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK == Configuration.UI_MODE_TYPE_WATCH
+
+    return if (isWatch) {
+        R.string.wear_bg_location_permission_rationale
+    } else {
+        R.string.bg_location_permission_rationale
     }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="uv_0">"Alacsony"</string>
+    <string name="uv_3">"Mérsékelt"</string>
+    <string name="uv_6">"Magas"</string>
+    <string name="uv_8">"Nagyon magas"</string>
+    <string name="uv_11">"Extrém"</string>
+</resources>

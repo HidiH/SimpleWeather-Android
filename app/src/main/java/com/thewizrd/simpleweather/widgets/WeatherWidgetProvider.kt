@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import com.thewizrd.shared_resources.utils.Logger
+import com.thewizrd.simpleweather.BuildConfig
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.services.UpdaterUtils
 import com.thewizrd.simpleweather.services.WidgetWorker
@@ -58,6 +59,45 @@ abstract class WeatherWidgetProvider : AppWidgetProvider() {
                 showLoadingView(context)
             }
             else -> {
+                if (BuildConfig.DEBUG && AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED == intent?.action) {
+                    val extras = intent.extras
+                    if (extras != null && extras.containsKey(AppWidgetManager.EXTRA_APPWIDGET_ID)
+                        && extras.containsKey(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS)
+                    ) {
+                        val appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)
+                        val widgetExtras =
+                            extras.getBundle(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS)
+                        Logger.debug(TAG, "widget options changed for widgetId = $appWidgetId")
+
+                        if (widgetExtras != null) {
+                            val minWidth =
+                                widgetExtras.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+                            val maxWidth =
+                                widgetExtras.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
+                            val minHeight =
+                                widgetExtras.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+                            val maxHeight =
+                                widgetExtras.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
+                            val cellWidth = WidgetUtils.getCellsForSize(minWidth)
+                            val maxCellWidth = WidgetUtils.getCellsForSize(maxWidth)
+                            val cellHeight = WidgetUtils.getCellsForSize(minHeight)
+                            val maxCellHeight = WidgetUtils.getCellsForSize(maxHeight)
+                            val hasExtraWidth = (maxCellWidth - cellWidth) > 0
+                            val hasExtraHeight = (maxCellHeight - cellHeight) > 0
+
+                            Logger.debug(TAG, "minWidth = $minWidth")
+                            Logger.debug(TAG, "maxWidth = $maxWidth")
+                            Logger.debug(TAG, "minHeight = $minHeight")
+                            Logger.debug(TAG, "maxHeight = $maxHeight")
+                            Logger.debug(TAG, "cellWidth = $cellWidth")
+                            Logger.debug(TAG, "maxCellWidth = $maxCellWidth")
+                            Logger.debug(TAG, "cellHeight = $cellHeight")
+                            Logger.debug(TAG, "maxCellHeight = $maxCellHeight")
+                            Logger.debug(TAG, "hasExtraWidth = $hasExtraWidth")
+                            Logger.debug(TAG, "hasExtraHeight = $hasExtraHeight")
+                        }
+                    }
+                }
                 super.onReceive(context, intent)
             }
         }

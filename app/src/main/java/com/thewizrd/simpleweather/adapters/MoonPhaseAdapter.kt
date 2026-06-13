@@ -99,4 +99,10 @@ class MoonPhaseAdapter : RecyclerView.Adapter<MoonPhaseAdapter.MoonPhaseViewHold
         selectedMoonPhaseType = phaseType
         notifyItemRangeChanged(0, itemCount, selectPayload)
     }
+
+    override fun onViewRecycled(holder: MoonPhaseViewHolder) {
+        super.onViewRecycled(holder)
+        holder.itemView.cancelPendingInputEvents()
+        holder.itemView.animate().cancel()
+    }
 }

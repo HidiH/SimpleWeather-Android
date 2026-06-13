@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"Helyszín megadása"</string>
+    <string name="api_label">"Időjárás Szolgáltató"</string>
+    <string name="key_hint">"Szolgáltatói Kulcs"</string>
+    <string name="label_gpsfollow">"Jelenlegi Helyszín"</string>
+    <string name="label_getstarted">"Kezdjük el"</string>
+    <string name="setup_welcome_prompt">"Üdvözöljük a SimpleWeather alkalmazásban"</string>
+    <string name="setup_welcome_tagline_prompt">"Egy egyszerű időjárás alkalmazás"</string>
+    <string name="setup_location_prompt">"Adjon hozzá egy helyszínt a kezdéshez"</string>
+    <string name="setup_preferences_prompt">"Szabja testre a beállításokat alább"</string>
+    <string name="label_next">"Következő"</string>
+    <string name="label_back">"Vissza"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"Időjárás"</string>
+    <string name="action_settings">"Beállítások"</string>
+    <string name="action_retry">"Újra"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"Részletek"</string>
+    <string name="label_humidity">"Páratartalom"</string>
+    <string name="label_pressure">"Légnyomás"</string>
+    <string name="label_visibility">"Láthatóság"</string>
+    <string name="label_feelslike">"Érzet"</string>
+    <string name="label_wind">"Szél"</string>
+    <string name="label_forecast">"Előrejelzés"</string>
+    <string name="label_condition">"Állapot"</string>
+    <string name="label_sunriseset">"Napfelkelte / Napnyugta"</string>
+    <string name="label_sunrise">"Napfelkelte"</string>
+    <string name="label_sunset">"Napnyugta"</string>
+    <string name="label_hourlyforecast">"Óránkénti"</string>
+    <string name="label_precipitation">"Csapadék"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"Esély"</string>
+    <string name="label_cloudiness">"Felhőzet"</string>
+    <string name="label_qpf_rain">"Eső"</string>
+    <string name="label_qpf_snow">"Hó"</string>
+    <string name="credit_prefix">"Adatok innen:"</string>
+    <string name="attrib_prefix">"Fotó készítette:"</string>
+    <string name="label_high">"Maximum"</string>
+    <string name="label_low">"Minimum"</string>
+    <string name="label_dewpoint">"Harmatpont"</string>
+    <string name="label_moonrise">"Holdkelte"</string>
+    <string name="label_moonset">"Holdnyugta"</string>
+    <string name="label_moonphase">"Holdfázis"</string>
+    <string name="label_beaufort">"Beaufort-skála"</string>
+    <string name="label_uv">"UV Index"</string>
+    <string name="label_airquality">"Levegőminőségi index"</string>
+    <string name="label_airquality_short">"Levegőminőség"</string>
+    <string name="label_radar">"Radar"</string>
+    <string name="label_afternoon">"Délután"</string>
+    <string name="label_eve">"Este"</string>
+    <string name="label_morning">"Reggel"</string>
+    <string name="label_night">"Éjszaka"</string>
+    <string name="label_temp">"Hőmérséklet"</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"Időjárás"</string>
+    <string name="label_nav_alerts">"Figyelmeztetések"</string>
+    <string name="label_nav_locations">"Helyszínek"</string>
+    <string name="title_activity_settings">"Beállítások"</string>
+    <string name="title_fragment_alerts">"Súlyos Időjárási Figyelmeztetések"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"Általános"</string>
+    <string name="pref_category_version">"Verzió"</string>
+    <string name="pref_title_units">"Mértékegységek"</string>
+    <string name="pref_summary_fahrenheit">"Mértékegységek megjelenítése Fahrenheitben (°F)"</string>
+    <string name="pref_summary_celsius">"Mértékegységek megjelenítése Celsiusban (°C)"</string>
+    <string name="pref_title_about">"Névjegy"</string>
+    <string name="pref_title_about_app">"A SimpleWeather névjegye"</string>
+    <string name="pref_title_credits">"Közreműködők"</string>
+    <string name="pref_title_oslibs">"Nyílt forráskódú könyvtárak"</string>
+    <string name="pref_category_providers">"Adatszolgáltatók"</string>
+    <string name="pref_summary_currentlocation">"Hozzáférés engedélyezése a jelenlegi helyhez GPS-en keresztül"</string>
+    <string name="pref_summary_apikey">"Adja meg a(z) %1$s szolgáltatóhoz szükséges kulcsot"</string>
+    <string name="message_enter_apikey">"Kérjük, adjon meg egy szolgáltatói kulcsot"</string>
+    <string name="message_keyverified">"Kulcs ellenőrizve"</string>
+    <string name="message_keyinvalid">"Érvénytelen kulcs"</string>
+    <string name="pref_title_onnotification">"Időjárás Értesítés"</string>
+    <string name="pref_summary_notification">"Tartós értesítés megjelenítése a jelenlegi időjárási körülményekről"</string>
+    <string name="pref_title_api">"Időjárás Szolgáltató"</string>
+    <string name="pref_category_notification">"Értesítések"</string>
+    <string name="pref_title_notificationicon">"Értesítési Ikon"</string>
+    <string name="pref_title_alerts">"Időjárási riasztások"</string>
+    <string name="pref_summary_alerts">"Értesítések megjelenítése időjárási riasztásokhoz"</string>
+    <string name="pref_summary_alerts_disabled">"Az időjárási riasztásokat ez az időjárás-szolgáltató nem támogatja"</string>
+    <string name="pref_title_apiregister">"Fiók létrehozása"</string>
+    <string name="pref_summary_apiregister">"Hozzon létre egy fiókot a szolgáltatói kulcs regisztrálásához"</string>
+    <string name="error_message_weather_region_unsupported">"Ez az ország nem támogatott ezen időjárás-szolgáltató által"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"Hely hozzáadása"</string>
+    <string name="action_editmode">"Szerkesztés"</string>
+    <string name="label_currentlocation">"Aktuális hely"</string>
+    <string name="label_favoritelocations">"Kedvenc helyek"</string>
+    <string name="error_location_denied">"Helyhozzáférés megtagadva"</string>
+    <string name="error_retrieve_location">"Nem sikerült lekérni a helyet"</string>
+    <string name="error_enable_location_services">"A helyszolgáltatások ki vannak kapcsolva. Kérjük, engedélyezze a Beállításokban"</string>
+    <string name="error_noresults">"Nincs találat"</string>
+    <string name="label_fab_add_location">"Hely hozzáadása"</string>
+    <string name="message_locationremoved">"Hely eltávolítva"</string>
+    <string name="message_needfavorite">"Legalább egy kedvenc hely szükséges"</string>
+    <string name="undo">"Visszavonás"</string>
+    <string name="delete">"Törlés"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"Engedélyezze a hely frissítéséhez való hozzáférést a háttérben az értesítések és widgetek számára"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"Nem sikerült betölteni az időjárási adatokat"</string>
+    <string name="werror_networkerror">"Hálózati kapcsolati hiba"</string>
+    <string name="werror_invalidkey">"Érvénytelen szolgáltatói kulcs"</string>
+    <string name="werror_querynotfound">"Nincs találat a keresési feltételeknek megfelelő városok között"</string>
+    <string name="werror_unknown">"Ismeretlen hiba történt"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"Frissítési gyakoriság"</string>
+    <string name="refresh_60min">"1 óra"</string>
+    <string name="refresh_2hrs">"2 óra"</string>
+    <string name="refresh_3hrs">"3 óra"</string>
+    <string name="refresh_6hrs">"6 óra"</string>
+    <string name="refresh_12hrs">"12 óra"</string>
+    <string name="update_prefix">"Frissítve"</string>
+    <string name="update_prefix_day">"Frissítve ekkor:"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"Hőmérséklet"</string>
+    <string name="notificationicon_condition">"Időjárási viszonyok"</string>
+    <string name="not_channel_name_weather">"Időjárás-értesítések"</string>
+    <string name="not_channel_desc_weather">"Időjárás-értesítések"</string>
+    <string name="not_channel_name_alerts">"Időjárási riasztások"</string>
+    <string name="not_channel_desc_alerts">"Értesítések időjárási riasztásokhoz"</string>
+    <string name="not_channel_name_general">"Szolgáltatás értesítések"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"%1$d perce"</string>
+    <string name="datetime_hr_ago">"%1$d órája"</string>
+    <string name="datetime_min_ago">"%1$d perce"</string>
+    <string name="datetime_sec_ago">"%1$d másodperce"</string>
+    <string name="datetime_validuntil">"Érvényes eddig:"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"Személyes szolgáltatói kulcs"</string>
+    <string name="pref_summary_personalkey">"Személyes időjárás-szolgáltatói kulcs használata"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"Téma"</string>
+    <string name="userthememode_default">"Rendszer alapértelmezett"</string>
+    <string name="userthememode_dark">"Sötét"</string>
+    <string name="userthememode_black">"Sötét (AMOLED)"</string>
+    <string name="userthememode_light">"Világos"</string>
+    <string name="summary_default">"Alapértelmezett"</string>
+    <string name="action_refresh">"Frissítés"</string>
+    <string name="label_windgust">"Széllökés"</string>
+    <string name="pref_title_language">"Nyelv"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"Hőmérséklet"</string>
+    <string name="label_speed">"Sebesség"</string>
+    <string name="label_distance">"Távolság"</string>
+    <string name="pref_title_resetunits">"Mértékegységek visszaállítása az alapértelmezett értékekre"</string>
+    <string name="not_title_weather_update">"Időjárás frissítése…"</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"Ikonok"</string>
+    <string name="refresh_30min">"30 perc"</string>
+    <string name="label_day">"Nap"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"Pollenszám"</string>
+    <string name="label_pollen_tree">"Fa"</string>
+    <string name="label_tree_pollen">"Fa pollen"</string>
+    <string name="label_pollen_grass">"Fű"</string>
+    <string name="label_grass_pollen">"Fű pollen"</string>
+    <string name="label_pollen_ragweed">"Parlagfű"</string>
+    <string name="label_ragweed_pollen">"Parlagfű pollen"</string>
+    <string name="label_count_low">"Alacsony"</string>
+    <string name="label_count_moderate">"Mérsékelt"</string>
+    <string name="label_count_high">"Magas"</string>
+    <string name="label_count_veryhigh">"Nagyon magas"</string>
+    <string name="bg_location_permission_rationale_settings">"A hely háttérben történő frissítéséhez az értesítésekhez és widgetekhez, kérjük, állítsa a helymeghatározási engedélyt '%1$s'-re."</string>
+    <string name="prompt_location_not_set">"Nincs beállított hely. Kérjük, adjon hozzá egy helyet."</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"Háttérben Futó Hozzáférés a Helyhez"</string>
+    <string name="wear_bg_location_permission_rationale">"Engedélyezze a hozzáférést a hely háttérben történő frissítéséhez a csempékhez és a komplikációkhoz."</string>
+    <string name="wear_bg_location_permission_rationale_settings">"A hely háttérben történő frissítéséhez a csempékhez és a komplikációkhoz, kérjük, állítsa a helymeghatározási engedélyt '%1$s'-re."</string>
+    <string name="time_current">"Jelenlegi"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"NINCS ADAT"</string>
+    <string name="label_minutelyforecast">"Percenként"</string>
+    <string name="hint_username">"Felhasználónév"</string>
+    <string name="hint_password">"Jelszó"</string>
+    <string name="pref_category_terms">Szolgáltatási feltételek</string>
+    <string name="pref_title_privacypolicy">"Adatvédelmi irányelvek"</string>
+    <string name="pref_title_termsofservice">"Szolgáltatási feltételek"</string>
+    <string name="label_moreinfo">"További információ"</string>
+    <string name="action_reset">"Visszaállítás"</string>
+    <string name="label_count_low_short">"Al."</string>
+    <string name="label_count_moderate_short">"Közepes"</string>
+    <string name="label_count_high_short">"Magas"</string>
+    <string name="label_count_veryhigh_short">"Magas"</string>
+    <string name="werror_ratelimited">"Túl sok kérés. Kérjük, néhány perc múlva próbálja újra."</string>
+    <string name="werror_locationnotsupported">"Ezt a helyet nem támogatja ez az időjárás-szolgáltató."</string>
+    <string name="notification_perm_denied">"Értesítési engedély megtagadva"</string>
+    <string name="pref_title_color">Szín</string>
+</resources>

@@ -4,6 +4,22 @@
 
     <application tools:ignore="AllowBackup,MissingApplicationIcon">
 
+        <activity
+            android:name=".wearable.RemoteLaunchActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="simpleweather"
+                    android:host="launch-activity" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".wearable.WearableDataListenerService"
             android:enabled="true"

@@ -12,13 +12,13 @@ import com.thewizrd.common.utils.ErrorMessage
 import com.thewizrd.common.utils.LiveDataUtils.awaitWithTimeout
 import com.thewizrd.common.weatherdata.WeatherDataLoader
 import com.thewizrd.common.weatherdata.WeatherRequest
+import com.thewizrd.common.weatherdata.WeatherResult
 import com.thewizrd.shared_resources.appLib
 import com.thewizrd.shared_resources.di.settingsManager
 import com.thewizrd.shared_resources.preferences.SettingsManager
 import com.thewizrd.shared_resources.remoteconfig.remoteConfigService
 import com.thewizrd.shared_resources.utils.Logger
 import com.thewizrd.shared_resources.wearable.WearableDataSync
-import com.thewizrd.shared_resources.weatherdata.model.Weather
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.JOB_ID
 import com.thewizrd.simpleweather.services.ServiceNotificationHelper.getForegroundNotification
@@ -124,15 +124,13 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
 
     override suspend fun doWork(): Result {
         Logger.writeLine(Log.INFO, "%s: Work started", TAG)
-
-        if (!WeatherUpdaterHelper.executeWork(applicationContext))
-            return Result.failure()
-
-        return Result.success()
+        return WeatherUpdaterHelper.executeWork(applicationContext)
     }
 
     private object WeatherUpdaterHelper {
-        suspend fun executeWork(context: Context): Boolean {
+        suspend fun executeWork(context: Context): Result {
+            var result = Result.success()
+
             var locationChanged = false
 
             if (settingsManager.getDataSync() == WearableDataSync.OFF) {
@@ -145,12 +143,12 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
             if (settingsManager.isWeatherLoaded()) {
                 if (settingsManager.getDataSync() == WearableDataSync.OFF && settingsManager.useFollowGPS()) {
                     try {
-                        val result = updateLocation()
+                        val locationResult = updateLocation()
 
-                        when (result) {
+                        when (locationResult) {
                             is LocationResult.Changed -> {
                                 locationChanged = true
-                                settingsManager.saveLastGPSLocData(result.data)
+                                settingsManager.saveLastGPSLocData(locationResult.data)
                             }
                             else -> {
                                 // no-op
@@ -166,11 +164,11 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                 }
 
                 // Update for home
-                val weather = getWeather()
+                val weatherResult = getWeather()
 
                 WidgetUpdaterWorker.requestWidgetUpdate(context)
 
-                if (weather == null) {
+                if (weatherResult !is WeatherResult.Success && weatherResult !is WeatherResult.WeatherWithError) {
                     if (settingsManager.getDataSync() != WearableDataSync.OFF) {
                         // Check if data has been updated
                         WearableWorker.enqueueAction(
@@ -178,38 +176,52 @@ class WeatherUpdaterWorker(context: Context, workerParams: WorkerParameters) : C
                             WearableWorkerActions.ACTION_REQUESTWEATHERUPDATE
                         )
                     }
-                    Timber.tag(TAG).i("Work failed...")
-                    return false
+                }
+
+                result = when (weatherResult) {
+                    is WeatherResult.Success -> Result.success()
+                    is WeatherResult.NoWeather -> Result.failure()
+                    is WeatherResult.Error,
+                    is WeatherResult.WeatherWithError -> Result.retry()
                 }
             }
 
-            Timber.tag(TAG).i("Work completed successfully...")
-            return true
+            when (result) {
+                Result.success() -> {
+                    Timber.tag(TAG).i("Work completed successfully...")
+                }
+
+                Result.retry() -> {
+                    Timber.tag(TAG).w("Work failed. Will retry...")
+                }
+
+                Result.failure() -> {
+                    Timber.tag(TAG).e("Work failed...")
+                }
+            }
+
+            return result
         }
 
-        private suspend fun getWeather(): Weather? = withContext(Dispatchers.IO) {
+        private suspend fun getWeather(): WeatherResult = withContext(Dispatchers.IO) {
             Timber.tag(TAG).d("Getting weather data...")
 
-            val weather = try {
-                val locData = settingsManager.getHomeData() ?: return@withContext null
-                WeatherDataLoader(locData)
-                    .loadWeatherData(
-                        WeatherRequest.Builder()
-                            .run {
-                                if (settingsManager.getDataSync() == WearableDataSync.OFF) {
-                                    this.forceRefresh(false)
-                                        .loadAlerts()
-                                } else {
-                                    this.forceLoadSavedData()
-                                }
+            val locData =
+                settingsManager.getHomeData() ?: return@withContext WeatherResult.NoWeather()
+
+            WeatherDataLoader(locData)
+                .loadWeatherResult(
+                    WeatherRequest.Builder()
+                        .run {
+                            if (settingsManager.getDataSync() == WearableDataSync.OFF) {
+                                this.forceRefresh(false)
+                                    .loadAlerts()
+                            } else {
+                                this.forceLoadSavedData()
                             }
-                            .build()
-                    )
-            } catch (ex: Exception) {
-                Logger.writeLine(Log.ERROR, ex, "%s: getWeather error", TAG)
-                null
-            }
-            weather
+                        }
+                        .build()
+                )
         }
 
         private suspend fun updateLocation(): LocationResult {

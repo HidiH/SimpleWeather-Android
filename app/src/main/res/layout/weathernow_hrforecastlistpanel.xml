@@ -18,10 +18,10 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginVertical="4dp"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginVertical="2dp"
         app:contentPaddingBottom="4dp"
-        style="@style/Widget.Material3.CardView.Elevated">
+        style="@style/WeatherNow.CardView">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                 app:showIfNotEmpty="@{forecastsView.hourlyForecastListData}"
                 app:showIfTrue="@{FeatureSettings.hourlyForecastEnabled}">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/hourly_forecast_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.Text
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.LocalContentColor
+import androidx.wear.compose.material3.Text
 import androidx.wear.compose.ui.tooling.preview.WearPreviewFontScales
 import com.thewizrd.common.controls.DetailItemViewModel
 import com.thewizrd.common.controls.WeatherDetailsType
@@ -29,7 +31,7 @@ fun WeatherDetailItem(
 ) {
     val isPreview = LocalInspectionMode.current
 
-    Chip(
+    Button(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
@@ -44,23 +46,25 @@ fun WeatherDetailItem(
             )
         },
         onClick = {},
-        colors = ChipDefaults.secondaryChipColors(),
+        colors = ButtonDefaults.filledTonalButtonColors(),
         icon = {
             if (isPreview) {
                 Image(
                     modifier = Modifier
-                        .size(ChipDefaults.IconSize)
+                        .size(ButtonDefaults.IconSize)
                         .wrapContentSize(align = Alignment.Center),
                     painter = painterResource(id = R.drawable.ic_error),
-                    contentDescription = ""
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(LocalContentColor.current)
                 )
             } else {
                 WeatherIcon(
                     modifier = Modifier
-                        .size(ChipDefaults.IconSize)
+                        .size(ButtonDefaults.IconSize)
                         .wrapContentSize(align = Alignment.Center)
                         .rotate(model.iconRotation.toFloat()),
-                    weatherIcon = model.icon
+                    weatherIcon = model.icon,
+                    tint = LocalContentColor.current
                 )
             }
         }

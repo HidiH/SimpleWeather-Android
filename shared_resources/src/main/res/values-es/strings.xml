@@ -33,6 +33,8 @@
     <string name="label_sunset">"Puesta del sol"</string>
     <string name="label_hourlyforecast">"Cada hora"</string>
     <string name="label_precipitation">"Precipitación"</string>
+
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Probabilidad"</string>
     <string name="label_cloudiness">"Nubosidad"</string>
     <string name="label_qpf_rain">"Lluvia"</string>
@@ -67,8 +69,8 @@
     <string name="pref_title_general">"General"</string>
     <string name="pref_category_version">"Versión"</string>
     <string name="pref_title_units">"Unidades"</string>
-    <string name="pref_summary_fahrenheit">"Muestra las unidades en Fahrenheit"</string>
-    <string name="pref_summary_celsius">"Muestra las unidades en Celcius"</string>
+    <string name="pref_summary_fahrenheit">"Muestra las unidades en Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Muestra las unidades en Celcius (°C)"</string>
     <string name="pref_title_about">"Acerca"</string>
     <string name="pref_title_about_app">"Acerca de SimpleWeather"</string>
     <string name="pref_title_credits">"Créditos"</string>
@@ -225,10 +227,14 @@
     <string name="wear_bg_location_permission_rationale_settings">"Para actualizar la ubicación en segundo plano para los mosaicos y las complicaciones, establezca el permiso de ubicación en '%1$s'"</string>
     <string name="time_current">"Actual"</string>
 
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"SIN DATOS"</string>
+
     <!-- Fuzzy -->
     <string name="label_minutelyforecast">"Previsión de minutos"</string>
     <string name="hint_username">"Nombre de usuario"</string>
     <string name="hint_password">"Contraseña"</string>
+    <string name="pref_category_terms">Términos</string>
     <string name="pref_title_privacypolicy">"Política de privacidad"</string>
     <string name="pref_title_termsofservice">"Zmluvné podmienky"</string>
     <string name="label_moreinfo">"Más información"</string>
@@ -238,4 +244,7 @@
     <string name="label_count_high_short">"Alto"</string>
     <string name="label_count_veryhigh_short">"Alto"</string>
     <string name="werror_ratelimited">"Demasiadas solicitudes. Vuelva a intentarlo pasados unos minutos"</string>
+    <string name="werror_locationnotsupported">"Esta ubicación no es compatible con este proveedor meteorológico"</string>
+    <string name="notification_perm_denied">"Permiso de notificación denegado"</string>
+    <string name="pref_title_color">Color</string>
 </resources>

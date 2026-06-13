@@ -2,16 +2,8 @@
 <resources>
     <attr format="color" name="colorOnSurfaceVariant" />
 
-    <attr format="reference" name="textAppearanceDisplay1" />
-    <attr format="reference" name="textAppearanceDisplay2" />
-    <attr format="reference" name="textAppearanceDisplay3" />
-    <attr format="reference" name="textAppearanceTitle1" />
-    <attr format="reference" name="textAppearanceTitle2" />
-    <attr format="reference" name="textAppearanceTitle3" />
-    <attr format="reference" name="textAppearanceBody1" />
-    <attr format="reference" name="textAppearanceBody2" />
-    <attr format="reference" name="textAppearanceButton" />
-    <attr format="reference" name="textAppearanceCaption1" />
-    <attr format="reference" name="textAppearanceCaption2" />
-    <attr format="reference" name="textAppearanceCaption3" />
+    <attr format="reference" name="textAppearanceBodyExtraSmall" />
+    <attr format="reference" name="textAppearanceArcLarge" />
+    <attr format="reference" name="textAppearanceArcMedium" />
+    <attr format="reference" name="textAppearanceArcSmall" />
 </resources>

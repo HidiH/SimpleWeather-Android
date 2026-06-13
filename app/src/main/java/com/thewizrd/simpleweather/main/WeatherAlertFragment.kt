@@ -28,20 +28,18 @@ import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.UserThemeMode
 import com.thewizrd.simpleweather.R
 import com.thewizrd.simpleweather.databinding.FragmentWeatherListBinding
-import com.thewizrd.simpleweather.databinding.LayoutLocationHeaderBinding
-import com.thewizrd.simpleweather.fragments.ToolbarFragment
+import com.thewizrd.simpleweather.fragments.CollapsingToolbarFragment
 import com.thewizrd.simpleweather.snackbar.SnackbarManager
 import com.thewizrd.simpleweather.viewmodels.WeatherNowViewModel
 import kotlinx.coroutines.launch
 
-class WeatherAlertFragment : ToolbarFragment() {
+class WeatherAlertFragment : CollapsingToolbarFragment() {
     private val wNowViewModel: WeatherNowViewModel by activityViewModels()
     private val alertsView: WeatherAlertsViewModel by activityViewModels()
 
     private var locationData: LocationData? = null
 
     private lateinit var binding: FragmentWeatherListBinding
-    private lateinit var headerBinding: LayoutLocationHeaderBinding
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var alertAdapter: WeatherAlertPanelAdapter
 
@@ -72,11 +70,7 @@ class WeatherAlertFragment : ToolbarFragment() {
         val root = super.onCreateView(inflater, container, savedInstanceState) as ViewGroup
         // Use this to return your custom view for this Fragment
         binding = FragmentWeatherListBinding.inflate(inflater, root, true)
-        headerBinding = LayoutLocationHeaderBinding.inflate(inflater, appBarLayout, true)
-
         binding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.lifecycleOwner = viewLifecycleOwner
-        headerBinding.viewModel = wNowViewModel
 
         // Setup Actionbar
         toolbar.setNavigationIcon(toolbar.context.getAttrResourceId(R.attr.homeAsUpIndicator))
@@ -108,6 +102,7 @@ class WeatherAlertFragment : ToolbarFragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 wNowViewModel.uiState.collect {
                     locationData = it.locationData
+                    toolbar.subtitle = it.weather?.location
                     initialize()
                 }
             }

@@ -45,5 +45,20 @@ class NotificationUtils {
                 Notification.Builder(context)
             }
         }
+
+        fun Context.openAppSettingsActivity() {
+            val intent = getAppSettingsActivityIntent(this)
+            if (intent.resolveActivity(packageManager) != null) {
+                this.startActivity(intent)
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun Context.openAppNotificationSettingsActivity() {
+            val intent = getAppNotificationSettingsActivityIntent(this)
+            if (intent.resolveActivity(packageManager) != null) {
+                this.startActivity(intent)
+            }
+        }
     }
 }

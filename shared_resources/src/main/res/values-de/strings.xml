@@ -11,35 +11,21 @@
     <string name="setup_welcome_tagline_prompt">"Nur eine einfache Wetter-App"</string>
     <string name="setup_location_prompt">"Ort hinzufügen"</string>
     <string name="setup_preferences_prompt">"Einstellungen anpassen"</string>
-
-    <!-- This could only be shortened as "Vor" but wouldn't be a good replacement. -->
     <string name="label_next">"Vorwärts"</string>
-
-    <!-- This is the shortest possible string -->
     <string name="label_back">"Zurück"</string>
 
     <!-- MainActivity -->
     <string name="title_activity_weather_now">"Wetter"</string>
-
-    <!-- This would be the shortest translation. -->
     <string name="action_settings">"Einstellungen"</string>
-
-    <!-- Even "Erneut" would be too long. -->
     <string name="action_retry">"Erneut versuchen"</string>
 
     <!-- Weather Details -->
     <string name="label_details">"Details"</string>
-
-    <!-- Too long and ideally it would be "Luftfeuchtigkeit" -->
     <string name="label_humidity">"Luftfeuchtigkeit"</string>
-
-    <!-- Could be shortened with "Druck" -->
     <string name="label_pressure">"Luftdruck"</string>
     <string name="label_visibility">"Sichtweite"</string>
     <string name="label_feelslike">"Gefühlt"</string>
     <string name="label_wind">"Wind"</string>
-
-    <!-- Could only be replaced by "Prognose" but this isn't really used in this case. -->
     <string name="label_forecast">"Vorhersage"</string>
     <string name="label_condition">"Bedingung"</string>
     <string name="label_sunriseset">"Sonnenauf- und -untergang"</string>
@@ -48,14 +34,10 @@
     <string name="label_hourlyforecast">"Stündlich"</string>
     <string name="label_precipitation">"Niederschlag"</string>
 
-    <!-- "Chance" could be used as well but isn't really used in this case. -->
+    <!-- Chance of Precipitation -->
     <string name="label_chance">"Niederschlagsgefahr"</string>
     <string name="label_cloudiness">"Bewölkung"</string>
-
-    <!-- There is no better word for it. -->
     <string name="label_qpf_rain">"Regen"</string>
-
-    <!-- The only German word for snow. -->
     <string name="label_qpf_snow">"Schnee"</string>
     <string name="credit_prefix">"Daten von"</string>
     <string name="attrib_prefix">"Foto von"</string>
@@ -74,8 +56,6 @@
     <string name="label_eve">"Abend"</string>
     <string name="label_morning">"Morgen"</string>
     <string name="label_night">"Nacht"</string>
-
-    <!-- Abbreviated from temperature or from temporary? -->
     <string name="label_temp">"Temp"</string>
 
     <!-- NavBar -->
@@ -89,10 +69,8 @@
     <string name="pref_title_general">"Allgemein"</string>
     <string name="pref_category_version">"Version"</string>
     <string name="pref_title_units">"Einheiten"</string>
-    <string name="pref_summary_fahrenheit">"Einheiten in Fahrenheit"</string>
-
-    <!-- Maybe leave out the bracketed metric? -->
-    <string name="pref_summary_celsius">"Einheiten in Celsius"</string>
+    <string name="pref_summary_fahrenheit">"Einheiten in Fahrenheit (°F)"</string>
+    <string name="pref_summary_celsius">"Einheiten in Celsius (°C)"</string>
     <string name="pref_title_about">"Über"</string>
     <string name="pref_title_about_app">"Über SimpleWeather"</string>
     <string name="pref_title_credits">"Danksagungen"</string>
@@ -103,20 +81,12 @@
     <string name="message_enter_apikey">"Anbieterschlüssel eingeben"</string>
     <string name="message_keyverified">"Schlüssel bestätigt"</string>
     <string name="message_keyinvalid">"Schlüssel ungültig"</string>
-
-    <!-- Or "Laufende Benachrichtigung" in a less formal way. -->
     <string name="pref_title_onnotification">"Wetter-Benachrichtigung"</string>
-
-    <!-- Or dismiss the trailing "anzeigen" -->
     <string name="pref_summary_notification">"Dauerhafte Benachrichtigung der aktuellen Wetterbedingungen anzeigen"</string>
-
-    <!-- Sometimes the title is Weather Provider sometimes it is Data Provider. It could also be titled more precisely as Weather Data Provider. Maybe we should unify this? -->
     <string name="pref_title_api">"Wetteranbieter"</string>
     <string name="pref_category_notification">"Benachrichtigungen"</string>
     <string name="pref_title_notificationicon">"Benachrichtigungssymbol"</string>
     <string name="pref_title_alerts">"Wetterwarnungen"</string>
-
-    <!-- Or dismiss the trailing "anzeigen" -->
     <string name="pref_summary_alerts">"Benachrichtigungen für Wetterwarnungen anzeigen"</string>
     <string name="pref_summary_alerts_disabled">"Wetterwarnungen werden von diesem Wetteranbieter nicht unterstützt"</string>
     <string name="pref_title_apiregister">"Benutzerkonto erstellen"</string>
@@ -236,12 +206,14 @@
     <string name="wear_bg_location_permission_rationale_settings">"Um den Standort im Hintergrund für Kacheln und Komplikationen zu aktualisieren, setzen Sie bitte die Standortberechtigung auf '%1$s'"</string>
     <string name="time_current">"Aktuell"</string>
 
-    <!-- Minutely
-Minute-by-Minute Forecast -->
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"KEINE DATEN"</string>
+
     <!-- Fuzzy -->
     <string name="label_minutelyforecast">"Vorhersage im Minutentakt"</string>
     <string name="hint_username">"Nutzername"</string>
     <string name="hint_password">"Passwort"</string>
+    <string name="pref_category_terms">Nutzungsbedingungen</string>
     <string name="pref_title_privacypolicy">"Datenschutzerklärung"</string>
     <string name="pref_title_termsofservice">"Nutzungsbedingungen"</string>
     <string name="label_moreinfo">"Mehr Infos"</string>
@@ -251,4 +223,7 @@ Minute-by-Minute Forecast -->
     <string name="label_count_high_short">"Hoch"</string>
     <string name="label_count_veryhigh_short">"Hoch"</string>
     <string name="werror_ratelimited">"Zu viele Anfragen. Bitte versuchen Sie es nach ein paar Minuten erneut"</string>
+    <string name="werror_locationnotsupported">"Dieser Standort wird von diesem Wetteranbieter nicht unterstützt"</string>
+    <string name="notification_perm_denied">"Benachrichtigungserlaubnis verweigert"</string>
+    <string name="pref_title_color">Farbe</string>
 </resources>

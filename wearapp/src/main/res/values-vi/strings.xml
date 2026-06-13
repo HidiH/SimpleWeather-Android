@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"Thiết lập từ điện thoại"</string>
+    <string name="action_changelocation">"Thay đổi vị trí"</string>
+    <string name="action_openonphone">"Mở trên điện thoại"</string>
+    <string name="message_openedonphone">"Đã mở trên điện thoại…"</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"Thiết bị chưa kết nối"</string>
+    <string name="status_connecting">"Đang kết nối…"</string>
+    <string name="status_notinstalled">"Ứng dụng chưa được cài đặt trên thiết bị"</string>
+    <string name="status_connected">"Đã kết nối"</string>
+    <string name="status_node_unavailable">"Thiết bị chưa được kết nối hoặc ứng dụng chưa được cài đặt trên thiết bị…"</string>
+    <string name="status_node_notsupported">"Thiết bị đã kết nối không được hỗ trợ"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"Bạn có muốn thiết lập và đồng bộ hóa dữ liệu từ điện thoại/thiết bị đã kết nối của mình không?"</string>
+    <string name="message_gettingstatus">"Đang lấy trạng thái kết nối…"</string>
+    <string name="error_notinstalled">"Cài đặt ứng dụng trên thiết bị và thử lại"</string>
+    <string name="message_continueondevice">"Tiếp tục thiết lập trên thiết bị đã kết nối"</string>
+    <string name="message_retrievingdata">"Đang truy xuất dữ liệu từ thiết bị đã kết nối…"</string>
+    <string name="error_syncing">"Không thể đồng bộ hóa dữ liệu"</string>
+    <string name="message_settingsretrieved">"Đã nhận dữ liệu cài đặt…"</string>
+    <string name="message_locationretrieved">"Đã nhận dữ liệu vị trí…"</string>
+    <string name="message_weatherretrieved">"Đã nhận dữ liệu thời tiết…"</string>
+    <string name="message_synccompleted">"Đồng bộ hóa dữ liệu thành công"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"Tắt"</string>
+    <string name="pref_sync_deviceonly">"Đồng bộ hóa chỉ từ thiết bị"</string>
+    <string name="pref_sync_whenavailable">"Đồng bộ hóa từ thiết bị (khi có)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"Đồng bộ"</string>
+    <string name="pref_sync_title">"Đồng bộ hóa dữ liệu"</string>
+    <string name="pref_connectionstatus_title">"Trạng thái kết nối"</string>
+    <string name="message_disconnected">"Đã ngắt kết nối"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"Thời tiết hiện tại"</string>
+    <string name="tile_label_weather_forecast">"Thời tiết + Dự báo"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"Thời tiết (Cao / Thấp)"</string>
+    <string name="complication_label_weather_currentlocation">"Thời tiết (vị trí hiện tại)"</string>
+    <string name="tile_label_weather_hrforecast">"Thời tiết + Dự báo hàng giờ"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Thời tiết (Vị trí hiện tại + Cảm giác như)"</string>
+    <string name="title_tile_config">"Cấu hình thẻ thông tin"</string>
+    <string name="message_reset_to_default">"Đặt lại về mặc định?"</string>
+    <string name="pref_title_detailstileeditor">"Biên tập thẻ thông tin"</string>
+</resources>

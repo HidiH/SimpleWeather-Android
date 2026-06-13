@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moonphase_new">"Jaunatis"</string>
+    <string name="moonphase_waxcrescent">"Pilnėjantis pusmėnulis"</string>
+    <string name="moonphase_firstqtr">"Priešpilnis"</string>
+    <string name="moonphase_waxgibbous">"Pilnėjantis mėnulis"</string>
+    <string name="moonphase_full">"Pilnatis"</string>
+    <string name="moonphase_wangibbous">"Dylantis mėnulis"</string>
+    <string name="moonphase_lastqtr">"Delčia"</string>
+    <string name="moonphase_wancrescent">"Dylantis pusmėnulis"</string>
+    <string name="moonphase_new_short">"Jaun."</string>
+    <string name="moonphase_waxcrescent_short">"Pln. p."</string>
+    <string name="moonphase_firstqtr_short">"Priešp."</string>
+    <string name="moonphase_waxgibbous_short">"Pln. m."</string>
+    <string name="moonphase_full_short">"Pilnat."</string>
+    <string name="moonphase_wangibbous_short">"Dyl. m."</string>
+    <string name="moonphase_lastqtr_short">"delčia"</string>
+    <string name="moonphase_wancrescent_short">"Dyl. p."</string>
+</resources>

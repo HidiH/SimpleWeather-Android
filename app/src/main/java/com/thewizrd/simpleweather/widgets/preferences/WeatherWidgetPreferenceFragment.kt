@@ -1,12 +1,14 @@
 package com.thewizrd.simpleweather.widgets.preferences
 
 import android.app.Activity
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.text.style.TextAppearanceSpan
+import android.util.SizeF
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -47,6 +49,7 @@ import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider
 import com.thewizrd.simpleweather.widgets.WidgetGraphType
 import com.thewizrd.simpleweather.widgets.WidgetType
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper
+import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper.apply
 import com.thewizrd.simpleweather.widgets.WidgetUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -209,7 +212,10 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
                 true
             }
 
-        if (WidgetUtils.isForecastWidget(mWidgetType) && mWidgetType != WidgetType.Widget4x2MaterialYou && mWidgetType != WidgetType.Widget4x4MaterialYou) {
+        if (WidgetUtils.isForecastWidget(mWidgetType) && !WidgetUtils.isMaterialForecastWidget(
+                mWidgetType
+            )
+        ) {
             fcastOptPref.setValueIndex(WidgetUtils.getForecastOption(mAppWidgetId).value)
             fcastOptPref.callChangeListener(fcastOptPref.value)
             findPreference<Preference>(KEY_FORECAST)!!.isVisible = true
@@ -323,7 +329,18 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
                 )
             }
 
-            val widgetView = views.apply(mWidgetViewCtx, binding.widgetContainer)
+            val widgetSize = mWidgetOptions.let {
+                val minWidth = it.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0).toFloat()
+                val minHeight = it.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0).toFloat()
+
+                if (minWidth > 0 && minHeight > 0) {
+                    SizeF(minWidth, minHeight)
+                } else {
+                    null
+                }
+            }
+
+            val widgetView = views.apply(mWidgetViewCtx, binding.widgetContainer, widgetSize)
             binding.widgetContainer.addView(widgetView)
             widgetView.updateLayoutParams<FrameLayout.LayoutParams> {
                 height = mWidgetViewCtx.dpToPx(
@@ -340,18 +357,21 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
                         WidgetType.Widget2x2MaterialYou -> 2
                         WidgetType.Widget2x2PillMaterialYou -> 2
                         WidgetType.Widget4x2MaterialYou -> 2
-                        WidgetType.Widget4x4MaterialYou -> 3.5f
-                        WidgetType.Widget4x3Locations -> 3
+                        WidgetType.Widget4x4MaterialYou -> 3 /* 4 is too big */
+                        WidgetType.Widget4x3Locations -> 2.5f /* 3 is too big */
                         WidgetType.Widget3x1MaterialYou -> 1
                         WidgetType.Widget4x2Graph -> 2
                         WidgetType.Widget4x2Tomorrow -> 2
+                        WidgetType.Widget2x2M3 -> 2
+                        WidgetType.Widget4x4M3 -> 3 /* 4 is too big */
+                        WidgetType.Widget4x2M3 -> 2
                     }.toFloat()
                 ).toInt()
                 width = mWidgetViewCtx.dpToPx(
-                    96 * when (mWidgetType) {
+                    96f * when (mWidgetType) {
                         WidgetType.Unknown -> 4
                         WidgetType.Widget1x1 -> 1
-                        WidgetType.Widget2x2 -> 4 /* 2 is to small */
+                        WidgetType.Widget2x2 -> 4 /* 2 is too small */
                         WidgetType.Widget4x1 -> 4
                         WidgetType.Widget4x2 -> 4
                         WidgetType.Widget4x1Google -> 4
@@ -366,6 +386,9 @@ class WeatherWidgetPreferenceFragment : BaseWeatherWidgetPreferenceFragment() {
                         WidgetType.Widget3x1MaterialYou -> 3
                         WidgetType.Widget4x2Graph -> 4
                         WidgetType.Widget4x2Tomorrow -> 4
+                        WidgetType.Widget2x2M3 -> 2 /* 2 is too small */
+                        WidgetType.Widget4x4M3 -> 4
+                        WidgetType.Widget4x2M3 -> 4
                     }.toFloat()
                 ).toInt()
                 gravity = Gravity.CENTER

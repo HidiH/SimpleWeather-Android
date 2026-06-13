@@ -9,7 +9,7 @@
         android:clipToPadding="false"
         android:orientation="vertical"
         tools:context=".main.MainActivity"
-        tools:theme="@style/Theme.Material3.DayNight">
+        tools:theme="@style/Theme.Material3Expressive.DayNight">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container"

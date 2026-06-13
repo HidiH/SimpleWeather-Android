@@ -5,8 +5,8 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
+    android:layout_gravity="center"
     android:gravity="center"
-    tools:layout_gravity="center"
     tools:viewBindingIgnore="true">
 
     <androidx.appcompat.widget.AppCompatImageView

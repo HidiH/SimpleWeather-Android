@@ -1,5 +1,6 @@
 package com.thewizrd.common.utils
 
+import android.app.Activity
 import android.graphics.Color
 import android.os.Build
 import android.view.View
@@ -7,10 +8,11 @@ import android.view.Window
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.ColorInt
-import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.core.app.ActivityCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ object ActivityUtils {
         setTransparentWindow(backgroundColor, statusBarColor, navBarColor, true)
     }
 
+    @Suppress("DEPRECATION")
     fun Window.setTransparentWindow(
         @ColorInt backgroundColor: Int,
         @ColorInt statusBarColor: Int,
@@ -56,12 +59,8 @@ object ActivityUtils {
         ) < 4.5f
         val statBarProtected = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M || !isLightStatusBar
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setLightStatusBar(setColors && isLightStatusBar)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            setLightNavBar(setColors && isLightNavBar)
-        }
+        setLightStatusBar(setColors && isLightStatusBar)
+        setLightNavBar(setColors && isLightNavBar)
 
         this.statusBarColor = if (setColors) {
             if (statBarProtected) statusBarColor else ColorUtils.blendARGB(
@@ -94,6 +93,7 @@ object ActivityUtils {
         setStatusBarColor(backgroundColor, statusBarColor, true)
     }
 
+    @Suppress("DEPRECATION")
     private fun Window.setStatusBarColor(
         @ColorInt backgroundColor: Int,
         @ColorInt statusBarColor: Int,
@@ -129,30 +129,14 @@ object ActivityUtils {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     fun Window.setLightStatusBar(setLight: Boolean) {
-        if (setLight) {
-            decorView.systemUiVisibility = (
-                    decorView.systemUiVisibility
-                            or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-        } else {
-            decorView.systemUiVisibility = (
-                    decorView.systemUiVisibility
-                            and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv())
-        }
+        WindowInsetsControllerCompat(this, decorView)
+            .isAppearanceLightStatusBars = setLight
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     fun Window.setLightNavBar(setLight: Boolean) {
-        if (setLight) {
-            decorView.systemUiVisibility = (
-                    decorView.systemUiVisibility
-                            or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
-        } else {
-            decorView.systemUiVisibility = (
-                    decorView.systemUiVisibility
-                            and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv())
-        }
+        WindowInsetsControllerCompat(this, decorView)
+            .isAppearanceLightNavigationBars = setLight
     }
 
     fun ComponentActivity.showToast(@StringRes resId: Int, duration: Int) {
@@ -165,5 +149,9 @@ object ActivityUtils {
         lifecycleScope.launch(Dispatchers.Main.immediate) {
             Toast.makeText(this@showToast, message, duration).show()
         }
+    }
+
+    fun Activity.recreateCompat() {
+        ActivityCompat.recreate(this)
     }
 }

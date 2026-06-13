@@ -149,4 +149,7 @@
     <action
         android:id="@+id/action_global_premiumFragment"
         app:destination="@id/premiumFragment" />
+    <action
+        android:id="@+id/action_global_settingsFragment"
+        app:destination="@id/settingsFragment" />
 </navigation>

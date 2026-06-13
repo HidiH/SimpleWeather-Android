@@ -38,25 +38,15 @@ public class IconProviderPreference extends RadioButtonPreference {
     }
 
     public IconProviderPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, R.attr.iconProviderPreferenceStyle);
     }
 
     public IconProviderPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
+        this(context, attrs, defStyleAttr, 0);
     }
 
     public IconProviderPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
-    private void init() {
-        setWidgetLayoutResource(R.layout.preference_widget_radiobutton);
-        setLayoutResource(R.layout.preference_icon);
-        setIconSpaceReserved(false);
-
     }
 
     @NonNull
@@ -72,7 +62,7 @@ public class IconProviderPreference extends RadioButtonPreference {
         setIconFrameVisibility(mIconVisibility);
 
         mPremiumIcon = (ImageView) holder.findViewById(R.id.premium_icon);
-        mPremiumIcon.setVisibility(ExtrasKt.isIconPackSupported(getKey()) ? View.GONE : View.VISIBLE);
+        mPremiumIcon.setVisibility(ExtrasKt.isIconPackSupported(getKey()) ? View.INVISIBLE : View.VISIBLE);
 
         ViewGroup iconsContainer = (ViewGroup) holder.findViewById(R.id.icons_container);
         if (iconsContainer != null) {

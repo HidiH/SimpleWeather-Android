@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moonphase_new">"Trăng non"</string>
+    <string name="moonphase_waxcrescent">"Trăng lưỡi liềm"</string>
+    <string name="moonphase_firstqtr">"Trăng thượng tuần"</string>
+    <string name="moonphase_waxgibbous">"Trăng khuyết đầu tháng"</string>
+    <string name="moonphase_full">"Trăng tròn"</string>
+    <string name="moonphase_wangibbous">"Trăng khuyết cuối tháng"</string>
+    <string name="moonphase_lastqtr">"Trăng hạ huyền"</string>
+    <string name="moonphase_wancrescent">"Trăng lưỡi liềm cuối tháng"</string>
+    <string name="moonphase_new_short">"Non"</string>
+    <string name="moonphase_waxcrescent_short">"Khuyết"</string>
+    <string name="moonphase_firstqtr_short">"Thượng tuần"</string>
+    <string name="moonphase_waxgibbous_short">"Khuyết"</string>
+    <string name="moonphase_full_short">"Tròn"</string>
+    <string name="moonphase_wangibbous_short">"Khuyết"</string>
+    <string name="moonphase_lastqtr_short">"Hạ tuần"</string>
+    <string name="moonphase_wancrescent_short">"Khuyết"</string>
+</resources>

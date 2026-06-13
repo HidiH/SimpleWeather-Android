@@ -32,50 +32,61 @@ fun createLocationModel(
     @WeatherAPI.WeatherProviders weatherAPI: String?
 ): LocationQuery {
     return LocationQuery().apply {
-        var town: String? = null
-        var region: String? = null
-        var adminArea: String? = null
-        var countryName: String? = null
+        var town: AddressComponent? = null
+        var region: AddressComponent? = null
+        var adminArea: AddressComponent? = null
+        var country: AddressComponent? = null
 
         val addressComponents: List<AddressComponent?>? = response.place.addressComponents?.asList()
 
         if (!addressComponents.isNullOrEmpty()) {
             for (addrCmp in addressComponents) {
-                if (town.isNullOrBlank() && addrCmp?.types?.contains("locality") == true) {
-                    town = addrCmp.name
+                if (town == null && addrCmp?.types?.contains("locality") == true) {
+                    town = addrCmp
                 }
-                if (adminArea.isNullOrBlank() && addrCmp?.types?.contains("administrative_area_level_2") == true) {
-                    adminArea = addrCmp.shortName
+                if (adminArea == null && addrCmp?.types?.contains("administrative_area_level_2") == true) {
+                    adminArea = addrCmp
                 }
-                if (region.isNullOrBlank() && addrCmp?.types?.contains("administrative_area_level_1") == true) {
-                    region = addrCmp.shortName
+                if (region == null && addrCmp?.types?.contains("administrative_area_level_1") == true) {
+                    region = addrCmp
                 }
-                if (locationCountry.isNullOrBlank() && addrCmp?.types?.contains("country") == true) {
-                    countryName = addrCmp.name
+                if (country == null && addrCmp?.types?.contains("country") == true) {
+                    country = addrCmp
                     locationCountry = addrCmp.shortName
                 }
-                if (town != null && adminArea != null && region != null && locationCountry != null) {
+                if (town != null && adminArea != null && region != null && country != null) {
                     break
                 }
             }
         }
 
-        if (!town.isNullOrBlank() && !region.isNullOrBlank() && !adminArea.isNullOrBlank() &&
-                !(adminArea == region || adminArea == town)) {
-            locationName = String.format("%s, %s, %s", town, adminArea, region)
-        } else if (!town.isNullOrBlank() && !region.isNullOrBlank()) {
-            locationName = if (town == region) {
-                String.format("%s, %s", town, countryName)
+        val isUS = country?.shortName == "US" || country?.name == "United States"
+
+        if (town != null && region != null && adminArea != null && !(adminArea.name == region.name || adminArea.name.contains(
+                region.name,
+                true
+            ) || adminArea.name == town.name || adminArea.name.contains(town.name, true))
+        ) {
+            locationName = String.format(
+                "%s, %s, %s",
+                town.name,
+                adminArea.name,
+                if (isUS) region.shortName else region.name
+            )
+        } else if (town != null && region != null) {
+            locationName = if (town.name == region.name) {
+                String.format("%s, %s", town.name, country?.name)
             } else {
-                String.format("%s, %s", town, region)
+                String.format("%s, %s", town.name, if (isUS) region.shortName else region.name)
             }
         } else {
-            if (town.isNullOrBlank() || region.isNullOrBlank()) {
-                if (!response.place.name.isNullOrBlank()) {
-                    val placeName = response.place.name
+            if (town == null || region == null) {
+                if (!response.place.displayName.isNullOrBlank()) {
+                    val placeName = response.place.displayName
+
                     locationName = when {
-                        placeName?.contains(", $countryName") == true -> {
-                            placeName.replace(", $countryName", "")
+                        placeName?.contains(", ${country?.name}") == true -> {
+                            placeName.replace(", ${country?.name}", "")
                         }
                         placeName?.contains(", $locationCountry") == true -> {
                             placeName.replace(", $locationCountry", "")
@@ -85,24 +96,27 @@ fun createLocationModel(
                         }
                     }
                 } else {
-                    locationName = if (town.isNullOrBlank()) {
-                        String.format("%s, %s", region, countryName)
+                    locationName = if (town == null) {
+                        String.format("%s, %s", region?.name, country?.name)
                     } else {
-                        String.format("%s, %s", town, countryName)
+                        String.format("%s, %s", town.name, country?.name)
                     }
                 }
             }
         }
 
         if (locationName.isNullOrBlank()) {
-            locationName = response.place.name
+            locationName = response.place.displayName
         }
         if (locationCountry.isNullOrBlank()) {
-            locationCountry = countryName
+            locationCountry = country?.shortName ?: country?.name
+        }
+        if (locationRegion.isNullOrBlank()) {
+            locationRegion = region?.name ?: adminArea?.name
         }
 
-        locationLat = response.place.latLng!!.latitude
-        locationLong = response.place.latLng!!.longitude
+        locationLat = response.place.location!!.latitude
+        locationLong = response.place.location!!.longitude
 
         locationTZLong = null
 

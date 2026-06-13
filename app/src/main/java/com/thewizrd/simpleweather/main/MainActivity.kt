@@ -2,7 +2,6 @@ package com.thewizrd.simpleweather.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Outline
@@ -44,12 +43,10 @@ import com.thewizrd.shared_resources.utils.ContextUtils.getOrientation
 import com.thewizrd.shared_resources.utils.ContextUtils.isSmallestWidth
 import com.thewizrd.shared_resources.utils.JSONParser
 import com.thewizrd.shared_resources.utils.UserThemeMode
-import com.thewizrd.shared_resources.utils.UserThemeMode.OnThemeChangeListener
 import com.thewizrd.simpleweather.NavGraphDirections
 import com.thewizrd.simpleweather.R
+import com.thewizrd.simpleweather.activities.WindowColorActivity
 import com.thewizrd.simpleweather.databinding.ActivityMainBinding
-import com.thewizrd.simpleweather.helpers.WindowColorManager
-import com.thewizrd.simpleweather.locale.UserLocaleActivity
 import com.thewizrd.simpleweather.notifications.WeatherAlertNotificationService
 import com.thewizrd.simpleweather.preferences.SettingsFragment
 import com.thewizrd.simpleweather.services.UpdaterUtils
@@ -58,7 +55,7 @@ import com.thewizrd.simpleweather.updates.InAppUpdateManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivity : UserLocaleActivity(), OnThemeChangeListener, WindowColorManager {
+class MainActivity : WindowColorActivity() {
     companion object {
         private const val TAG = "MainActivity"
         private const val INSTALL_REQUESTCODE = 168
@@ -66,8 +63,6 @@ class MainActivity : UserLocaleActivity(), OnThemeChangeListener, WindowColorMan
 
     private lateinit var binding: ActivityMainBinding
     private var mNavController: NavController? = null
-
-    private var prevConfig: Configuration? = null
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private var appUpdateManager: InAppUpdateManager? = null
@@ -204,8 +199,6 @@ class MainActivity : UserLocaleActivity(), OnThemeChangeListener, WindowColorMan
 
     override fun onStart() {
         super.onStart()
-        prevConfig = Configuration(this.resources.configuration)
-
         AnalyticsLogger.logEvent("$TAG: onStart")
 
         val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
@@ -430,13 +423,4 @@ class MainActivity : UserLocaleActivity(), OnThemeChangeListener, WindowColorMan
         )
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-
-        if (prevConfig == null || (newConfig.diff(prevConfig) and ActivityInfo.CONFIG_ORIENTATION) != 0) {
-            updateWindowColors(settingsManager.getUserThemeMode())
-        }
-
-        prevConfig = Configuration(newConfig)
-    }
 }

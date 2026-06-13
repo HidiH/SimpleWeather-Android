@@ -152,10 +152,6 @@
     <!-- Fuzzy -->
     <string name="prompt_max_locations_allowed">"最多允许五个位置"</string>
 
-    <!-- Forecast Graphs -->
-    <!-- Fuzzy -->
-    <string name="label_nodata">"没有数据"</string>
-
     <!-- Fuzzy -->
     <string name="pref_title_widgetgraphtype">"预测类型"</string>
 
@@ -220,4 +216,7 @@
     <string name="alertsev_extreme">"极端"</string>
     <string name="pref_title_txtshadow">"文字阴影"</string>
     <string name="pref_summary_txtshadow">"为文本添加阴影图层"</string>
+    <string name="precipitation_likely_text_format">"%1$s左右可能下雨（%2$d%%的几率）"</string>
+    <string name="precipitation_likely_minutely_starting_text_format">"预计%1$s左右开始下雨"</string>
+    <string name="precipitation_likely_minutely_stopping_text_format">"预计%1$s左右雨停"</string>
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- North -->
+    <string name="wind_dir_n">"É"</string>
+
+    <!-- North-North East -->
+    <string name="wind_dir_nne">"ÉKÉ"</string>
+
+    <!-- North-East -->
+    <string name="wind_dir_ne">"ÉK"</string>
+
+    <!-- East North-East -->
+    <string name="wind_dir_ene">"KÉK"</string>
+
+    <!-- East -->
+    <string name="wind_dir_e">"K"</string>
+
+    <!-- East South-East -->
+    <string name="wind_dir_ese">"KKÉ"</string>
+
+    <!-- South-East -->
+    <string name="wind_dir_se">"DK"</string>
+
+    <!-- South South-East -->
+    <string name="wind_dir_sse">"DDK"</string>
+
+    <!-- South -->
+    <string name="wind_dir_s">"D"</string>
+
+    <!-- South South-West -->
+    <string name="wind_dir_ssw">"DDNY"</string>
+
+    <!-- South-West -->
+    <string name="wind_dir_sw">"DNY"</string>
+
+    <!-- West South-West -->
+    <string name="wind_dir_wsw">"NYDNY"</string>
+
+    <!-- West -->
+    <string name="wind_dir_w">"NY"</string>
+
+    <!-- West North-West -->
+    <string name="wind_dir_wnw">"ÉNYNY"</string>
+
+    <!-- North-West -->
+    <string name="wind_dir_nw">"ÉNY"</string>
+
+    <!-- North North-West -->
+    <string name="wind_dir_nnw">"ÉÉNY"</string>
+</resources>

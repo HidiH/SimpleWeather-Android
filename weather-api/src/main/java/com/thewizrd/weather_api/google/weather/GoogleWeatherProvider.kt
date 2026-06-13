@@ -165,7 +165,6 @@ class GoogleWeatherProvider : WeatherProviderImpl() {
 
             val client = sharedDeps.httpClient
             var conditionResponse: Response? = null
-            var dailyResponse: Response? = null
             var wEx: WeatherException? = null
 
             try {
@@ -251,7 +250,6 @@ class GoogleWeatherProvider : WeatherProviderImpl() {
                 Logger.writeLine(Log.ERROR, ex, "GoogleWeatherProvider: error getting weather data")
             } finally {
                 conditionResponse?.closeQuietly()
-                dailyResponse?.closeQuietly()
             }
 
             if (wEx == null && weather.isNullOrInvalid()) {

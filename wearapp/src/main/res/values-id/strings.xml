@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_setupfromphone">"Atur dari Ponsel"</string>
+    <string name="action_changelocation">"Ubah Lokasi"</string>
+    <string name="action_openonphone">"Buka di Ponsel"</string>
+    <string name="message_openedonphone">"Dibuka di Ponsel…"</string>
+
+    <!-- Connection Status -->
+    <string name="status_disconnected">"Perangkat tidak terhubung"</string>
+    <string name="status_connecting">"Menghubungkan…"</string>
+    <string name="status_notinstalled">"Aplikasi tidak terpasang di perangkat"</string>
+    <string name="status_connected">"Terhubung"</string>
+    <string name="status_node_unavailable">"Perangkat tidak terhubung atau aplikasi tidak terpasang di perangkat…"</string>
+    <string name="status_node_notsupported">"Perangkat terhubung tidak didukung"</string>
+
+    <!-- Setup -->
+    <string name="prompt_confirmsetup">"Apakah Anda ingin mengatur dan menyinkronkan data dari ponsel/perangkat terhubung Anda?"</string>
+    <string name="message_gettingstatus">"Mendapatkan status koneksi…"</string>
+    <string name="error_notinstalled">"Pasang aplikasi di perangkat dan coba lagi"</string>
+    <string name="message_continueondevice">"Lanjutkan pengaturan di perangkat terhubung"</string>
+    <string name="message_retrievingdata">"Mengambil data dari perangkat terhubung…"</string>
+    <string name="error_syncing">"Tidak dapat menyinkronkan data"</string>
+    <string name="message_settingsretrieved">"Data pengaturan diterima…"</string>
+    <string name="message_locationretrieved">"Data lokasi diterima…"</string>
+    <string name="message_weatherretrieved">"Data cuaca diterima…"</string>
+    <string name="message_synccompleted">"Sinkronisasi data berhasil"</string>
+
+    <!-- Preferences -->
+    <string name="pref_sync_off">"Mati"</string>
+    <string name="pref_sync_deviceonly">"Sinkronkan hanya dari perangkat"</string>
+    <string name="pref_sync_whenavailable">"Sinkronkan dari perangkat (jika tersedia)"</string>
+
+    <!-- Preferences -->
+    <string name="pref_category_title_sync">"Sinkronisasi"</string>
+    <string name="pref_sync_title">"Sinkronisasi Data"</string>
+    <string name="pref_connectionstatus_title">"Status Koneksi"</string>
+    <string name="message_disconnected">"Terputus"</string>
+
+    <!-- Tile Labels -->
+    <string name="tile_label_currentweather">"Cuaca Saat Ini"</string>
+    <string name="tile_label_weather_forecast">"Cuaca + Prakiraan"</string>
+
+    <!-- Complication Labels
+Weather (High/Low) -->
+    <string name="complication_label_weather_hilo">"Cuaca (Tertinggi / Terendah)"</string>
+    <string name="complication_label_weather_currentlocation">"Cuaca (lokasi saat ini)"</string>
+    <string name="tile_label_weather_hrforecast">"Cuaca + Prakiraan Jam"</string>
+    <string name="complication_label_weather_currentlocation_feelslike">"Cuaca (Lokasi Saat Ini + Terasa Seperti)"</string>
+    <string name="title_tile_config">"Mengkonfigurasi Kartu"</string>
+    <string name="message_reset_to_default">"Setel ulang ke default?"</string>
+    <string name="pref_title_detailstileeditor">"Editor kartu"</string>
+</resources>

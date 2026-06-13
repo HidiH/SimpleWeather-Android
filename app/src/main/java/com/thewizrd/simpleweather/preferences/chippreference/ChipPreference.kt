@@ -37,7 +37,7 @@ import com.thewizrd.simpleweather.R
 class ChipPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
+    defStyleAttr: Int = R.attr.chipPreferenceStyle,
     defStyleRes: Int = 0
 ) : Preference(context, attrs, defStyleAttr, defStyleRes) {
     private lateinit var mEntries: Array<CharSequence>
@@ -49,14 +49,11 @@ class ChipPreference @JvmOverloads constructor(
 
     init {
         context.obtainStyledAttributes(
-            attrs, R.styleable.ListPreference, defStyleAttr, defStyleRes
+            attrs, R.styleable.ChipPreference, defStyleAttr, defStyleRes
         ).use {
             mEntries = it.getTextArray(R.styleable.ChipPreference_android_entries)
             mEntryValues = it.getTextArray(R.styleable.ChipPreference_android_entryValues)
         }
-
-        layoutResource = R.layout.preference_widget_chip
-        isSelectable = false
     }
 
     constructor(
@@ -70,8 +67,6 @@ class ChipPreference @JvmOverloads constructor(
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        holder.isDividerAllowedAbove = true
-        holder.isDividerAllowedBelow = true
 
         chipGroup = holder.findViewById(R.id.chip_group) as ChipGroup
 

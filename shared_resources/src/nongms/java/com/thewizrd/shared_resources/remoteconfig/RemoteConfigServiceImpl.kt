@@ -72,4 +72,8 @@ class RemoteConfigServiceImpl : RemoteConfigService {
     }
 
     override fun getBoolean(key: String): Boolean = false
+
+    override fun getLong(key: String): Long = 0L
+
+    override fun getDouble(key: String): Double = 0.0
 }

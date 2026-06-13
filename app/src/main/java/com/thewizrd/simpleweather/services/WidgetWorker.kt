@@ -3,7 +3,17 @@ package com.thewizrd.simpleweather.services
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Build
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.ForegroundInfo
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.multiprocess.RemoteWorkManager
 import com.thewizrd.shared_resources.Constants
 import com.thewizrd.shared_resources.locationdata.LocationData
 import com.thewizrd.simpleweather.widgets.WeatherWidgetProvider.Companion.EXTRA_WIDGET_IDS
@@ -12,10 +22,15 @@ import com.thewizrd.simpleweather.widgets.WidgetProviderInfo
 import com.thewizrd.simpleweather.widgets.WidgetType
 import com.thewizrd.simpleweather.widgets.WidgetUpdaterHelper
 import com.thewizrd.simpleweather.widgets.WidgetUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 class WidgetWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
     companion object {
+        private const val TAG = "WidgetWorker"
         private const val KEY_ACTION = "action"
 
         // Widget Actions
@@ -118,6 +133,60 @@ class WidgetWorker(appContext: Context, params: WorkerParameters) :
                 .build()
 
             workMgr.enqueue(request)
+        }
+
+        suspend fun scheduleRefreshWidget(
+            context: Context,
+            appWidgetId: Int,
+            info: WidgetProviderInfo,
+            duration: Duration,
+            expedited: Boolean = false
+        ) {
+            // Check if there is existing work pending
+            val tag = "${TAG}_sched_${appWidgetId}"
+            val workMgr = WorkManager.getInstance(context.applicationContext)
+            val workInfos = withContext(Dispatchers.IO) {
+                runCatching {
+                    workMgr.getWorkInfosForUniqueWork(tag).get(10, TimeUnit.SECONDS)
+                }.getOrElse { emptyList() }
+            }
+
+            var existingWorkPolicy = ExistingWorkPolicy.REPLACE
+            val requestedDelayInMillis = duration.toMillis()
+            val nextScheduleTimeMillis = System.currentTimeMillis() + requestedDelayInMillis
+
+            // If any existing work exists with a shorter delay, keep it, else replace it
+            for (workInfo in workInfos) {
+                if (workInfo.state == WorkInfo.State.ENQUEUED) {
+                    val estimatedDelayInMillis =
+                        workInfo.nextScheduleTimeMillis - System.currentTimeMillis()
+
+                    if (estimatedDelayInMillis in 1..<nextScheduleTimeMillis) {
+                        existingWorkPolicy = ExistingWorkPolicy.KEEP
+                        break
+                    }
+                }
+            }
+
+            val request = OneTimeWorkRequestBuilder<WidgetWorker>()
+                .apply {
+                    if (expedited) {
+                        setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    }
+                }
+                .setConstraints(Constraints.NONE)
+                .setInputData(
+                    Data.Builder()
+                        .putString(KEY_ACTION, ACTION_REFRESHWIDGET)
+                        .putIntArray(EXTRA_WIDGET_IDS, intArrayOf(appWidgetId))
+                        .putInt(EXTRA_WIDGET_TYPE, info.widgetType.value)
+                        .build()
+                )
+                .setInitialDelay(requestedDelayInMillis, TimeUnit.MILLISECONDS)
+                .build()
+
+            RemoteWorkManager.getInstance(context)
+                .enqueueUniqueWork(tag, existingWorkPolicy, request)
         }
     }
 

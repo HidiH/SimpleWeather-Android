@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setup -->
+    <string name="location_search_hint">"أدخل الموقع"</string>
+    <string name="api_label">"مزود الطقس"</string>
+    <string name="key_hint">"مفتاح المزود"</string>
+    <string name="label_gpsfollow">"الموقع الحالي"</string>
+    <string name="label_getstarted">"ابدأ"</string>
+    <string name="setup_welcome_prompt">"مرحباً بك في تطبيق SimpleWeather"</string>
+    <string name="setup_welcome_tagline_prompt">"مجرد تطبيق بسيط للطقس"</string>
+    <string name="setup_location_prompt">"أضف موقعاً للبدء"</string>
+    <string name="setup_preferences_prompt">"خصص إعداداتك أدناه"</string>
+    <string name="label_next">"التالي"</string>
+    <string name="label_back">"السابق"</string>
+
+    <!-- MainActivity -->
+    <string name="title_activity_weather_now">"الطقس"</string>
+    <string name="action_settings">"الإعدادات"</string>
+    <string name="action_retry">"إعادة المحاولة"</string>
+
+    <!-- Weather Details -->
+    <string name="label_details">"التفاصيل"</string>
+    <string name="label_humidity">"الرطوبة"</string>
+    <string name="label_pressure">"الضغط الجوي"</string>
+    <string name="label_visibility">"مدى الرؤية"</string>
+    <string name="label_feelslike">"الشعور بالحرارة"</string>
+    <string name="label_wind">"الرياح"</string>
+    <string name="label_forecast">"التوقعات"</string>
+    <string name="label_condition">"الحالة"</string>
+    <string name="label_sunriseset">"شروق / غروب الشمس"</string>
+    <string name="label_sunrise">"شروق الشمس"</string>
+    <string name="label_sunset">"غروب الشمس"</string>
+    <string name="label_hourlyforecast">"كل ساعة"</string>
+    <string name="label_precipitation">"هطول الأمطار"</string>
+
+    <!-- Chance of Precipitation -->
+    <string name="label_chance">"احتمالية"</string>
+    <string name="label_cloudiness">"تلبد الغيوم"</string>
+    <string name="label_qpf_rain">"المطر"</string>
+    <string name="label_qpf_snow">"الثلج"</string>
+    <string name="credit_prefix">"البيانات من"</string>
+    <string name="attrib_prefix">"صورة بواسطة"</string>
+    <string name="label_high">"أعلى"</string>
+    <string name="label_low">"أقل"</string>
+    <string name="label_dewpoint">"نقطة الندى"</string>
+    <string name="label_moonrise">"طلوع القمر"</string>
+    <string name="label_moonset">"غروب القمر"</string>
+    <string name="label_moonphase">"طور القمر"</string>
+    <string name="label_beaufort">"مقياس بوفورت"</string>
+    <string name="label_uv">"مؤشر الأشعة فوق البنفسجية"</string>
+    <string name="label_airquality">"مؤشر جودة الهواء"</string>
+    <string name="label_airquality_short">"جودة الهواء"</string>
+    <string name="label_radar">"رادار"</string>
+    <string name="label_afternoon">"بعد الظهر"</string>
+    <string name="label_eve">"المساء"</string>
+    <string name="label_morning">"الصباح"</string>
+    <string name="label_night">"الليل"</string>
+    <string name="label_temp">"درجة الحرارة"</string>
+
+    <!-- NavBar -->
+    <string name="label_nav_weathernow">"الطقس"</string>
+    <string name="label_nav_alerts">"تنبيهات"</string>
+    <string name="label_nav_locations">"المواقع"</string>
+    <string name="title_activity_settings">"الإعدادات"</string>
+    <string name="title_fragment_alerts">"تنبيهات الطقس القاسي"</string>
+
+    <!-- Settings -->
+    <string name="pref_title_general">"عام"</string>
+    <string name="pref_category_version">"الإصدار"</string>
+    <string name="pref_title_units">"الوحدات"</string>
+    <string name="pref_summary_fahrenheit">"عرض الوحدات بالفهرنهايت (°F)"</string>
+    <string name="pref_summary_celsius">"عرض الوحدات بالسيليزية (°C)"</string>
+    <string name="pref_title_about">"حول"</string>
+    <string name="pref_title_about_app">"حول SimpleWeather"</string>
+    <string name="pref_title_credits">"شكر وتقدير"</string>
+    <string name="pref_title_oslibs">"مكتبات مفتوحة المصدر"</string>
+    <string name="pref_category_providers">"مزودو البيانات"</string>
+    <string name="pref_summary_currentlocation">"السماح بالوصول إلى الموقع الحالي عبر GPS"</string>
+    <string name="pref_summary_apikey">"أدخل مفتاح المزود المطلوب لـ %1$s"</string>
+    <string name="message_enter_apikey">"الرجاء إدخال مفتاح المزود"</string>
+    <string name="message_keyverified">"تم التحقق من المفتاح"</string>
+    <string name="message_keyinvalid">"مفتاح غير صالح"</string>
+    <string name="pref_title_onnotification">"إشعار الطقس"</string>
+    <string name="pref_summary_notification">"إظهار إشعار مستمر يعرض أحوال الطقس الحالية"</string>
+    <string name="pref_title_api">"مزود الطقس"</string>
+    <string name="pref_category_notification">"الإشعارات"</string>
+    <string name="pref_title_notificationicon">"رمز الإشعار"</string>
+    <string name="pref_title_alerts">"تنبيهات الطقس"</string>
+    <string name="pref_summary_alerts">"إظهار إشعارات لتنبيهات الطقس"</string>
+    <string name="pref_summary_alerts_disabled">"تنبيهات الطقس غير مدعومة من قبل مزود خدمة الطقس هذا"</string>
+    <string name="pref_title_apiregister">"إنشاء حساب"</string>
+    <string name="pref_summary_apiregister">"إنشاء حساب للتسجيل للحصول على مفتاح مزود الخدمة"</string>
+    <string name="error_message_weather_region_unsupported">"الدولة غير مدعومة من قبل مزود خدمة الطقس هذا"</string>
+
+    <!-- Locations -->
+    <string name="label_btn_add_location">"إضافة موقع"</string>
+    <string name="action_editmode">"تعديل"</string>
+    <string name="label_currentlocation">"الموقع الحالي"</string>
+    <string name="label_favoritelocations">"المواقع المفضلة"</string>
+    <string name="error_location_denied">"تم رفض الوصول إلى الموقع"</string>
+    <string name="error_retrieve_location">"غير قادر على الحصول على الموقع"</string>
+    <string name="error_enable_location_services">"خدمات الموقع معطلة. يرجى تمكينها في الإعدادات"</string>
+    <string name="error_noresults">"لم يتم العثور على نتائج"</string>
+    <string name="label_fab_add_location">"إضافة موقع"</string>
+    <string name="message_locationremoved">"تمت إزالة الموقع"</string>
+    <string name="message_needfavorite">"يجب أن يكون لديك موقع مفضل واحد على الأقل"</string>
+    <string name="undo">"تراجع"</string>
+    <string name="delete">"حذف"</string>
+
+    <!-- Background Location Permission -->
+    <string name="bg_location_permission_rationale">"السماح بالوصول لتحديث الموقع في الخلفية للإشعارات والودجات"</string>
+
+    <!-- Weather Exceptions -->
+    <string name="werror_noweather">"غير قادر على تحميل بيانات الطقس"</string>
+    <string name="werror_networkerror">"خطأ في الاتصال بالشبكة"</string>
+    <string name="werror_invalidkey">"مفتاح مزود خدمة غير صالح"</string>
+    <string name="werror_querynotfound">"لا توجد مدن تطابق استعلام البحث الخاص بك"</string>
+    <string name="werror_unknown">"حدث خطأ غير معروف"</string>
+
+    <!-- Refresh Intervals -->
+    <string name="pref_title_refreshinterval">"فترة التحديث"</string>
+    <string name="refresh_60min">"ساعة واحدة"</string>
+    <string name="refresh_2hrs">"ساعتان"</string>
+    <string name="refresh_3hrs">"3 ساعات"</string>
+    <string name="refresh_6hrs">"6 ساعات"</string>
+    <string name="refresh_12hrs">"12 ساعة"</string>
+    <string name="update_prefix">"تم التحديث في"</string>
+    <string name="update_prefix_day">"تم التحديث في الساعة"</string>
+
+    <!-- Notification -->
+    <string name="notificationicon_temperature">"درجة الحرارة"</string>
+    <string name="notificationicon_condition">"حالة الطقس"</string>
+    <string name="not_channel_name_weather">"إشعارات الطقس"</string>
+    <string name="not_channel_desc_weather">"إشعارات الطقس"</string>
+    <string name="not_channel_name_alerts">"تنبيهات الطقس"</string>
+    <string name="not_channel_desc_alerts">"إشعارات لتنبيهات الطقس"</string>
+    <string name="not_channel_name_general">"إشعارات الخدمة"</string>
+
+    <!-- Alerts -->
+    <string name="datetime_day_ago">"منذ %1$d أيام"</string>
+    <string name="datetime_hr_ago">"منذ %1$d ساعات"</string>
+    <string name="datetime_min_ago">"منذ %1$d دقائق"</string>
+    <string name="datetime_sec_ago">"منذ %1$d ثواني"</string>
+    <string name="datetime_validuntil">"صالح حتى"</string>
+
+    <!-- HERE API -->
+    <string name="pref_title_personalkey">"مفتاح مزود خدمة شخصي"</string>
+    <string name="pref_summary_personalkey">"استخدام مفتاح مزود خدمة طقس شخصي"</string>
+
+    <!-- Dark Theme -->
+    <string name="pref_title_userthememode">"السمة"</string>
+    <string name="userthememode_default">"افتراضي النظام"</string>
+    <string name="userthememode_dark">"داكن"</string>
+    <string name="userthememode_black">"داكن (AMOLED)"</string>
+    <string name="userthememode_light">"فاتح"</string>
+    <string name="summary_default">"افتراضي"</string>
+    <string name="action_refresh">"تحديث"</string>
+    <string name="label_windgust">"هبة الرياح"</string>
+    <string name="pref_title_language">"اللغة"</string>
+
+    <!-- Units -->
+    <string name="label_temperature">"درجة الحرارة"</string>
+    <string name="label_speed">"السرعة"</string>
+    <string name="label_distance">"المسافة"</string>
+    <string name="pref_title_resetunits">"إعادة تعيين الوحدات إلى القيم الافتراضية"</string>
+    <string name="not_title_weather_update">"جاري تحديث الطقس..."</string>
+
+    <!-- Icons -->
+    <string name="pref_title_icons">"أيقونات"</string>
+    <string name="refresh_30min">"30 دقيقة"</string>
+    <string name="label_day">"يوم"</string>
+
+    <!-- Pollen -->
+    <string name="label_pollen_count">"عدد حبوب اللقاح"</string>
+    <string name="label_pollen_tree">"شجرة"</string>
+    <string name="label_tree_pollen">"حبوب لقاح الأشجار"</string>
+    <string name="label_pollen_grass">"عشب"</string>
+    <string name="label_grass_pollen">"حبوب لقاح العشب"</string>
+    <string name="label_pollen_ragweed">"عشبة الرجيد"</string>
+    <string name="label_ragweed_pollen">"حبوب لقاح عشبة الرجيد"</string>
+    <string name="label_count_low">"قليل"</string>
+    <string name="label_count_moderate">"معتدل"</string>
+    <string name="label_count_high">"عالي"</string>
+    <string name="label_count_veryhigh">"عالية جداً"</string>
+    <string name="bg_location_permission_rationale_settings">"لتحديث الموقع في الخلفية للإشعارات والودجات، يرجى تعيين إذن الموقع إلى '%1$s'"</string>
+    <string name="prompt_location_not_set">"لم يتم تعيين الموقع. يرجى إضافة موقع"</string>
+
+    <!-- Background Location Permission -->
+    <string name="title_bg_location_access">"الوصول إلى الموقع في الخلفية"</string>
+    <string name="wear_bg_location_permission_rationale">"السماح بالوصول لتحديث الموقع في الخلفية للبلاطات والمضاعفات"</string>
+    <string name="wear_bg_location_permission_rationale_settings">"لتحديث الموقع في الخلفية للبلاطات والمضاعفات، يرجى تعيين إذن الموقع إلى '%1$s'"</string>
+    <string name="time_current">"الحالي"</string>
+
+    <!-- Forecast Graphs -->
+    <string name="label_nodata">"لا توجد بيانات"</string>
+    <string name="label_minutelyforecast">"كل دقيقة"</string>
+    <string name="hint_username">"اسم المستخدم"</string>
+    <string name="hint_password">"كلمة المرور"</string>
+    <string name="pref_category_terms">الشروط</string>
+    <string name="pref_title_privacypolicy">"سياسة الخصوصية"</string>
+    <string name="pref_title_termsofservice">"شروط الخدمة"</string>
+    <string name="label_moreinfo">"مزيد من المعلومات"</string>
+    <string name="action_reset">"إعادة تعيين"</string>
+    <string name="label_count_low_short">"قليل"</string>
+    <string name="label_count_moderate_short">"معتدل"</string>
+    <string name="label_count_high_short">"عالي"</string>
+    <string name="label_count_veryhigh_short">"عالي"</string>
+    <string name="werror_ratelimited">"طلبات كثيرة جداً. يرجى المحاولة مرة أخرى بعد بضع دقائق"</string>
+    <string name="werror_locationnotsupported">"لا يدعم مزود الطقس هذا الموقع"</string>
+    <string name="notification_perm_denied">"تم رفض إذن الإخطار"</string>
+    <string name="pref_title_color">اللون</string>
+</resources>
