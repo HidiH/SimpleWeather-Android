@@ -42,7 +42,7 @@ import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
@@ -221,8 +221,8 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
                 currentStream.closeQuietly()
                 forecastStream.closeQuietly()
 
-                requireNotNull(currRoot)
-                requireNotNull(foreRoot)
+                requireNotNull(currRoot) { "currRoot is null" }
+                requireNotNull(foreRoot) { "foreRoot is null" }
 
                 var hourlyRoot: HourlyResponse? = null
 
@@ -307,7 +307,7 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
                 // End Stream
                 stream.closeQuietly()
 
-                requireNotNull(root)
+                requireNotNull(root) { "AlertsResponse is null" }
 
                 alerts = createWeatherAlerts(root.alerts, root.timezone!!)
             } catch (ex: Exception) {
@@ -329,7 +329,7 @@ class WeatherBitIOProvider : WeatherProviderImpl(), WeatherAlertProvider {
 
     @Throws(WeatherException::class)
     override suspend fun updateWeatherData(location: LocationData, weather: Weather) {
-        // no-op
+        super.updateWeatherData(location, weather)
     }
 
     override suspend fun updateLocationQuery(weather: Weather): String {
